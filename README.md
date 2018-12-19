@@ -1,4 +1,4 @@
-# Custom Grammar Utilities
+# Grammar Utilities
 
 Occam's grammar utilities.
 
