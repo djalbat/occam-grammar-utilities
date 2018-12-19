@@ -1,6 +1,6 @@
 # Grammar Utilities
 
-Occam's grammar utilities.
+[Occam](https://github.com/jecs-imperial/occam)'s grammar utilities.
 
 ### Contents
 
