@@ -91,7 +91,7 @@ You will need to do this if you want to look at the example.
 
 ## Example
 
-To come.
+There is one example but the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. The initial BNF is actually a representation of Occam's BNF parser's rules. If seems too daunting at first, you can copy the BNF given in the introduction into the BNF textarea.
 
 ## Building
 
