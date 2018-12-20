@@ -47,7 +47,7 @@ expression~   ::= operator expression expression~
 
                 ;
 ```
-It is well worth a few minutes to satisfy yourself, at least broadly, of the veracity of this process. Here is the parse tree of the expression `(1+2)/3` the results:
+It is well worth a few minutes to satisfy yourself, at least broadly, of the veracity of this remedy. Here is the parse tree of the expression `(1+2)/3` that results:
 ```
                                             expression
                                                 |
@@ -61,7 +61,7 @@ It is well worth a few minutes to satisfy yourself, at least broadly, of the ver
                |                          |                            |              |             |
             number        --------------------------------        /[terminal]    -----------        ε
                |          |               |              |                       |         |
-          1[terminal]   operator      expression     expression~                term   expression~
+          1[terminal]  operator      expression     expression~                term   expression~
                           |               |              |                       |         |
                      +[terminal]    -------------        ε                    number       ε
                                     |           |                                |
