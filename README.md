@@ -49,27 +49,27 @@ expression~   ::= operator expression expression~
 ```
 It is well worth a few minutes to satisfy yourself, at least broadly, of the veracity of this process. Here is the parse tree of the expression `(1+2)/3` the results:
 ```
-                                                            expression(0-6)
-                                                                   |
-       ------------------------------------------------------------------------------------------------------------------------
-       |                                |                                                  |                                  |
-([terminal](0)                   expression(1-3)                                    )[terminal](4)                    expression~(5-6)
-                                        |                                                                                     |
-                      ------------------------------------                                                -----------------------------------------
-                      |                                  |                                                |                     |                 |
-                   term(1)                       expression~(2-3)                                    operator(5)          expression(6)      expression~
-                      |                                  |                                                |                     |                 |
-                  number(1)          -----------------------------------------                     /[terminal](5)        --------------           ε
-                      |              |                     |                 |                                           |            |
-               1[terminal](1)   operator(2)          expression(3)      expression~                                   term(6)    expression~
-                                     |                     |                 |                                           |            |
-                              +[terminal](2)        --------------           ε                                       number(6)        ε
-                                                    |            |                                                       |
-                                                 term(3)    expression~                                           3[terminal](6)
-                                                    |            |
-                                                number(3)        ε
+                                                expression
                                                     |
-                                             2[terminal](3)
+       ---------------------------------------------------------------------------------------
+       |                       |                                    |                        |
+([terminal]                expression                          )[terminal]              expression~
+                               |                                                             |
+                  ---------------------------                                 ------------------------------
+                  |                         |                                 |              |             |
+                term                   expression~                        operator      expression    expression~
+                  |                         |                                 |              |             |
+               number       --------------------------------             /[terminal]    -----------        ε
+                  |         |               |              |                            |         |
+             1[terminal] operator      expression     expression~                     term   expression~
+                            |               |              |                            |         |
+                       +[terminal]    -------------        ε                         number       ε
+                                      |           |                                     |
+                                    term     expression~                           3[terminal]
+                                      |           |
+                                   number         ε
+                                      |
+                                 2[terminal]
 ```
 
 ## Installation
