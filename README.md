@@ -13,7 +13,64 @@
 
 ## Introduction
 
-To come.
+This package provides the means to remove left recursion, the achilles heel of top-down parsers, from BNF. To give an example, consider the following BNF:
+```
+expression    ::= expression operator expression
+
+                | "(" expression ")"
+
+                | term
+
+                ;
+
+operator      ::= "+" | "-" | "/" | "*" ;
+
+term          ::= [number] ;
+
+```
+Here the first rule is left recursive. When the parser encounters this rule it will immediately enter an infinite loop as it tries to evaluate the right hand side. This is an example of immediate left recursion. To remedy it, the rule can be rewritten to be right recursive. The first definition `expression operator expression` is discarded and a the name of a new, right recursive rule `expression~` is appended to the remaining two definitions. The new, right recursive rule itself consists of two definitions, the first of which `operator expression expression~` is right recursive, the second of which is consists of a single terminating part `ε` which permits the parser to continue when the first definition no longer results in a match:
+
+```
+expression    ::= "(" expression ")" expression~
+
+                | term expression~
+
+                ;
+
+operator      ::= "+" | "-" | "/" | "*" ;
+
+term          ::= [number] ;
+
+expression~   ::= operator expression expression~
+
+                | ε
+
+                ;
+```
+It is well worth a few minutes to satisfy yourself, at least broadly, of the veracity of this process. Here is the parse tree of the expression `(1+2)/3` the results:
+```
+                                                            expression(0-6)
+                                                                   |
+       ------------------------------------------------------------------------------------------------------------------------
+       |                                |                                                  |                                  |
+([terminal](0)                   expression(1-3)                                    )[terminal](4)                    expression~(5-6)
+                                        |                                                                                     |
+                      ------------------------------------                                                -----------------------------------------
+                      |                                  |                                                |                     |                 |
+                   term(1)                       expression~(2-3)                                    operator(5)          expression(6)      expression~
+                      |                                  |                                                |                     |                 |
+                  number(1)          -----------------------------------------                     /[terminal](5)        --------------           ε
+                      |              |                     |                 |                                           |            |
+               1[terminal](1)   operator(2)          expression(3)      expression~                                   term(6)    expression~
+                                     |                     |                 |                                           |            |
+                              +[terminal](2)        --------------           ε                                       number(6)        ε
+                                                    |            |                                                       |
+                                                 term(3)    expression~                                           3[terminal](6)
+                                                    |            |
+                                                number(3)        ε
+                                                    |
+                                             2[terminal](3)
+```
 
 ## Installation
 
