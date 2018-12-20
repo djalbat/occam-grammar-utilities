@@ -47,7 +47,7 @@ expression~   ::= operator expression expression~
 
                 ;
 ```
-It is well worth a few minutes to convince yourself that this makes sense. Here is the parse tree of the expression `(1+2)/3` that results:
+It is well worth a few minutes to convince yourself that this makes sense. Here is the parse tree of the expression `(1+2)/3` that results from the use of this amended BNF:
 ```
                                       expression
                                            |
