@@ -49,28 +49,29 @@ expression~   ::= operator expression expression~
 ```
 It is well worth a few minutes to satisfy yourself, at least broadly, of the veracity of this remedy. Here is the parse tree of the expression `(1+2)/3` that results:
 ```
-                                            expression
-                                                |
-       --------------------------------------------------------------------------------
-       |                     |                               |                        |
-([terminal]              expression                     )[terminal]              expression~
-                             |                                                        |
-               ----------------------------                            ------------------------------
-               |                          |                            |              |             |
-             term                    expression~                   operator      expression    expression~
-               |                          |                            |              |             |
-            number        --------------------------------        /[terminal]    -----------        ε
-               |          |               |              |                       |         |
-          1[terminal]  operator      expression     expression~                term   expression~
-                          |               |              |                       |         |
-                     +[terminal]    -------------        ε                    number       ε
-                                    |           |                                |
-                                  term     expression~                       3[terminal]
+                                      expression
+                                           |
+     ------------------------------------------------------------------------------
+     |                       |                          |                         |
+([terminal              expression                 )[terminal]               expression~
+                             |                                                    |
+               ----------------------------                          ------------------------------
+               |                          |                          |              |             |
+             term                    expression~                 operator      expression    expression~
+               |                          |                          |              |             |
+            number        --------------------------------      /[terminal]    -----------        ε
+               |          |               |              |                     |         |
+          1[terminal]  operator      expression     expression~              term   expression~
+                          |               |              |                     |         |
+                     +[terminal]    -------------        ε                  number       ε
+                                    |           |                              |
+                                  term     expression~                    3[terminal]
                                     |           |
                                  number         ε
                                     |
                                2[terminal]
 ```
+The implementation of an algorithm that reliably removes left recursion is fiddlesome to say the least and there are caveats. A full treatment is given below after mention of the example.
 
 ## Installation
 
