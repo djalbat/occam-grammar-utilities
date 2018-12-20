@@ -49,27 +49,27 @@ expression~   ::= operator expression expression~
 ```
 It is well worth a few minutes to satisfy yourself, at least broadly, of the veracity of this process. Here is the parse tree of the expression `(1+2)/3` the results:
 ```
-                                                expression
-                                                    |
-       ---------------------------------------------------------------------------------------
-       |                       |                                    |                        |
-([terminal]                expression                          )[terminal]              expression~
-                               |                                                             |
-                  ---------------------------                                 ------------------------------
-                  |                         |                                 |              |             |
-                term                   expression~                        operator      expression    expression~
-                  |                         |                                 |              |             |
-               number       --------------------------------             /[terminal]    -----------        ε
-                  |         |               |              |                            |         |
-             1[terminal] operator      expression     expression~                     term   expression~
-                            |               |              |                            |         |
-                       +[terminal]    -------------        ε                         number       ε
-                                      |           |                                     |
-                                    term     expression~                           3[terminal]
-                                      |           |
-                                   number         ε
-                                      |
-                                 2[terminal]
+                                              expression
+                                                  |
+       ----------------------------------------------------------------------------------
+       |                     |                                 |                        |
+([terminal]              expression                       )[terminal]              expression~
+                             |                                                          |
+                ---------------------------                              ------------------------------
+                |                         |                              |              |             |
+              term                   expression~                     operator      expression    expression~
+                |                         |                              |              |             |
+             number       --------------------------------          /[terminal]    -----------        ε
+                |         |               |              |                         |         |
+           1[terminal] operator      expression     expression~                  term   expression~
+                          |               |              |                         |         |
+                     +[terminal]    -------------        ε                      number       ε
+                                    |           |                                  |
+                                  term     expression~                         3[terminal]
+                                    |           |
+                                 number         ε
+                                    |
+                               2[terminal]
 ```
 
 ## Installation
@@ -103,7 +103,6 @@ Automation is done with [npm scripts](https://docs.npmjs.com/misc/scripts), have
 
 * [Gate Lectures on Compiler Design by Ravindrababu Ravula](https://www.youtube.com/watch?v=Qkwj65l_96I&list=PLEbnTDJUr_IcPtUXFy2b1sGRPsLFMghhS)
 * [Notes on Formal Language Theory and Parsing by James Power](http://www.cs.nuim.ie/~jpower/Courses/Previous/parsing)
-* [Eliminating ambiguity in context free grammars by Rasmus Ejlers Møgelberg](http://itu.dk/people/mogel/SPLC2012/lectures/eliminatingAmbiguity.pdf)
 
 ## Contact
 
