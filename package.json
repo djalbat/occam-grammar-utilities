@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "necessary": "^1.7.5",
+    "occam-lexers": "^8.0.29",
     "occam-parsers": "^8.0.23",
     "occam-tarjan": "^2.0.12"
   },
