@@ -13,7 +13,7 @@
 
 ## Introduction
 
-This package provides the means to remove left recursion, the achilles heel of top-down parsers, from BNF. To give an example, consider the following BNF:
+This package provides the means to eliminate left recursion, the achilles heel of top-down parsers. Consider the following:
 ```
 expression    ::= expression operator expression
 
