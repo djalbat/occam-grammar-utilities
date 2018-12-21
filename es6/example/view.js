@@ -8,9 +8,14 @@ const easy = require('easy'),
 const exampleBNF = require('../example/bnf'),
       BNFTextarea = require('./textarea/bnf'),
       rulesUtilities = require('../utilities/rules'),
+      eliminateCycles = require('../eliminateCycles'),
       AdjustedBNFTextarea = require('./textarea/adjustedBNF'),
       MainVerticalSplitter = require('./verticalSplitter/main'),
-      eliminateLeftRecursion = require('../eliminateLeftRecursion');
+      EliminateCyclesCheckbox = require('./checkbox/eliminateCycles'),
+      eliminateImplicitLeftRecursion = require('../eliminateImplicitLeftRecursion'),
+      eliminateImmediateLeftRecursion = require('../eliminateImmediateLeftRecursion'),
+      EliminateImplicitLeftRecursionCheckbox = require('./checkbox/eliminateImplicitLeftRecursion'),
+      EliminateImmediateLeftRecursionCheckbox = require('./checkbox/eliminateImmediateLeftRecursion');
 
 const { Element } = easy,
       { BNFLexer } = lexers,
@@ -22,24 +27,37 @@ const bnfLexer = BNFLexer.fromNothing(),
       bnfParser = BNFParser.fromNothing();
 
 class View extends Element {
-  getAdjustedBNF() {
+  getRules() {
     const bnf = this.getBNF(),
           tokens = bnfLexer.tokensFromBNF(bnf),
-          rulesNode = bnfParser.rulesNodeFromTokens(tokens);
+          rulesNode = bnfParser.rulesNodeFromTokens(tokens),
+          rules = BNFParser.generateRules(rulesNode);
 
-    let rules = BNFParser.generateRules(rulesNode);
-
-    rules = eliminateLeftRecursion(rules);
-
-    const rulesString = rulesAsString(rules),
-          adjustedBNF = rulesString;  ///
-
-    return adjustedBNF;
+    return rules;
   }
 
-  keyUpHandler() {
+  adjustBNF() {
     try {
-      const adjustedBNF = this.getAdjustedBNF();
+      const eliminateCyclesCheckboxChecked = this.isEliminateCyclesCheckboxChecked(),
+            eliminateImmediateLeftRecursionCheckboxChecked = this.isEliminateImmediateLeftRecursionCheckboxChecked(),
+            eliminateImplicitLeftRecursionCheckboxChecked = this.isEliminateImplicitLeftRecursionCheckboxChecked();
+
+      let rules = this.getRules();
+
+      if (eliminateCyclesCheckboxChecked) {
+        rules = eliminateCycles(rules);
+      }
+
+      if (eliminateImmediateLeftRecursionCheckboxChecked) {
+        rules = eliminateImmediateLeftRecursion(rules);
+      }
+
+      if (eliminateImplicitLeftRecursionCheckboxChecked) {
+        rules = eliminateImplicitLeftRecursion(rules);
+      }
+
+      const rulesString = rulesAsString(rules),
+            adjustedBNF = rulesString;  ///
 
       this.hideError();
 
@@ -51,8 +69,43 @@ class View extends Element {
     }
   }
 
+  keyUpHandler() {
+    this.adjustBNF();
+  }
+
+  eliminateCyclesCheckboxChangeHandler(checked) {
+    this.adjustBNF();
+  }
+
+  eliminateImmediateLeftRecursionCheckboxChangeHandler(checked) {
+    this.adjustBNF();
+  }
+
+  eliminateImplicitLeftRecursionCheckboxChangeHandler(checked) {
+    if (checked) {
+      this.checkEliminateCyclesCheckbox(checked);
+
+      checked = false;  ///
+
+      this.checkEliminateImmediateLeftRecursionCheckbox(checked);
+
+      this.disableEliminateCyclesCheckbox();
+
+      this.disableEliminateImmediateLeftRecursionCheckbox();
+    } else {
+      this.enableEliminateCyclesCheckbox();
+
+      this.enableEliminateImmediateLeftRecursionCheckbox();
+    }
+
+    this.adjustBNF();
+  }
+
   childElements(properties) {
-    const keyUpHandler = this.keyUpHandler.bind(this);
+    const keyUpHandler = this.keyUpHandler.bind(this),
+          eliminateCyclesCheckboxChangeHandler = this.eliminateCyclesCheckboxChangeHandler.bind(this),
+          eliminateImmediateLeftRecursionCheckboxChangeHandler = this.eliminateImmediateLeftRecursionCheckboxChangeHandler.bind(this),
+          eliminateImplicitLeftRecursionCheckboxChangeHandler = this.eliminateImplicitLeftRecursionCheckboxChangeHandler.bind(this);
 
     return ([
 
@@ -63,6 +116,14 @@ class View extends Element {
         <SizeableElement>
           <h2>BNF</h2>
           <BNFTextarea onKeyUp={keyUpHandler} />
+          <EliminateCyclesCheckbox onChange={eliminateCyclesCheckboxChangeHandler} disabled />
+          <span>Eliminate cycles</span>
+          <br />
+          <EliminateImmediateLeftRecursionCheckbox onChange={eliminateImmediateLeftRecursionCheckboxChangeHandler} disabled />
+          <span>Eliminate immediate left recursion</span>
+          <br />
+          <EliminateImplicitLeftRecursionCheckbox onChange={eliminateImplicitLeftRecursionCheckboxChangeHandler} checked />
+          <span>Eliminate implicit left recursion</span>
         </SizeableElement>
         <MainVerticalSplitter />
         <div className="column">
