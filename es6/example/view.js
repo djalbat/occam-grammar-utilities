@@ -116,7 +116,7 @@ class View extends Element {
         <SizeableElement>
           <h2>BNF</h2>
           <BNFTextarea onKeyUp={keyUpHandler} />
-          <EliminateCyclesCheckbox onChange={eliminateCyclesCheckboxChangeHandler} disabled />
+          <EliminateCyclesCheckbox onChange={eliminateCyclesCheckboxChangeHandler} checked disabled />
           <span>Eliminate cycles</span>
           <br />
           <EliminateImmediateLeftRecursionCheckbox onChange={eliminateImmediateLeftRecursionCheckboxChangeHandler} disabled />

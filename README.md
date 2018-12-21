@@ -91,9 +91,27 @@ You will need to do this if you want to look at the example.
 
 ## Example
 
-There is one example but the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. The initial BNF is actually a representation of Occam's BNF parser's rules. If this seems too daunting, you can copy the BNF given in the introduction into the BNF textarea.
+There is one example but the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. The initial BNF is actually a representation of Occam's BNF parser's rules. If this seems too daunting, you can copy the BNF given in the introduction into the BNF textarea. You can also try the BNF examples given in the treatment below.
 
 Additionally you can choose to eliminate just cycles or immediate left recursion, in order to see the effects. If you choose to eliminate implicit left recursion, you cannot choose not to eliminate cycles, because eliminating implicit left recursion requires it. Nor can you choose to eliminate immediate left recursion, because this is only a special case of implicit left recursion.
+
+## Treatment of the algorithms
+
+### Removing cycles
+
+Consider the following BNF:
+```
+  S ::= X "a" | Y ;
+
+  X ::= Y | "b" ;
+
+  Y ::= Z | "c" ;
+
+  Z ::= X "d" | "e" ;
+```
+This results in the cycle `Y -> Z -> X "d" -> Y`, abbreviated `Y ->* Y`. Note that the derivation `X -> Y -> Z -> X "d"` is not considered a cycle because it does not terminate in a unit definition. In abbreviated form it is `X ->* X "d"`, which is an example of implicit left recursion, but not of a cycle.
+
+The algorithm is pre-emptive. It removes all unit rules, thereby forestalling any chance of cycles being created.
 
 ## Building
 

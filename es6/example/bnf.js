@@ -2,6 +2,20 @@
 
 const exampleBNF = `
 
+  S ::= X "b" | Y ;
+  
+  Y ::= X | "a" ;
+
+  X ::= Z | "d";
+  
+  Z ::= Y | "c" ;
+  
+
+`
+
+/*
+`
+
   rules                ::=  rule+ ;
   
   rule                 ::=  ruleName "::=" definitions ";" ;
@@ -64,6 +78,7 @@ const exampleBNF = `
 
   wildcard             ::=  "." ;
 
-`;
+`
+*/;
 
 module.exports = exampleBNF;
