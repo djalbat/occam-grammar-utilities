@@ -109,7 +109,7 @@ Consider the following BNF:
 
   Z ::= X "d" | "e" ;
 ```
-This results in the cycle `Y -> Z -> X "d" -> Y`, abbreviated `Y ->* Y`. Note that the derivation `X -> Y -> Z -> X "d"` is not considered a cycle because it does not terminate in a unit definition. In abbreviated form it is `X ->* X "d"`, which is an example of implicit left recursion, but not of a cycle.
+This results in the cycle `Y -> Z -> X ("d") -> Y`, abbreviated `Y ->* Y`. Here the terminal part `"d"` of the first of the `Z` rules definitions is put in parenthesis to emphasise that although it is part of the definition, it is not evaluated during the derivation. Only the first part `X` is evaluated, which leads immediately to an evaluation of the first definition of the `X` rule, namely `Y`. Also note that the derivation `X -> Y -> Z -> X "d"` is not considered a cycle because it does not terminate in a unit definition. In abbreviated form it is `X ->* X "d"`, which is an example of implicit left recursion, but not of a cycle.
 
 The algorithm is pre-emptive. It removes all unit rules, thereby forestalling any chance of cycles being created.
 
