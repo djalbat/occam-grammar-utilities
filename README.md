@@ -91,7 +91,7 @@ You will need to do this if you want to look at the example.
 
 ## Example
 
-There is one example but the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. The initial BNF is actually a representation of Occam's BNF parser's rules. If seems too daunting at first, you can copy the BNF given in the introduction into the BNF textarea.
+There is one example but the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. The initial BNF is actually a representation of Occam's BNF parser's rules. If this seems too daunting, you can copy the BNF given in the introduction into the BNF textarea.
 
 Additionally you can choose to eliminate just cycles or immediate left recursion, in order to see the effects. If you choose to eliminate implicit left recursion, you cannot choose not to eliminate cycles, because eliminating implicit left recursion requires it. Nor can you choose to eliminate immediate left recursion, because this is only a special case of implicit left recursion.
 
