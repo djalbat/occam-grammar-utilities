@@ -2,13 +2,13 @@
 
 const exampleBNF = `
 
-  S ::= X "b" | Y ;
-  
-  Y ::= X | "a" ;
+  S ::= X "a" | Y ;
 
-  X ::= Z | "d";
-  
-  Z ::= Y | "c" ;
+  X ::= Y | "b" ;
+
+  Y ::= Z | "c" ;
+
+  Z ::= X "d" | "e" ;
   
 
 `
