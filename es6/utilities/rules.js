@@ -1,6 +1,6 @@
 'use strict';
 
-function rulesAsString(rules) {
+function rulesAsString(rules, multiLine) {
   const maximumRuleNameLength = rules.reduce(function(maximumRuleNameLength, rule) {
           const ruleName = rule.getName(),
                 ruleNameLength = ruleName.length;
@@ -10,7 +10,7 @@ function rulesAsString(rules) {
           return maximumRuleNameLength;
         }, 0),
         rulesString = rules.reduce(function(rulesString, rule) {
-          const ruleString = rule.asString(maximumRuleNameLength);
+          const ruleString = rule.asString(maximumRuleNameLength, multiLine);
 
           rulesString += ruleString;
 

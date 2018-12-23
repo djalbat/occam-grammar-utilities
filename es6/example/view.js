@@ -56,7 +56,8 @@ class View extends Element {
         rules = eliminateImplicitLeftRecursion(rules);
       }
 
-      const rulesString = rulesAsString(rules),
+      const multiLine = false,
+            rulesString = rulesAsString(rules, multiLine),
             adjustedBNF = rulesString;  ///
 
       this.hideError();
@@ -116,13 +117,13 @@ class View extends Element {
         <SizeableElement>
           <h2>BNF</h2>
           <BNFTextarea onKeyUp={keyUpHandler} />
-          <EliminateCyclesCheckbox onChange={eliminateCyclesCheckboxChangeHandler} checked disabled />
+          <EliminateCyclesCheckbox onChange={eliminateCyclesCheckboxChangeHandler} checked enabled />
           <span>Eliminate cycles</span>
           <br />
-          <EliminateImmediateLeftRecursionCheckbox onChange={eliminateImmediateLeftRecursionCheckboxChangeHandler} disabled />
+          <EliminateImmediateLeftRecursionCheckbox onChange={eliminateImmediateLeftRecursionCheckboxChangeHandler} enabled />
           <span>Eliminate immediate left recursion</span>
           <br />
-          <EliminateImplicitLeftRecursionCheckbox onChange={eliminateImplicitLeftRecursionCheckboxChangeHandler} checked />
+          <EliminateImplicitLeftRecursionCheckbox onChange={eliminateImplicitLeftRecursionCheckboxChangeHandler} />
           <span>Eliminate implicit left recursion</span>
         </SizeableElement>
         <MainVerticalSplitter />

@@ -1,76 +1,58 @@
 'use strict';
 
-const tarjan = require('occam-tarjan'),
-      parsers = require('occam-parsers');
+const parsers = require('occam-parsers');
 
 const UnitRule = require('./rule/unit'),
-      UnitsRule = require('./rule/units'),
       FixedRule = require('./rule/fixed'),
+      NonUnitsRule = require('./rule/nonUnits'),
       NonCyclicRule = require('./rule/nonCyclic'),
       ruleUtilities = require('./utilities/rule');
 
 const { Rule } = parsers,
-      { Graph } = tarjan,
       { findRuleByName } = ruleUtilities;
 
 function eliminateCycles(rules) {
-  const graph = graphFromRules(rules),
-        stronglyConnectedComponents = graph.getStronglyConnectedComponents(),
-        nonCyclicRules = nonCyclicRulesFromStronglyConnectedComponents(stronglyConnectedComponents, rules);
+  const nonUnitsRules = nonUnitsRulesFromRules(rules),
+        unitRules = unitRulesFromRules(rules);
 
-  rules = rules.map(function(rule) {
-    const ruleName = rule.getName(),
-          nonCyclicRuleName = ruleName, ///
-          nonCyclicRule = findRuleByName(nonCyclicRuleName, nonCyclicRules);
-
-    if (nonCyclicRule !== null) {
-      rule = nonCyclicRule; ///
-    } else {
-      const alreadyNonCyclicRuleName = ruleName,  ///
-            alreadyNonCyclicRule = findRuleByName(alreadyNonCyclicRuleName, rules);  ///
-
-      rule = alreadyNonCyclicRule; ///
-    }
-
-    return rule;
-  });
+  rules = unitRules;  ///
 
   return rules;
 }
 
 module.exports = eliminateCycles;
 
-function graphFromRules(rules) {
-  const unitsRules = unitsRulesFromRules(rules),
-        vertexLiterals = unitsRules.map(function(unitsRule) {
-          const ruleName = unitsRule.getName(),
-                unitDefinitionsRuleNames = unitsRule.getUnitDefinitionRuleNames(),
-                vertexName = ruleName,  ///
-                descendantVertexNames = unitDefinitionsRuleNames, ///
-                vertexLiteral = [
-                  vertexName,
-                  descendantVertexNames
-                ];
-      
-          return vertexLiteral;
-        }),
-        graph = Graph.fromVertexLiterals(vertexLiterals);
+function nonUnitsRulesFromRules(rules) {
+  const nonUnitsRules = [];
 
-  return graph;
+  rules.forEach(function(rule) {
+    const nonUnitsRule = NonUnitsRule.fromRule(rule);
+
+    if (nonUnitsRule !== null) {
+      nonUnitsRules.push(nonUnitsRule);
+    }
+  });
+
+  return nonUnitsRules;
 }
 
-function unitsRulesFromRules(rules) {
-  const unitsRules = rules.reduce(function(unitsRules, rule) {
-    const unitsRule = UnitsRule.fromRule(rule);
+function unitRulesFromRules(rules) {
+  const unitRules = [];
 
-    if (unitsRule !== null) {
-      unitsRules.push(unitsRule);
-    }
+  rules.forEach(function(rule) {
+    const name = rule.getName(),
+          definitions = rule.getDefinitions();
 
-    return unitsRules;
-  }, []);
+    definitions.forEach(function(definition) {
+      const unitRule = UnitRule.fromNameAndDefinition(name, definition);
 
-  return unitsRules;
+      if (unitRule !== null) {
+        unitRules.push(unitRule);
+      }
+    });
+  });
+
+  return unitRules;
 }
 
 function nonCyclicRulesFromStronglyConnectedComponents(stronglyConnectedComponents, rules) {
@@ -180,7 +162,8 @@ function nonCyclicRulesFromFixedRulesAndAddedRules(fixedRules, addedRules, nonCy
       nonCyclicRule.addDefinitions(addedRuleDefinitions);
     }
 
-    const nonCyclicRuleDefinitionsExist = nonCyclicRule.doDefinitionsExist();
+    const nonCyclicRuleDefinitions = nonCyclicRule.getDefinitions(),
+          nonCyclicRuleDefinitionsExist = (nonCyclicRuleDefinitions > 0);
 
     if (nonCyclicRuleDefinitionsExist) {
       nonCyclicRules.push(nonCyclicRule);

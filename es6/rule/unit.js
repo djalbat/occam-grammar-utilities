@@ -1,7 +1,7 @@
 'use strict';
 
 const necessary = require('necessary'),
-    parsers = require('occam-parsers');
+      parsers = require('occam-parsers');
 
 const UnitDefinition = require('../definition/unit');
 
@@ -43,6 +43,18 @@ class UnitRule extends Rule {
           ],
           Node = null,  ///
           unitRule = new UnitRule(name, definitions, Node);
+
+    return unitRule;
+  }
+
+  static fromNameAndDefinition(name, definition) {
+    let unitRule = null;
+
+    const unitDefinition = UnitDefinition.fromDefinition(definition);
+
+    if (unitDefinition !== null) {
+      unitRule = UnitRule.fromNameAndUnitDefinition(name, unitDefinition);
+    }
 
     return unitRule;
   }
