@@ -2,6 +2,18 @@
 
 const exampleBNF = `
 
+  S ::= X "b" | Y ;
+
+  Y ::= X | "a" ;
+
+  X ::= Z | "d" ;
+
+  Z ::= Y | "c" ;
+
+
+`
+
+/*
   S ::= X "a" | Y ;
 
   X ::= Y | "b" ;
@@ -9,9 +21,7 @@ const exampleBNF = `
   Y ::= Z | "c" ;
 
   Z ::= X "d" | "e" ;
-  
-
-`
+*/
 
 /*
 `

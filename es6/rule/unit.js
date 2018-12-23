@@ -6,35 +6,57 @@ const necessary = require('necessary'),
 const UnitDefinition = require('../definition/unit');
 
 const { Rule } = parsers,
-    { arrayUtilities } = necessary,
-    { first } = arrayUtilities;
+      { arrayUtilities } = necessary,
+      { first } = arrayUtilities;
 
 class UnitRule extends Rule {
-  getUnitRuleName() {
-    const definitions = this.getDefinitions(),
-          firstDefinition = first(definitions),
-          unitDefinition = firstDefinition, ///
-          unitRuleName = unitDefinition.getRuleName();
+  getUnitDefinitionRuleName() {
+    const unitDefinition = this.getUnitDefinition(),
+          unitDefinitionRuleName = unitDefinition.getRuleName();
 
-    return unitRuleName;
+    return unitDefinitionRuleName;
   }
 
-  isNotCyclic() {
-    const name = this.getName(),
-          unitRuleName = this.getUnitRuleName(),
-          notCyclic = (name !== unitRuleName);
+  getUnitDefinition() {
+    const definitions = this.getDefinitions(),
+          firstDefinition = first(definitions),
+          unitDefinition = firstDefinition; ///
 
-    return notCyclic;
+    return unitDefinition;
+  }
+
+  isNonCyclic() {
+    const name = this.getName(),
+          unitDefinitionRuleName = this.getUnitDefinitionRuleName(),
+          nonCyclic = (name !== unitDefinitionRuleName);
+
+    return nonCyclic;
   }
 
   isIncludedInRuleNames(ruleNames) {
     const name = this.getName(),
-          unitRuleName = this.getUnitRuleName(),
+          unitDefinitionRuleName = this.getUnitDefinitionRuleName(),
           ruleNamesContainsName = ruleNames.includes(name),
-          ruleNamesContainsUnitRuleName = ruleNames.includes(unitRuleName),
+          ruleNamesContainsUnitRuleName = ruleNames.includes(unitDefinitionRuleName),
           includedInRuleNames = (ruleNamesContainsName && ruleNamesContainsUnitRuleName);
 
     return includedInRuleNames;
+  }
+
+  matches(unitRule) {
+    let matches = false;
+
+    const name = this.getName(),
+          unitRuleName = unitRule.getName();
+
+    if (name === unitRuleName) {
+      const unitDefinitionRuleName = this.getUnitDefinitionRuleName(),
+            unitRuleUnitDefinitionRuleName = unitRule.getUnitDefinitionRuleName();
+
+      matches = (unitDefinitionRuleName === unitRuleUnitDefinitionRuleName);
+    }
+
+    return matches;
   }
 
   static fromNameAndUnitDefinition(name, unitDefinition) {

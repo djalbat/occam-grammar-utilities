@@ -131,6 +131,7 @@ The first stage is to split the rules into 'non-units' rules, that is rules with
 
   Y ::= Z ;
 ```
+The algorithm then works on the stack of unit rules, converting each to other unit rules or new non-unit rules until the stack is empty. Precisely, it pops the first rule `S ::= Y`
 
 ## Building
 
