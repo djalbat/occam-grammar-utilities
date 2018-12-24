@@ -2,11 +2,9 @@
 
 const UnitRule = require('./rule/unit'),
       NonUnitsRule = require('./rule/nonUnits'),
-      ruleUtilities = require('./utilities/rule'),
-      rulesUtilities = require('./utilities/rules');
+      ruleUtilities = require('./utilities/rule');
 
-const { findRuleByName } = ruleUtilities,
-      { rulesAsString } = rulesUtilities;
+const { findRuleByName } = ruleUtilities;
 
 function eliminateCycles(rules) {
   const unitRules = unitRulesFromRules(rules),
@@ -100,16 +98,6 @@ function newNonUnitsRulesFromUnitRulesAndNonUnitsRules(unitRules, nonUnitsRules)
     });
 
     unitRules = [].concat(newUnitRules).concat(unitRules);
-
-    console.log(rulesAsString(oldUnitRules));
-
-    console.log('------------');
-
-    console.log(rulesAsString(unitRules));
-
-    console.log(rulesAsString(newNonUnitsRules));
-
-    console.log('\n\n')
   }
 
   return newNonUnitsRules;
