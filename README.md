@@ -102,11 +102,8 @@ Additionally you can choose to eliminate just cycles or immediate left recursion
 Consider the following BNF:
 ```
   S ::= X "a" | Y ;
-
   X ::= Y | "b" ;
-
   Y ::= Z | "c" ;
-
   Z ::= "d" ;
 ```
 This results in the cycle `Y -> Z -> X ("d") -> Y`, abbreviated `Y ->* Y`. Here the terminal part `"d"` of the first of the `Z` rule's definitions is put in parenthesis to emphasise that although it is part of the definition, it is not evaluated during the derivation. Only the first part `X` is evaluated, which leads immediately to an evaluation of the first definition of the `X` rule, namely `Y`. Also note that the derivation `X -> Y -> Z -> X "d"` is not considered a cycle because it does not terminate in a unit definition. In abbreviated form it is `X ->* X "d"`, which is an example of implicit left recursion, but not of a cycle.
@@ -116,19 +113,14 @@ The algorithm is pre-emptive. It removes all unit definitions, thereby forestall
 The first stage is to split the rules into 'non-units' rules, that is rules without unit definitions, and 'unit' rules. The former are...
 ```
   S ::= X "a" ;
-
   X ::= "b" ;
-
   Y ::= "c" ;
-
   Z ::= "d" ;
 ```
 ...and the latter in this case:
 ```
   S ::= Y ;
-
   X ::= Y ;
-
   Y ::= Z ;
 ```
 The algorithm then works on the stack of 'unit' rules, popping rules off the top for consideration until none are left. The first one in this case is `S ::= Y`. If the 'unit' rule is cyclic, say `Y ::= Y`, or if it has been considered already, it is simply discarded and the next rule is considered.
@@ -177,6 +169,13 @@ There are no matching 'unit' rules of the form `Z ::= .`, so no new 'unit' rules
   X ::= Z ;         X ::= "d" ;
   Y ::= Z ;         Y ::= "d" ;
   ---------
+```
+Finally, the old 'unit' rules are discarded and the newly formed 'non-units' rules are combined with the original ones to create a new set:
+```
+  S ::= X "a" | "c" | "d" ;
+  X ::= "b" | "c" | "d" ;
+  Y ::= "c" | "d" ;
+  Z ::= "d" ;
 ```
 
 ## Building
