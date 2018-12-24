@@ -183,7 +183,7 @@ Finally, the old 'unit' rules are discarded and the newly formed 'non-units' rul
 
   Z ::= "d" ;
 ```
-There are a couple of points worth noting. The first is that termination can be informally proved by noting there are a finite number of 'unit' rules and that each is evaluated at most once. The second is that the effective order of the definitions may change. For example, if the first rule is changed to `S ::= Y | X "a"` then the result `S ::= X "a" | "c" | "d"` stays the same, with the definition `X "a"` coming before the remaining two definitions `"c"` and `"d"`. Theoretically the order of definitions in any rule should not matter, however in practice it can be difficult not to occasionally rely on it. A better algorithm would maintain the order of the definitions, and this is left for future work.
+There are a couple of points worth noting. The first is that termination can be informally proved by noting there are a finite number of 'unit' rules and that each is evaluated at most once. The second is that the effective order of the definitions may change. For example, if the first rule is changed to `S ::= Y | X "a"` then the result `S ::= X "a" | "c" | "d"` stays the same, with the definition `X "a"` coming before the remaining two definitions `"c"` and `"d"`. Theoretically this should not matter, however in practice it can be difficult not to occasionally rely on it. A better algorithm would maintain the order of the definitions, and this is left for future work.
 
 ## Building
 
