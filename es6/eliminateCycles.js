@@ -2,9 +2,11 @@
 
 const UnitRule = require('./rule/unit'),
       NonUnitsRule = require('./rule/nonUnits'),
-      ruleUtilities = require('./utilities/rule');
+      ruleUtilities = require('./utilities/rule'),
+      rulesUtilities = require('./utilities/rules');
 
-const { findRuleByName } = ruleUtilities;
+const { findRuleByName } = ruleUtilities,
+      { rulesAsString } = rulesUtilities;
 
 function eliminateCycles(rules) {
   const unitRules = unitRulesFromRules(rules),
@@ -51,57 +53,55 @@ function newNonUnitsRulesFromUnitRulesAndNonUnitsRules(unitRules, nonUnitsRules)
   const newNonUnitsRules = [],
         oldUnitRules = [];
 
-  let unitRulesLength = unitRules.length;
+  let unitRule;
 
-  while (unitRulesLength > 0) {
-    const unitRule = unitRules.shift(),
-          unitRuleNonCyclic = unitRule.isNonCyclic();
+  while (unitRule = unitRules.shift()) {
+    const unitRuleCyclic = unitRule.isCyclic(),
+          oldUnitsRulesIncludesUnitRule = checkOldUnitsRulesIncludesUnitRule(oldUnitRules, unitRule);
 
-    if (unitRuleNonCyclic) {
-      const oldUnitsRulesIncludesUnitRule = checkOldUnitsRulesIncludesUnitRule(oldUnitRules, unitRule);
-
-      const oldUnitRule = unitRule, ///
-            oldUnitRuleName = oldUnitRule.getName(),
-            oldUnitRuleUnitDefinitionRuleName = oldUnitRule.getUnitDefinitionRuleName();
-
-      oldUnitRules.push(oldUnitRule);
-
-      if (!oldUnitsRulesIncludesUnitRule) {
-        nonUnitsRules.forEach(function(nonUnitsRule) {
-          const nonUnitsRuleName = nonUnitsRule.getName();
-
-          if (nonUnitsRuleName === oldUnitRuleUnitDefinitionRuleName) {
-            const name = oldUnitRuleName, ///
-                  definitions = nonUnitsRule.getDefinitions(),
-                  newNonUnitsRule = NonUnitsRule.fromNameAndDefinitions(name, definitions);
-
-            newNonUnitsRules.push(newNonUnitsRule);
-          }
-        });
-
-        const newUnitRules = [];
-
-        unitRules.forEach(function(unitRule) {
-          const unitRuleName = unitRule.getName();
-
-          if (unitRuleName === oldUnitRuleUnitDefinitionRuleName) {
-            const unitRuleUnitDefinition = unitRule.getUnitDefinition(),
-                  name = oldUnitRuleName, ///
-                  unitDefinition = unitRuleUnitDefinition,  ///
-                  newUnitRule = UnitRule.fromNameAndUnitDefinition(name, unitDefinition),
-                  oldUnitRulesIncludesNewUnitRule = checkOldUnitsRulesIncludesUnitRule(oldUnitRules, newUnitRule);
-
-            if (!oldUnitRulesIncludesNewUnitRule) {
-              newUnitRules.push(newUnitRule);
-            }
-          }
-        });
-
-        unitRules = [].concat(newUnitRules).concat(unitRules);
-      }
+    if (unitRuleCyclic || oldUnitsRulesIncludesUnitRule) {
+      continue;
     }
 
-    unitRulesLength = unitRules.length;
+    const oldUnitRule = unitRule, ///
+          oldUnitRuleName = oldUnitRule.getName(),
+          oldUnitRuleUnitDefinitionRuleName = oldUnitRule.getUnitDefinitionRuleName();
+
+    oldUnitRules.push(oldUnitRule);
+
+    nonUnitsRules.forEach(function(nonUnitsRule) {
+      const nonUnitsRuleName = nonUnitsRule.getName();
+
+      if (nonUnitsRuleName === oldUnitRuleUnitDefinitionRuleName) {
+        const name = oldUnitRuleName, ///
+              definitions = nonUnitsRule.getDefinitions(),
+              newNonUnitsRule = NonUnitsRule.fromNameAndDefinitions(name, definitions);
+
+        newNonUnitsRules.push(newNonUnitsRule);
+      }
+    });
+
+    console.log(rulesAsString(newNonUnitsRules));
+
+    const newUnitRules = [];
+
+    unitRules.forEach(function(unitRule) {
+      const unitRuleName = unitRule.getName();
+
+      if (unitRuleName === oldUnitRuleUnitDefinitionRuleName) {
+        const unitRuleUnitDefinition = unitRule.getUnitDefinition(),
+              name = oldUnitRuleName, ///
+              unitDefinition = unitRuleUnitDefinition,  ///
+              newUnitRule = UnitRule.fromNameAndUnitDefinition(name, unitDefinition),
+              oldUnitRulesIncludesNewUnitRule = checkOldUnitsRulesIncludesUnitRule(oldUnitRules, newUnitRule);
+
+        if (!oldUnitRulesIncludesNewUnitRule) {
+          newUnitRules.push(newUnitRule);
+        }
+      }
+    });
+
+    unitRules = [].concat(newUnitRules).concat(unitRules);
   }
 
   return newNonUnitsRules;

@@ -107,13 +107,13 @@ Consider the following BNF:
 
   Y ::= Z | "c" ;
 
-  Z ::= "d" | "e" ;
+  Z ::= "d" ;
 ```
 This results in the cycle `Y -> Z -> X ("d") -> Y`, abbreviated `Y ->* Y`. Here the terminal part `"d"` of the first of the `Z` rule's definitions is put in parenthesis to emphasise that although it is part of the definition, it is not evaluated during the derivation. Only the first part `X` is evaluated, which leads immediately to an evaluation of the first definition of the `X` rule, namely `Y`. Also note that the derivation `X -> Y -> Z -> X "d"` is not considered a cycle because it does not terminate in a unit definition. In abbreviated form it is `X ->* X "d"`, which is an example of implicit left recursion, but not of a cycle.
 
-The algorithm is pre-emptive. It removes all unit definitions, thereby forestalling any chance of cycles being created. Here the removal of the unit definition `X -> Y` will break the aforementioned cycle, for example.
+The algorithm is pre-emptive. It removes all unit definitions, thereby forestalling any chance of cycles being created. Here the removal of the unit definition `Y` in the `X` rule will break the aforementioned cycle, for example.
 
-The first stage is to split the rules into 'non-units' rules, that is rules without unit definitions, and unit rules. The former are...
+The first stage is to split the rules into 'non-units' rules, that is rules without unit definitions, and 'unit' rules. The former are...
 ```
   S ::= X "a" ;
 
@@ -121,7 +121,7 @@ The first stage is to split the rules into 'non-units' rules, that is rules with
 
   Y ::= "c" ;
 
-  Z ::= X "d" | "e" ;
+  Z ::= "d" ;
 ```
 ...and the latter in this case:
 ```
@@ -131,7 +131,18 @@ The first stage is to split the rules into 'non-units' rules, that is rules with
 
   Y ::= Z ;
 ```
-The algorithm then works on the stack of unit rules, converting each to other unit rules or new non-unit rules until the stack is empty. Precisely, it pops the first rule `S ::= Y`
+The algorithm then works on the stack of 'unit' rules. It pops 'unit' rules off the stack of 'unit' rules for consideration until none are left, the first one in this case being `S ::= Y`. If the 'unit' rule is cyclic, say `Y ::= Y`, or if it has been considered already, it is simply discarded and the next rule is considered. Assuming neither of these conditions hold, the list of 'non-units' rules is searched and the rule the name of which matches the rule name in the rule under consideration's unit definition is found. The definitions of this rule are then coupled with that rule under consideration's name to form a new rule. An example will clarify. The first rule under consideration is `S ::= Y`, the matching rule is `Y ::= "c"` and therefore the new 'non-units' rule is `S ::= "c"`. In effect the derivation `S -> Y -> "c"` is reduced to `S -> "c"`. The essence of the algorithm is in reducing all such derivations. To continue, the stack of remaining 'unit' rules is also searched for matching rules and these are combined with the rule under consideration to make new 'unit' rule which are pushed onto the stack to be the next rules under consideration. Again an example should clarify. The `S ::= Y` 'unit' rule is coupled with the `Y ::= Z` 'unit' rule to form a new unit rule `S ::= Z`. The result of the first iteration of the algorithm is the following stack of 'unit' rules and a burgeoning list of new 'non-unit' rules. These are shown to the right. The evolving stack of 'unit' rules is shown on the left with old rules kept above the dotted line:
+```
+  S ::= Y ;         S ::= "c" ;
+
+  ---------
+
+  S ::= Z ;
+
+  X ::= Y ;
+
+  Y ::= Z ;
+```
 
 ## Building
 

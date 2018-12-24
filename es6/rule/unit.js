@@ -25,12 +25,12 @@ class UnitRule extends Rule {
     return unitDefinition;
   }
 
-  isNonCyclic() {
+  isCyclic() {
     const name = this.getName(),
           unitDefinitionRuleName = this.getUnitDefinitionRuleName(),
-          nonCyclic = (name !== unitDefinitionRuleName);
+          cyclic = (name === unitDefinitionRuleName);
 
-    return nonCyclic;
+    return cyclic;
   }
 
   matches(unitRule) {
