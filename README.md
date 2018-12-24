@@ -102,8 +102,11 @@ Additionally you can choose to eliminate just cycles or immediate left recursion
 Consider the following BNF:
 ```
   S ::= X "a" | Y ;
+
   X ::= Y | "b" ;
+
   Y ::= Z | "c" ;
+
   Z ::= "d" ;
 ```
 This results in the cycle `Y -> Z -> X ("d") -> Y`, abbreviated `Y ->* Y`. Here the terminal part `"d"` of the first of the `Z` rule's definitions is put in parenthesis to emphasise that although it is part of the definition, it is not evaluated during the derivation. Only the first part `X` is evaluated, which leads immediately to an evaluation of the first definition of the `X` rule, namely `Y`. Also note that the derivation `X -> Y -> Z -> X "d"` is not considered a cycle because it does not terminate in a unit definition. In abbreviated form it is `X ->* X "d"`, which is an example of implicit left recursion, but not of a cycle.
@@ -173,10 +176,14 @@ There are no matching 'unit' rules of the form `Z ::= .`, so no new 'unit' rules
 Finally, the old 'unit' rules are discarded and the newly formed 'non-units' rules are combined with the original ones to create a new set:
 ```
   S ::= X "a" | "c" | "d" ;
+
   X ::= "b" | "c" | "d" ;
+
   Y ::= "c" | "d" ;
+
   Z ::= "d" ;
 ```
+There are a couple of points worth noting. The first is that termination can be informally proved by noting there are a finite number of 'unit' rules and that each is evaluated at most once. The second is that the effective order of the definitions may change. For example, if the first rule is changed to `S ::= Y | X "a"` then the result stays the same, with the definition `X "a"` seeming to take precedence over the remaining two definitions `"c"` and `"d"`. Theoretically the order of definitions in any rule should not matter, however in practice it can be difficult not to occasionally rely on it. A better algorithm would maintain the order of the definitions, and this is left for future work.
 
 ## Building
 
