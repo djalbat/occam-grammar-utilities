@@ -107,7 +107,7 @@ Consider the following BNF:
 
   Y ::= Z | "c" ;
 
-  Z ::= X "d" | "e" ;
+  Z ::= "d" | "e" ;
 ```
 This results in the cycle `Y -> Z -> X ("d") -> Y`, abbreviated `Y ->* Y`. Here the terminal part `"d"` of the first of the `Z` rule's definitions is put in parenthesis to emphasise that although it is part of the definition, it is not evaluated during the derivation. Only the first part `X` is evaluated, which leads immediately to an evaluation of the first definition of the `X` rule, namely `Y`. Also note that the derivation `X -> Y -> Z -> X "d"` is not considered a cycle because it does not terminate in a unit definition. In abbreviated form it is `X ->* X "d"`, which is an example of implicit left recursion, but not of a cycle.
 

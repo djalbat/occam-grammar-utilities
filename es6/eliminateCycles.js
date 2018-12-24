@@ -1,33 +1,22 @@
 'use strict';
 
 const UnitRule = require('./rule/unit'),
-      NonUnitsRule = require('./rule/nonUnits');
+      NonUnitsRule = require('./rule/nonUnits'),
+      ruleUtilities = require('./utilities/rule');
+
+const { findRuleByName } = ruleUtilities;
 
 function eliminateCycles(rules) {
-  const nonUnitsRules = nonUnitsRulesFromRules(rules),
-        unitRules = unitRulesFromRules(rules),
-        nonUnitRules = nonUnitRulesFromNonUnitsRulesAndUnitRules(nonUnitsRules, unitRules);
+  const unitRules = unitRulesFromRules(rules),
+        nonUnitsRules = nonUnitsRulesFromRules(rules),
+        newNonUnitsRules = newNonUnitsRulesFromUnitRulesAndNonUnitsRules(unitRules, nonUnitsRules);
 
-  rules = nonUnitRules;  ///
+  rules = rulesFromNonUnitsRulesAndNewNonUnitsRules(nonUnitsRules, newNonUnitsRules);
 
   return rules;
 }
 
 module.exports = eliminateCycles;
-
-function nonUnitsRulesFromRules(rules) {
-  const nonUnitsRules = [];
-
-  rules.forEach(function(rule) {
-    const nonUnitsRule = NonUnitsRule.fromRule(rule);
-
-    if (nonUnitsRule !== null) {
-      nonUnitsRules.push(nonUnitsRule);
-    }
-  });
-
-  return nonUnitsRules;
-}
 
 function unitRulesFromRules(rules) {
   const unitRules = [];
@@ -48,8 +37,18 @@ function unitRulesFromRules(rules) {
   return unitRules;
 }
 
-function nonUnitRulesFromNonUnitsRulesAndUnitRules(nonUnitsRules, unitRules) {
-  const nonUnitRules = [],
+function nonUnitsRulesFromRules(rules) {
+  const nonUnitsRules = rules.map(function(rule) {
+    const nonUnitsRule = NonUnitsRule.fromRule(rule);
+
+    return nonUnitsRule;
+  });
+
+  return nonUnitsRules;
+}
+
+function newNonUnitsRulesFromUnitRulesAndNonUnitsRules(unitRules, nonUnitsRules) {
+  const newNonUnitsRules = [],
         oldUnitRules = [];
 
   let unitRulesLength = unitRules.length;
@@ -61,14 +60,26 @@ function nonUnitRulesFromNonUnitsRulesAndUnitRules(nonUnitsRules, unitRules) {
     if (unitRuleNonCyclic) {
       const oldUnitsRulesIncludesUnitRule = checkOldUnitsRulesIncludesUnitRule(oldUnitRules, unitRule);
 
-      const oldUnitRule = unitRule; ///
+      const oldUnitRule = unitRule, ///
+            oldUnitRuleName = oldUnitRule.getName(),
+            oldUnitRuleUnitDefinitionRuleName = oldUnitRule.getUnitDefinitionRuleName();
 
       oldUnitRules.push(oldUnitRule);
 
       if (!oldUnitsRulesIncludesUnitRule) {
-        const newUnitRules = [],
-              oldUnitRuleName = oldUnitRule.getName(),
-              oldUnitRuleUnitDefinitionRuleName = oldUnitRule.getUnitDefinitionRuleName();
+        nonUnitsRules.forEach(function(nonUnitsRule) {
+          const nonUnitsRuleName = nonUnitsRule.getName();
+
+          if (nonUnitsRuleName === oldUnitRuleUnitDefinitionRuleName) {
+            const name = oldUnitRuleName, ///
+                  definitions = nonUnitsRule.getDefinitions(),
+                  newNonUnitsRule = NonUnitsRule.fromNameAndDefinitions(name, definitions);
+
+            newNonUnitsRules.push(newNonUnitsRule);
+          }
+        });
+
+        const newUnitRules = [];
 
         unitRules.forEach(function(unitRule) {
           const unitRuleName = unitRule.getName();
@@ -93,7 +104,31 @@ function nonUnitRulesFromNonUnitsRulesAndUnitRules(nonUnitsRules, unitRules) {
     unitRulesLength = unitRules.length;
   }
 
-  return nonUnitRules;
+  return newNonUnitsRules;
+}
+
+function rulesFromNonUnitsRulesAndNewNonUnitsRules(nonUnitsRules, newNonUnitsRules) {
+  const rules = [];
+
+  newNonUnitsRules.forEach(function(newNonUnitsRule) {
+    const name = newNonUnitsRule.getName(),
+          definitions = newNonUnitsRule.getDefinitions(),
+          nonUnitsRule = findRuleByName(name, nonUnitsRules);
+
+    nonUnitsRule.addDefinitions(definitions);
+  });
+
+  nonUnitsRules.forEach(function(nonUnitsRule) {
+    const nonUnitsRuleNonTrivial = nonUnitsRule.isNonTrivial();
+
+    if (nonUnitsRuleNonTrivial) {
+      const rule = nonUnitsRule;  ///
+
+      rules.push(rule);
+    }
+  });
+
+  return rules;
 }
 
 function checkOldUnitsRulesIncludesUnitRule(oldUnitsRules, unitRule) {

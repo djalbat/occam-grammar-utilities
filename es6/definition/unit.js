@@ -14,13 +14,6 @@ class UnitDefinition extends Definition {
     return ruleName;
   }
 
-  isIncludedInRuleNames(ruleNames) {
-    const ruleName = this.getRuleName(),
-          includedInRuleNames = ruleNames.includes(ruleName);
-
-    return includedInRuleNames;
-  }
-
   static fromRuleName(ruleName) {
     const noWhitespace = false, ///
           ruleNamePart = new RuleNamePart(ruleName, noWhitespace),

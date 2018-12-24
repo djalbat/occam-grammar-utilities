@@ -33,16 +33,6 @@ class UnitRule extends Rule {
     return nonCyclic;
   }
 
-  isIncludedInRuleNames(ruleNames) {
-    const name = this.getName(),
-          unitDefinitionRuleName = this.getUnitDefinitionRuleName(),
-          ruleNamesContainsName = ruleNames.includes(name),
-          ruleNamesContainsUnitRuleName = ruleNames.includes(unitDefinitionRuleName),
-          includedInRuleNames = (ruleNamesContainsName && ruleNamesContainsUnitRuleName);
-
-    return includedInRuleNames;
-  }
-
   matches(unitRule) {
     let matches = false;
 
@@ -63,8 +53,8 @@ class UnitRule extends Rule {
     const definitions = [
             unitDefinition
           ],
-          Node = null,  ///
-          unitRule = new UnitRule(name, definitions, Node);
+          NonTerminalNode = null,  ///
+          unitRule = new UnitRule(name, definitions, NonTerminalNode);
 
     return unitRule;
   }

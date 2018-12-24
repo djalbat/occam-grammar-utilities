@@ -7,18 +7,26 @@ const NonUnitDefinition = require('../definition/nonUnit');
 const { Rule } = parsers;
 
 class NonUnitsRule extends Rule {
+  isNonTrivial() {
+    const definitions = this.getDefinitions(),
+          definitionsLength = definitions.length,
+          nonTrivial = (definitionsLength > 0);
+
+    return nonTrivial;
+  }
+
   static fromRule(rule) {
-    let nonUnitsRule = null;
+    const name = rule.getName(),
+          definitions = definitionsFromRule(rule),
+          nonTerminalNode = rule.getNonTerminalNode(),
+          nonUnitsRule = new NonUnitsRule(name, definitions, nonTerminalNode);
 
-    const definitions = definitionsFromRule(rule),
-          definitionsLength = definitions.length;
+    return nonUnitsRule;
+  }
 
-    if (definitionsLength > 0) {
-      const name = rule.getName(),
-            nonTerminalNode = rule.getNonTerminalNode();
-
-      nonUnitsRule = new NonUnitsRule(name, definitions, nonTerminalNode);
-    }
+  static fromNameAndDefinitions(name, definitions) {
+    const nonTerminalNode = null, ///
+          nonUnitsRule = new NonUnitsRule(name, definitions, nonTerminalNode);
 
     return nonUnitsRule;
   }
