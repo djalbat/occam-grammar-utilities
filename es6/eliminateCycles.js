@@ -81,8 +81,6 @@ function newNonUnitsRulesFromUnitRulesAndNonUnitsRules(unitRules, nonUnitsRules)
       }
     });
 
-    console.log(rulesAsString(newNonUnitsRules));
-
     const newUnitRules = [];
 
     unitRules.forEach(function(unitRule) {
@@ -102,6 +100,16 @@ function newNonUnitsRulesFromUnitRulesAndNonUnitsRules(unitRules, nonUnitsRules)
     });
 
     unitRules = [].concat(newUnitRules).concat(unitRules);
+
+    console.log(rulesAsString(oldUnitRules));
+
+    console.log('------------');
+
+    console.log(rulesAsString(unitRules));
+
+    console.log(rulesAsString(newNonUnitsRules));
+
+    console.log('\n\n')
   }
 
   return newNonUnitsRules;

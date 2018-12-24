@@ -140,14 +140,43 @@ To continue, the stack of remaining 'unit' rules is also searched for matching r
 The result of the first iteration of the algorithm is an evolving stack of 'unit' rules, shown on the left, and a burgeoning list of new 'non-units' rules, shown on the right. The list of old 'unit' rules is kept above the dotted line:
 ```
   S ::= Y ;         S ::= "c" ;
-
   ---------
-
   S ::= Z ;
-
   X ::= Y ;
-
   Y ::= Z ;
+```
+The remaining iterations are now given with pertinent comments:
+```
+  S ::= Y ;         S ::= "c" ;
+  S ::= Z ;         S ::= "d" ;
+  ---------
+  X ::= Y ;
+  Y ::= Z ;
+```
+There are no matching 'unit' rules of the form `Z ::= .`, so no new 'unit' rules are formed. Only one matching 'non-unit' rule, namely `Z ::= "d"`, results in the new 'non-unit' rule `S ::= "d"`.
+```
+  S ::= Y ;         S ::= "c" ;
+  S ::= Z ;         S ::= "d" ;
+  X ::= Y ;         X ::= "c" ;
+  ---------
+  X ::= Z ;
+  Y ::= Z ;
+```
+```
+  S ::= Y ;         S ::= "c" ;
+  S ::= Z ;         S ::= "d" ;
+  X ::= Y ;         X ::= "c" ;
+  X ::= Z ;         X ::= "d" ;
+  ---------
+  Y ::= Z ;
+```
+```
+  S ::= Y ;         S ::= "c" ;
+  S ::= Z ;         S ::= "d" ;
+  X ::= Y ;         X ::= "c" ;
+  X ::= Z ;         X ::= "d" ;
+  Y ::= Z ;         Y ::= "d" ;
+  ---------
 ```
 
 ## Building
