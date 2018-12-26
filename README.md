@@ -191,11 +191,11 @@ Consider the following BNF:
 ```
   Y  ::=  "a" | "b" | Y "c";
 ```
-The problem is that this could result in the derivation `Y -> Y ("c")` or, keeping to the convention that those parts of a definition that are never evaluated are shown in parenthesis, simply `Y -> Y "c"`.
+The problem is that this could result in the derivation `Y -> Y ("c")` or, losing the convention that those parts of a definition that are never evaluated are shown in parenthesis, simply `Y -> Y "c"`.
 
 On the surface of it this algorithm is much simpler than those to deal with eliminating cycles or implicit left recursion and, unlike those two, is pre-emptive in the sense that it directly removes immediate left recursion where it finds it but otherwise leaves the BNF as-is.
 
-It works by identifying the immediately left recursive rule within in any rule, in this case the `Y  ::=  Y "c"` rule, and rewriting it as right recursive. The part referencing the new rule is then appended to any definition that is not immediately left recursive, thus:
+It works by identifying the immediately left recursive rule within in any rule, in this case the `Y  ::=  Y "c"` rule, and rewriting it as right recursive. A part referencing the new rule is then appended to any definition that is not immediately left recursive, thus:
 ```
   Y  ::=  "a" Y~ | "b" Y~;
 
@@ -203,7 +203,28 @@ It works by identifying the immediately left recursive rule within in any rule, 
 ```
 The `ε` definition here matches nothing and allows the right recursive rule to terminate.
 
-The one point worth noting is that it is usual to show the left recursive definitions first. In practice, however, rules of the above form are just as likely and left recursive definitions should be eliminated regardless of where they appear. Again it is worth pointing out that theoretically the order of definitions in any rule should not matter or, to be more exact this time, the fact that the order of definitions does matter implies that the grammar is ambiguous, and should be corrected if possible.
+Two special cases deserve attention. The first is the lack of definitions other than immediately left recursive ones. Consider the BNF:
+```
+  Y  ::=  Y "c";
+```
+The algorithm will handle this case, returning the following:
+```
+  Y  ::= Y~ ;
+
+  Y~ ::= "c" Y~ | ε ;
+```
+In doing so it could be argued that it is changing the nature of the grammar. However, so does the algorithm to eliminate cycles, and we leave the argument at that. Secondly, there may be more than one immediately left recursive definition:
+```
+  Y  ::=  "a" | "b" | Y "c" | Y "d" ;
+```
+This is not really special and is dealt with in a standard manner:
+```
+  Y  ::= "a" Y~ | "b" Y~ ;
+
+  Y~ ::= "c" Y~ | "d" Y~ | ε ;
+```
+
+One further point worth noting is that it is usual to show the left recursive definitions first. In practice, however, rules of the above form are just as likely and left recursive definitions should be eliminated regardless of where they appear. Again it is worth pointing out that theoretically the order of definitions in any rule should not matter or, to be more exact this time, the fact that the order of definitions does matter implies that the grammar is ambiguous, and should be corrected if possible.
 
 ### Eliminating implicit left recursion
 
