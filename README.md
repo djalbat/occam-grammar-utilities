@@ -97,7 +97,7 @@ Note that if you choose to eliminate implicit left recursion, you cannot choose 
 
 ## Treatment of the algorithms
 
-### Removing cycles
+### Eliminating cycles
 
 Consider the following BNF:
 ```
@@ -184,6 +184,18 @@ Finally, the old 'unit' rules are discarded and the newly formed 'non-units' rul
   Z ::= "d" ;
 ```
 There are a couple of points worth noting. The first is that termination can be informally proved by noting there are a finite number of 'unit' rules and that each is evaluated at most once. The second is that the effective order of the definitions may change. For example, if the first rule is changed to `S ::= Y | X "a"` then the result `S ::= X "a" | "c" | "d"` stays the same, with the definition `X "a"` coming before the remaining two definitions `"c"` and `"d"`. Theoretically this should not matter, however in practice it can be difficult not to occasionally rely on it. A better algorithm would maintain the order of the definitions, and this is left for future work.
+
+### Eliminating left recursion
+
+Like the algorithm to eliminate cycles, this algorithm is pre-emptive in that it does not explicitly remove left recursion. Instead, it rearranges the BNF so that no left recursion may occur.. Consider the following BNF:
+```
+  S ::= X "a" ;
+
+  X ::= Y "b" ;
+
+  Y ::= S "c" ;
+```
+Here there are no cycles, since none of the definitions are unit definitions and a cycle must end with a unit definition. However, there is implicit left recursion in the form of the derivation `S -> X ("a") -> Y ("b") -> S ("c")`, abbreviated `S ->* S "c""`. Recall that the parts of the definitions shown in parenthesis represent that parts that are never evaluated.
 
 ## Building
 

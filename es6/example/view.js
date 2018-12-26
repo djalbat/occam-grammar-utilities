@@ -97,10 +97,10 @@ class View extends Element {
         <SizeableElement>
           <h2>BNF</h2>
           <BNFTextarea onKeyUp={keyUpHandler} />
-          <EliminateCyclesCheckbox onChange={eliminateCyclesCheckboxChangeHandler} checked enabled />
+          <EliminateCyclesCheckbox onChange={eliminateCyclesCheckboxChangeHandler} checked disabled />
           <span>Eliminate cycles</span>
           <br />
-          <EliminateImplicitLeftRecursionCheckbox onChange={eliminateImplicitLeftRecursionCheckboxChangeHandler} />
+          <EliminateImplicitLeftRecursionCheckbox onChange={eliminateImplicitLeftRecursionCheckboxChangeHandler} checked />
           <span>Eliminate implicit left recursion</span>
         </SizeableElement>
         <MainVerticalSplitter />
