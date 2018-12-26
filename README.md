@@ -197,7 +197,7 @@ Like the algorithm to eliminate cycles, this algorithm is pre-emptive in that it
 ```
 Here there are no cycles, since none of the definitions are unit definitions and a cycle must end with a unit definition. However, there is implicit left recursion in the form of the derivation `S -> X ("a") -> Y ("b") -> S ("c")`, abbreviated `S ->* S "c""`. Recall that the parts of the definitions shown in parenthesis represent those parts that are never evaluated.
 
-In order to eliminate left recursion we disallow rules that reference previous ones. The first two rules are okay, however the third `Y` references the `S` rule and so must be changed. The `S` part of the rule's definition is therefore replaced with the right hand side of the `S` rule leading to the intermediate rule `Y  ::=  X "a" "c"`. This similarly needs to be changed, to `Y  ::=  Y "b" "a" "c"`. Now this rule no longer references previous rules, however it is immediately left recursive. Eliminating this gives the completed set of rules:
+In order to eliminate left recursion we disallow rules that reference previous ones. The first two rules are okay, however the third `Y` references the `S` rule and so must be changed. The `S` part of the rule's definition is therefore replaced with the right hand side of the `S` rule leading to the intermediate rule `Y  ::=  X "a" "c"`. This similarly needs to be changed, replacing the reference to the `X` rule with its right hand side to yield `Y  ::=  Y "b" "a" "c"`. Now this rule no longer references previous rules, however it is immediately left recursive. Eliminating this gives the completed set of rules:
 ```
   S  ::=  X "a" ;
 
