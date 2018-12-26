@@ -2,13 +2,16 @@
 
 const parsers = require('occam-parsers');
 
-const { Definition } = parsers;
+const definitionUtilities = require('../utilities/definition');
+
+const { Definition } = parsers,
+      { isFirstPartRuleNamePart } = definitionUtilities;
 
 class ImmediatelyLeftRecursiveDefinition extends Definition {
   static fromDefinitionAndRuleName(definition, ruleName) {
     let immediatelyLeftRecursiveDefinition = null;
     
-    const definitionFirstPartRuleNamePart = definition.isFirstPartRuleNamePart();
+    const definitionFirstPartRuleNamePart = isFirstPartRuleNamePart(definition);
     
     if (definitionFirstPartRuleNamePart) {
       const definitionFirstPart = definition.getFirstPart(),

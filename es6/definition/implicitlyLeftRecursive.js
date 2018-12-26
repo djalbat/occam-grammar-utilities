@@ -2,7 +2,10 @@
 
 const parsers = require('occam-parsers');
 
-const { Definition } = parsers;
+const definitionUtilities = require('../utilities/definition');
+
+const { Definition } = parsers,
+      { isFirstPartRuleNamePart } = definitionUtilities;
 
 class ImplicitlyLeftRecursiveDefinition extends Definition {
   static fromDefinitionAndPreviousRule(definition, previousRule) {
@@ -39,7 +42,7 @@ module.exports = ImplicitlyLeftRecursiveDefinition;
 function implicitlyLeftRecursiveDefinitionFromDefinition(definition, callback) {
   let implicitlyLeftRecursiveDefinition = null;
 
-  const firstPartRuleNamePart = definition.isFirstPartRuleNamePart();
+  const firstPartRuleNamePart = isFirstPartRuleNamePart(definition);
 
   if (firstPartRuleNamePart) {
     const firstPart = definition.getFirstPart(),

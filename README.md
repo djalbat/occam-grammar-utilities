@@ -109,7 +109,7 @@ Consider the following BNF:
 
   Z  ::=  "d" ;
 ```
-This results in the cycle `Y -> Z -> X ("d") -> Y`, abbreviated `Y ->* Y`. Here the terminal part `"d"` of the first of the `Z` rule's definitions is put in parenthesis to emphasise that although it is part of the definition, it is not evaluated during the derivation. Only the first part `X` is evaluated, which leads immediately to an evaluation of the first definition of the `X` rule, namely `Y`. Also note that the derivation `X -> Y -> Z -> X ("d")` is not considered a cycle because it does not terminate in a unit definition. In abbreviated form it is `X ->* X "d"`, which is an example of implicit left recursion, but not of a cycle.
+This results in the cycle `Y -> Z -> X ("d") -> Y`, abbreviated `Y ->* Y`. Here the terminal part `"d"` of the first of the `Z` rule's definitions is put in parenthesis to emphasise that although it is part of the definition, it is not evaluated. Only the first part `X` is evaluated, which leads immediately to an evaluation of the first definition of the `X` rule, namely `Y`. Also note that the derivation `X -> Y -> Z -> X ("d")` is not considered a cycle because it does not terminate in a unit definition. In abbreviated form it is `X ->* X "d"`, which is an example of implicit left recursion, but not of a cycle.
 
 The algorithm is pre-emptive. It removes all unit definitions, thereby forestalling any chance of cycles being created. Here the removal of the unit definition `Y` in the `X` rule will break the aforementioned cycle, for example.
 
@@ -185,7 +185,27 @@ Finally, the old 'unit' rules are discarded and the newly formed 'non-units' rul
 ```
 There are a couple of points worth noting. The first is that termination can be informally proved by noting there are a finite number of 'unit' rules and that each is evaluated at most once. The second is that the effective order of the definitions may change. For example, if the first rule is changed to `S  ::=  Y | X "a"` then the result `S  ::=  X "a" | "c" | "d"` stays the same, with the definition `X "a"` coming before the remaining two definitions `"c"` and `"d"`. Theoretically this should not matter, however in practice it can be difficult not to occasionally rely on it. A better algorithm would maintain the order of the definitions, and this is left for future work.
 
-### Eliminating left recursion
+### Eliminating immediate left recursion
+
+Consider the following BNF:
+```
+  Y  ::=  "a" | "b" | Y "c";
+```
+The problem is that this could result in the derivation `Y -> Y ("c")` or, keeping to the convention that those parts of a definition that are never evaluated are shown in parenthesis, simply `Y -> Y "c"`.
+
+On the surface of it this algorithm is much simpler than those to deal with eliminating cycles or implicit left recursion and, unlike those two, is pre-emptive in the sense that it directly removes immediate left recursion where it finds it but otherwise leaves the BNF as-is.
+
+It works by identifying the immediately left recursive rule within in any rule, in this case the `Y  ::=  Y "c"` rule, and rewriting it as right recursive. The part referencing the new rule is then appended to any definition that is not immediately left recursive, thus:
+```
+  Y  ::=  "a" Y~ | "b" Y~;
+
+  Y~ ::=  "c" Y~ | ε;
+```
+The `ε` definition here matches nothing and allows the right recursive rule to terminate.
+
+The one point worth noting is that it is usual to show the left recursive definitions first. In practice, however, rules of the above form are just as likely and left recursive definitions should be eliminated regardless of where they appear. Again it is worth pointing out that theoretically the order of definitions in any rule should not matter or, to be more exact this time, the fact that the order of definitions does matter implies that the grammar is ambiguous, and should be corrected if possible.
+
+### Eliminating implicit left recursion
 
 Like the algorithm to eliminate cycles, this algorithm is pre-emptive in that it does not explicitly remove left recursion. Instead, it rearranges the BNF so that no left recursion may occur.. Consider the following BNF:
 ```

@@ -2,6 +2,10 @@
 
 const parsers = require('occam-parsers');
 
+const definitionUtilities = require('../utilities/definition');
+
+const { isFirstPartRuleNamePart } = definitionUtilities;
+
 const { Definition, parts } = parsers,
       { RuleNamePart } = parts;
 
@@ -31,7 +35,7 @@ class UnitDefinition extends Definition {
     const partsLength = definition.getPartsLength();
 
     if (partsLength === 1) {
-      const firstPartRuleNamePart = definition.isFirstPartRuleNamePart();
+      const firstPartRuleNamePart = isFirstPartRuleNamePart(definition);
       
       if (firstPartRuleNamePart) {
         const parts = definition.getParts();
