@@ -6,17 +6,17 @@ const { Rule, Definition, NonTerminalNode, parts } = parsers,
     { EpsilonPart, RuleNamePart } = parts;
 
 class RightRecursiveRule extends Rule {
-  static ruleNamePartFromLeftRecursiveRule(leftRecursiveRule) {
-    const name = nameFromLeftRecursiveRule(leftRecursiveRule),
+  static ruleNamePartFromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule) {
+    const name = nameFromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule),
           noWhitespace = false, ///
           ruleNamePart = new RuleNamePart(name, noWhitespace);
 
     return ruleNamePart;
   }
 
-  static fromLeftRecursiveRule(leftRecursiveRule) {
-    const name = nameFromLeftRecursiveRule(leftRecursiveRule),
-          definitions = definitionsFromLeftRecursiveRule(leftRecursiveRule),
+  static fromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule) {
+    const name = nameFromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule),
+          definitions = definitionsFromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule),
           Node = NonTerminalNode, ///
           rightRecursiveRule = new RightRecursiveRule(name, definitions, Node);
 
@@ -26,8 +26,8 @@ class RightRecursiveRule extends Rule {
 
 module.exports = RightRecursiveRule;
 
-function definitionsFromLeftRecursiveRule(leftRecursiveRule) {
-  const rightRecursiveDefinitions = rightRecursiveDefinitionsFromLeftRecursiveRule(leftRecursiveRule),
+function definitionsFromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule) {
+  const rightRecursiveDefinitions = rightRecursiveDefinitionsFromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule),
         epsilonPart = new EpsilonPart(),
         epsilonParts = [
           epsilonPart
@@ -38,13 +38,13 @@ function definitionsFromLeftRecursiveRule(leftRecursiveRule) {
   return definitions;
 }
 
-function rightRecursiveDefinitionsFromLeftRecursiveRule(leftRecursiveRule) {
-  const ruleLeftRecursiveDefinitions = leftRecursiveRule.getLeftRecursiveDefinitions(),
-        ruleNamePart = RightRecursiveRule.ruleNamePartFromLeftRecursiveRule(leftRecursiveRule),
-        rightRecursiveDefinitions = ruleLeftRecursiveDefinitions.map(function(ruleLeftRecursiveDefinition) {
-          const ruleLeftRecursiveDefinitionAllButFirstParts = ruleLeftRecursiveDefinition.getAllButFirstParts(),
-              rightRecursiveDefinitionParts = [].concat(ruleLeftRecursiveDefinitionAllButFirstParts).concat(ruleNamePart),
-              rightRecursiveDefinition = new Definition(rightRecursiveDefinitionParts);
+function rightRecursiveDefinitionsFromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule) {
+  const immediatelyLeftRecursiveDefinitions = immediatelyLeftRecursiveRule.getImmediatelyLeftRecursiveDefinitions(),
+        ruleNamePart = RightRecursiveRule.ruleNamePartFromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule),
+        rightRecursiveDefinitions = immediatelyLeftRecursiveDefinitions.map(function(immediatelyLeftRecursiveDefinition) {
+          const immediatelyLeftRecursiveDefinitionAllButFirstParts = immediatelyLeftRecursiveDefinition.getAllButFirstParts(),
+                rightRecursiveDefinitionParts = [].concat(immediatelyLeftRecursiveDefinitionAllButFirstParts).concat(ruleNamePart),
+                rightRecursiveDefinition = new Definition(rightRecursiveDefinitionParts);
   
           return rightRecursiveDefinition;
         });
@@ -52,8 +52,8 @@ function rightRecursiveDefinitionsFromLeftRecursiveRule(leftRecursiveRule) {
   return rightRecursiveDefinitions;
 }
 
-function nameFromLeftRecursiveRule(leftRecursiveRule) {
-  const leftRecursiveRuleName = leftRecursiveRule.getName(),
+function nameFromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule) {
+  const leftRecursiveRuleName = immediatelyLeftRecursiveRule.getName(),
         name = `${leftRecursiveRuleName}~`;
 
   return name;

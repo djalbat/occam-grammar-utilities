@@ -2,10 +2,12 @@
 
 const exampleBNF = `
 
-  A0         ::=  A1 "a" ;
+  S  ::=  X "b" ;
 
-  A1         ::=  A0 | "b" ;
+  X  ::=  Y "a" ;
 
+  Y  ::=  S "c" ;
+  
 `;
 
 module.exports = exampleBNF;

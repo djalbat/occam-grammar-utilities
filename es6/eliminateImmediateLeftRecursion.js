@@ -1,23 +1,15 @@
 'use strict';
 
 const RightRecursiveRule = require('./rule/rightRecursive'),
-      ImplicitlyLeftRecursiveRule = require('./rule/implicitlyLeftRecursive'),
       ImmediatelyLeftRecursiveRule = require('./rule/immediatelyLeftRecursive'),
       NonImmediatelyLeftRecursiveRule = require('./rule/nonImmediatelyLeftRecursive');
 
-function eliminateImplicitLeftRecursion(rules) {
+function eliminateImmediateLeftRecursion(rules) {
   const rightRecursiveRules = [],
         nonImmediatelyLeftRecursiveRules = [];
 
-  rules.forEach(function(rule, index) {
-    const begin = 0,
-          end = index,  ///
-          previousNonLeftRecursiveRules = nonImmediatelyLeftRecursiveRules.slice(begin, end),
-          previousRules = previousNonLeftRecursiveRules,  ///
-          implicitlyLeftRecursiveRule = ImplicitlyLeftRecursiveRule.fromRuleAndPreviousRules(rule, previousRules),
-          immediatelyLeftRecursiveRule = (implicitlyLeftRecursiveRule === null) ?
-                                           ImmediatelyLeftRecursiveRule.fromRule(rule) :
-                                             ImmediatelyLeftRecursiveRule.fromImplicitlyLeftRecursiveRuleAndPreviousRules(implicitlyLeftRecursiveRule, previousRules);
+  rules.forEach(function(rule) {
+    const immediatelyLeftRecursiveRule = ImmediatelyLeftRecursiveRule.fromRule(rule);
 
     if (immediatelyLeftRecursiveRule === null) {
       const nonImmediatelyLeftRecursiveRule = rule;  ///
@@ -38,4 +30,4 @@ function eliminateImplicitLeftRecursion(rules) {
   return rules;
 }
 
-module.exports = eliminateImplicitLeftRecursion;
+module.exports = eliminateImmediateLeftRecursion;

@@ -93,7 +93,7 @@ You will need to do this if you want to look at the example.
 
 There is one example but the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. The initial BNF is actually a representation of Occam's BNF parser's rules. If this seems too daunting, you can copy the BNF given in the introduction into the BNF textarea. You can also try the BNF examples given in the treatment below.
 
-Note that if you choose to eliminate implicit left recursion, you cannot choose not to eliminate cycles, because eliminating implicit left recursion requires it. Also note that there is no option to eliminate immediate left recursion, because this is simply a special case of implicit left recursion.
+Note that if you choose to eliminate implicit left recursion, you cannot choose not to eliminate cycles or to eliminate immediate left recursion, because eliminating implicit left recursion requires the former and entails the latter. The choice of eliminating immediate left recursion is only provided for the purposes of the example, in fact.
 
 ## Treatment of the algorithms
 
@@ -189,23 +189,23 @@ There are a couple of points worth noting. The first is that termination can be 
 
 Like the algorithm to eliminate cycles, this algorithm is pre-emptive in that it does not explicitly remove left recursion. Instead, it rearranges the BNF so that no left recursion may occur.. Consider the following BNF:
 ```
-  S  ::=  X "a" ;
+  S  ::=  X "b" ;
 
-  X  ::=  Y "b" ;
+  X  ::=  Y "a" ;
 
   Y  ::=  S "c" ;
 ```
-Here there are no cycles, since none of the definitions are unit definitions and a cycle must end with a unit definition. However, there is implicit left recursion in the form of the derivation `S -> X ("a") -> Y ("b") -> S ("c")`, abbreviated `S ->* S "c""`. Recall that the parts of the definitions shown in parenthesis represent those parts that are never evaluated.
+Here there are no cycles, since none of the definitions are unit definitions and a cycle must end with a unit definition. However, there is implicit left recursion in the form of the derivation `S -> X ("b") -> Y ("a") -> S ("c")`, abbreviated `S ->* S "c""`. Recall that the parts of the definitions shown in parenthesis represent those parts that are never evaluated.
 
-In order to eliminate left recursion we disallow rules that reference previous ones. The first two rules are okay, however the third `Y` references the `S` rule and so must be changed. The `S` part of the rule's definition is therefore replaced with the right hand side of the `S` rule leading to the intermediate rule `Y  ::=  X "a" "c"`. This similarly needs to be changed, replacing the reference to the `X` rule with its right hand side to yield `Y  ::=  Y "b" "a" "c"`. Now this rule no longer references previous rules, however it is immediately left recursive. Eliminating this gives the completed set of rules:
+In order to eliminate left recursion we disallow rules that reference previous ones. The first two rules are okay, however the third `Y` references the `S` rule and so must be changed. The `S` part of the rule's definition is therefore replaced with the right hand side of the `S` rule leading to the intermediate rule `Y  ::=  X "b" "c"`. This similarly needs to be changed, replacing the reference to the `X` rule with its right hand side to yield `Y  ::=  Y "a" "b" "c"`. Now this rule no longer references previous rules, however it is immediately left recursive. Eliminating this gives the completed set of rules:
 ```
-  S  ::=  X "a" ;
+  S  ::=  X "b" ;
 
-  X  ::=  Y "b" ;
+  X  ::=  Y "a" ;
 
   Y  ::=  Y~ ;
 
-  Y~ ::=  "b" "a" "c" Y~ | ε ;
+  Y~ ::=  "a" "b" "c" Y~ | ε ;
 ```
 
 

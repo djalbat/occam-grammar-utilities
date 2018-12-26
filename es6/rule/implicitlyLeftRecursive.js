@@ -15,7 +15,11 @@ class ImplicitlyLeftRecursiveRule extends Rule {
           ruleImplicitlyLeftRecursive = (implicitlyLeftRecursiveDefinitionsLength > 0);
 
     if (ruleImplicitlyLeftRecursive) {
-      implicitlyLeftRecursiveRule = Rule.fromRule(ImplicitlyLeftRecursiveRule, rule); ///
+      const name = rule.getName(),
+            definitions = rule.getDefinitions(),
+            NonTerminalNode = rule.getNonTerminalNode();
+
+      implicitlyLeftRecursiveRule = new ImplicitlyLeftRecursiveRule(name, definitions, NonTerminalNode);
     }
 
     return implicitlyLeftRecursiveRule;
@@ -25,10 +29,9 @@ class ImplicitlyLeftRecursiveRule extends Rule {
 module.exports = ImplicitlyLeftRecursiveRule;
 
 function implicitlyLeftRecursiveDefinitionsFromRuleAndPreviousRules(rule, previousRules) {
-  const ruleDefinitions = rule.getDefinitions(),
-        implicitlyLeftRecursiveDefinitions = ruleDefinitions.reduce(function(implicitlyLeftRecursiveDefinitions, ruleDefinition) {
-          const definition = ruleDefinition,  ///
-                implicitlyLeftRecursiveDefinition = ImplicitlyLeftRecursiveDefinition.fromDefinitionAndPreviousRules(definition, previousRules);
+  const definitions = rule.getDefinitions(),
+        implicitlyLeftRecursiveDefinitions = definitions.reduce(function(implicitlyLeftRecursiveDefinitions, definition) {
+          const implicitlyLeftRecursiveDefinition = ImplicitlyLeftRecursiveDefinition.fromDefinitionAndPreviousRules(definition, previousRules);
   
           if (implicitlyLeftRecursiveDefinition !== null) {
             implicitlyLeftRecursiveDefinitions.push(implicitlyLeftRecursiveDefinition);

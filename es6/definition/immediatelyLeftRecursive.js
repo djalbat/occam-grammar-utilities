@@ -4,9 +4,9 @@ const parsers = require('occam-parsers');
 
 const { Definition } = parsers;
 
-class LeftRecursiveDefinition extends Definition {
+class ImmediatelyLeftRecursiveDefinition extends Definition {
   static fromDefinitionAndRuleName(definition, ruleName) {
-    let leftRecursiveDefinition = null;
+    let immediatelyLeftRecursiveDefinition = null;
     
     const definitionFirstPartRuleNamePart = definition.isFirstPartRuleNamePart();
     
@@ -18,12 +18,12 @@ class LeftRecursiveDefinition extends Definition {
       if (definitionFirstRuleNamePartRuleName === ruleName) {
         const parts = definition.getParts();
 
-        leftRecursiveDefinition = new LeftRecursiveDefinition(parts);
+        immediatelyLeftRecursiveDefinition = new ImmediatelyLeftRecursiveDefinition(parts);
       }
     }
 
-    return leftRecursiveDefinition;
+    return immediatelyLeftRecursiveDefinition;
   }
 }
 
-module.exports = LeftRecursiveDefinition;
+module.exports = ImmediatelyLeftRecursiveDefinition;
