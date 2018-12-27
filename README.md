@@ -71,7 +71,7 @@ It is well worth a few minutes to convince yourself that this makes sense. Here 
                                     |
                                2[terminal]
 ```
-The implementation of an algorithm that reliably removes left recursion is fiddlesome to say the least and there are caveats. A full treatment is given below after mention of the example.
+The implementations of algorithms that reliably removes left recursion are fiddlesome to say the least and there are caveats. A full treatment is given below after mention of the example.
 
 ## Installation
 
@@ -91,7 +91,7 @@ You will need to do this if you want to look at the example.
 
 ## Example
 
-There is one example but the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. The initial BNF is actually a representation of Occam's BNF parser's rules. If this seems too daunting, you can copy the BNF given in the introduction into the BNF textarea. You can also try the BNF examples given in the treatment below.
+There is one example although the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. The initial BNF is actually a representation of Occam's BNF parser's [rules](https://raw.githubusercontent.com/jecs-imperial/occam-parsers/master/es6/bnf/bnf.js). If this seems too daunting, you can copy the BNF given in the introduction into the BNF textarea. You can also try the BNF examples given in the treatment below.
 
 Note that if you choose to eliminate implicit left recursion, you cannot choose not to eliminate cycles or to eliminate immediate left recursion, because eliminating implicit left recursion requires the former and entails the latter. The choice of eliminating immediate left recursion is only provided for the purposes of the example, in fact.
 
@@ -107,11 +107,11 @@ Consider the following BNF:
 
   Y  ::=  Z | "c" ;
 
-  Z  ::=  "d" ;
+  Z  ::=  X "d" ;
 ```
-This results in the cycle `Y -> Z -> X ("d") -> Y`, abbreviated `Y ->* Y`. Here the terminal part `"d"` of the first of the `Z` rule's definitions is put in parenthesis to emphasise that although it is part of the definition, it is not evaluated. Only the first part `X` is evaluated, which leads immediately to an evaluation of the first definition of the `X` rule, namely `Y`. Also note that the derivation `X -> Y -> Z -> X ("d")` is not considered a cycle because it does not terminate in a unit definition. In abbreviated form it is `X ->* X "d"`, which is an example of implicit left recursion, but not of a cycle.
+This results in the cycle `Y -> Z -> X ("d") -> Y`, abbreviated `Y ->* Y`. Here the terminal part `"d"` of the `Z` rule's definition is put in parenthesis to emphasise that although it is part of the definition, it is not evaluated. Only the first part `X` is evaluated, which leads immediately to an evaluation of the first definition of the `X` rule, namely `Y`. Also note that the derivation `X -> Y -> Z -> X ("d")` is not considered a cycle because it does not terminate in a unit definition. In abbreviated form it is `X ->* X "d"`, which is an example of implicit left recursion, but not of a cycle.
 
-The algorithm is pre-emptive. It removes all unit definitions, thereby forestalling any chance of cycles being created. Here the removal of the unit definition `Y` in the `X` rule will break the aforementioned cycle, for example.
+The algorithm is pre-emptive. It removes all unit definitions, thereby forestalling any chance of cycles being created. The removal of the unit definition `Y` in the `X` rule will break the aforementioned cycle, for example.
 
 The first stage is to split the rules into 'non-units' rules, that is rules without unit definitions, and 'unit' rules. The former are...
 ```
@@ -120,7 +120,7 @@ The first stage is to split the rules into 'non-units' rules, that is rules with
   Y  ::=  "c" ;
   Z  ::=  "d" ;
 ```
-...and the latter in this case:
+...and the latter:
 ```
   S  ::=  Y ;
   X  ::=  Y ;
@@ -193,9 +193,9 @@ Consider the following BNF:
 ```
 The problem is that this could result in the derivation `Y -> Y ("c")` or, losing the convention that those parts of a definition that are never evaluated are shown in parenthesis, simply `Y -> Y "c"`.
 
-On the surface of it this algorithm is much simpler than those to deal with eliminating cycles or implicit left recursion and, unlike those two, is pre-emptive in the sense that it directly removes immediate left recursion where it finds it but otherwise leaves the BNF as-is.
+On the surface of it this algorithm is much simpler than those to deal with eliminating cycles or implicit left recursion and, unlike those two, the algorithm is pre-emptive in the sense that it directly removes immediate left recursion where it finds it but otherwise leaves the BNF as-is.
 
-It works by identifying the immediately left recursive rule within in any rule, in this case the `Y  ::=  Y "c"` rule, and rewriting it as right recursive. A part referencing the new rule is then appended to any definition that is not immediately left recursive, thus:
+It works by identifying immediately left recursive definitions within in any rule, in this case the `Y "c"` rule, and rewriting the resultant rule as right recursive. A part referencing the new rule is then appended to any definition that is not immediately left recursive, thus:
 ```
   Y  ::=  "a" Y~ | "b" Y~;
 
@@ -203,7 +203,7 @@ It works by identifying the immediately left recursive rule within in any rule, 
 ```
 The `ε` definition here matches nothing and allows the right recursive rule to terminate.
 
-Two special cases deserve attention. The first is the lack of definitions other than immediately left recursive ones. Consider the BNF:
+Two special cases deserve mention. The first is the lack of definitions other than immediately left recursive ones. Consider:
 ```
   Y  ::=  Y "c";
 ```
@@ -217,7 +217,7 @@ In doing so it could be argued that it is changing the nature of the grammar. Ho
 ```
   Y  ::=  "a" | "b" | Y "c" | Y "d" ;
 ```
-This is not really special and is dealt with in a standard manner:
+This is not really a special case as such and is dealt with in a standard way:
 ```
   Y  ::= "a" Y~ | "b" Y~ ;
 
@@ -228,7 +228,7 @@ One further point worth noting is that it is usual to show the left recursive de
 
 ### Eliminating implicit left recursion
 
-Like the algorithm to eliminate cycles, this algorithm is pre-emptive in that it does not explicitly remove left recursion. Instead, it rearranges the BNF so that no left recursion may occur.. Consider the following BNF:
+Like the algorithm to eliminate cycles, this algorithm is pre-emptive in that it does not explicitly remove implicit left recursion. Instead, it rearranges the BNF so that no left recursion can occur. Consider the following BNF:
 ```
   S  ::=  X "b" ;
 

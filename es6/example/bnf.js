@@ -2,18 +2,6 @@
 
 const exampleBNF = `
 
-  S  ::=  X "b" ;
-
-  X  ::=  Y "a" ;
-
-  Y  ::=  S "c" ;
-  
-`;
-
-module.exports = exampleBNF;
-
-/*
-
 
   rules                ::=  rule+ ;
 
@@ -77,6 +65,7 @@ module.exports = exampleBNF;
 
   wildcard             ::=  "." ;
 
+  
+`;
 
-
- */
+module.exports = exampleBNF;
