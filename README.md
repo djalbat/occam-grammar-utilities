@@ -28,7 +28,7 @@ operator      ::=  "+" | "-" | "/" | "*" ;
 term          ::=  [number] ;
 
 ```
-Here the first rule is immediately left recursive. When the parser encounters this rule it will immediately enter an infinite loop as it tries to evaluate the right hand side. In order to eliminate it, the rule can be rewritten to be right recursive. The first definition `expression operator expression` is discarded and a the name of a new, right recursive rule `expression~` is appended to the remaining two definitions. The new, right recursive rule itself consists of two definitions, the first of which `operator expression expression~` is right recursive, the second of which consists of a single terminating part `ε` which permits the parser to continue when the first definition no longer results in a match:
+Here the first rule is immediately left recursive. When the parser encounters this rule it will immediately enter an infinite loop as it tries to evaluate the right hand side. In order to eliminate immediate left recursion, the first definition `expression operator expression` is discarded and a the name of a new, right recursive rule `expression~` is appended to the remaining two definitions. The new, right recursive rule itself consists of two definitions, the first of which `operator expression expression~` is right recursive, the second of which consists of a single terminating part `ε` which permits the parser to continue when the first definition no longer results in a match:
 
 ```
 expression    ::=  "(" expression ")" expression~
