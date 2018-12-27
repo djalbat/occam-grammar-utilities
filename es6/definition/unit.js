@@ -6,8 +6,8 @@ const definitionUtilities = require('../utilities/definition');
 
 const { isFirstPartRuleNamePart } = definitionUtilities;
 
-const { Definition, parts } = parsers,
-      { RuleNamePart } = parts;
+const { Definition, Parts } = parsers,
+      { RuleNamePart } = Parts;
 
 class UnitDefinition extends Definition {
   getRuleName() {

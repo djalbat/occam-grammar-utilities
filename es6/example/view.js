@@ -11,7 +11,9 @@ const exampleBNF = require('../example/bnf'),
       eliminateCycles = require('../eliminateCycles'),
       AdjustedBNFTextarea = require('./textarea/adjustedBNF'),
       MainVerticalSplitter = require('./verticalSplitter/main'),
+      eliminateOrphanedRules = require('../eliminateOrphanedRules'),
       EliminateCyclesCheckbox = require('./checkbox/eliminateCycles'),
+      EliminateOrphanedRulesCheckbox = require('./checkbox/eliminateOrphanedRules'),
       eliminateImplicitLeftRecursion = require('../eliminateImplicitLeftRecursion'),
       eliminateImmediateLeftRecursion = require('../eliminateImmediateLeftRecursion'),
       EliminateImplicitLeftRecursionCheckbox = require('./checkbox/eliminateImplicitLeftRecursion'),
@@ -39,6 +41,7 @@ class View extends Element {
   adjustBNF() {
     try {
       const eliminateCyclesCheckboxChecked = this.isEliminateCyclesCheckboxChecked(),
+            eliminateOrphanedRulesCheckboxChecked = this.isEliminateOrphanedRulesCheckboxChecked(),
             eliminateImplicitLeftRecursionCheckboxChecked = this.isEliminateImplicitLeftRecursionCheckboxChecked(),
             eliminateImmediateLeftRecursionCheckboxChecked = this.isEliminateImmediateLeftRecursionCheckboxChecked();
 
@@ -56,7 +59,11 @@ class View extends Element {
         rules = eliminateImmediateLeftRecursion(rules);
       }
 
-      const multiLine = false,
+      if (eliminateOrphanedRulesCheckboxChecked) {
+        rules = eliminateOrphanedRules(rules);
+      }
+
+      const multiLine = true,
             rulesString = rulesAsString(rules, multiLine),
             adjustedBNF = rulesString;  ///
 
@@ -75,6 +82,10 @@ class View extends Element {
   }
 
   eliminateCyclesCheckboxChangeHandler(checked) {
+    this.adjustBNF();
+  }
+
+  eliminateOrphanedRulesCheckboxChangeHandler(checked) {
     this.adjustBNF();
   }
 
@@ -105,6 +116,7 @@ class View extends Element {
   childElements(properties) {
     const keyUpHandler = this.keyUpHandler.bind(this),
           eliminateCyclesCheckboxChangeHandler = this.eliminateCyclesCheckboxChangeHandler.bind(this),
+          eliminateOrphanedRulesCheckboxChangeHandler = this.eliminateOrphanedRulesCheckboxChangeHandler.bind(this),
           eliminateImplicitLeftRecursionCheckboxChangeHandler = this.eliminateImplicitLeftRecursionCheckboxChangeHandler.bind(this),
           eliminateImmediateLeftRecursionCheckboxChangeHandler = this.eliminateImmediateLeftRecursionCheckboxChangeHandler.bind(this);
 
@@ -125,6 +137,9 @@ class View extends Element {
           <br />
           <EliminateImplicitLeftRecursionCheckbox onChange={eliminateImplicitLeftRecursionCheckboxChangeHandler} checked />
           <span>Eliminate implicit left recursion</span>
+          <br />
+          <EliminateOrphanedRulesCheckbox onChange={eliminateOrphanedRulesCheckboxChangeHandler} />
+          <span>Eliminate orphaned rules</span>
         </SizeableElement>
         <MainVerticalSplitter />
         <div className="column">

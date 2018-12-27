@@ -69,6 +69,7 @@ textarea.adjusted-bnf {
 }
 
 input.eliminate-cycles,
+input.eliminate-orphaned-rules,
 input.eliminate-implicit-left-recursion,
 input.eliminate-immediate-left-recursion {
   margin-right: 0.5rem;

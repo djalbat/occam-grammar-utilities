@@ -2,8 +2,8 @@
 
 const parsers = require('occam-parsers');
 
-const { Rule, Definition, NonTerminalNode, parts } = parsers,
-    { EpsilonPart, RuleNamePart } = parts;
+const { Rule, Definition, NonTerminalNode, Parts } = parsers,
+      { EpsilonPart, RuleNamePart } = Parts;
 
 class RightRecursiveRule extends Rule {
   static ruleNamePartFromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule) {

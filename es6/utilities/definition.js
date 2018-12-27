@@ -1,27 +1,12 @@
 'use strict';
 
-const parsers = require('occam-parsers');
+const partUtilities = require('../utilities/part');
 
-const { parts } = parsers,
-      { RuleNamePart } = parts,
-      { type } = RuleNamePart,
-      ruleNamePartType = type;  ///
+const { isPartRuleNamePart } = partUtilities;
 
 function isFirstPartRuleNamePart(rule) {
-  let firstPartRuleNamePart;
-
   const firstPart = rule.getFirstPart(),
-        firstPartTerminalPart = firstPart.isTerminalPart(),
-        firstPartNonTerminalPart = !firstPartTerminalPart;
-
-  if (firstPartNonTerminalPart) {
-    const nonTerminalPart = firstPart,  ///
-          nonTerminalPartType = nonTerminalPart.getType(),
-          nonTerminalPartTypeRuleNamePartType = (nonTerminalPartType === ruleNamePartType),
-          nonTerminalPartRuleNamePart = nonTerminalPartTypeRuleNamePartType;  ///
-
-    firstPartRuleNamePart = nonTerminalPartRuleNamePart;  ///
-  }
+        firstPartRuleNamePart = isPartRuleNamePart(firstPart);
 
   return firstPartRuleNamePart;
 }
