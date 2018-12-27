@@ -2,7 +2,7 @@
 
 const partUtilities = require('../utilities/part');
 
-const { ruleNamesFromParts } = partUtilities;
+const { partRuleNamesFromParts } = partUtilities;
 
 function rulesAsString(rules, multiLine) {
   const maximumRuleNameLength = rules.reduce(function(maximumRuleNameLength, rule) {
@@ -25,7 +25,17 @@ function rulesAsString(rules, multiLine) {
 }
 
 function ruleNamesFromRules(rules) {
-  const ruleNames = [];
+  const ruleNames = rules.map(function(rule) {
+    const ruleName = rule.getName();
+
+    return ruleName;
+  });
+
+  return ruleNames;
+}
+
+function partRuleNamesFromRules(rules) {
+  const partRuleNames = [];
 
   rules.forEach(function(rule) {
     const definitions = rule.getDefinitions();
@@ -33,14 +43,15 @@ function ruleNamesFromRules(rules) {
     definitions.forEach(function(definition) {
       const parts = definition.getParts();
 
-      ruleNamesFromParts(parts, ruleNames);
+      partRuleNamesFromParts(parts, partRuleNames);
     });
   });
 
-  return ruleNames;
+  return partRuleNames;
 }
 
 module.exports = {
   rulesAsString,
-  ruleNamesFromRules
+  ruleNamesFromRules,
+  partRuleNamesFromRules
 };

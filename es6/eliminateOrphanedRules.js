@@ -2,25 +2,53 @@
 
 const rulesUtilities = require('./utilities/rules');
 
-const { ruleNamesFromRules } = rulesUtilities;
+const { ruleNamesFromRules, partRuleNamesFromRules } = rulesUtilities;
 
 function eliminateOrphanedRules(rules) {
-  const ruleNames = ruleNamesFromRules(rules);
+  let ruleNames = ruleNamesFromRules(rules),
+      partRuleNames = partRuleNamesFromRules(rules),
+      orphanedRuleNames = orphanedRuleNamesFromRuleNamesAndPartRuleNames(ruleNames, partRuleNames),
+      orphanedRuleNamesLength = orphanedRuleNames.length;
 
-  rules = filterRules(rules, ruleNames); ///
+  while (orphanedRuleNamesLength > 0) {
+    rules = filterRules(rules, orphanedRuleNames); ///
+
+    ruleNames = ruleNamesFromRules(rules);
+    partRuleNames = partRuleNamesFromRules(rules);
+    orphanedRuleNames = orphanedRuleNamesFromRuleNamesAndPartRuleNames(ruleNames, partRuleNames);
+    orphanedRuleNamesLength = orphanedRuleNames.length;
+  }
 
   return rules;
 }
 
 module.exports = eliminateOrphanedRules;
 
-function filterRules(rules, ruleNames) {
-  rules = rules.filter(function(rule, index) {
-    const ruleName = rule.getName(),
-          ruleFirstRule = (index === 0),
-          ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
+function orphanedRuleNamesFromRuleNamesAndPartRuleNames(ruleNames, partRuleNames) {
+  const orphanedRuleNames = [];
 
-    if (ruleFirstRule || ruleNamesIncludesRuleName) {
+  ruleNames.forEach(function(ruleName, index) {
+    if (index > 0) {
+      const partRuleNamesIncludesRuleName = partRuleNames.includes(ruleName),
+            ruleNameOrphanedRuleName = !partRuleNamesIncludesRuleName;
+
+      if (ruleNameOrphanedRuleName) {
+        const orphanedRuleName = ruleName;
+
+        orphanedRuleNames.push(orphanedRuleName);
+      }
+    }
+  });
+
+  return orphanedRuleNames;
+}
+
+function filterRules(rules, orphanedRuleNames) {
+  rules = rules.filter(function(rule) {
+    const ruleName = rule.getName(),
+          orphanedRuleNamesIncludesRuleName = orphanedRuleNames.includes(ruleName);
+
+    if (!orphanedRuleNamesIncludesRuleName) {
       return true;
     }
   });

@@ -93,15 +93,21 @@ class View extends Element {
     if (checked) {
       this.checkEliminateCyclesCheckbox(checked);
 
+      this.checkEliminateOrphanedRulesCheckbox(checked);
+
       checked = false;
 
       this.checkEliminateImmediateLeftRecursionCheckbox(checked);
 
       this.disableEliminateCyclesCheckbox();
 
+      this.disableEliminateOrphanedRulesCheckbox();
+
       this.disableEliminateImmediateLeftRecursionCheckbox();
     } else {
       this.enableEliminateCyclesCheckbox();
+
+      this.enableEliminateOrphanedRulesCheckbox();
 
       this.enableEliminateImmediateLeftRecursionCheckbox();
     }
@@ -138,7 +144,7 @@ class View extends Element {
           <EliminateImplicitLeftRecursionCheckbox onChange={eliminateImplicitLeftRecursionCheckboxChangeHandler} checked />
           <span>Eliminate implicit left recursion</span>
           <br />
-          <EliminateOrphanedRulesCheckbox onChange={eliminateOrphanedRulesCheckboxChangeHandler} checked />
+          <EliminateOrphanedRulesCheckbox onChange={eliminateOrphanedRulesCheckboxChangeHandler} checked disabled />
           <span>Eliminate orphaned rules</span>
         </SizeableElement>
         <MainVerticalSplitter />

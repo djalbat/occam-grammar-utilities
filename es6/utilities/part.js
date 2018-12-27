@@ -11,9 +11,9 @@ const { Parts } = parsers,
       partsTypes = typesFromParts([ GroupOfPartsPart, ChoiceOfPartsPart ]),
       ruleNamePartType = typeFromPart(RuleNamePart);
 
-function ruleNamesFromParts(parts, ruleNames) {
+function partRuleNamesFromParts(parts, partRuleNames) {
   parts.forEach(function(part) {
-    ruleNamesFromPart(part, ruleNames);
+    partRuleNamesFromPart(part, partRuleNames);
   });
 }
 
@@ -36,18 +36,19 @@ function isPartRuleNamePart(part) {
 }
 
 module.exports = {
-  ruleNamesFromParts,
+  partRuleNamesFromParts,
   isPartRuleNamePart
 };
 
-function ruleNamesFromPart(part, ruleNames) {
+function partRuleNamesFromPart(part, partRuleNames) {
   const partRuleNamePart = isPartRuleNamePart(part);
 
   if (partRuleNamePart) {
     const ruleNamePart = part,
-          ruleName = ruleNamePart.getRuleName();
+          ruleNamePartRuleName = ruleNamePart.getRuleName(),
+          ruleName = ruleNamePartRuleName;  ///
 
-    ruleNames.push(ruleName);
+    partRuleNames.push(ruleName);
   } else {
     const partTerminalPart = part.isTerminalPart(),
           partNonTerminalPart = !partTerminalPart;
@@ -64,12 +65,12 @@ function ruleNamesFromPart(part, ruleNames) {
         const partPart = nonTerminalPart, ///
               part = partPart.getPart();
 
-        ruleNamesFromPart(part, ruleNames);
+        partRuleNamesFromPart(part, partRuleNames);
       } else if (typePartsType) {
         const partsPart = nonTerminalPart, ///
               parts = partsPart.getParts();
 
-        ruleNamesFromParts(parts, ruleNames);
+        partRuleNamesFromParts(parts, partRuleNames);
       }
     }
   }

@@ -39,9 +39,15 @@ class EliminateOrphanedRulesCheckbox extends Element {
   }
 
   parentContext() {
-    const isEliminateOrphanedRulesCheckboxChecked = this.isChecked.bind(this); ///
+    const checkEliminateOrphanedRulesCheckbox = this.check.bind(this), ///
+          enableEliminateOrphanedRulesCheckbox = this.enable.bind(this), ///
+          disableEliminateOrphanedRulesCheckbox = this.disable.bind(this), ///
+          isEliminateOrphanedRulesCheckboxChecked = this.isChecked.bind(this); ///
 
     return ({
+      checkEliminateOrphanedRulesCheckbox,
+      enableEliminateOrphanedRulesCheckbox,
+      disableEliminateOrphanedRulesCheckbox,
       isEliminateOrphanedRulesCheckboxChecked
     });
   }
