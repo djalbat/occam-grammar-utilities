@@ -318,9 +318,9 @@ Now neither of the two parts are adjusted and the BNF stays the same.
 
 In fact, none of the algorithms bar the algorithm to eliminate orphans is able to handle references to rules on the right hand side when modified or inside brackets. It is not always clear, at least not to the author, whether they always must. Certainly re-writing the algorithms to deal with such cases will add considerably to their complexity. Such an investigation is, again, left for future work.
 
-Finally, it is worth pointing out that algorithm to eliminate orphaned rules is at least more savvy. The following erroneous adjustments to the rule names in the first definition results in the `rule` and `error` rules being orphaned in spite of the presence of numerous brackets and modifiers:
+It is worth pointing out that algorithm to eliminate orphaned rules is at least more savvy. The following spurious adjustments to the rule names in the first definition results in the `rule` and `error` rules being orphaned in spite of the presence of numerous brackets and modifiers:
 ```
-  document  ::=  ( _rule+ | _error )? ;
+  document  ::=  ( _rule+ | _error* )? ;
 
       rule  ::=  [rule] ;
 
