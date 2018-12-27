@@ -1,5 +1,9 @@
 'use strict';
 
+const partUtilities = require('../utilities/part');
+
+const { ruleNamesFromParts } = partUtilities;
+
 function rulesAsString(rules, multiLine) {
   const maximumRuleNameLength = rules.reduce(function(maximumRuleNameLength, rule) {
           const ruleName = rule.getName(),
@@ -20,6 +24,23 @@ function rulesAsString(rules, multiLine) {
   return rulesString;
 }
 
+function ruleNamesFromRules(rules) {
+  const ruleNames = [];
+
+  rules.forEach(function(rule) {
+    const definitions = rule.getDefinitions();
+
+    definitions.forEach(function(definition) {
+      const parts = definition.getParts();
+
+      ruleNamesFromParts(parts, ruleNames);
+    });
+  });
+
+  return ruleNames;
+}
+
 module.exports = {
-  rulesAsString
+  rulesAsString,
+  ruleNamesFromRules
 };

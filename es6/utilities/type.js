@@ -1,8 +1,14 @@
 'use strict';
 
+function typeFromPart(Part) {
+  const { type } = Part;
+
+  return type;
+}
+
 function typesFromParts(Parts) {
   const types = Parts.map(function(Part) {
-    const { type } = Part;
+    const type = typeFromPart(Part);
 
     return type;
   });
@@ -11,5 +17,6 @@ function typesFromParts(Parts) {
 }
 
 module.exports = {
+  typeFromPart,
   typesFromParts
 };

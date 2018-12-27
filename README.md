@@ -249,6 +249,16 @@ In order to eliminate left recursion we disallow rules that reference previous o
   Y~ ::=  "a" "b" "c" Y~ | ε ;
 ```
 
+### Caveats
+
+Consider the following BNF:
+
+```
+  S  ::=  X | "b" ;
+
+  X  ::=  S "a" ;
+```
+
 
 ## Building
 

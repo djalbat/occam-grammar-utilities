@@ -138,7 +138,7 @@ class View extends Element {
           <EliminateImplicitLeftRecursionCheckbox onChange={eliminateImplicitLeftRecursionCheckboxChangeHandler} checked />
           <span>Eliminate implicit left recursion</span>
           <br />
-          <EliminateOrphanedRulesCheckbox onChange={eliminateOrphanedRulesCheckboxChangeHandler} />
+          <EliminateOrphanedRulesCheckbox onChange={eliminateOrphanedRulesCheckboxChangeHandler} checked />
           <span>Eliminate orphaned rules</span>
         </SizeableElement>
         <MainVerticalSplitter />

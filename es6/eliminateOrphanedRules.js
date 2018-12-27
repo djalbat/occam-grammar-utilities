@@ -1,22 +1,20 @@
 'use strict';
 
-const partUtilities = require('./utilities/part');
+const rulesUtilities = require('./utilities/rules');
 
-const { ruleNamesFromParts } = partUtilities;
+const { ruleNamesFromRules } = rulesUtilities;
 
 function eliminateOrphanedRules(rules) {
-  const ruleNames = [];
+  const ruleNames = ruleNamesFromRules(rules);
 
-  rules.forEach(function(rule) {
-    const definitions = rule.getDefinitions();
+  rules = filterRules(rules, ruleNames); ///
 
-    definitions.forEach(function(definition) {
-      const parts = definition.getParts();
+  return rules;
+}
 
-      ruleNamesFromParts(parts, ruleNames);
-    });
-  });
+module.exports = eliminateOrphanedRules;
 
+function filterRules(rules, ruleNames) {
   rules = rules.filter(function(rule, index) {
     const ruleName = rule.getName(),
           ruleFirstRule = (index === 0),
@@ -29,5 +27,3 @@ function eliminateOrphanedRules(rules) {
 
   return rules;
 }
-
-module.exports = eliminateOrphanedRules;

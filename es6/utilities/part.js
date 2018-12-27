@@ -5,19 +5,11 @@ const parsers = require('occam-parsers');
 const typeUtilities = require('../utilities/type');
 
 const { Parts } = parsers,
-      { typesFromParts } = typeUtilities,
+      { typeFromPart, typesFromParts } = typeUtilities,
       { ChoiceOfPartsPart, GroupOfPartsPart, OneOrMorePartsPart, OptionalPartPart, ZeroOrMorePartsPart, RuleNamePart } = Parts,
-      partsTypes = typesFromParts([
-        GroupOfPartsPart,
-        ChoiceOfPartsPart
-      ]),
-      partTypes = typesFromParts([
-        OptionalPartPart,
-        OneOrMorePartsPart,
-        ZeroOrMorePartsPart
-      ]),
-      { type } = RuleNamePart,
-      ruleNamePartType = type;  ///
+      partTypes = typesFromParts([ OptionalPartPart, OneOrMorePartsPart, ZeroOrMorePartsPart ]),
+      partsTypes = typesFromParts([ GroupOfPartsPart, ChoiceOfPartsPart ]),
+      ruleNamePartType = typeFromPart(RuleNamePart);
 
 function ruleNamesFromParts(parts, ruleNames) {
   parts.forEach(function(part) {

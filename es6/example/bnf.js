@@ -65,7 +65,7 @@ const exampleBNF = `
 
   wildcard             ::=  "." ;
 
-  
+
 `;
 
 module.exports = exampleBNF;
