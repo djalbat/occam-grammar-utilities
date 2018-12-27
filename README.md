@@ -130,7 +130,7 @@ The algorithm then works on the stack of 'unit' rules, popping rules off the top
 
 Assuming neither of these conditions hold, the list of 'non-units' rules is searched and the rule the name of which matches the rule name in the rule under consideration's unit definition is found. The definitions of this rule are then coupled with the rule under consideration's name to form a new rule. An example will clarify. The first 'unit' rule under consideration is `S  ::=  Y`, the matching 'non-units' rule is `Y  ::=  "c"` and therefore the new 'non-units' rule is `S  ::=  "c"`. In effect the derivation `S -> Y -> "c"` is reduced to `S -> "c"`. The essence of the algorithm is in reducing all such derivations.
 
-To continue, the stack of remaining 'unit' rules is also searched for matching rules and these are combined with the rule under consideration to make new 'unit' rules which are pushed onto the stack to be the next rules under consideration. Again an example should clarify. The `S  ::=  Y` 'unit' rule is coupled with the `Y  ::=  Z` 'unit' rule to form a new unit rule `S  ::=  Z`.
+To continue, the stack of remaining 'unit' rules is also searched for matching rules and these are combined with the rule under consideration to make new 'unit' rules which are pushed onto the stack to be the next rules under consideration. Again an example should clarify. The `S  ::=  Y` 'unit' rule is coupled with the `Y  ::=  Z` 'unit' rule to form a new 'unit' rule `S  ::=  Z`.
 
 The result of the first iteration of the algorithm is an evolving stack of 'unit' rules, shown on the left, and a burgeoning list of new 'non-units' rules, shown on the right. The list of old 'unit' rules is kept above the dotted line:
 ```
@@ -249,16 +249,84 @@ In order to eliminate left recursion we disallow rules that reference previous o
   Y~ ::=  "a" "b" "c" Y~ | ε ;
 ```
 
+### Eliminating orphaned rules
+
+Orphaned rules are rules which are never referenced from the right hand sides of any rules. They may crop up as a result of eliminating left recursion or they may be present in the grammar already. Consider the following BNF:
+```
+  S  ::=  X ;
+
+  Z  ::=  W ;
+
+  W  ::=  "w" ;
+```
+Here the `Z` rule is orphaned since there is no mention of it in any definition. Eliminating it leaves:
+```
+  S  ::=  X ;
+
+  W  ::=  "w" ;
+```
+Now the `W` rule is orphaned and since the algorithm works iteratively, this too will be removed, leaving:
+```
+  S  ::=  X ;
+```
+Now there are no more orphaned rules and the algorithm terminates. A simple boundedness argument proves that it always will do so. Note that there is a reference to an `X` rule that does not exist. This is a fault in the grammar, undoubtedly, but not within the scope of this algorithm to fix.
+
 ### Caveats
 
-Consider the following BNF:
+As already mentioned, the algorithm to eliminate cycles could be better, leaving the order of definitions intact. More seriously, the remaining algorithms do not deal with brackets or modifiers at all. Consider the following BNF:
 
 ```
-  S  ::=  X | "b" ;
+  document  ::=  rule | error ;
 
-  X  ::=  S "a" ;
+      rule  ::=  [rule] ;
+
+     error  ::=  . ;
 ```
+If we eliminate cycles, we get what we would expect:
+```
+  document  ::= [rule] | . ;
 
+   rule     ::= [rule] ;
+
+   error    ::= . ;
+```
+There were no cycles, of course, but the 'unit' rules have been eliminated. Now we add a modifier to the first definition:
+```
+  document  ::=  rule+ | error ;
+
+      rule  ::=  [rule] ;
+
+     error  ::=  . ;
+```
+We would expect the new `rule+` definition to be adjusted to `[rule]+`, but this does not happen. Instead we get:
+```
+  document  ::=  rule+ | . ;
+
+      rule  ::=  [rule] ;
+
+     error  ::=  . ;
+```
+Similarly, adding brackets nullifies the workings of the algorithm to eliminate cycles, too:
+```
+  document  ::=  ( rule | error ) ;
+
+      rule  ::=  [rule] ;
+
+     error  ::=  . ;
+```
+Now neither of the two parts are adjusted and the BNF stays the same.
+
+In fact, none of the algorithms bar the algorithm to eliminate orphans is able to handle references to rules on the right hand side when modified or inside brackets. It is not always clear, at least not to the author, whether they always must. Certainly re-writing the algorithms to deal with such cases will add considerably to their complexity. Such an investigation is, again, left for future work.
+
+Finally, it is worth pointing out that algorithm to eliminate orphaned rules is at least more savvy. The following erroneous adjustments to the rule names in the first definition results in the `rule` and `error` rules being orphaned in spite of the presence of numerous brackets and modifiers:
+```
+  document  ::=  ( _rule+ | _error )? ;
+
+      rule  ::=  [rule] ;
+
+     error  ::=  . ;
+```
+This is straightfoward to check.
 
 ## Building
 

@@ -1,7 +1,7 @@
 {
   "name": "occam-grammar-utilities",
   "author": "James Smith",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "license": "MIT",
   "homepage": "https://github.com/jecs-imperial/occam-grammar-utilities",
   "description": "Occam's grammar utilities.",
@@ -12,7 +12,7 @@
   "dependencies": {
     "necessary": "^1.7.5",
     "occam-lexers": "^8.0.29",
-    "occam-parsers": "^8.0.31",
+    "occam-parsers": "^8.0.34",
     "occam-tarjan": "^2.0.12"
   },
   "devDependencies": {

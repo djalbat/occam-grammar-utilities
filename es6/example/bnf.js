@@ -19,7 +19,7 @@ const exampleBNF = `
 
   oneOrMoreParts       ::=  part<NO_WHITESPACE>"+" ;
 
-  groupOfParts         ::=  "(" part+ ")" ;
+  groupOfParts         ::=  "(" part part+ ")" ;
 
   choiceOfParts        ::=  "(" part ( "|" part )+ ")" ;
 
@@ -66,6 +66,6 @@ const exampleBNF = `
   wildcard             ::=  "." ;
 
 
-`;
+ `;
 
 module.exports = exampleBNF;
