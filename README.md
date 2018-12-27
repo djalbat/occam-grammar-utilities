@@ -7,6 +7,7 @@
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Example](#example)
+- [Algorithms](#algorithms)
 - [Building](#building)
 - [Resources](#resources)
 - [Contact](#contact)
@@ -95,7 +96,7 @@ There is one example although the BNF can be changed dynamically. To view it, op
 
 Note that if you choose to eliminate implicit left recursion, you cannot choose not to eliminate cycles or to eliminate immediate left recursion, because eliminating implicit left recursion requires the former and entails the latter. Also, the exported function to remove left recursion will also remove orphaned rules, so this choice is also enforced when eliminating implicit left recursion. The choice of eliminating immediate left recursion is only provided for the purposes of the example, in fact.
 
-## Treatment of the algorithms
+## Algorithms
 
 ### Eliminating cycles
 
