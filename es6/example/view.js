@@ -126,11 +126,8 @@ class View extends Element {
           eliminateImplicitLeftRecursionCheckboxChangeHandler = this.eliminateImplicitLeftRecursionCheckboxChangeHandler.bind(this),
           eliminateImmediateLeftRecursionCheckboxChangeHandler = this.eliminateImmediateLeftRecursionCheckboxChangeHandler.bind(this);
 
-    return ([
+    return (
 
-      <h1>
-        Grammar utilities example
-      </h1>,
       <div className="columns">
         <SizeableElement>
           <h2>BNF</h2>
@@ -154,7 +151,7 @@ class View extends Element {
         </div>
       </div>
 
-    ]);
+    );
   }
 
   initialise() {
