@@ -32,8 +32,7 @@ class View extends Element {
   getRules() {
     const bnf = this.getBNF(),
           tokens = bnfLexer.tokensFromBNF(bnf),
-          rulesNode = bnfParser.rulesNodeFromTokens(tokens),
-          rules = BNFParser.generateRules(rulesNode);
+          rules = bnfParser.rulesFromTokens(tokens);
 
     return rules;
   }
