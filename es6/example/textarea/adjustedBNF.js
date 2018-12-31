@@ -5,10 +5,12 @@ const easy = require('easy');
 const { InputElement } = easy;
 
 class AdjustedBNFTextarea extends InputElement {
-  setAdjustedBNF(adjustedBNF) {
-    const value = adjustedBNF;  ///
+  showError() {
+    this.addClass('error');
+  }
 
-    this.setValue(value);
+  hideError() {
+    this.removeClass('error');
   }
 
   clearAdjustedBNF() {
@@ -17,11 +19,21 @@ class AdjustedBNFTextarea extends InputElement {
     this.setValue(value);
   }
 
+  setAdjustedBNF(adjustedBNF) {
+    const value = adjustedBNF;  ///
+
+    this.setValue(value);
+  }
+
   parentContext() {
-    const setAdjustedBNF = this.setAdjustedBNF.bind(this),
+    const showError = this.showError.bind(this),
+          hideError = this.hideError.bind(this),
+          setAdjustedBNF = this.setAdjustedBNF.bind(this),
           clearAdjustedBNF = this.clearAdjustedBNF.bind(this);
 
     return ({
+      showError,
+      hideError,
       setAdjustedBNF,
       clearAdjustedBNF
     });
