@@ -6,6 +6,7 @@
 
 - [Introduction](#introduction)
 - [Installation](#installation)
+- [Usage](#usage)
 - [Example](#example)
 - [Algorithms](#algorithms)
 - [Building](#building)
@@ -89,6 +90,19 @@ You can also clone the repository with [Git](https://git-scm.com/)...
     npm install
 
 You will need to do this if you want to look at the example.
+
+## Usage
+
+```js
+const grammarUtilities = require('occam-grammar-utilities');
+
+const { eliminateLeftRecursion } = grammarUtilities;
+
+let rules = ...
+
+rules = eliminateLeftRecursion(rules);  ///
+```
+Only the one `eliminateLeftRecursion()` function is exported. Others are available if you run the example.
 
 ## Example
 
