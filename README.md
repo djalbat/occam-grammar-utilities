@@ -15,7 +15,7 @@
 
 ## Introduction
 
-This package provides the means to eliminate left recursion, the achilles heel of top-down parsers. Consider the following:
+This package provides the means to detect and eliminate left recursion, the achilles heel of top-down parsers. Consider the following:
 ```
 expression    ::=  expression operator expression
 
