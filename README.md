@@ -286,6 +286,8 @@ Now the `W` rule is orphaned and since the algorithm works iteratively, this too
 ```
 Now there are no more orphaned rules and the algorithm terminates. A simple boundedness argument proves that it always will do so. Note that there is a reference to an `X` rule that does not exist. This is a fault in the grammar, undoubtedly, but not within the scope of this algorithm to fix.
 
+Note that the first rule is technically an orphaned rule. However, the algorithm leaves it as-is by default.
+
 ### Caveats
 
 As already mentioned, the algorithm to eliminate cycles could be better, leaving the order of definitions intact. More seriously, the remaining algorithms do not deal with brackets or modifiers at all. Consider the following BNF:
@@ -341,7 +343,7 @@ It is worth pointing out that algorithm to eliminate orphaned rules is at least 
 
      error  ::=  . ;
 ```
-This is straightfoward to check.
+This is straightforward to check.
 
 ## Building
 
