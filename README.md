@@ -108,7 +108,7 @@ Functions to eliminate cycles, immediate left recursion, implicit left recursion
 
 There is one example although the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. The initial BNF is actually a representation of Occam's BNF parser's rules. If this seems too daunting, you can copy the BNF given in the introduction into the BNF textarea. You can also try the BNF examples given in the treatment below.
 
-Note that if you choose to eliminate implicit left recursion, you cannot choose not to eliminate immediate left recursion, because eliminating the former implies eliminating the latter.
+Note that if you choose to eliminate implicit left recursion you cannot choose not to eliminate immediate left recursion because eliminating the former implies eliminating the latter.
 
 ## Algorithms
 
