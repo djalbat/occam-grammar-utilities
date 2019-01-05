@@ -15,7 +15,7 @@
 
 ## Introduction
 
-This package provides the means to detect and eliminate left recursion, the achilles heel of top-down parsers. Consider the following:
+This package provides the means to eliminate left recursion, the achilles heel of top-down parsers. Consider the following:
 ```
 expression    ::=  expression operator expression
 
@@ -30,7 +30,7 @@ operator      ::=  "+" | "-" | "/" | "*" ;
 term          ::=  [number] ;
 
 ```
-Here the first rule is immediately left recursive. When the parser encounters this rule it will immediately enter an infinite loop as it tries to evaluate the right hand side. In order to eliminate immediate left recursion, the first definition is discarded and a the name of a new, right recursive rule `expression~` is appended to the remaining two definitions. The new, right recursive rule itself consists of two definitions, the first of which `operator expression expression~` is right recursive, the second of which consists of a single terminating part `ε` which permits the parser to continue when the first definition no longer results in a match:
+Here the first rule is immediately left recursive. When the parser encounters this rule it will immediately enter an infinite loop as it tries to evaluate the right hand side. In order to eliminate immediate left recursion, the first definition is discarded and the name of a new, right recursive rule `expression~` is appended to the remaining two definitions. The new, right recursive rule itself consists of two definitions, the first of which `operator expression expression~` is right recursive, the second of which consists of a single terminating part `ε` which permits the parser to continue when the first definition no longer results in a match:
 
 ```
 expression    ::=  "(" expression ")" expression~
@@ -73,7 +73,7 @@ It is well worth a few minutes to convince yourself that this makes sense. Here 
                                     |
                                2[terminal]
 ```
-The implementations of algorithms that reliably removes left recursion are fiddlesome to say the least and there are caveats. A full treatment is given below after mention of the example.
+The implementations of algorithms that reliably remove left recursion are fiddlesome to say the least and there are caveats. A full treatment is given below after mention of the example.
 
 ## Installation
 
@@ -102,13 +102,13 @@ let rules = ...
 
 rules = eliminateLeftRecursion(rules);  ///
 ```
-Only the one `eliminateLeftRecursion()` function is exported. Others are available if you run the example.
+Functions to eliminate cycles, immediate left recursion, implicit left recursion and orphaned rules are all exported. The main `eliminateLeftRecursion()` function relies on these.
 
 ## Example
 
 There is one example although the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. The initial BNF is actually a representation of Occam's BNF parser's rules. If this seems too daunting, you can copy the BNF given in the introduction into the BNF textarea. You can also try the BNF examples given in the treatment below.
 
-Note that if you choose to eliminate implicit left recursion, you cannot choose not to eliminate cycles or to eliminate immediate left recursion, because eliminating implicit left recursion requires the former and entails the latter. Also, the exported function to remove left recursion will also remove orphaned rules, so this choice is also enforced when eliminating implicit left recursion. The choice of eliminating immediate left recursion is only provided for the purposes of the example, in fact.
+Note that if you choose to eliminate implicit left recursion, you cannot choose not to eliminate immediate left recursion, because eliminating the former implies eliminating the latter.
 
 ## Algorithms
 

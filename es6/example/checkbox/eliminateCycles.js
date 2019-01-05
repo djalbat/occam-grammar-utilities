@@ -40,14 +40,10 @@ class EliminateCyclesCheckbox extends Element {
 
   parentContext() {
     const checkEliminateCyclesCheckbox = this.check.bind(this), ///
-          enableEliminateCyclesCheckbox = this.enable.bind(this), ///
-          disableEliminateCyclesCheckbox = this.disable.bind(this), ///
           isEliminateCyclesCheckboxChecked = this.isChecked.bind(this); ///
 
     return ({
       checkEliminateCyclesCheckbox,
-      enableEliminateCyclesCheckbox,
-      disableEliminateCyclesCheckbox,
       isEliminateCyclesCheckboxChecked
     });
   }

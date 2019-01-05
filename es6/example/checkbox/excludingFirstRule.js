@@ -4,7 +4,7 @@ const easy = require('easy');
 
 const { Element } = easy;
 
-class EliminateOrphanedRulesCheckbox extends Element {
+class ExcludingFirstRuleCheckbox extends Element {
   constructor(selector, changeHandler, checked) {
     super(selector);
 
@@ -39,28 +39,32 @@ class EliminateOrphanedRulesCheckbox extends Element {
   }
 
   parentContext() {
-    const checkEliminateOrphanedRulesCheckbox = this.check.bind(this), ///
-          isEliminateOrphanedRulesCheckboxChecked = this.isChecked.bind(this); ///
+    const checkExcludingFirstRuleCheckbox = this.check.bind(this), ///
+          enableExcludingFirstRuleCheckbox = this.enable.bind(this), ///
+          disableExcludingFirstRuleCheckbox = this.disable.bind(this), ///
+          isExcludingFirstRuleCheckboxChecked = this.isChecked.bind(this); ///
 
     return ({
-      checkEliminateOrphanedRulesCheckbox,
-      isEliminateOrphanedRulesCheckboxChecked
+      checkExcludingFirstRuleCheckbox,
+      enableExcludingFirstRuleCheckbox,
+      disableExcludingFirstRuleCheckbox,
+      isExcludingFirstRuleCheckboxChecked
     });
   }
 
   static fromProperties(properties) {
     const { onChange, checked } = properties,
           changeHandler = onChange, ///
-          eliminateOrphanedRulesCheckbox = Element.fromProperties(EliminateOrphanedRulesCheckbox, properties, changeHandler, checked);
+          excludingFirstRuleCheckbox = Element.fromProperties(ExcludingFirstRuleCheckbox, properties, changeHandler, checked);
 
-    return eliminateOrphanedRulesCheckbox;
+    return excludingFirstRuleCheckbox;
   }}
 
-Object.assign(EliminateOrphanedRulesCheckbox, {
+Object.assign(ExcludingFirstRuleCheckbox, {
   tagName: 'input',
   defaultProperties: {
     type: 'checkbox',
-    className: 'eliminate-orphaned-rules'
+    className: 'excluding-first-rule'
   },
   ignoredProperties: [
     'onChange',
@@ -68,7 +72,7 @@ Object.assign(EliminateOrphanedRulesCheckbox, {
   ]
 });
 
-module.exports = EliminateOrphanedRulesCheckbox;
+module.exports = ExcludingFirstRuleCheckbox;
 
 function defaultIntermediateChangeHandler(changeHandler, event, targetElement) {
   const checkbox = targetElement, ///

@@ -13,6 +13,7 @@ const exampleBNF = require('../example/bnf'),
       MainVerticalSplitter = require('./verticalSplitter/main'),
       eliminateOrphanedRules = require('../eliminateOrphanedRules'),
       EliminateCyclesCheckbox = require('./checkbox/eliminateCycles'),
+      ExcludingFirstRuleCheckbox = require('./checkbox/excludingFirstRule'),
       EliminateOrphanedRulesCheckbox = require('./checkbox/eliminateOrphanedRules'),
       eliminateImplicitLeftRecursion = require('../eliminateImplicitLeftRecursion'),
       eliminateImmediateLeftRecursion = require('../eliminateImmediateLeftRecursion'),
@@ -40,9 +41,11 @@ class View extends Element {
   adjustBNF() {
     try {
       const eliminateCyclesCheckboxChecked = this.isEliminateCyclesCheckboxChecked(),
+            excludingFirstRuleCheckboxChecked = this.isExcludingFirstRuleCheckboxChecked(),
             eliminateOrphanedRulesCheckboxChecked = this.isEliminateOrphanedRulesCheckboxChecked(),
             eliminateImplicitLeftRecursionCheckboxChecked = this.isEliminateImplicitLeftRecursionCheckboxChecked(),
-            eliminateImmediateLeftRecursionCheckboxChecked = this.isEliminateImmediateLeftRecursionCheckboxChecked();
+            eliminateImmediateLeftRecursionCheckboxChecked = this.isEliminateImmediateLeftRecursionCheckboxChecked(),
+            excludingFirstRule = excludingFirstRuleCheckboxChecked;  ///
 
       let rules = this.getRules();
 
@@ -59,7 +62,7 @@ class View extends Element {
       }
 
       if (eliminateOrphanedRulesCheckboxChecked) {
-        rules = eliminateOrphanedRules(rules);
+        rules = eliminateOrphanedRules(rules, excludingFirstRule);
       }
 
       const multiLine = true,
@@ -84,7 +87,19 @@ class View extends Element {
     this.adjustBNF();
   }
 
+  excludingFirstRuleCheckboxChangeHandler(checked) {
+    this.adjustBNF();
+  }
+
   eliminateOrphanedRulesCheckboxChangeHandler(checked) {
+    if (checked) {
+      this.enableExcludingFirstRuleCheckbox();
+    } else {
+      this.checkExcludingFirstRuleCheckbox(checked);
+
+      this.disableExcludingFirstRuleCheckbox();
+    }
+
     this.adjustBNF();
   }
 
@@ -98,16 +113,8 @@ class View extends Element {
 
       this.checkEliminateImmediateLeftRecursionCheckbox(checked);
 
-      this.disableEliminateCyclesCheckbox();
-
-      this.disableEliminateOrphanedRulesCheckbox();
-
       this.disableEliminateImmediateLeftRecursionCheckbox();
     } else {
-      this.enableEliminateCyclesCheckbox();
-
-      this.enableEliminateOrphanedRulesCheckbox();
-
       this.enableEliminateImmediateLeftRecursionCheckbox();
     }
 
@@ -121,6 +128,7 @@ class View extends Element {
   childElements(properties) {
     const keyUpHandler = this.keyUpHandler.bind(this),
           eliminateCyclesCheckboxChangeHandler = this.eliminateCyclesCheckboxChangeHandler.bind(this),
+          excludingFirstRuleCheckboxChangeHandler = this.excludingFirstRuleCheckboxChangeHandler.bind(this),
           eliminateOrphanedRulesCheckboxChangeHandler = this.eliminateOrphanedRulesCheckboxChangeHandler.bind(this),
           eliminateImplicitLeftRecursionCheckboxChangeHandler = this.eliminateImplicitLeftRecursionCheckboxChangeHandler.bind(this),
           eliminateImmediateLeftRecursionCheckboxChangeHandler = this.eliminateImmediateLeftRecursionCheckboxChangeHandler.bind(this);
@@ -131,7 +139,7 @@ class View extends Element {
         <SizeableElement>
           <h2>BNF</h2>
           <BNFTextarea onKeyUp={keyUpHandler} />
-          <EliminateCyclesCheckbox onChange={eliminateCyclesCheckboxChangeHandler} checked disabled />
+          <EliminateCyclesCheckbox onChange={eliminateCyclesCheckboxChangeHandler} />
           <span>Eliminate cycles</span>
           <br />
           <EliminateImmediateLeftRecursionCheckbox onChange={eliminateImmediateLeftRecursionCheckboxChangeHandler} disabled />
@@ -140,8 +148,11 @@ class View extends Element {
           <EliminateImplicitLeftRecursionCheckbox onChange={eliminateImplicitLeftRecursionCheckboxChangeHandler} checked />
           <span>Eliminate implicit left recursion</span>
           <br />
-          <EliminateOrphanedRulesCheckbox onChange={eliminateOrphanedRulesCheckboxChangeHandler} checked disabled />
+          <EliminateOrphanedRulesCheckbox onChange={eliminateOrphanedRulesCheckboxChangeHandler} checked />
           <span>Eliminate orphaned rules</span>
+          <br />
+          <ExcludingFirstRuleCheckbox onChange={excludingFirstRuleCheckboxChangeHandler} checked />
+          <span>excluding first rule</span>
         </SizeableElement>
         <MainVerticalSplitter />
         <div className="column">

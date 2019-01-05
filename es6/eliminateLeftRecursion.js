@@ -1,7 +1,7 @@
 'use strict';
 
 const eliminateCycles = require('./eliminateCycles'),
-      eliminateOrphanedRules = require('./eliminateCycles'),
+      eliminateOrphanedRules = require('./eliminateOrphanedRules'),
       eliminateImplicitLeftRecursion = require('./eliminateImplicitLeftRecursion');
 
 function eliminateLeftRecursion(rules) {

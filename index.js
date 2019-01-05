@@ -1,6 +1,9 @@
 'use strict';
 
 module.exports = {
-  detectLeftRecursion: require('./lib/detectLeftRecursion'),
+  eliminateCycles: require('./lib/eliminateCycles'),
+  eliminateOrphanedRules: require('./lib/eliminateOrphanedRules'),
+  eliminateImplicitLeftRecursion: require('./lib/eliminateImplicitLeftRecursion'),
+  eliminateImmediateLeftRecursion: require('./lib/eliminateImmediateLeftRecursion'),
   eliminateLeftRecursion: require('./lib/eliminateLeftRecursion')
 };
