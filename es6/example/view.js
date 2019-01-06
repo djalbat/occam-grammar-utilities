@@ -8,11 +8,9 @@ const easy = require('easy'),
 const exampleBNF = require('../example/bnf'),
       BNFTextarea = require('./textarea/bnf'),
       rulesUtilities = require('../utilities/rules'),
-      eliminateCycles = require('../eliminateCycles'),
       AdjustedBNFTextarea = require('./textarea/adjustedBNF'),
       MainVerticalSplitter = require('./verticalSplitter/main'),
       eliminateOrphanedRules = require('../eliminateOrphanedRules'),
-      EliminateCyclesCheckbox = require('./checkbox/eliminateCycles'),
       ExcludingFirstRuleCheckbox = require('./checkbox/excludingFirstRule'),
       EliminateOrphanedRulesCheckbox = require('./checkbox/eliminateOrphanedRules'),
       eliminateImplicitLeftRecursion = require('../eliminateImplicitLeftRecursion'),
@@ -40,18 +38,13 @@ class View extends Element {
 
   adjustBNF() {
     try {
-      const eliminateCyclesCheckboxChecked = this.isEliminateCyclesCheckboxChecked(),
-            excludingFirstRuleCheckboxChecked = this.isExcludingFirstRuleCheckboxChecked(),
+      const excludingFirstRuleCheckboxChecked = this.isExcludingFirstRuleCheckboxChecked(),
             eliminateOrphanedRulesCheckboxChecked = this.isEliminateOrphanedRulesCheckboxChecked(),
             eliminateImplicitLeftRecursionCheckboxChecked = this.isEliminateImplicitLeftRecursionCheckboxChecked(),
             eliminateImmediateLeftRecursionCheckboxChecked = this.isEliminateImmediateLeftRecursionCheckboxChecked(),
             excludingFirstRule = excludingFirstRuleCheckboxChecked;  ///
 
       let rules = this.getRules();
-
-      if (eliminateCyclesCheckboxChecked) {
-        rules = eliminateCycles(rules);
-      }
 
       if (eliminateImplicitLeftRecursionCheckboxChecked) {
         rules = eliminateImplicitLeftRecursion(rules);
@@ -83,10 +76,6 @@ class View extends Element {
     this.adjustBNF();
   }
 
-  eliminateCyclesCheckboxChangeHandler(checked) {
-    this.adjustBNF();
-  }
-
   excludingFirstRuleCheckboxChangeHandler(checked) {
     this.adjustBNF();
   }
@@ -105,8 +94,6 @@ class View extends Element {
 
   eliminateImplicitLeftRecursionCheckboxChangeHandler(checked) {
     if (checked) {
-      this.checkEliminateCyclesCheckbox(checked);
-
       this.checkEliminateOrphanedRulesCheckbox(checked);
 
       checked = false;
@@ -127,7 +114,6 @@ class View extends Element {
 
   childElements(properties) {
     const keyUpHandler = this.keyUpHandler.bind(this),
-          eliminateCyclesCheckboxChangeHandler = this.eliminateCyclesCheckboxChangeHandler.bind(this),
           excludingFirstRuleCheckboxChangeHandler = this.excludingFirstRuleCheckboxChangeHandler.bind(this),
           eliminateOrphanedRulesCheckboxChangeHandler = this.eliminateOrphanedRulesCheckboxChangeHandler.bind(this),
           eliminateImplicitLeftRecursionCheckboxChangeHandler = this.eliminateImplicitLeftRecursionCheckboxChangeHandler.bind(this),
@@ -139,9 +125,6 @@ class View extends Element {
         <SizeableElement>
           <h2>BNF</h2>
           <BNFTextarea onKeyUp={keyUpHandler} />
-          <EliminateCyclesCheckbox onChange={eliminateCyclesCheckboxChangeHandler} />
-          <span>Eliminate cycles</span>
-          <br />
           <EliminateImmediateLeftRecursionCheckbox onChange={eliminateImmediateLeftRecursionCheckboxChangeHandler} disabled />
           <span>Eliminate immediate left recursion</span>
           <br />

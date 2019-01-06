@@ -2,10 +2,11 @@
 
 function findRuleByName(name, rules) {
   const rule = rules.find(function(rule) {
-    const ruleName = rule.getName(),
-          found = (ruleName === name);
+    const ruleName = rule.getName();
 
-    return found;
+    if (ruleName === name) {
+      return true;
+    }
   }) || null; ///
 
   return rule;

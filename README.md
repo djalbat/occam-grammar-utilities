@@ -29,7 +29,7 @@ This package provides the means to eliminate left recursion, the achilles heel o
 
   term          ::=  [number] ;
 ```
-Here the first rule is immediately left recursive. When the parser encounters this rule it will immediately enter an infinite loop as it tries to evaluate the right hand side. In order to eliminate immediate left recursion, the first definition is discarded and the name of a new, right recursive rule `expression~` is appended to the remaining two definitions. The new, right recursive rule itself consists of two definitions, the first of which `operator expression expression~` is right recursive, the second of which consists of a single terminating part `ε` which permits the parser to continue when the first definition no longer results in a match:
+Here the first rule is immediately left recursive. When the parser encounters this rule it will enter an infinite loop as it tries to evaluate the right hand side. In order to eliminate immediate left recursion, the first definition is discarded and the name of a new, right recursive rule `expression~` is appended to the remaining two definitions. The new, right recursive rule itself consists of two definitions, the first of which `operator expression expression~` is right recursive, the second of which consists of a single terminating part `ε` which permits the parser to continue when the first definition no longer results in a match:
 
 ```
   expression    ::=  "(" expression ")" expression~
@@ -101,7 +101,7 @@ let rules = ...
 
 rules = eliminateLeftRecursion(rules);  ///
 ```
-Functions to eliminate immediate left recursion, implicit left recursion and orphaned rules are all exported. The main `eliminateLeftRecursion()` function relies on these.
+Functions to eliminate immediate left recursion, implicit left recursion and orphaned rules are also exported.
 
 ## Example
 
@@ -119,9 +119,7 @@ Consider the following BNF:
 ```
 The problem is that this could result in the derivation `Y -> Y ("c")` or, losing the convention that those parts of a definition that are never evaluated are shown in parenthesis, simply `Y -> Y "c"`.
 
-The algorithm is pre-emptive in the sense that it directly removes immediate left recursion where it finds it but otherwise leaves the BNF as-is.
-
-It works by identifying immediately left recursive definitions within in any rule, in this case the `Y "c"` rule, and rewriting the resultant rule as right recursive. A part referencing the new rule is then appended to any definition that is not immediately left recursive, thus:
+The algorithm is pre-emptive in the sense that it directly removes immediate left recursion where it finds it but otherwise leaves the BNF as-is.It works by identifying immediately left recursive definitions within in any rule, in this case the `Y "c"` rule, and rewriting the resultant rule as right recursive. A part referencing the new rule is then appended to any definition that is not immediately left recursive, thus:
 ```
   Y  ::=  "a" Y~ | "b" Y~;
 
@@ -150,7 +148,7 @@ This is not really a special case as such and is dealt with in a standard way:
   Y~ ::= "c" Y~ | "d" Y~ | ε ;
 ```
 
-One further point worth noting is that it is usual to show the left recursive definitions first. In practice, however, rules of the above form are just as likely and left recursive definitions should be eliminated regardless of where they appear. Again it is worth pointing out that theoretically the order of definitions in any rule should not matter or, to be more exact this time, the fact that the order of definitions does matter implies that the grammar is ambiguous, and should be corrected if possible.
+One further point worth noting is that it is usual to show the left recursive definitions first. In practice, however, rules of the above form are just as likely and left recursive definitions should be eliminated regardless of where they appear.
 
 ### Eliminating implicit left recursion
 
@@ -162,7 +160,7 @@ This algorithm is pre-emptive in the sense that it does not explicitly remove im
 
   Y  ::=  S "c" ;
 ```
-Here there is implicit left recursion in the form of the derivation `S -> X ("b") -> Y ("a") -> S ("c")`, abbreviated `S ->* S "c""`. Recall that the parts of the definitions shown in parenthesis represent those parts that are never evaluated.
+Here there is implicit left recursion in the derivation `S -> X ("b") -> Y ("a") -> S ("c")`, abbreviated `S ->* S "c"`. Recall that the parts of the definitions shown in parenthesis represent those parts that are never evaluated.
 
 In order to eliminate left recursion we disallow rules that reference previous ones. The first two rules are okay, however the third `Y` references the `S` rule and so must be changed. The `S` part of the rule's definition is therefore replaced with the right hand side of the `S` rule leading to the intermediate rule `Y  ::=  X "b" "c"`. This similarly needs to be changed, replacing the reference to the `X` rule with its right hand side to yield `Y  ::=  Y "a" "b" "c"`. Now this rule no longer references previous rules, however it is immediately left recursive. Eliminating this gives the completed set of rules:
 ```
@@ -195,15 +193,13 @@ Now the `W` rule is orphaned and since the algorithm works iteratively, this too
 ```
   S  ::=  X ;
 ```
-Now there are no more orphaned rules and the algorithm terminates. A simple boundedness argument proves that it always will do so. Note that there is a reference to an `X` rule that does not exist. This is a fault in the grammar, undoubtedly, but not within the scope of this algorithm to fix.
-
-Note that the first rule is technically an orphaned rule. However, the algorithm leaves it as-is by default.
+Now there are no more orphaned rules and the algorithm terminates. A simple boundedness argument proves that it always will do so. Note that there is a reference to an `X` rule that does not exist. This is a fault in the grammar, undoubtedly, but not within the scope of this algorithm to fix. Note that the first rule is technically an orphaned rule, however the algorithm leaves it as-is by default.
 
 ### Caveats
 
 None of the algorithms bar the algorithm to eliminate orphans is able to handle references to rules on the right hand side when modified or inside brackets. It is not always clear, at least not to the author, whether they always must. Certainly re-writing the algorithms to deal with such cases will add considerably to their complexity. Such an investigation is, again, left for future work.
 
-It is worth pointing out that algorithm to eliminate orphaned rules is at least more savvy. The following spurious adjustments to the rule names in the first definition results in the `rule` and `error` rules being orphaned in spite of the presence of numerous brackets and modifiers:
+It is worth pointing out that algorithm to eliminate orphaned rules is at least more savvy. The following spurious adjustments to the rule names in the first definition result in the `rule` and `error` rules being orphaned in spite of the presence of numerous brackets and modifiers:
 ```
   document  ::=  ( _rule+ | _error* )? ;
 
