@@ -44,7 +44,7 @@ class ImmediatelyLeftRecursiveRule extends Rule {
           ruleDefinitions = rule.getDefinitions(),
           someRuleDefinitionImmediatelyLeftRecursive = ruleDefinitions.some(function(ruleDefinition) {
             const definition = ruleDefinition, ///
-                immediatelyLeftRecursiveDefinition = ImmediatelyLeftRecursiveDefinition.fromDefinitionAndRuleName(definition, ruleName);
+                  immediatelyLeftRecursiveDefinition = ImmediatelyLeftRecursiveDefinition.fromDefinitionAndRuleName(definition, ruleName);
 
             if (immediatelyLeftRecursiveDefinition !== null) {
               return true;

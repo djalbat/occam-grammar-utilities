@@ -2,14 +2,17 @@
 
 const parsers = require('occam-parsers');
 
-const typeUtilities = require('../utilities/type');
-
-const { Parts } = parsers,
-      { typeFromPart, typesFromParts } = typeUtilities,
-      { ChoiceOfPartsPart, GroupOfPartsPart, OneOrMorePartsPart, OptionalPartPart, ZeroOrMorePartsPart, RuleNamePart } = Parts,
-      partTypes = typesFromParts([ OptionalPartPart, OneOrMorePartsPart, ZeroOrMorePartsPart ]),
-      partsTypes = typesFromParts([ GroupOfPartsPart, ChoiceOfPartsPart ]),
-      ruleNamePartType = typeFromPart(RuleNamePart);
+const { partTypes } = parsers,
+      { RuleNamePartType, OptionalPartPartType, GroupOfPartsPartType, ChoiceOfPartsPartType, OneOrMorePartsPartType, ZeroOrMorePartsPartType } = partTypes,
+      partPartTypes = [
+        OptionalPartPartType,
+        OneOrMorePartsPartType,
+        ZeroOrMorePartsPartType
+      ],
+      partsPartTypes = [
+        GroupOfPartsPartType,
+        ChoiceOfPartsPartType
+      ];
 
 function partRuleNamesFromParts(parts, partRuleNames) {
   parts.forEach(function(part) {
@@ -26,7 +29,7 @@ function isPartRuleNamePart(part) {
   if (partNonTerminalPart) {
     const nonTerminalPart = part,  ///
           type = nonTerminalPart.getType(),
-          typeRuleNamePartType = (type === ruleNamePartType),
+          typeRuleNamePartType = (type === RuleNamePartType),
           nonTerminalPartRuleNamePart = typeRuleNamePartType;  ///
 
     partRuleNamePart = nonTerminalPartRuleNamePart;  ///
@@ -56,17 +59,17 @@ function partRuleNamesFromPart(part, partRuleNames) {
     if (partNonTerminalPart) {
       const nonTerminalPart = part, ///
             type = nonTerminalPart.getType(),
-            typePartType = partTypes.includes(type),
-            typePartsType = partsTypes.includes(type);
+            typePartPartType = partPartTypes.includes(type),
+            typePartsPartType = partsPartTypes.includes(type);
 
       if (false) {
-
-      } else if (typePartType) {
+        ///
+      } else if (typePartPartType) {
         const partPart = nonTerminalPart, ///
               part = partPart.getPart();
 
         partRuleNamesFromPart(part, partRuleNames);
-      } else if (typePartsType) {
+      } else if (typePartsPartType) {
         const partsPart = nonTerminalPart, ///
               parts = partsPart.getParts();
 

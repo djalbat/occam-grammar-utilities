@@ -3,69 +3,77 @@
 const exampleBNF = `
 
 
-  rules                ::=  rule+ ;
+      document             ::=  ( rule | error )+ ;
 
-  rule                 ::=  ruleName "::=" definitions ";" ;
+      rule                 ::=  name "::=" definitions ";" ;
 
-  definitions          ::=  definition ( "|" definition )* ;
+      definitions          ::=  definition ( "|" definition )* ;
 
-  definition           ::=  part+ ;
+      definition           ::=  part+ ;
 
-  noWhitespacePart     ::=  "<NO_WHITESPACE>" part ;
+      noWhitespacePart     ::=  "<NO_WHITESPACE>" part ;
 
-  optionalPart         ::=  part<NO_WHITESPACE>"?" ;
+      optionalPart         ::=  part<NO_WHITESPACE>"?" ;
 
-  zeroOrMoreParts      ::=  part<NO_WHITESPACE>"*" ;
+      zeroOrMoreParts      ::=  part<NO_WHITESPACE>"*" ;
 
-  oneOrMoreParts       ::=  part<NO_WHITESPACE>"+" ;
+      oneOrMoreParts       ::=  part<NO_WHITESPACE>"+" ;
 
-  groupOfParts         ::=  "(" part part+ ")" ;
+      lookAheadPart        ::=  part<NO_WHITESPACE>"!" ;
 
-  choiceOfParts        ::=  "(" part ( "|" part )+ ")" ;
+      groupOfParts         ::=  "(" part part+ ")" ;
 
-  part                 ::=  noWhitespacePart
+      choiceOfParts        ::=  "(" part ( "|" part )+ ")" ;
 
-                         |  optionalPart
+      part                 ::=  noWhitespacePart
 
-                         |  zeroOrMoreParts
+                             |  optionalPart
 
-                         |  oneOrMoreParts
+                             |  zeroOrMoreParts
 
-                         |  groupOfParts
+                             |  oneOrMoreParts
 
-                         |  choiceOfParts
+                             |  lookAheadPart
 
-                         |  ruleName
+                             |  groupOfParts
 
-                         |  regularExpression
+                             |  choiceOfParts
 
-                         |  significantTokenType
+                             |  ruleName
 
-                         |  terminalSymbol
+                             |  regularExpression
 
-                         |  endOfLine
+                             |  significantTokenType
 
-                         |  epsilon
+                             |  terminalSymbol
 
-                         |  wildcard
+                             |  endOfLine
 
-                         ;
+                             |  epsilon
 
-  ruleName             ::=  [name] ;
+                             |  wildcard
 
-  regularExpression    ::=  [regularExpression] ;
+                             ;
 
-  significantTokenType ::=  [type] ;
+      name                 ::=  [name] ;
 
-  terminalSymbol       ::=  [stringLiteral] ;
+      ruleName             ::=  [name] ;
 
-  endOfLine            ::=  "<END_OF_LINE>" ;
+      regularExpression    ::=  [regular-expression] ;
 
-  epsilon              ::=  "ε" ;
+      significantTokenType ::=  [type] ;
 
-  wildcard             ::=  "." ;
+      terminalSymbol       ::=  [string-literal] ;
+
+      endOfLine            ::=  "<END_OF_LINE>" ;
+
+      epsilon              ::=  "ε" ;
+
+      wildcard             ::=  "." ;
+
+      error                ::=  . ;
 
 
- `;
+`;
 
 module.exports = exampleBNF;
