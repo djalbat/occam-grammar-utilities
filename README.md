@@ -119,7 +119,7 @@ Consider the following BNF:
 ```
 The problem is that this could result in the derivation `Y -> Y ("c")` or, losing the convention that those parts of a definition that are never evaluated are shown in parenthesis, simply `Y -> Y "c"`.
 
-The algorithm is pre-emptive in the sense that it directly removes immediate left recursion where it finds it but otherwise leaves the BNF as-is.It works by identifying immediately left recursive definitions within in any rule, in this case the `Y "c"` rule, and rewriting the resultant rule as right recursive. A part referencing the new rule is then appended to any definition that is not immediately left recursive, thus:
+The algorithm directly removes immediate left recursion where it finds it but otherwise leaves the BNF as-is. It works by identifying immediately left recursive definitions within in any rule, in this case the `Y "c"` rule, and rewriting the resultant rule as right recursive. A part referencing the new rule is then appended to any definition that is not immediately left recursive, thus:
 ```
   Y  ::=  "a" Y~ | "b" Y~;
 
@@ -127,7 +127,9 @@ The algorithm is pre-emptive in the sense that it directly removes immediate lef
 ```
 The `ε` definition here matches nothing and allows the right recursive rule to terminate.
 
-Two special cases deserve mention. The first is the lack of definitions other than immediately left recursive ones. Consider:
+A few special cases deserve mention.
+
+1. Lack of definitions other than immediately left recursive ones:
 ```
   Y  ::=  Y "c";
 ```
@@ -137,7 +139,8 @@ The algorithm will handle this case, returning the following:
 
   Y~ ::= "c" Y~ | ε ;
 ```
-Secondly, there may be more than one immediately left recursive definition:
+
+2. More than one immediately left recursive definition:
 ```
   Y  ::=  "a" | "b" | Y "c" | Y "d" ;
 ```
@@ -146,6 +149,17 @@ This is not really a special case as such and is dealt with in a standard way:
   Y  ::= "a" Y~ | "b" Y~ ;
 
   Y~ ::= "c" Y~ | "d" Y~ | ε ;
+```
+
+3. The left recursive definition is in fact cyclic:
+```
+  Y  ::=  "a" | "b" | Y ;
+```
+The algorithm fails to handle this case, generating a right recursive rule that is still cyclic:
+```
+  Y  ::= "a" Y~ | "b" Y~ ;
+
+  Y~ ::= Y~ | ε ;
 ```
 
 One further point worth noting is that it is usual to show the left recursive definitions first. In practice, however, rules of the above form are just as likely and left recursive definitions should be eliminated regardless of where they appear.
