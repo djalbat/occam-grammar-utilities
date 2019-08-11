@@ -3,6 +3,24 @@
 const exampleBNF = `
 
 
+
+  expression    ::=  expression operator expression
+
+                  |  "(" expression ")"
+
+                  |  term
+
+                  ;
+
+  operator      ::=  "+" | "-" | "/" | "*" ;
+
+  term          ::=  [number] ;
+`;
+
+module.exports = exampleBNF;
+
+/*
+
       document             ::=  ( rule | error )+ ;
 
       rule                 ::=  name "::=" definitions ";" ;
@@ -74,6 +92,4 @@ const exampleBNF = `
       error                ::=  . ;
 
 
-`;
-
-module.exports = exampleBNF;
+ */

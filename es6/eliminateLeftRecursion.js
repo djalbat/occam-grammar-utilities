@@ -1,12 +1,14 @@
 'use strict';
 
-const eliminateOrphanedRules = require('./eliminateOrphanedRules'),
-      eliminateImplicitLeftRecursion = require('./eliminateImplicitLeftRecursion');
+const ruleUtilities = require('./utilities/rule');
+
+const { eliminateLeftRecursionFromRule } = ruleUtilities;
 
 function eliminateLeftRecursion(rules) {
-  rules = eliminateImplicitLeftRecursion(rules);
+  rules.forEach((rule) => {
+    const ruleImmediatelyLeftRecursive = eliminateLeftRecursionFromRule(rule, rules);
 
-  rules = eliminateOrphanedRules(rules);
+  });
 
   return rules;
 }

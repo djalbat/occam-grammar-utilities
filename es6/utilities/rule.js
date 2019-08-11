@@ -1,17 +1,47 @@
 'use strict';
 
-function findRuleByName(name, rules) {
-  const rule = rules.find(function(rule) {
-    const ruleName = rule.getName();
+const arrayUtilities = require('../utilities/array'),
+      RightRecursiveRule = require('../rule/rightRecursive'),
+      definitionUtilities = require('../utilities/definition'),
+      RightRecursiveRuleNamePart = require('../part/rightRecursiveRuleName');
 
-    if (ruleName === name) {
+const { push, iterateWithDelete } = arrayUtilities,
+      { isDefinitionLeftRecursive } = definitionUtilities;
+
+function eliminateLeftRecursionFromRule(rule, rules) {
+  const name = rule.getName(),
+        ruleName = name,  ///
+        definitions = rule.getDefinitions(),
+        nonTerminalNode = rule.getNonTerminalNode(),
+        rightRecursiveRules = [];
+
+  let count = 1;
+
+  iterateWithDelete(definitions, (definition) => {
+    const definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName);
+
+    if (definitionLeftRecursive) {
+      const leftRecursiveDefinition = definition, ///
+            rightRecursiveRuleName = `${ruleName}${count++}~`,
+            rightRecursiveRule = RightRecursiveRule.fromLeftRecursiveDefinitionRightRecursiveRuleNameAndnonTerminalNode(leftRecursiveDefinition, rightRecursiveRuleName, nonTerminalNode);
+
+      rightRecursiveRules.push(rightRecursiveRule);
+
       return true;
     }
-  }) || null; ///
+  });
 
-  return rule;
+  definitions.forEach((definition) => {
+    rightRecursiveRules.forEach((rightRecursiveRule) => {
+      const rightRecursiveRuleNamePart = RightRecursiveRuleNamePart.fromRightRecursiveRule(rightRecursiveRule);
+
+      definition.addPart(rightRecursiveRuleNamePart);
+    });
+  });
+
+  push(rules, rightRecursiveRules);
 }
 
 module.exports = {
-  findRuleByName
+  eliminateLeftRecursionFromRule
 };
