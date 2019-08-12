@@ -7,11 +7,12 @@ const { arrayUtilities } = necessary;
 function iterateWithDelete(array, callback) {
   let arrayLength = array.length;
 
-  let index = 0;
+  let index = 0,
+      count = 0;
 
   while (index < arrayLength) {
     const element = array[index],
-          result = callback(element);
+          result = callback(element, count);
 
     if (result) {
       const start = index,
@@ -23,6 +24,8 @@ function iterateWithDelete(array, callback) {
     } else {
       index++;
     }
+
+    count++;
   }
 }
 

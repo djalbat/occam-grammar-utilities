@@ -5,8 +5,8 @@ const arrayUtilities = require('../utilities/array'),
       definitionUtilities = require('../utilities/definition'),
       NonLeftRecursiveDefinition = require('../definition/nonLeftRecursive');
 
-const { push, unshift, iterateWithDelete } = arrayUtilities,
-      { isDefinitionLeftRecursive } = definitionUtilities;
+const { isDefinitionLeftRecursive } = definitionUtilities,
+      { push, unshift, iterateWithDelete } = arrayUtilities;
 
 function eliminateLeftRecursionFromRule(rule, rules) {
   const name = rule.getName(),
@@ -15,11 +15,11 @@ function eliminateLeftRecursionFromRule(rule, rules) {
         nonTerminalNode = rule.getNonTerminalNode(),
         rightRecursiveRules = [];
 
-  iterateWithDelete(definitions, (definition) => {
+  iterateWithDelete(definitions, (definition, count) => {
     const definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName);
 
     if (definitionLeftRecursive) {
-      const rightRecursiveRule = RightRecursiveRule.fromRuleNameDefinitionAndNonTerminalNode(ruleName, definition, nonTerminalNode);
+      const rightRecursiveRule = RightRecursiveRule.fromRuleNameDefinitionAndNonTerminalNodeAndCount(ruleName, definition, nonTerminalNode, count);
 
       rightRecursiveRules.push(rightRecursiveRule);
 

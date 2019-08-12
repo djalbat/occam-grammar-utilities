@@ -8,8 +8,6 @@ const arrayUtilities = require('../utilities/array'),
 const { Rule } = parsers,
       { first } = arrayUtilities;
 
-let count = 1;  ///
-
 class RightRecursiveRule extends Rule {
   hasNoWhitespace() {
     const firstDefinition = first(this.definitions),
@@ -19,9 +17,9 @@ class RightRecursiveRule extends Rule {
     return noWhitespace;
   }
 
-  static fromRuleNameDefinitionAndNonTerminalNode(ruleName, definition, nonTerminalNode) {
+  static fromRuleNameDefinitionAndNonTerminalNodeAndCount(ruleName, definition, nonTerminalNode, count) {
     const rightRecursiveDefinition = RightRecursiveDefinition.fromDefinition(definition),
-          name = `${ruleName}${count++}~`,
+          name = `${ruleName}${count + 1}~`,
           definitions = [
             rightRecursiveDefinition
           ],
