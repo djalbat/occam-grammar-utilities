@@ -18,8 +18,8 @@ class RightRecursiveDefinition extends Definition {
     return this.noWhitespace;
   }
 
-  static fromLeftRecursiveDefinition(leftRecursiveDefinition) {
-    let parts = leftRecursiveDefinition.getParts();
+  static fromDefinition(definition) {
+    let parts = definition.getParts();
 
     parts = cloneParts(parts);  ///
 

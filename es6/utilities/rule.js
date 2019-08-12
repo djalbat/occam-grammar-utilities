@@ -15,15 +15,11 @@ function eliminateLeftRecursionFromRule(rule, rules) {
         nonTerminalNode = rule.getNonTerminalNode(),
         rightRecursiveRules = [];
 
-  let count = 1;
-
   iterateWithDelete(definitions, (definition) => {
     const definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName);
 
     if (definitionLeftRecursive) {
-      const leftRecursiveDefinition = definition, ///
-            rightRecursiveRuleName = `${ruleName}${count++}~`,
-            rightRecursiveRule = RightRecursiveRule.fromLeftRecursiveDefinitionRightRecursiveRuleNameAndnonTerminalNode(leftRecursiveDefinition, rightRecursiveRuleName, nonTerminalNode);
+      const rightRecursiveRule = RightRecursiveRule.fromRuleNameDefinitionAndNonTerminalNode(ruleName, definition, nonTerminalNode);
 
       rightRecursiveRules.push(rightRecursiveRule);
 
@@ -31,15 +27,17 @@ function eliminateLeftRecursionFromRule(rule, rules) {
     }
   });
 
-  rightRecursiveRules.forEach((rightRecursiveRule) => {
-    const nonLeftRecursiveDefinitions = definitions.map((definition) => {
+  const nonLeftRecursiveDefinitions = [];
+
+  definitions.forEach((definition) => {
+    rightRecursiveRules.forEach((rightRecursiveRule) => {
       const nonLeftRecursiveDefinition = NonLeftRecursiveDefinition.fromDefinitionAndRightRecursiveRule(definition, rightRecursiveRule);
 
-      return nonLeftRecursiveDefinition;
+      nonLeftRecursiveDefinitions.push(nonLeftRecursiveDefinition);
     });
-
-    unshift(definitions, nonLeftRecursiveDefinitions);
   });
+
+  unshift(definitions, nonLeftRecursiveDefinitions);
 
   push(rules, rightRecursiveRules);
 }

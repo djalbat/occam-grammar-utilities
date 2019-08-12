@@ -2,22 +2,15 @@
 
 const exampleBNF = `
 
+  expression    ::=  <NO_WHITESPACE>expression "+" expression
 
-
-
-
-  expression    ::=  <NO_WHITESPACE>expression operator expression
+                  |  expression "-" expression
 
                   |  "(" expression ")"
 
                   |  term
 
                   ;
-
-  operator      ::=  "+" | "/" ;
-
-  term          ::=  [number] ;
-
 
 
 `;
