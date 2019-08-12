@@ -2,19 +2,26 @@
 
 const parsers = require('occam-parsers');
 
-const EpsilonDefinition = require('../definition/epsilon'),
+const arrayUtilities = require('../utilities/array'),
       RightRecursiveDefinition = require('../definition/rightRecursive');
 
-const { Rule } = parsers;
+const { Rule } = parsers,
+      { first } = arrayUtilities;
 
 class RightRecursiveRule extends Rule {
+  hasNoWhitespace() {
+    const firstDefinition = first(this.definitions),
+          rightRecursiveDefinition = firstDefinition, ///
+          noWhitespace = rightRecursiveDefinition.hasNoWhitespace();
+
+    return noWhitespace;
+  }
+
   static fromLeftRecursiveDefinitionRightRecursiveRuleNameAndnonTerminalNode(leftRecursiveDefinition, rightRecursiveRuleName, nonTerminalNode) {
     const name = rightRecursiveRuleName,  ///
-          rightRecursiveDefinition = RightRecursiveDefinition.fromLeftRecursiveDefinitionAndRightRecursiveRuleName(leftRecursiveDefinition, rightRecursiveRuleName),
-          epsilonDefinition = EpsilonDefinition.fromNothing(),
+          rightRecursiveDefinition = RightRecursiveDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition),
           definitions = [
-            rightRecursiveDefinition,
-            epsilonDefinition
+            rightRecursiveDefinition
           ],
           rightRecursiveRule = new RightRecursiveRule(name, definitions, nonTerminalNode);
 

@@ -4,7 +4,9 @@ const exampleBNF = `
 
 
 
-  expression    ::=  expression operator expression
+
+
+  expression    ::=  <NO_WHITESPACE>expression operator expression
 
                   |  "(" expression ")"
 
@@ -12,9 +14,12 @@ const exampleBNF = `
 
                   ;
 
-  operator      ::=  "+" | "-" | "/" | "*" ;
+  operator      ::=  "+" | "/" ;
 
   term          ::=  [number] ;
+
+
+
 `;
 
 module.exports = exampleBNF;

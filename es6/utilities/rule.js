@@ -3,9 +3,9 @@
 const arrayUtilities = require('../utilities/array'),
       RightRecursiveRule = require('../rule/rightRecursive'),
       definitionUtilities = require('../utilities/definition'),
-      RightRecursiveRuleNamePart = require('../part/rightRecursiveRuleName');
+      NonLeftRecursiveDefinition = require('../definition/nonLeftRecursive');
 
-const { push, iterateWithDelete } = arrayUtilities,
+const { push, unshift, iterateWithDelete } = arrayUtilities,
       { isDefinitionLeftRecursive } = definitionUtilities;
 
 function eliminateLeftRecursionFromRule(rule, rules) {
@@ -31,12 +31,14 @@ function eliminateLeftRecursionFromRule(rule, rules) {
     }
   });
 
-  definitions.forEach((definition) => {
-    rightRecursiveRules.forEach((rightRecursiveRule) => {
-      const rightRecursiveRuleNamePart = RightRecursiveRuleNamePart.fromRightRecursiveRule(rightRecursiveRule);
+  rightRecursiveRules.forEach((rightRecursiveRule) => {
+    const nonLeftRecursiveDefinitions = definitions.map((definition) => {
+      const nonLeftRecursiveDefinition = NonLeftRecursiveDefinition.fromDefinitionAndRightRecursiveRule(definition, rightRecursiveRule);
 
-      definition.addPart(rightRecursiveRuleNamePart);
+      return nonLeftRecursiveDefinition;
     });
+
+    unshift(definitions, nonLeftRecursiveDefinitions);
   });
 
   push(rules, rightRecursiveRules);
