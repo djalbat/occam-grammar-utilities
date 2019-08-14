@@ -7,7 +7,7 @@ const partUtilities = require('../utilities/part'),
 
 const { Definition } = parsers,
       { cloneParts } = partsUtilities,
-      { ruleNamePartFromRuleName } = partUtilities;
+      { optionalRuleNamePartPartFromRuleName } = partUtilities;
 
 class RightRecursiveDefinition extends Definition {
   constructor(parts, noWhitespace, lookAhead) {
@@ -31,9 +31,9 @@ class RightRecursiveDefinition extends Definition {
 
     parts = cloneParts(parts);  ///
 
-    const rightRecursiveRuleNamePart = ruleNamePartFromRuleName(rightRecursiveRuleName);
+    const optionalRightRecursiveRuleNamePart = optionalRuleNamePartPartFromRuleName(rightRecursiveRuleName);
 
-    parts.push(rightRecursiveRuleNamePart);
+    parts.push(optionalRightRecursiveRuleNamePart);
 
     const firstPart = parts.shift(),
           lookAhead = firstPart.isLookAhead(),

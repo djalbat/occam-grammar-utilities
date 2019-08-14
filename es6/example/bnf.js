@@ -2,15 +2,18 @@
 
 const exampleBNF = `
 
-  expression    ::=  expression! operator 
+
+
+
+  expression    ::=  <NO_WHITESPACE>expression "+" expression
+
+                  |  expression "/" expression
 
                   |  "(" expression ")"
 
                   |  term
 
                   ;
-
-
 
 `;
 
@@ -18,18 +21,10 @@ module.exports = exampleBNF;
 
 /*
 
-  L    ::=  L! "c"
-
-         |  "a"
-
-         |  "a" "b"
-
-         ;
 
 
-  expression    ::=  <NO_WHITESPACE>expression "+" expression
 
-                  |  expression! "/" expression
+  expression    ::=  expression! operator expression
 
                   |  "(" expression ")"
 
@@ -39,16 +34,7 @@ module.exports = exampleBNF;
 
 
 
-  expression    ::=  <NO_WHITESPACE>expression "+" expression
-
-                  |  expression! "/" expression
-
-                  |  "(" expression ")"
-
-                  |  term
-
-                  ;
-
+  expression1~ ::=
 
       document             ::=  ( rule | error )+ ;
 

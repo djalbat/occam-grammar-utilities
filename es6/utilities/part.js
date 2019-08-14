@@ -3,8 +3,8 @@
 const parsers = require('occam-parsers');
 
 const { Parts, partTypes } = parsers,
-      { RuleNamePart } = Parts,
-      { RuleNamePartType } = partTypes;
+      { RuleNamePartType } = partTypes,
+      { OptionalPartPart, RuleNamePart } = Parts;
 
 function isPartRuleNamePart(part) {
   let partRuleNamePart = false;
@@ -29,7 +29,15 @@ function ruleNamePartFromRuleName(ruleName, noWhitespace = false) {
   return ruleNamePart;
 }
 
+function optionalRuleNamePartPartFromRuleName(ruleName) {
+  const ruleNamePart = ruleNamePartFromRuleName(ruleName),
+        optionalRuleNamePartPart = new OptionalPartPart(ruleNamePart);
+
+  return optionalRuleNamePartPart;
+}
+
 module.exports = {
   isPartRuleNamePart,
-  ruleNamePartFromRuleName
+  ruleNamePartFromRuleName,
+  optionalRuleNamePartPartFromRuleName
 };
