@@ -9,6 +9,14 @@ const { Rule } = parsers,
       { first } = arrayUtilities;
 
 class RightRecursiveRule extends Rule {
+  isLookAhead() {
+    const firstDefinition = first(this.definitions),
+          rightRecursiveDefinition = firstDefinition, ///
+          lookAhead = rightRecursiveDefinition.isLookAhead();
+
+    return lookAhead;
+  }
+
   hasNoWhitespace() {
     const firstDefinition = first(this.definitions),
           rightRecursiveDefinition = firstDefinition, ///
@@ -18,8 +26,9 @@ class RightRecursiveRule extends Rule {
   }
 
   static fromRuleNameDefinitionAndNonTerminalNodeAndCount(ruleName, definition, nonTerminalNode, count) {
-    const rightRecursiveDefinition = RightRecursiveDefinition.fromDefinition(definition),
-          name = `${ruleName}${count + 1}~`,
+    const rightRecursiveRuleName = `${ruleName}${count + 1}~`,
+          rightRecursiveDefinition = RightRecursiveDefinition.fromRightRecursiveRuleNameAndDefinition(rightRecursiveRuleName, definition),
+          name = rightRecursiveRuleName,  ///
           definitions = [
             rightRecursiveDefinition
           ],
