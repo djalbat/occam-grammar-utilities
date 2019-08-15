@@ -1,33 +1,38 @@
 'use strict';
 
-const arrayUtilities = require('../utilities/array'),
+const partUtilities = require('../utilities/part'),
+      arrayUtilities = require('../utilities/array'),
       NonRecursiveRule = require('../rule/nonRecursive'),
       RightRecursiveRule = require('../rule/rightRecursive'),
       definitionUtilities = require('../utilities/definition'),
       NonRecursiveDefinition = require('../definition/nonRecursive'),
       RecursiveRuleNameDefinition = require('../definition/recursiveRuleName');
 
-const { push, iterateWithDelete } = arrayUtilities,
-      { isDefinitionLeftRecursive } = definitionUtilities;
+const { first } = arrayUtilities,
+      { isPartRuleNamePart } = partUtilities,
+      { push, iterateWithDelete } = arrayUtilities,
+      { leftRecursiveRuleNameFromLeftRecursiveDefinition } = definitionUtilities;
 
 function eliminateLeftRecursionFromRule(rule, rules) {
-  const ruleLeftRecursive = isRuleLeftRecursive(rule);
+  const ruleName = rule.getName(),
+        ruleLeftRecursive = isRuleLeftRecursive(rule, rules, ruleName);
 
   if (!ruleLeftRecursive) {
     return;
   }
 
-  const name = rule.getName(),
-        ruleName = name,  ///
-        definitions = rule.getDefinitions(),
+  const definitions = rule.getDefinitions(),
         nonTerminalNode = rule.getNonTerminalNode(),
         rightRecursiveRules = [];
 
   iterateWithDelete(definitions, (definition, count) => {
-    const definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName);
+    const definitionLeftRecursive = isDefinitionLeftRecursive(definition, rules, ruleName);
 
     if (definitionLeftRecursive) {
-      const rightRecursiveRule = RightRecursiveRule.fromRuleNameDefinitionAndNonTerminalNodeAndCount(ruleName, definition, nonTerminalNode, count);
+      const leftRecursiveDefinition = definition, ///
+            leftRecursiveRuleName = leftRecursiveRuleNameFromLeftRecursiveDefinition(leftRecursiveDefinition),
+            leftRecursiveRule = findRuleByName(leftRecursiveRuleName, rules),
+            rightRecursiveRule = RightRecursiveRule.fromLeftRecursiveRuleAndNonTerminalNode(leftRecursiveRule, nonTerminalNode, count);
 
       rightRecursiveRules.push(rightRecursiveRule);
 
@@ -57,11 +62,36 @@ module.exports = {
   eliminateLeftRecursionFromRule
 };
 
-function isRuleLeftRecursive(rule) {
-  const ruleName = rule.getName(),
-        definitions = rule.getDefinitions(),
+function isDefinitionLeftRecursive(definition, rules, ruleName) {
+  let definitionLeftRecursive = false;
+
+  const parts = definition.getParts(),
+        firstPart = first(parts),
+        firstPartRuleNamePart = isPartRuleNamePart(firstPart);
+
+  if (firstPartRuleNamePart) {
+    const ruleNamePart = firstPart, ///
+          ruleNamePartRuleName = ruleNamePart.getRuleName(),
+          ruleNamePartRuleNameRuleName = (ruleNamePartRuleName === ruleName);
+
+    if (ruleNamePartRuleNameRuleName) {
+      definitionLeftRecursive = true;
+    } else {
+      const name = ruleNamePartRuleName,  ///
+            rule = findRuleByName(name, rules),
+            ruleLeftRecursive = isRuleLeftRecursive(rule, rules, ruleName);
+
+      definitionLeftRecursive = ruleLeftRecursive;  ///
+    }
+  }
+
+  return definitionLeftRecursive;
+}
+
+function isRuleLeftRecursive(rule, rules, ruleName) {
+  const definitions = rule.getDefinitions(),
         ruleLeftRecursive = definitions.some((definition) => {
-          const definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName);
+          const definitionLeftRecursive = isDefinitionLeftRecursive(definition, rules, ruleName);
 
           if (definitionLeftRecursive) {
             return true;
@@ -69,4 +99,16 @@ function isRuleLeftRecursive(rule) {
         });
 
   return ruleLeftRecursive;
+}
+
+function findRuleByName(name, rules) {
+  const rule = rules.find(function(rule) {
+    const ruleName = rule.getName();
+
+    if (ruleName === name) {
+      return true;
+    }
+  }) || null; ///
+
+  return rule;
 }

@@ -2,6 +2,33 @@
 
 const exampleBNF = `
 
+  expression          ::=  compoundExpression
+
+                        |  "(" expression ")"
+
+                        |  term
+
+                        ;
+
+  compoundExpression  ::=  expression "+" expression ;
+
+  term                ::= /\\d+/ ;
+
+
+`;
+
+module.exports = exampleBNF;
+
+/*
+
+
+
+
+  L    ::=  L! "c" | "a" | "a" "b" ;
+
+
+
+
   expression    ::=  <NO_WHITESPACE>expression "+" expression
 
                   |  expression! "/" expression
@@ -15,25 +42,10 @@ const exampleBNF = `
 
   term          ::= naturalNumber ;
 
-  naturalNumber ::= /\\d+/ ;
-
-`;
-
-module.exports = exampleBNF;
-
-/*
+  naturalNumber ::= /\d+/ ;
 
 
 
-  expression    ::=  <NO_WHITESPACE>expression "+" expression
-
-                  |  expression! "/" expression
-
-                  |  "(" expression ")"
-
-                  |  term
-
-                  ;
 
 
 

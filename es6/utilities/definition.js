@@ -1,29 +1,20 @@
 'use strict';
 
-const partUtilities = require('../utilities/part'),
-      arrayUtilities = require('../utilities/array');
+const necessary = require('necessary');
 
-const { first } = arrayUtilities,
-      { isPartRuleNamePart } = partUtilities;
+const { arrayUtilities } = necessary,
+      { first } = arrayUtilities;
 
-function isDefinitionLeftRecursive(definition, ruleName) {
-  let definitionLeftRecursive = false;
-
-  const parts = definition.getParts(),
+function leftRecursiveRuleNameFromLeftRecursiveDefinition(leftRecursiveDefinition) {
+  const parts = leftRecursiveDefinition.getParts(),
         firstPart = first(parts),
-        firstPartRuleNamePart = isPartRuleNamePart(firstPart);
+        ruleNamePart = firstPart,
+        ruleName = ruleNamePart.getRuleName(),
+        leftRecursiveRuleName = ruleName; ///
 
-  if (firstPartRuleNamePart) {
-    const ruleNamePart = firstPart, ///
-          ruleNamePartRuleName = ruleNamePart.getRuleName(),
-          ruleNamePartRuleNameRuleName = (ruleNamePartRuleName === ruleName);
-
-    definitionLeftRecursive = ruleNamePartRuleNameRuleName; ///
-  }
-
-  return definitionLeftRecursive;
+  return leftRecursiveRuleName;
 }
 
 module.exports = {
-  isDefinitionLeftRecursive
+  leftRecursiveRuleNameFromLeftRecursiveDefinition
 };

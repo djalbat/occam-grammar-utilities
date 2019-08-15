@@ -25,9 +25,11 @@ class RightRecursiveRule extends Rule {
     return noWhitespace;
   }
 
-  static fromRuleNameDefinitionAndNonTerminalNodeAndCount(ruleName, definition, nonTerminalNode, count) {
-    const rightRecursiveRuleName = `${ruleName}${count + 1}~`,
-          rightRecursiveDefinition = RightRecursiveDefinition.fromRightRecursiveRuleNameAndDefinition(rightRecursiveRuleName, definition),
+  static fromLeftRecursiveRuleAndNonTerminalNode(leftRecursiveRule, nonTerminalNode, count) {
+    const leftRecursiveRuleName = leftRecursiveRule.getName(),
+          rightRecursiveRuleName = `${leftRecursiveRuleName}${count + 1}~`,
+          leftRecursiveDefinition = definitionFromRule(leftRecursiveRule),
+          rightRecursiveDefinition = RightRecursiveDefinition.fromRightRecursiveRuleNameAndLeftRecursiveDefinition(rightRecursiveRuleName, leftRecursiveDefinition),
           name = rightRecursiveRuleName,  ///
           definitions = [
             rightRecursiveDefinition
@@ -39,3 +41,11 @@ class RightRecursiveRule extends Rule {
 }
 
 module.exports = RightRecursiveRule;
+
+function definitionFromRule(rule) {
+  const definitions = rule.getDefinitions(),
+        firstDefinition = first(definitions),
+        definition = firstDefinition; ///
+
+  return definition;
+}
