@@ -56,6 +56,12 @@ function eliminateLeftRecursionFromRule(rule, rules) {
   rules.push(nonRecursiveRule);
 
   push(rules, rightRecursiveRules);
+
+  rightRecursiveRules.forEach((rightRecursiveRule) => {
+    const leftRecursiveRuleName = rightRecursiveRule.getLeftRecursiveRuleName();
+
+    deleteRuleByName(leftRecursiveRuleName, rules);
+  })
 }
 
 module.exports = {
@@ -99,6 +105,15 @@ function isRuleLeftRecursive(rule, rules, ruleName) {
         });
 
   return ruleLeftRecursive;
+}
+
+function deleteRuleByName(name, rules) {
+  const rule = findRuleByName(name, rules),
+        index = rules.indexOf(rule),
+        start = index,  ///
+        deleteCount = 1;
+
+  rules.splice(start, deleteCount);
 }
 
 function findRuleByName(name, rules) {

@@ -9,20 +9,32 @@ const { Rule } = parsers,
       { first } = arrayUtilities;
 
 class RightRecursiveRule extends Rule {
-  isLookAhead() {
-    const firstDefinition = first(this.definitions),
-          rightRecursiveDefinition = firstDefinition, ///
-          lookAhead = rightRecursiveDefinition.isLookAhead();
+  constructor(name, definitions, nonTerminalNode, leftRecursiveRule, noWhitespace, lookAhead) {
+    super(name, definitions, nonTerminalNode);
 
-    return lookAhead;
+    this.leftRecursiveRule = leftRecursiveRule;
+
+    this.noWhitespace = noWhitespace;
+
+    this.lookAhead = lookAhead;
+  }
+
+  getLeftRecursiveRuleName() {
+    const leftRecursiveRuleName = this.leftRecursiveRule.getName();
+
+    return leftRecursiveRuleName;
+  }
+
+  getLeftRecursiveRule() {
+    return this.leftRecursiveRule;
+  }
+
+  isLookAhead() {
+    return this.lookAhead;
   }
 
   hasNoWhitespace() {
-    const firstDefinition = first(this.definitions),
-          rightRecursiveDefinition = firstDefinition, ///
-          noWhitespace = rightRecursiveDefinition.hasNoWhitespace();
-
-    return noWhitespace;
+    return this.noWhitespace;
   }
 
   static fromLeftRecursiveRuleAndNonTerminalNode(leftRecursiveRule, nonTerminalNode, count) {
@@ -30,11 +42,13 @@ class RightRecursiveRule extends Rule {
           rightRecursiveRuleName = `${leftRecursiveRuleName}${count + 1}~`,
           leftRecursiveDefinition = definitionFromRule(leftRecursiveRule),
           rightRecursiveDefinition = RightRecursiveDefinition.fromRightRecursiveRuleNameAndLeftRecursiveDefinition(rightRecursiveRuleName, leftRecursiveDefinition),
+          noWhitespace = rightRecursiveDefinition.hasNoWhitespace(),
+          lookAhead = rightRecursiveDefinition.isLookAhead(),
           name = rightRecursiveRuleName,  ///
           definitions = [
             rightRecursiveDefinition
           ],
-          rightRecursiveRule = new RightRecursiveRule(name, definitions, nonTerminalNode);
+          rightRecursiveRule = new RightRecursiveRule(name, definitions, nonTerminalNode, leftRecursiveRule, noWhitespace, lookAhead);
 
     return rightRecursiveRule;
   }
