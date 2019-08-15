@@ -39,6 +39,7 @@ h2 {
   font-size: 1.25rem;
 }
 
+input[type=text],
 textarea {
   width: 100%;
   font-size: 1rem;
@@ -56,9 +57,24 @@ textarea.error {
 
 textarea.bnf {
   margin-bottom: 0.5rem;
-  height: 32rem;
+  height: 20rem;
 }
 
 textarea.adjusted-bnf {
-  height: 48rem;
+  height: 24rem;
+}
+
+textarea.content {
+  height: 16rem;
+}
+
+textarea.parse-tree {
+  overflow-wrap: normal;
+  font-size: 0.75rem;
+  margin-bottom: 1rem;
+  height: 24rem;
+}
+
+input.lexical-pattern {
+  margin-bottom: 0.5rem;
 }

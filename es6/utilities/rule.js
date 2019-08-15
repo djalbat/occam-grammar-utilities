@@ -11,6 +11,12 @@ const { push, iterateWithDelete } = arrayUtilities,
       { isDefinitionLeftRecursive } = definitionUtilities;
 
 function eliminateLeftRecursionFromRule(rule, rules) {
+  const ruleLeftRecursive = isRuleLeftRecursive(rule);
+
+  if (!ruleLeftRecursive) {
+    return;
+  }
+
   const name = rule.getName(),
         ruleName = name,  ///
         definitions = rule.getDefinitions(),
@@ -50,3 +56,17 @@ function eliminateLeftRecursionFromRule(rule, rules) {
 module.exports = {
   eliminateLeftRecursionFromRule
 };
+
+function isRuleLeftRecursive(rule) {
+  const ruleName = rule.getName(),
+        definitions = rule.getDefinitions(),
+        ruleLeftRecursive = definitions.some((definition) => {
+          const definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName);
+
+          if (definitionLeftRecursive) {
+            return true;
+          }
+        });
+
+  return ruleLeftRecursive;
+}

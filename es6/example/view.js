@@ -8,20 +8,49 @@ const easy = require('easy'),
 const exampleBNF = require('../example/bnf'),
       BNFTextarea = require('./textarea/bnf'),
       rulesUtilities = require('../utilities/rules'),
+      exampleContent = require('../example/content'),
+      ContentTextarea = require('./textarea/content'),
+      ParseTreeTextarea = require('./textarea/parseTree'),
+      LexicalPatternInput = require('./input/lexicalPattern'),
       AdjustedBNFTextarea = require('./textarea/adjustedBNF'),
       MainVerticalSplitter = require('./verticalSplitter/main'),
+      exampleLexicalPattern = require('../example/lexicalPattern'),
       eliminateLeftRecursion = require('../eliminateLeftRecursion');
 
 const { Element } = easy,
-      { BNFLexer } = lexers,
-      { BNFParser } = parsers,
       { rulesAsString } = rulesUtilities,
-      { SizeableElement } = easyLayout;
+      { SizeableElement } = easyLayout,
+      { BasicLexer, BNFLexer } = lexers,
+      { BasicParser, BNFParser } = parsers;
 
 const bnfLexer = BNFLexer.fromNothing(),
       bnfParser = BNFParser.fromNothing();
 
 class View extends Element {
+  getParseTree(adjustedBNF) {
+    let parseTree = null;
+
+    const lexicalPattern = this.getLexicalPattern(),
+          unassigned = '^.*$',
+          custom = lexicalPattern,  ///
+          entries = [
+            { custom },
+            { unassigned }
+          ],
+          bnf = adjustedBNF,  ///
+          basicLexer = BasicLexer.fromEntries(entries),
+          basicParser = BasicParser.fromBNF(bnf),
+          content = this.getContent(),
+          tokens = basicLexer.tokenise(content),
+          node = basicParser.parse(tokens);
+
+    if (node !== null) {
+      parseTree = node.asParseTree(tokens);
+    }
+
+    return parseTree;
+  }
+
   keyUpHandler() {
     try {
       const bnf = this.getBNF(),
@@ -40,10 +69,16 @@ class View extends Element {
       this.hideError();
 
       this.setAdjustedBNF(adjustedBNF);
+
+      const parseTree = this.getParseTree(adjustedBNF);
+
+      this.setParseTree(parseTree);
     } catch (error) {
       this.showError();
 
       this.clearAdjustedBNF();
+
+      this.clearParseTree();
     }
   }
 
@@ -54,13 +89,19 @@ class View extends Element {
 
       <div className="columns">
         <SizeableElement>
+          <h2>Lexical pattern</h2>
+          <LexicalPatternInput onKeyUp={keyUpHandler} />
           <h2>BNF</h2>
           <BNFTextarea onKeyUp={keyUpHandler} />
+          <h2>Adjusted BNF</h2>
+          <AdjustedBNFTextarea />
         </SizeableElement>
         <MainVerticalSplitter />
         <div className="column">
-          <h2>Adjusted BNF</h2>
-          <AdjustedBNFTextarea />
+          <h2>Parse tree</h2>
+          <ParseTreeTextarea />
+          <h2>Content</h2>
+          <ContentTextarea onKeyUp={keyUpHandler} />
         </div>
       </div>
 
@@ -70,9 +111,15 @@ class View extends Element {
   initialise() {
     this.assignContext();
 
-    const bnf = exampleBNF; ///
+    const bnf = exampleBNF, ///
+          content = exampleContent, ///
+          lexicalPattern = exampleLexicalPattern; ///
 
     this.setBNF(bnf);
+
+    this.setContent(content);
+
+    this.setLexicalPattern(lexicalPattern);
 
     this.keyUpHandler();
   }

@@ -2,18 +2,20 @@
 
 const exampleBNF = `
 
-
-
-
   expression    ::=  <NO_WHITESPACE>expression "+" expression
 
-                  |  expression "/" expression
+                  |  expression! "/" expression
 
                   |  "(" expression ")"
 
                   |  term
 
                   ;
+
+
+  term          ::= naturalNumber ;
+
+  naturalNumber ::= /\\d+/ ;
 
 `;
 
@@ -23,8 +25,9 @@ module.exports = exampleBNF;
 
 
 
+  expression    ::=  <NO_WHITESPACE>expression "+" expression
 
-  expression    ::=  expression! operator expression
+                  |  expression! "/" expression
 
                   |  "(" expression ")"
 
