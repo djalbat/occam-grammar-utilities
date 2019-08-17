@@ -1,9 +1,30 @@
 'use strict';
 
-const necessary = require('necessary');
+const partUtilities = require('../utilities/part'),
+      arrayUtilities = require('../utilities/array');
 
-const { arrayUtilities } = necessary,
-      { first } = arrayUtilities;
+const { isPartRuleNamePart } = partUtilities;
+
+const { first } = arrayUtilities;
+
+function isDefinitionImmediatelyLeftRecursive(definition, ruleName) {
+  let definitionImmediatelyLeftRecursive = false;
+
+  const parts = definition.getParts(),
+        firstPart = first(parts),
+        firstPartRuleNamePart = isPartRuleNamePart(firstPart);
+
+  if (firstPartRuleNamePart) {
+    const ruleNamePart = firstPart, ///
+          ruleNamePartRuleName = ruleNamePart.getRuleName();
+
+    if (ruleNamePartRuleName === ruleName) {
+      definitionImmediatelyLeftRecursive = true;
+    }
+  }
+
+  return definitionImmediatelyLeftRecursive;
+}
 
 function leftRecursiveRuleNameFromLeftRecursiveDefinition(leftRecursiveDefinition) {
   const parts = leftRecursiveDefinition.getParts(),
@@ -16,5 +37,6 @@ function leftRecursiveRuleNameFromLeftRecursiveDefinition(leftRecursiveDefinitio
 }
 
 module.exports = {
+  isDefinitionImmediatelyLeftRecursive,
   leftRecursiveRuleNameFromLeftRecursiveDefinition
 };

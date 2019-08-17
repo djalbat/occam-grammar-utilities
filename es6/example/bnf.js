@@ -2,24 +2,66 @@
 
 const exampleBNF = `
 
-  expression          ::=  compoundExpression
+  expression            ::= compoundExpression
 
-                        |  "(" expression ")"
+                          | "(" expression ")"
 
-                        |  term
+                          | term
 
-                        ;
+                          ;
 
-  compoundExpression  ::=  expression "+" expression ;
+  compoundExpression    ::= expression "+" expression
 
-  term                ::= /\\d+/ ;
+                          | "xyz"
 
+                          ;
 
+  term                  ::= /\\d+/ ;
 `;
 
 module.exports = exampleBNF;
 
 /*
+
+
+  expression            ::=  compoundExpression
+
+                          |  expression_
+
+                          ;
+
+  compoundExpression    ::=  compoundExpression_ compoundExpression1~
+
+                          |  compoundExpression_
+
+                          ;
+
+  compoundExpression_   ::=  expression_
+
+                          |  "xyz"
+
+                          ;
+
+  compoundExpression1~  ::=  "+" expression compoundExpression1~? ;
+
+  term                  ::= /\d+/ ;
+
+  expression_           ::=  "(" expression ")"
+
+                          |  term
+
+                          ;
+
+
+
+
+
+
+
+
+
+
+
 
 
 

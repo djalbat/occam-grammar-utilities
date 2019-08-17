@@ -18,6 +18,20 @@ class NonRecursiveDefinition extends Definition {
 
     return nonRecursiveDefinition;
   }
+
+  static fromNonRecursiveRuleAndRightRecursiveRule(nonRecursiveRule, rightRecursiveRule) {
+    const nonRecursiveRuleName = nonRecursiveRule.getName(),
+          rightRecursiveRuleName = rightRecursiveRule.getName(),
+          nonRecursiveRuleNamePart = ruleNamePartFromRuleName(nonRecursiveRuleName),
+          rightRecursiveRuleNamePart = ruleNamePartFromRuleName(rightRecursiveRuleName),
+          parts = [
+            nonRecursiveRuleNamePart,
+            rightRecursiveRuleNamePart
+          ],
+          nonRecursiveDefinition = new NonRecursiveDefinition(parts);
+
+    return nonRecursiveDefinition;
+  }
 }
 
 module.exports = NonRecursiveDefinition;

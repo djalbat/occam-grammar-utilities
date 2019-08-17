@@ -1,14 +1,13 @@
 'use strict';
 
-const leftRecursionUtilities = require('./utilities/leftRecursion');
+const recursionUtilities = require('./utilities/recursion');
 
-const { eliminateLeftRecursionFromRule } = leftRecursionUtilities;
+const { eliminateLeftRecursionFromRule } = recursionUtilities;
 
 function eliminateLeftRecursion(rules) {
-  rules.forEach((rule) => {
-    const ruleImmediatelyLeftRecursive = eliminateLeftRecursionFromRule(rule, rules);
+  const ruleName = null;  ///
 
-  });
+  rules.forEach((rule) => eliminateLeftRecursionFromRule(rule, ruleName, rules));
 
   return rules;
 }

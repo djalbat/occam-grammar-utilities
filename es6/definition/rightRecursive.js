@@ -26,8 +26,8 @@ class RightRecursiveDefinition extends Definition {
     return this.lookAhead;
   }
 
-  static fromRightRecursiveRuleNameAndLeftRecursiveDefinition(rightRecursiveRuleName, leftRecursiveDefinition) {
-    let parts = leftRecursiveDefinition.getParts();
+  static fromRightRecursiveRuleNameAndImmediatelyLeftRecursiveDefinition(rightRecursiveRuleName, immediatelyLeftRecursiveDefinition) {
+    let parts = immediatelyLeftRecursiveDefinition.getParts();
 
     parts = cloneParts(parts);  ///
 

@@ -12,7 +12,7 @@
   "dependencies": {
     "necessary": "^1.7.5",
     "occam-lexers": "^9.2.1",
-    "occam-parsers": "^9.2.20",
+    "occam-parsers": "^9.2.21",
     "occam-tarjan": "^2.0.12"
   },
   "devDependencies": {

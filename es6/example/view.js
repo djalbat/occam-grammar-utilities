@@ -60,7 +60,7 @@ class View extends Element {
 
       rules = bnfParser.rulesFromTokens(tokens);
 
-      rules = eliminateLeftRecursion(rules);
+      eliminateLeftRecursion(rules);
 
       const multiLine = true,
             rulesString = rulesAsString(rules, multiLine),
@@ -69,6 +69,8 @@ class View extends Element {
       this.hideError();
 
       this.setAdjustedBNF(adjustedBNF);
+
+      return;
 
       const parseTree = this.getParseTree(adjustedBNF);
 
