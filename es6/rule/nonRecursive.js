@@ -2,14 +2,31 @@
 
 const parsers = require('occam-parsers');
 
-const { Rule } = parsers;
+const ruleNameUtilities = require('../utilities/ruleName'),
+      NonRecursiveRuleNameDefinition = require('../definition/nonRecursiveRuleName');
+
+const { Rule } = parsers,
+      { nonRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
 class NonRecursiveRule extends Rule {
-  static fromRuleAndNonRecursiveDefinitions(rule, nonRecursiveDefinitions) {
-    const nonRecursiveRuleName = nonRecursiveRuleNameFromRule(rule),
-          name = nonRecursiveRuleName,  ///
-          definitions = nonRecursiveDefinitions,  ///
-          NonTerminalNone = rule.getNonTerminalNode(),
+  static fromRuleRuleNameAndNonRecursiveDefinitions(rule, ruleName, nonRecursiveDefinitions) {
+    let name = rule.getName();
+
+    const definitions = nonRecursiveDefinitions;  ///
+
+    if (name !== ruleName) {
+      const nonRecursiveRuleNameDefinition = NonRecursiveRuleNameDefinition.fromRuleName(ruleName);
+
+      definitions.unshift(nonRecursiveRuleNameDefinition);
+    }
+
+    ruleName = rule.getName();
+
+    const nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName);
+
+    name = nonRecursiveRuleName;  ///
+
+    const NonTerminalNone = rule.getNonTerminalNode(),
           nonRecursiveRule = new NonRecursiveRule(name, definitions, NonTerminalNone);
 
     return nonRecursiveRule;
@@ -17,10 +34,3 @@ class NonRecursiveRule extends Rule {
 }
 
 module.exports = NonRecursiveRule;
-
-function nonRecursiveRuleNameFromRule(rule) {
-  const ruleName = rule.getName(),
-        nonRecursiveRuleName = `${ruleName}_`;
-
-  return nonRecursiveRuleName;
-}

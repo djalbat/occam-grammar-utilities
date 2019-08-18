@@ -52,7 +52,7 @@ class View extends Element {
   }
 
   keyUpHandler() {
-    // try {
+    try {
       const bnf = this.getBNF(),
             tokens = bnfLexer.tokensFromBNF(bnf);
 
@@ -70,18 +70,16 @@ class View extends Element {
 
       this.setAdjustedBNF(adjustedBNF);
 
-      return;
-
       const parseTree = this.getParseTree(adjustedBNF);
 
       this.setParseTree(parseTree);
-    // } catch (error) {
-    //   this.showError();
-    //
-    //   this.clearAdjustedBNF();
-    //
-    //   this.clearParseTree();
-    // }
+    } catch (error) {
+      this.showError();
+
+      this.clearAdjustedBNF();
+
+      this.clearParseTree();
+    }
   }
 
   childElements(properties) {

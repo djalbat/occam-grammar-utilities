@@ -10,7 +10,7 @@ const exampleBNF = `
 
                           ;
 
-  compoundExpression    ::= compoundExpression "+" expression
+  compoundExpression    ::= expression "+" expression
 
                           | "xyz"
 

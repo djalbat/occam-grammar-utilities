@@ -28,7 +28,7 @@ function eliminateLeftRecursionFromRule(rule, ruleName, rules) {
         nonRecursiveDefinitions = [];
 
   definitions.forEach((definition, count) => {
-    const recursiveDefinition = eliminateLeftRecursionFromDefinition(definition, ruleName, rules, count);
+    const recursiveDefinition = eliminateLeftRecursionFromDefinition(definition, ruleName, rule, rules, count);
 
     if (recursiveDefinition === null) {
       const nonRecursiveDefinition = definition;  ///
@@ -43,7 +43,7 @@ function eliminateLeftRecursionFromRule(rule, ruleName, rules) {
         ruleRecursive = (recursiveDefinitionsLength > 0);
 
   if (ruleRecursive) {
-    const nonRecursiveRule = NonRecursiveRule.fromRuleAndNonRecursiveDefinitions(rule, nonRecursiveDefinitions),
+    const nonRecursiveRule = NonRecursiveRule.fromRuleRuleNameAndNonRecursiveDefinitions(rule, ruleName, nonRecursiveDefinitions),
           nonRecursiveRuleNameDefinition = NonRecursiveRuleNameDefinition.fromNonRecursiveRule(nonRecursiveRule),
           definitions = [
               ...recursiveDefinitions,
@@ -62,21 +62,7 @@ module.exports = {
   eliminateLeftRecursionFromRule
 };
 
-function eliminateLeftRecursionFromDefinition(definition, ruleName, rules, count) {
-  let recursiveDefinition = null;
-
-  if (recursiveDefinition === null) {
-    recursiveDefinition = eliminateImmediateLeftRecursionFromDefinition(definition, ruleName, rules, count);
-  }
-
-  if (recursiveDefinition === null) {
-    recursiveDefinition = eliminateImplicitLeftRecursionFromDefinition(definition, ruleName, rules);
-  }
-
-  return recursiveDefinition;
-}
-
-function eliminateImmediateLeftRecursionFromDefinition(definition, ruleName, rules, count) {
+function eliminateLeftRecursionFromDefinition(definition, ruleName, rule, rules, count) {
   let recursiveDefinition = null;
 
   const parts = definition.getParts(),
@@ -84,94 +70,52 @@ function eliminateImmediateLeftRecursionFromDefinition(definition, ruleName, rul
         firstPartRuleNamePart = isPartRuleNamePart(firstPart);
 
   if (firstPartRuleNamePart) {
-    const ruleNamePart = firstPart, ///
-          ruleNamePartRuleName = ruleNamePart.getRuleName(),
-          ruleNamePartRuleNameRuleName = (ruleNamePartRuleName === ruleName);
+    const ruleNamePart = firstPart; ///
 
-    if (ruleNamePartRuleNameRuleName) {
-      const rightRecursiveRule = RightRecursiveRule.fromDefinitionAndRuleName(definition, ruleName, rules, count);
+    if (recursiveDefinition === null) {
+      recursiveDefinition = eliminateImmediateLeftRecursionFromDefinition(ruleNamePart, definition, ruleName, rule, rules, count);
+    }
 
-      recursiveDefinition = RecursiveDefinition.fromRuleName(ruleName, count);
-
-      rules.push(rightRecursiveRule);
+    if (recursiveDefinition === null) {
+      recursiveDefinition = eliminateImplicitLeftRecursionFromDefinition(ruleNamePart, definition, ruleName, rules);
     }
   }
 
   return recursiveDefinition;
 }
 
-function eliminateImplicitLeftRecursionFromDefinition(definition, ruleName, rules) {
+function eliminateImmediateLeftRecursionFromDefinition(ruleNamePart, definition, ruleName, rule, rules, count) {
   let recursiveDefinition = null;
 
-  ///
+  const ruleNamePartRuleName = ruleNamePart.getRuleName(),
+        ruleNamePartRuleNameRuleName = (ruleNamePartRuleName === ruleName);
+
+  if (ruleNamePartRuleNameRuleName) {
+    const ruleName = rule.getName(),
+          rightRecursiveRule = RightRecursiveRule.fromDefinitionAndRuleName(definition, ruleName, rules, count);
+
+    recursiveDefinition = RecursiveDefinition.fromRuleName(ruleName, count);
+
+    rules.push(rightRecursiveRule);
+  }
 
   return recursiveDefinition;
 }
 
-// function eliminateLeftRecursionFromDefinition(definition, ruleName, rules) {
-//   let definitionLeftRecursive = false;
-//
-//   const parts = definition.getParts(),
-//         firstPart = first(parts),
-//         firstPartRuleNamePart = isPartRuleNamePart(firstPart);
-//
-//   if (firstPartRuleNamePart) {
-//     const ruleNamePart = firstPart, ///
-//           ruleNamePartRuleName = ruleNamePart.getRuleName(),
-//           ruleNamePartRuleNameRuleName = (ruleNamePartRuleName === ruleName);
-//
-//     if (ruleNamePartRuleNameRuleName) {
-//       definitionLeftRecursive = true;
-//     } else {
-//       const name = ruleNamePartRuleName,  ///
-//             rule = findRuleByName(name, rules);
-//
-//       if (rule !== null) {
-//         const ruleLeftRecursive = eliminateLeftRecursionFromRule(rule, ruleName, rules);
-//
-//         definitionLeftRecursive = ruleLeftRecursive; ///
-//       }
-//     }
-//   }
-//
-//   return definitionLeftRecursive;
-// }
-//
-// function isDefinitionLeftRecursive(definition, ruleName, rules) {
-//   let definitionLeftRecursive = false;
-//
-//   const parts = definition.getParts(),
-//         firstPart = first(parts),
-//         firstPartRuleNamePart = isPartRuleNamePart(firstPart);
-//
-//   if (firstPartRuleNamePart) {
-//     const ruleNamePart = firstPart, ///
-//           ruleNamePartRuleName = ruleNamePart.getRuleName(),
-//           ruleNamePartRuleNameRuleName = (ruleNamePartRuleName === ruleName);
-//
-//     if (ruleNamePartRuleNameRuleName) {
-//       definitionLeftRecursive = true;
-//     } else {
-//       const name = ruleNamePartRuleName,  ///
-//             rule = findRuleByName(name, rules),
-//             ruleLeftRecursive = isRuleLeftRecursive(rule, ruleName, rules);
-//
-//       definitionLeftRecursive = ruleLeftRecursive;  ///
-//     }
-//   }
-//
-//   return definitionLeftRecursive;
-// }
-//
-// function isRuleLeftRecursive(rule, ruleName, rules) {
-//   const definitions = rule.getDefinitions(),
-//         ruleLeftRecursive = definitions.some((definition) => {
-//           const definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName, rules);
-//
-//           if (definitionLeftRecursive) {
-//             return true;
-//           }
-//         });
-//
-//   return ruleLeftRecursive;
-// }
+function eliminateImplicitLeftRecursionFromDefinition(ruleNamePart, definition, ruleName, rules) {
+  let recursiveDefinition = null;
+
+  const ruleNamePartRuleName = ruleNamePart.getRuleName(),
+        name = ruleNamePartRuleName,  ///
+        rule = findRuleByName(name, rules);
+
+  if (rule !== null) {
+    const ruleRecursive = eliminateLeftRecursionFromRule(rule, ruleName, rules);
+
+    if (ruleRecursive) {
+      recursiveDefinition = definition; ///
+    }
+  }
+
+  return recursiveDefinition;
+}
