@@ -5,9 +5,9 @@ const recursionUtilities = require('./utilities/recursion');
 const { eliminateLeftRecursionFromRule } = recursionUtilities;
 
 function eliminateLeftRecursion(rules) {
-  const ruleName = null;  ///
+  const ruleNames = [];  ///
 
-  rules.forEach((rule) => eliminateLeftRecursionFromRule(rule, ruleName, rules));
+  rules.forEach((rule) => eliminateLeftRecursionFromRule(rule, ruleNames, rules));
 
   return rules;
 }

@@ -1,6 +1,69 @@
 'use strict';
 
 const exampleBNF = `
+  expression            ::= compoundExpression
+
+                          | "(" expression ")"
+
+                          | term
+
+                          ;
+
+  compoundExpression    ::= sumOfExpressions
+
+                          | "xyz"
+
+                          ;
+
+  sumOfExpressions      ::= expression "+" expression
+
+                          | "abc"
+
+                          ;
+
+  term                  ::= /\\d+/ ;
+`;
+
+module.exports = exampleBNF;
+
+/*
+
+
+  expression            ::= compoundExpression
+
+                          | "(" expression ")"
+
+                          | term
+
+                          ;
+
+  compoundExpression    ::= sumOfExpressions
+
+                          | "xyz"
+
+                          ;
+
+  sumOfExpressions      ::= expression "+" expression
+
+                          | "abc"
+
+                          ;
+
+  term                  ::= /\d+/ ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   expression            ::= compoundExpression
 
@@ -16,13 +79,7 @@ const exampleBNF = `
 
                           ;
 
-  term                  ::= /\\d+/ ;
-`;
-
-module.exports = exampleBNF;
-
-/*
-
+  term                  ::= /\d+/ ;
 
   expression            ::=  compoundExpression
 
