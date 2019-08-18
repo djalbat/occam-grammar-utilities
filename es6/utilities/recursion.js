@@ -1,22 +1,18 @@
 'use strict';
 
+const necessary = require('necessary');
+
 const partUtilities = require('../utilities/part'),
       ruleUtilities = require('../utilities/rule'),
-      arrayUtilities = require('../utilities/array'),
       NonRecursiveRule = require('../rule/nonRecursive'),
       RightRecursiveRule = require('../rule/rightRecursive'),
       RecursiveDefinition = require('../definition/recursive'),
-      definitionUtilities = require('../utilities/definition'),
-      NonRecursiveDefinition = require('../definition/nonRecursive'),
-      RightRecursiveDefinition = require('../definition/rightRecursive'),
-      RecursiveRuleNameDefinition = require('../definition/recursiveRuleName'),
       NonRecursiveRuleNameDefinition = require('../definition/nonRecursiveRuleName');
 
-const { first } = arrayUtilities,
-      { isPartRuleNamePart } = partUtilities,
-      { push, filter, iterateWithReplace } = arrayUtilities,
-      { isDefinitionImmediatelyLeftRecursive } = definitionUtilities,
-      { findRuleByName, deleteRuleByName, isRuleImmediatelyLeftRecursive } = ruleUtilities;
+const { arrayUtilities } = necessary,
+      { first } = arrayUtilities,
+      { findRuleByName } = ruleUtilities,
+      { isPartRuleNamePart } = partUtilities;
 
 function eliminateLeftRecursionFromRule(rule, ruleName, rules) {
   if (ruleName === null) {
