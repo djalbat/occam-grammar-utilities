@@ -2,9 +2,13 @@
 
 const parsers = require('occam-parsers');
 
-const RightRecursiveDefinition = require('../definition/rightRecursive');
+const ruleUtilities = require('../utilities/rule'),
+      ruleNameUtilities = require('../utilities/ruleName'),
+      RightRecursiveDefinition = require('../definition/rightRecursive');
 
-const { Rule } = parsers;
+const { Rule } = parsers,
+      { findRuleByName } = ruleUtilities,
+      { rightRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
 class RightRecursiveRule extends Rule {
   constructor(name, definitions, nonTerminalNode, noWhitespace, lookAhead) {
@@ -23,18 +27,23 @@ class RightRecursiveRule extends Rule {
     return this.noWhitespace;
   }
 
-  static fromRuleAndImmediatelyLeftRecursiveDefinition(rule, immediatelyLeftRecursiveDefinition, count) {
-    const ruleName = rule.getName(),
-          rightRecursiveRuleName = `${ruleName}${count + 1}~`,
-          rightRecursiveDefinition = RightRecursiveDefinition.fromRightRecursiveRuleNameAndImmediatelyLeftRecursiveDefinition(rightRecursiveRuleName, immediatelyLeftRecursiveDefinition),
-          noWhitespace = rightRecursiveDefinition.hasNoWhitespace(),
-          lookAhead = rightRecursiveDefinition.isLookAhead(),
-          name = rightRecursiveRuleName,  ///
-          definitions = [
+  static fromDefinitionAndRuleName(definition, ruleName, rules, count) {
+    const rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName, count),
+          rightRecursiveDefinition = RightRecursiveDefinition.fromDefinitionAndRuleName(definition, ruleName, count);
+
+    let name = ruleName;  ///
+
+    const rule = findRuleByName(name, rules);
+
+    name = rightRecursiveRuleName;  ///
+
+    const definitions = [
             rightRecursiveDefinition
           ],
-          nonTerminalNode = rule.getNonTerminalNode(),
-          rightRecursiveRule = new RightRecursiveRule(name, definitions, nonTerminalNode, noWhitespace, lookAhead);
+          NonTerminalNode = rule.getNonTerminalNode(),
+          noWhitespace = rightRecursiveDefinition.hasNoWhitespace(),
+          lookAhead = rightRecursiveDefinition.isLookAhead(),
+          rightRecursiveRule = new RightRecursiveRule(name, definitions, NonTerminalNode, noWhitespace, lookAhead);
 
     return rightRecursiveRule;
   }

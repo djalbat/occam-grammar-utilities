@@ -57,11 +57,11 @@ textarea.error {
 
 textarea.bnf {
   margin-bottom: 0.5rem;
-  height: 24rem;
+  height: 18rem;
 }
 
 textarea.adjusted-bnf {
-  height: 24rem;
+  height: 28rem;
 }
 
 textarea.content {
