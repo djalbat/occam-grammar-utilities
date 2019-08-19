@@ -5,7 +5,7 @@ const parsers = require('occam-parsers'),
 
 const IntermediateNode = require('../node/intermediate'),
       ruleNameUtilities = require('../utilities/ruleName'),
-      NonRecursiveRuleNameDefinition = require('../definition/nonRecursiveRuleName');
+      NonRecursiveDefinition = require('../definition/nonRecursive');
 
 const { Rule } = parsers,
       { arrayUtilities } = necessary,
@@ -20,9 +20,10 @@ class NonRecursiveRule extends Rule {
     if (ruleNamesLength > 1) {
       const secondLastRuleName = secondLast(ruleNames),
             ruleName = secondLastRuleName,  ///
-            nonRecursiveRuleNameDefinition = NonRecursiveRuleNameDefinition.fromRuleName(ruleName);
+            nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
+            nonRecursiveDefinition = NonRecursiveDefinition.fromNonRecursiveRuleName(nonRecursiveRuleName);
 
-      definitions.unshift(nonRecursiveRuleNameDefinition);
+      definitions.unshift(nonRecursiveDefinition);
     }
 
     const lastRuleName = last(ruleNames),

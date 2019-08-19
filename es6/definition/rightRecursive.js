@@ -2,11 +2,9 @@
 
 const parsers = require('occam-parsers');
 
-const partUtilities = require('../utilities/part'),
-      ruleNameUtilities = require('../utilities/ruleName');
+const partUtilities = require('../utilities/part');
 
 const { Definition } = parsers,
-      { rightRecursiveRuleNameFromRuleName } = ruleNameUtilities,
       { optionalRuleNamePartPartFromRuleName } = partUtilities;
 
 class RightRecursiveDefinition extends Definition {
@@ -26,9 +24,8 @@ class RightRecursiveDefinition extends Definition {
     return this.lookAhead;
   }
 
-  static fromDefinitionAndRuleName(definition, ruleName, count) {
+  static fromDefinitionAndRightRecursiveRuleName(definition, rightRecursiveRuleName) {
     const parts = definition.getParts(),
-          rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName, count),
           optionalRightRecursiveRuleNamePart = optionalRuleNamePartPartFromRuleName(rightRecursiveRuleName);
 
     parts.push(optionalRightRecursiveRuleNamePart);

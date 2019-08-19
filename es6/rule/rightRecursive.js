@@ -3,11 +3,9 @@
 const parsers = require('occam-parsers');
 
 const IntermediateNode = require('../node/intermediate'),
-      ruleNameUtilities = require('../utilities/ruleName'),
       RightRecursiveDefinition = require('../definition/rightRecursive');
 
-const { Rule } = parsers,
-      { rightRecursiveRuleNameFromRuleName } = ruleNameUtilities;
+const { Rule } = parsers;
 
 class RightRecursiveRule extends Rule {
   constructor(name, definitions, nonTerminalNode, noWhitespace, lookAhead) {
@@ -26,9 +24,8 @@ class RightRecursiveRule extends Rule {
     return this.noWhitespace;
   }
 
-  static fromDefinitionAndRuleName(definition, ruleName, rules, count) {
-    const rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName, count),
-          rightRecursiveDefinition = RightRecursiveDefinition.fromDefinitionAndRuleName(definition, ruleName, count),
+  static fromDefinitionAndRightRecursiveRuleName(definition, rightRecursiveRuleName) {
+    const rightRecursiveDefinition = RightRecursiveDefinition.fromDefinitionAndRightRecursiveRuleName(definition, rightRecursiveRuleName),
           name = rightRecursiveRuleName,  ///
           definitions = [
             rightRecursiveDefinition

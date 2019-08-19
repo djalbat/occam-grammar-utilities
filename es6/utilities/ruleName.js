@@ -1,13 +1,15 @@
 'use strict';
 
+let count = 0;
+
 function nonRecursiveRuleNameFromRuleName(ruleName) {
   const nonRecursiveRuleName = `${ruleName}_`;
 
   return nonRecursiveRuleName;
 }
 
-function rightRecursiveRuleNameFromRuleName(ruleName, count) {
-  const rightRecursiveRuleName = `${ruleName}${count + 1}~`;
+function rightRecursiveRuleNameFromRuleName(ruleName) {
+  const rightRecursiveRuleName = `${ruleName}${++count}~`;
 
   return rightRecursiveRuleName;
 }
