@@ -38,7 +38,7 @@ function eliminateLeftRecursionFromRule(rule, ruleNames, rules) {
         ruleRecursive = (recursiveDefinitionsLength > 0);
 
   if (ruleRecursive) {
-    const nonRecursiveRule = NonRecursiveRule.fromRuleRuleNamesAndNonRecursiveDefinitions(rule, ruleNames, nonRecursiveDefinitions),
+    const nonRecursiveRule = NonRecursiveRule.fromNonRecursiveDefinitionsAndRuleNames(nonRecursiveDefinitions, ruleNames),
           nonRecursiveRuleNameDefinition = NonRecursiveRuleNameDefinition.fromNonRecursiveRule(nonRecursiveRule),
           definitions = [
               ...recursiveDefinitions,
