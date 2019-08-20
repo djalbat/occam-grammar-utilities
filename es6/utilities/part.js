@@ -23,8 +23,8 @@ function isPartRuleNamePart(part) {
   return partRuleNamePart;
 }
 
-function ruleNamePartFromRuleName(ruleName, noWhitespace = false) {
-  const ruleNamePart = new RuleNamePart(ruleName, noWhitespace);
+function ruleNamePartFromRuleName(ruleName, noWhitespace = false, lookAhead = false) {
+  const ruleNamePart = new RuleNamePart(ruleName, noWhitespace, lookAhead);
 
   return ruleNamePart;
 }
