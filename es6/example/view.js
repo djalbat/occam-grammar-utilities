@@ -7,6 +7,7 @@ const easy = require('easy'),
 
 const exampleBNF = require('../example/bnf'),
       BNFTextarea = require('./textarea/bnf'),
+      nodeUtilities = require('../utilities/node'),
       rulesUtilities = require('../utilities/rules'),
       exampleContent = require('../example/content'),
       ContentTextarea = require('./textarea/content'),
@@ -15,19 +16,21 @@ const exampleBNF = require('../example/bnf'),
       AdjustedBNFTextarea = require('./textarea/adjustedBNF'),
       MainVerticalSplitter = require('./verticalSplitter/main'),
       exampleLexicalPattern = require('../example/lexicalPattern'),
-      eliminateLeftRecursion = require('../eliminateLeftRecursion');
+      eliminateLeftRecursion = require('../eliminateLeftRecursion'),
+      RemoveIntermediateNodesCheckbox = require('./checkbox/removeIntermediateNodes');
 
 const { Element } = easy,
       { rulesAsString } = rulesUtilities,
       { SizeableElement } = easyLayout,
       { BasicLexer, BNFLexer } = lexers,
+      { removeIntermediateNodes } = nodeUtilities,
       { BasicParser, BNFParser } = parsers;
 
 const bnfLexer = BNFLexer.fromNothing(),
       bnfParser = BNFParser.fromNothing();
 
 class View extends Element {
-  getParseTree(adjustedBNF) {
+  getParseTree(rules) {
     let parseTree = null;
 
     const lexicalPattern = this.getLexicalPattern(),
@@ -37,22 +40,27 @@ class View extends Element {
             { custom },
             { unassigned }
           ],
-          bnf = adjustedBNF,  ///
           basicLexer = BasicLexer.fromEntries(entries),
-          basicParser = BasicParser.fromBNF(bnf),
+          basicParser = new BasicParser(rules),
           content = this.getContent(),
           tokens = basicLexer.tokenise(content),
           node = basicParser.parse(tokens);
 
     if (node !== null) {
+      const removeIntermediateNodesCheckboxChecked = this.isRemoveIntermediateNodesCheckboxChecked();
+
+      if (removeIntermediateNodesCheckboxChecked) {
+        removeIntermediateNodes(node);
+      }
+
       parseTree = node.asParseTree(tokens);
     }
 
     return parseTree;
   }
 
-  keyUpHandler() {
-    try {
+  changeHandler() {
+    // try {
       const bnf = this.getBNF(),
             tokens = bnfLexer.tokensFromBNF(bnf);
 
@@ -70,20 +78,25 @@ class View extends Element {
 
       this.setAdjustedBNF(adjustedBNF);
 
-      const parseTree = this.getParseTree(adjustedBNF);
+      const parseTree = this.getParseTree(rules);
 
       this.setParseTree(parseTree);
-    } catch (error) {
-      this.showError();
+    // } catch (error) {
+    //   this.showError();
+    //
+    //   this.clearAdjustedBNF();
+    //
+    //   this.clearParseTree();
+    // }
+  }
 
-      this.clearAdjustedBNF();
-
-      this.clearParseTree();
-    }
+  keyUpHandler() {
+    this.changeHandler();
   }
 
   childElements(properties) {
-    const keyUpHandler = this.keyUpHandler.bind(this);
+    const keyUpHandler = this.keyUpHandler.bind(this),
+          changeHandler = this.changeHandler.bind(this);
 
     return (
 
@@ -100,6 +113,10 @@ class View extends Element {
         <div className="column">
           <h2>Parse tree</h2>
           <ParseTreeTextarea />
+          <div>
+            <RemoveIntermediateNodesCheckbox onChange={changeHandler} />
+            <span>Remove intermediate nodes</span>
+          </div>
           <h2>Content</h2>
           <ContentTextarea onKeyUp={keyUpHandler} />
         </div>
