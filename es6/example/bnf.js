@@ -1,6 +1,78 @@
 'use strict';
 
 const exampleBNF = `
+
+
+
+
+  expression              ::= compoundExpression
+
+                            | "(" expression ")"
+
+                            | term
+
+                            ;
+
+  compoundExpression      ::= expression operator expression
+
+                            | "xyz"
+
+                            ;
+
+  operator                ::= "+" | "-" | "/" | "*" ;
+
+  term                    ::= /\\d+/ ;
+
+
+
+
+`;
+
+module.exports = exampleBNF;
+
+/*
+
+
+
+
+
+
+
+  expression              ::= compoundExpression
+
+                            | parenthesisedExpression
+
+                            | term
+
+                            ;
+
+  parenthesisedExpression ::= "(" expression ")" ;
+
+  compoundExpression      ::= sumOfExpressions
+
+                            | expression "/" expression
+
+                            | "xyz"
+
+                            ;
+
+  sumOfExpressions        ::= expression "+" expression
+
+                            | "abc"
+
+                            ;
+
+  term                    ::= /\d+/ ;
+
+
+
+
+
+
+
+
+
+
   expression    ::=  <NO_WHITESPACE>expression "+" expression
 
                   |  expression! "/" expression
@@ -14,12 +86,10 @@ const exampleBNF = `
 
   term          ::= naturalNumber ;
 
-  naturalNumber ::= /\\d+/ ;         
-`;
+  naturalNumber ::= /\d+/ ;
 
-module.exports = exampleBNF;
 
-/*
+
 
 
 
@@ -30,6 +100,45 @@ module.exports = exampleBNF;
          | "a" "b"
 
          ;
+
+
+
+
+
+  L    ::= L! "c"
+
+         | "a"
+
+         | "a" "b"
+
+         ;
+
+
+
+
+
+
+
+
+
+  expression              ::= compoundExpression
+
+                            | "(" expression ")"
+
+                            | term
+
+                            ;
+
+  compoundExpression      ::= expression operator expression
+
+                            | "xyz"
+
+                            ;
+
+  operator                ::= "+" | "-" | "/" | "*" ;
+
+  term                    ::= /\d+/ ;
+
 
 
 
@@ -60,7 +169,6 @@ module.exports = exampleBNF;
                             ;
 
   term                    ::= /\d+/ ;
-
 
 
 

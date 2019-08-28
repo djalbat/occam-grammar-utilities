@@ -23,8 +23,8 @@ const { Element } = easy,
       { rulesAsString } = rulesUtilities,
       { SizeableElement } = easyLayout,
       { BasicLexer, BNFLexer } = lexers,
-      { removeIntermediateNodes } = nodeUtilities,
-      { BasicParser, BNFParser } = parsers;
+      { BasicParser, BNFParser } = parsers,
+      { removeIntermediateNodes } = nodeUtilities;
 
 const bnfLexer = BNFLexer.fromNothing(),
       bnfParser = BNFParser.fromNothing();
