@@ -54,17 +54,21 @@ function eliminateLeftRecursionFromRule(rule, ruleNames, rules) {
         ruleRecursive = (recursiveDefinitionsLength > 0);
 
   if (ruleRecursive) {
-    const nonRecursiveRule = NonRecursiveRule.fromNonRecursiveDefinitionsAndRuleNames(nonRecursiveDefinitions, ruleNames),
-          nonRecursiveRuleName = nonRecursiveRule.getName(),
-          nonRecursiveDefinition = NonRecursiveDefinition.fromNonRecursiveRuleName(nonRecursiveRuleName),
-          definitions = [
-            ...recursiveDefinitions,
-            nonRecursiveDefinition
-          ];
+    const definitions = recursiveDefinitions, ///
+          nonRecursiveDefinitionsLength = nonRecursiveDefinitions.length;
+
+    if (nonRecursiveDefinitionsLength > 0) {
+      const nonRecursiveRule = NonRecursiveRule.fromNonRecursiveDefinitionsAndRuleNames(nonRecursiveDefinitions, ruleNames),
+            nonRecursiveRuleName = nonRecursiveRule.getName(),
+            nonRecursiveDefinition = NonRecursiveDefinition.fromNonRecursiveRuleName(nonRecursiveRuleName),
+            definition = nonRecursiveDefinition; ///
+
+      definitions.push(definition);
+
+      rules.push(nonRecursiveRule);
+    }
 
     rule.setDefinitions(definitions);
-
-    rules.push(nonRecursiveRule);
   }
 
   return ruleRecursive;
