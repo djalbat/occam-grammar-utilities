@@ -40,7 +40,7 @@ class View extends Element {
             { unassigned }
           ],
           basicLexer = BasicLexer.fromEntries(entries),
-          basicParser = new BasicParser(rules),
+          basicParser = BasicParser.fromRules(rules),
           content = this.getContent(),
           tokens = basicLexer.tokenise(content),
           node = basicParser.parse(tokens);

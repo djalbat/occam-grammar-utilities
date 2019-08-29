@@ -115,22 +115,26 @@ You will need to do this if you want to look at the example.
 ## Usage
 
 ```js
-const parsers = require('occam-parsers'),
+const lexers = require('occam-lexers'),
+      parsers = require('occam-parsers'),
       grammarUtilities = require('occam-grammar-utilities');
 
-const { BasicParser } = parsers,
+const { BasicLexer } = lexers,
+      { BasicParser } = parsers,
       { eliminateLeftRecursion, removeIntermediateNodes } = grammarUtilities;
 
-const rules = ...
+const rules = ... ,
+      entries = ... ,
       content = ... ;
 
 eliminateLeftRecursion(rules);
 
-const basicParser = new BasicParser(rules),
+const basicLexer = new BasicParser(rules),
+      basicParser = new BasicParser(rules),
       tokens = basicLexer.tokenise(content),
       node = basicParser.parse(tokens);
 
-removeIntermediateNodes(nodes);
+removeIntermediateNodes(node);
 ```
 
 ## Example
