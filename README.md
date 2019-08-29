@@ -15,7 +15,7 @@
 
 ## Introduction
 
-This package provides the means to eliminate left recursion, the Achilles heel of top-down parsers. Consider the following rules:
+This package provides the means to eliminate left recursion, the Achilles heel of top-down parsers, in both its immediate and indirect forms. Consider the following rules:
 ```
   expression  ::= expression operator expression
 
@@ -29,7 +29,9 @@ This package provides the means to eliminate left recursion, the Achilles heel o
 
   term        ::= /\d+/ ;
 ```
-Here the first rule is immediately left recursive. When the parser encounters this rule it will enter an infinite loop as it tries to evaluate the first definition, the first part of which is a reference to the same rule. To eliminate left recursion, the left recursive rules are rewritten as follows:
+Here the first rule is immediately left recursive. When the parser encounters this rule it will enter an infinite loop as it tries to evaluate the first definition, the first part of which is a reference to the same rule.
+
+To eliminate left recursion, the rules are rewritten as follows:
 
 ```
   expression  ::= expression_ expression~
@@ -78,20 +80,22 @@ Here is the parse tree of the expression `(1+2)/3` that results:
 ```
 This package also provides the means to eliminate nodes that correspond to the intermediate rules, resulting in the following abridged parse tree:
 ```
-                                       expression(0-6)
-                                              |
-      --------------------------------------------------------------------------------
-      |                         |                          |            |            |
-([custom](0)             expression(1-3)             )[custom](4)  operator(5) expression(6)
-                                |                                       |            |
-                   ---------------------------                    /[custom](5)    term(6)
-                   |            |            |                                       |
-                term(1)    operator(2) expression(3)                           3[custom](6)
-                   |            |            |
-             1[custom](1) +[custom](2)    term(3)
-                                             |
-                                       2[custom](3)
+                                             expression(0-6)
+                                                    |
+            --------------------------------------------------------------------------------
+            |                         |                          |            |            |
+      ([custom](0)             expression(1-3)             )[custom](4)  operator(5) expression(6)
+                                      |                                       |            |
+                         ---------------------------                    /[custom](5)    term(6)
+                         |            |            |                                       |
+                      term(1)    operator(2) expression(3)                           3[custom](6)
+                         |            |            |
+                   1[custom](1) +[custom](2)    term(3)
+                                                   |
+                                             2[custom](3)
 ```
+This is very close to ideal.
+
 ## Installation
 
 With [npm](https://www.npmjs.com/):
@@ -111,13 +115,20 @@ You will need to do this if you want to look at the example.
 ## Usage
 
 ```js
-const grammarUtilities = require('occam-grammar-utilities');
+const parsers = require('occam-parsers'),
+      grammarUtilities = require('occam-grammar-utilities');
 
-const { eliminateLeftRecursion, removeIntermediateNodes } = grammarUtilities;
+const { BasicParser } = parsers,
+      { eliminateLeftRecursion, removeIntermediateNodes } = grammarUtilities;
 
 const rules = ...
+      content = ... ;
 
 eliminateLeftRecursion(rules);
+
+const basicParser = new BasicParser(rules),
+      tokens = basicLexer.tokenise(content),
+      node = basicParser.parse(tokens);
 
 removeIntermediateNodes(nodes);
 ```
@@ -160,7 +171,7 @@ There is one example although the BNF can be changed dynamically. To view it, op
 
                 ;
 ```
-This last has been included to make it easy to copy and paste the troublesome `ε`. The algorithms themselves no longer use it.
+This last has been included to make it easy to copy and paste the troublesome `ε`, although the algorithms themselves no longer require it.
 
 ## Building
 
