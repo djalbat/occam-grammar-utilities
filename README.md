@@ -129,8 +129,8 @@ const rules = ... ,
 
 eliminateLeftRecursion(rules);
 
-const basicLexer = new BasicParser(rules),
-      basicParser = new BasicParser(rules),
+const basicLexer = BasicLexer.fromEntries(entries),
+      basicParser = BasicParser.fromRules(rules),
       tokens = basicLexer.tokenise(content),
       node = basicParser.parse(tokens);
 
