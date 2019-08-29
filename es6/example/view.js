@@ -7,7 +7,6 @@ const easy = require('easy'),
 
 const exampleBNF = require('../example/bnf'),
       BNFTextarea = require('./textarea/bnf'),
-      nodeUtilities = require('../utilities/node'),
       rulesUtilities = require('../utilities/rules'),
       exampleContent = require('../example/content'),
       ContentTextarea = require('./textarea/content'),
@@ -17,14 +16,14 @@ const exampleBNF = require('../example/bnf'),
       MainVerticalSplitter = require('./verticalSplitter/main'),
       exampleLexicalPattern = require('../example/lexicalPattern'),
       eliminateLeftRecursion = require('../eliminateLeftRecursion'),
+      removeIntermediateNodes = require('../removeIntermediateNodes'),
       RemoveIntermediateNodesCheckbox = require('./checkbox/removeIntermediateNodes');
 
 const { Element } = easy,
       { rulesAsString } = rulesUtilities,
       { SizeableElement } = easyLayout,
       { BasicLexer, BNFLexer } = lexers,
-      { BasicParser, BNFParser } = parsers,
-      { removeIntermediateNodes } = nodeUtilities;
+      { BasicParser, BNFParser } = parsers;
 
 const bnfLexer = BNFLexer.fromNothing(),
       bnfParser = BNFParser.fromNothing();

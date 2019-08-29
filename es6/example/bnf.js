@@ -1,17 +1,12 @@
 'use strict';
 
 const exampleBNF = `
-  expression              ::= compoundExpression
+
+  expression              ::= expression operator expression
 
                             | "(" expression ")"
 
                             | term
-
-                            ;
-
-  compoundExpression      ::= expression operator expression
-
-                            | "xyz"
 
                             ;
 
@@ -23,6 +18,7 @@ const exampleBNF = `
 module.exports = exampleBNF;
 
 /*
+
 
 
 

@@ -1,8 +1,8 @@
 'use strict';
 
-const NonRecursiveNode = require('../node/nonRecursive'),
-      ruleNameUtilities = require('../utilities/ruleName'),
-      RightRecursiveNode = require('../node/rightRecursive');
+const NonRecursiveNode = require('./node/nonRecursive'),
+      ruleNameUtilities = require('./utilities/ruleName'),
+      RightRecursiveNode = require('./node/rightRecursive');
 
 const { ruleNameFromNonRecursiveRuleName, checkNonRecursiveRuleNameMatchesRuleName } = ruleNameUtilities;
 
@@ -12,9 +12,43 @@ function removeIntermediateNodes(node) {
   removeOrRenameNonRecursiveNodes(node);
 }
 
-module.exports = {
-  removeIntermediateNodes
-};
+module.exports = removeIntermediateNodes;
+
+function removeRightRecursiveNodes(node) {
+  const nodeNonTerminalNode = node.isNonTerminalNode();
+
+  if (nodeNonTerminalNode) {
+    const nonTerminalNode = node; ///
+
+    let childNodes = nonTerminalNode.getChildNodes();
+
+    childNodes = removeRightRecursiveChildNodes(childNodes);
+
+    nonTerminalNode.setChildNodes(childNodes)
+  }
+}
+
+function removeRightRecursiveChildNodes(childNodes) {
+  childNodes = childNodes.reduce((childNodes, childNode) => {
+    const childNodeRightRecursiveNode = (childNode instanceof RightRecursiveNode);
+
+    if (childNodeRightRecursiveNode) {
+      let childNodeChildNodes = childNode.getChildNodes();
+
+      childNodeChildNodes = removeRightRecursiveChildNodes(childNodeChildNodes);
+
+      childNodes = childNodes.concat(childNodeChildNodes);
+    } else {
+      removeRightRecursiveNodes(childNode);
+
+      childNodes.push(childNode);
+    }
+
+    return childNodes;
+  }, []);
+
+  return childNodes;
+}
 
 function removeOrRenameNonRecursiveNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
@@ -67,40 +101,4 @@ function removeOrRenameNonRecursiveChildNodes(childNodes, ruleName) {
 
   return childNodes;
 
-}
-
-function removeRightRecursiveNodes(node) {
-  const nodeNonTerminalNode = node.isNonTerminalNode();
-
-  if (nodeNonTerminalNode) {
-    const nonTerminalNode = node; ///
-
-    let childNodes = nonTerminalNode.getChildNodes();
-
-    childNodes = removeRightRecursiveChildNodes(childNodes);
-
-    nonTerminalNode.setChildNodes(childNodes)
-  }
-}
-
-function removeRightRecursiveChildNodes(childNodes) {
-  childNodes = childNodes.reduce((childNodes, childNode) => {
-    const childNodeRightRecursiveNode = (childNode instanceof RightRecursiveNode);
-
-    if (childNodeRightRecursiveNode) {
-      let childNodeChildNodes = childNode.getChildNodes();
-
-      childNodeChildNodes = removeRightRecursiveChildNodes(childNodeChildNodes);
-
-      childNodes = childNodes.concat(childNodeChildNodes);
-    } else {
-      removeRightRecursiveNodes(childNode);
-
-      childNodes.push(childNode);
-    }
-
-    return childNodes;
-  }, []);
-
-  return childNodes;
 }
