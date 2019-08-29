@@ -80,23 +80,23 @@ Here is the parse tree of the expression `(1+2)/3` that results:
 ```
 This package also provides the means to eliminate nodes that correspond to the intermediate rules, resulting in the following abridged parse tree:
 ```
-                                                     expression(0-6)
-                                                            |
-                                 ------------------------------------------------------
-                                 |                                       |            |
-                          expression(0-4)                           operator(5) expression(6)
-                                 |                                       |            |
-      -------------------------------------------------------      /[custom](5)    term(6)
-      |                          |                          |                         |
-([custom](0)              expression(1-3)             )[custom](4)              3[custom](6)
-                                 |
-                   ----------------------------
-                   |             |            |
-             expression(1)  operator(2) expression(3)
-                   |             |            |
-                term(1)    +[custom](2)    term(3)
-                   |                          |
-             1[custom](1)               2[custom](3)
+                                                           expression(0-6)
+                                                                  |
+                                       ------------------------------------------------------
+                                       |                                       |            |
+                                expression(0-4)                           operator(5) expression(6)
+                                       |                                       |            |
+            -------------------------------------------------------      /[custom](5)    term(6)
+            |                          |                          |                         |
+      ([custom](0)              expression(1-3)             )[custom](4)              3[custom](6)
+                                       |
+                         ----------------------------
+                         |             |            |
+                   expression(1)  operator(2) expression(3)
+                         |             |            |
+                      term(1)    +[custom](2)    term(3)
+                         |                          |
+                   1[custom](1)               2[custom](3)
 ```
 This is very close to ideal.
 
