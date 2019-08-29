@@ -7,9 +7,9 @@ const NonRecursiveNode = require('./node/nonRecursive'),
 const { ruleNameFromNonRecursiveRuleName, checkNonRecursiveRuleNameMatchesRuleName } = ruleNameUtilities;
 
 function removeIntermediateNodes(node) {
-  removeRightRecursiveNodes(node);
-
   removeOrRenameNonRecursiveNodes(node);
+
+  removeRightRecursiveNodes(node);
 }
 
 module.exports = removeIntermediateNodes;
@@ -66,6 +66,8 @@ function removeOrRenameNonRecursiveNodes(node) {
 }
 
 function removeOrRenameNonRecursiveChildNodes(childNodes, ruleName) {
+  const childNodesLength = childNodes.length;
+
   childNodes = childNodes.reduce((childNodes, childNode) => {
     const childNodeNonRecursiveNode = (childNode instanceof NonRecursiveNode);
 
@@ -76,11 +78,21 @@ function removeOrRenameNonRecursiveChildNodes(childNodes, ruleName) {
             nonRecursiveRuleNameMatchesRuleName = checkNonRecursiveRuleNameMatchesRuleName(nonRecursiveRuleName, ruleName);
 
       if (nonRecursiveRuleNameMatchesRuleName) {
-        let childNodeChildNodes = childNode.getChildNodes();
+        if (childNodesLength > 1) {
+          const ruleName = ruleNameFromNonRecursiveRuleName(nonRecursiveRuleName);
 
-        childNodeChildNodes = removeOrRenameNonRecursiveChildNodes(childNodeChildNodes);
+          childNode.setRuleName(ruleName);
 
-        childNodes = childNodes.concat(childNodeChildNodes);
+          removeOrRenameNonRecursiveNodes(childNode);
+
+          childNodes.push(childNode);
+        } else {
+          let childNodeChildNodes = childNode.getChildNodes();
+
+          childNodeChildNodes = removeOrRenameNonRecursiveChildNodes(childNodeChildNodes);
+
+          childNodes = childNodes.concat(childNodeChildNodes);
+        }
       } else {
         const ruleName = ruleNameFromNonRecursiveRuleName(nonRecursiveRuleName);
 
