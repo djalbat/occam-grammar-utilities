@@ -13,9 +13,9 @@ const { Rule } = parsers,
 
 class NonRecursiveRule extends Rule {
   static fromNonRecursiveDefinitionsAndRuleNames(nonRecursiveDefinitions, ruleNames) {
-    const definitions = nonRecursiveDefinitions,  ///
-          lastRuleName = last(ruleNames),
+    const lastRuleName = last(ruleNames),
           ruleName = lastRuleName,  ///
+          definitions = nonRecursiveDefinitions,  ///
           nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
           name = nonRecursiveRuleName,  ///
           NonTerminalNode = NonRecursiveNode, ///
