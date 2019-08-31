@@ -8,20 +8,14 @@ const { Definition } = parsers,
       { optionalRuleNamePartPartFromRuleName } = partUtilities;
 
 class RightRecursiveDefinition extends Definition {
-  constructor(parts, noWhitespace, lookAhead) {
+  constructor(parts, recursiveRuleName) {
     super(parts);
 
-    this.noWhitespace = noWhitespace;
-
-    this.lookAhead = lookAhead;
+    this.recursiveRuleName = recursiveRuleName;
   }
 
-  hasNoWhitespace() {
-    return this.noWhitespace;
-  }
-
-  isLookAhead() {
-    return this.lookAhead;
+  getRecursiveRuleName() {
+    return this.recursiveRuleName;
   }
 
   static fromDefinitionAndRightRecursiveRuleName(definition, rightRecursiveRuleName) {
@@ -31,9 +25,10 @@ class RightRecursiveDefinition extends Definition {
     parts.push(optionalRightRecursiveRuleNamePart);
 
     const firstPart = parts.shift(),
-          lookAhead = firstPart.isLookAhead(),
-          noWhitespace = firstPart.hasNoWhitespace(),
-          rightRecursiveDefinition = new RightRecursiveDefinition(parts, noWhitespace, lookAhead);
+          ruleNamePart = firstPart, ///
+          ruleName = ruleNamePart.getRuleName(),
+          recursiveRuleName = ruleName, ///
+          rightRecursiveDefinition = new RightRecursiveDefinition(parts, recursiveRuleName);
 
     return rightRecursiveDefinition;
   }

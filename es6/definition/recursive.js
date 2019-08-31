@@ -10,6 +10,24 @@ const { Definition } = parsers,
       { nonRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
 class RecursiveDefinition extends Definition {
+  static fromRecursiveRuleNameAndRightRecursiveRuleName(recursiveRuleName, rightRecursiveRuleName) {
+    const ruleName = recursiveRuleName, ///
+          nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
+          ruleNames = [
+            nonRecursiveRuleName,
+            rightRecursiveRuleName
+          ],
+          ruleNameParts = ruleNames.map((ruleName) => {
+            const ruleNamePart = ruleNamePartFromRuleName(ruleName);
+
+            return ruleNamePart;
+          }),
+          parts = ruleNameParts,  ///
+          recursiveDefinition = new Definition(parts);
+
+    return recursiveDefinition;
+  }
+
   static fromRuleNamePartAndRightRecursiveRuleName(ruleNamePart, rightRecursiveRuleName) {
     const ruleName = ruleNamePart.getRuleName(),
           lookAhead = ruleNamePart.isLookAhead(),

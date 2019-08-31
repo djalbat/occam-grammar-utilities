@@ -1,6 +1,7 @@
 'use strict';
 
-const partUtilities = require('./utilities/part'),
+const Configuration = require('./configuration'),
+      partUtilities = require('./utilities/part'),
       ruleUtilities = require('./utilities/rule'),
       arrayUtilities = require('./utilities/array'),
       NonRecursiveRule = require('./rule/nonRecursive'),
@@ -17,22 +18,26 @@ const { findRuleByName } = ruleUtilities,
       { resetRightRecursiveRuleNameCount, rightRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
 function eliminateLeftRecursion(rules) {
-  const map = {};
+  const configuration = Configuration.fromRules(rules);
 
-  removeImmediateLeftRecursionFromRules(rules, map);
+  removeImmediateLeftRecursionFromRules(configuration);
+
+  createNonRecursiveRules(configuration);
+
+  createRightRecursiveRules(configuration);
 }
 
 module.exports = eliminateLeftRecursion;
 
-function removeImmediateLeftRecursionFromRules(rules, map) {
-  rules.forEach((rule) => {
+function removeImmediateLeftRecursionFromRules(configuration) {
+  configuration.forEachRule((rule) => {
     const ruleNames = [];
 
-    removeImmediateLeftRecursionFromRule(rule, ruleNames, rules, map);
+    removeImmediateLeftRecursionFromRule(rule, ruleNames, configuration);
   });
 }
 
-function removeImmediateLeftRecursionFromRule(rule, ruleNames, rules, map) {
+function removeImmediateLeftRecursionFromRule(rule, ruleNames, configuration) {
   const ruleName = rule.getName(),
         ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
 
@@ -50,25 +55,61 @@ function removeImmediateLeftRecursionFromRule(rule, ruleNames, rules, map) {
           definitionImmediatelyLeftRecursiveDefinition = isDDefinitionImmediateLeftRecursiveDefinition(definition, ruleName);
 
     if (definitionImmediatelyLeftRecursiveDefinition) {
-      if (!map[ruleName]) {
-        map[ruleName] = [];
-      }
-
-      const immediatelyLeftRecursiveDefinitions = map[ruleName],
+      const lastRuleName = last(ruleNames),
+            ruleName = lastRuleName,  ///
             immediatelyLeftRecursiveDefinition = definition;  ///
 
-      immediatelyLeftRecursiveDefinitions.push(immediatelyLeftRecursiveDefinition);
+      configuration.mapImmediatelyLeftRecursiveDefinition(ruleName, immediatelyLeftRecursiveDefinition);
 
       return true;
     }
 
-    const rule = ruleFromDefinition(definition, rules);
+    const rules = configuration.getRules(),
+          rule = ruleFromDefinition(definition, rules);
 
     if (rule !== null) {
-      removeImmediateLeftRecursionFromRule(rule, ruleNames, rules, map)
+      removeImmediateLeftRecursionFromRule(rule, ruleNames, configuration)
     }
   });
 }
+
+function createRightRecursiveRules(configuration) {
+  configuration.forEachRuleName((ruleName) => {
+    const rule = configuration.findRule(ruleName),
+          immediatelyLeftRecursiveDefinitions = configuration.getImmediatelyLeftRecursiveDefinitions(ruleName);
+
+    immediatelyLeftRecursiveDefinitions.forEach((immediatelyLeftRecursiveDefinition) => {
+      const definition = immediatelyLeftRecursiveDefinition,  ///
+            rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName),
+            rightRecursiveRule = RightRecursiveRule.fromDefinitionAndRightRecursiveRuleName(definition, rightRecursiveRuleName),
+            recursiveRuleName = rightRecursiveRule.getRecursiveRuleName(),
+            recursiveDefinition = RecursiveDefinition.fromRecursiveRuleNameAndRightRecursiveRuleName(recursiveRuleName, rightRecursiveRuleName);
+
+      rule.addDefinition(recursiveDefinition);
+
+      configuration.addRightRecursiveRule(rightRecursiveRule);
+    });
+
+    const nonRecursiveDefinition = NonRecursiveDefinition.fromRuleName(ruleName);
+
+    rule.addDefinition(nonRecursiveDefinition);
+  });
+}
+
+function createNonRecursiveRules(configuration) {
+  configuration.forEachRule((rule) => {
+    const nonRecursiveRule = NonRecursiveRule.fromRule(rule);
+
+    configuration.addNonRecursiveRule(nonRecursiveRule);
+
+    rule.clearDefinitions();
+  });
+}
+
+
+
+
+
 
 
 

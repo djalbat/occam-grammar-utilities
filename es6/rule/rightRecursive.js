@@ -8,20 +8,14 @@ const RightRecursveNode = require('../node/rightRecursive'),
 const { Rule } = parsers;
 
 class RightRecursiveRule extends Rule {
-  constructor(name, definitions, nonTerminalNode, noWhitespace, lookAhead) {
-    super(name, definitions, nonTerminalNode);
+  constructor(name, definitions, NonTerminalNode, recursiveRuleName) {
+    super(name, definitions, NonTerminalNode);
 
-    this.noWhitespace = noWhitespace;
-
-    this.lookAhead = lookAhead;
+    this.recursiveRuleName = recursiveRuleName;
   }
 
-  isLookAhead() {
-    return this.lookAhead;
-  }
-
-  hasNoWhitespace() {
-    return this.noWhitespace;
+  getRecursiveRuleName() {
+    return this.recursiveRuleName;
   }
 
   static fromDefinitionAndRightRecursiveRuleName(definition, rightRecursiveRuleName) {
@@ -31,9 +25,8 @@ class RightRecursiveRule extends Rule {
             rightRecursiveDefinition
           ],
           NonTerminalNode = RightRecursveNode, ///
-          noWhitespace = rightRecursiveDefinition.hasNoWhitespace(),
-          lookAhead = rightRecursiveDefinition.isLookAhead(),
-          rightRecursiveRule = new RightRecursiveRule(name, definitions, NonTerminalNode, noWhitespace, lookAhead);
+          recursiveRuleName = rightRecursiveDefinition.getRecursiveRuleName(),
+          rightRecursiveRule = new RightRecursiveRule(name, definitions, NonTerminalNode, recursiveRuleName);
 
     return rightRecursiveRule;
   }
