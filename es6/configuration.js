@@ -5,28 +5,32 @@ const ruleUtilities = require('./utilities/rule');
 const { findRuleByName } = ruleUtilities;
 
 class Configuration {
-  constructor(map, rules) {
-    this.map = map;
+  constructor(immediatelyLeftRecursiveDefinitionsMap, indirectlyLeftRecursiveDefinitionsMap, rules) {
+    this.immediatelyLeftRecursiveDefinitionsMap = immediatelyLeftRecursiveDefinitionsMap;
+
+    this.indirectlyLeftRecursiveDefinitionsMap = indirectlyLeftRecursiveDefinitionsMap;
 
     this.rules = rules;
-  }
-
-  getMap() {
-    return this.map;
   }
 
   getRules() {
     return this.rules;
   }
 
-  getMappedRuleNames() {
-    const mappedRuleNames = Object.keys(this.map);
+  getIndirectlyLeftRecursiveRuleNames() {
+    const indirectlyLeftRecursiveRuleNames = Object.keys(this.indirectlyLeftRecursiveDefinitionsMap);
 
-    return mappedRuleNames;
+    return indirectlyLeftRecursiveRuleNames;
+  }
+
+  getImmediatelyLeftRecursiveRuleNames() {
+    const immediatelyLeftRecursiveRuleNames = Object.keys(this.immediatelyLeftRecursiveDefinitionsMap);
+
+    return immediatelyLeftRecursiveRuleNames;
   }
 
   getImmediatelyLeftRecursiveDefinitions(ruleName) {
-    const immediatelyLeftRecursiveDefinitions = this.map[ruleName];
+    const immediatelyLeftRecursiveDefinitions = this.immediatelyLeftRecursiveDefinitionsMap[ruleName];
 
     return immediatelyLeftRecursiveDefinitions;
   }
@@ -38,24 +42,55 @@ class Configuration {
     return rule;
   }
 
+  isRulePresent(ruleName) {
+    const rule = this.findRule(ruleName),
+          rulePresent = (rule !== null);
+
+    return rulePresent;
+  }
+
+  isDefinitionIndirectlyLeftRecursiveDefinition(definition, ruleName) {
+    const indirectlyLeftRecursiveDefinitions = this.indirectlyLeftRecursiveDefinitionsMap[ruleName],
+          indirectlyLeftRecursiveDefinitionsIncludesDefinition = indirectlyLeftRecursiveDefinitions.includes(definition),
+          definitionIndirectlyRecursiveDefinition = indirectlyLeftRecursiveDefinitionsIncludesDefinition; ///
+
+    return definitionIndirectlyRecursiveDefinition;
+  }
+
   forEachRule(callback) {
     this.rules.forEach(callback);
   }
 
-  forEachMappedRule(callback) {
-    const mappedRuleNames = this.getMappedRuleNames();
+  forEachIndirectlyLeftRecursiveRule(callback) {
+    const indirectlyLeftRecursiveRuleNames = this.getIndirectlyLeftRecursiveRuleNames();
 
-    mappedRuleNames.forEach((mappedRuleName) => {
+    indirectlyLeftRecursiveRuleNames.forEach((mappedRuleName) => {
       const mappedRule = this.findRule(mappedRuleName);
 
       callback(mappedRule);
     });
   }
 
-  forEachMappedRuleName(callback) {
-    const mappedRuleNames = this.getMappedRuleNames();
+  forEachIndirectlyLeftRecursiveRuleName(callback) {
+    const indirectlyLeftRecursiveRuleNames = this.getIndirectlyLeftRecursiveRuleNames();
 
-    mappedRuleNames.forEach(callback);
+    indirectlyLeftRecursiveRuleNames.forEach(callback);
+  }
+
+  forEachImmediatelyLeftRecursiveRule(callback) {
+    const immediatelyLeftRecursiveRuleNames = this.getImmediatelyLeftRecursiveRuleNames();
+
+    immediatelyLeftRecursiveRuleNames.forEach((mappedRuleName) => {
+      const mappedRule = this.findRule(mappedRuleName);
+
+      callback(mappedRule);
+    });
+  }
+
+  forEachImmediatelyLeftRecursiveRuleName(callback) {
+    const immediatelyLeftRecursiveRuleNames = this.getImmediatelyLeftRecursiveRuleNames();
+
+    immediatelyLeftRecursiveRuleNames.forEach(callback);
   }
 
   addNonRecursiveRule(nonRecursiveRule) {
@@ -71,18 +106,29 @@ class Configuration {
   }
 
   mapImmediatelyLeftRecursiveDefinition(ruleName, immediatelyLeftRecursiveDefinition) {
-    if (!this.map[ruleName]) {
-      this.map[ruleName] = [];
+    if (!this.immediatelyLeftRecursiveDefinitionsMap[ruleName]) {
+      this.immediatelyLeftRecursiveDefinitionsMap[ruleName] = [];
     }
 
-    const immediatelyLeftRecursiveDefinitions = this.map[ruleName];
+    const immediatelyLeftRecursiveDefinitions = this.immediatelyLeftRecursiveDefinitionsMap[ruleName];
 
     immediatelyLeftRecursiveDefinitions.push(immediatelyLeftRecursiveDefinition);
   }
 
+  mapIndirectlyLeftRecursiveDefinition(ruleName, indirectlyLeftRecursiveDefinition) {
+    if (!this.indirectlyLeftRecursiveDefinitionsMap[ruleName]) {
+      this.indirectlyLeftRecursiveDefinitionsMap[ruleName] = [];
+    }
+
+    const indirectlyLeftRecursiveDefinitions = this.indirectlyLeftRecursiveDefinitionsMap[ruleName];
+
+    indirectlyLeftRecursiveDefinitions.push(indirectlyLeftRecursiveDefinition);
+  }
+
   static fromRules(rules) {
-    const map = {},
-          configuration = new Configuration(map, rules);
+    const immediatelyLeftRecursiveDefinitionsMap = {},
+          indirectlyLeftRecursiveDefinitionsMap = {},
+          configuration = new Configuration(immediatelyLeftRecursiveDefinitionsMap, indirectlyLeftRecursiveDefinitionsMap, rules);
 
     return configuration;
   }

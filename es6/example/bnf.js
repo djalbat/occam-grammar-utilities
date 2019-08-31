@@ -16,16 +16,16 @@ const exampleBNF = `
 
                             ;
 
+  operator                ::= "+" | "-" | "/" | "*" ;
+
+  term                    ::= /\\d+/ ;
+
 `;
 
 module.exports = exampleBNF;
 
 /*
 
-
-  operator                ::= "+" | "-" | "/" | "*" ;
-
-  term                    ::= /\d+/ ;
 
 
 
