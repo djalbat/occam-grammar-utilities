@@ -1,6 +1,34 @@
 'use strict';
 
 const exampleBNF = `
+
+  optionalPart     ::=  part "?"
+                     
+                     |  "abc"
+
+                     ;
+  
+  zeroOrMoreParts  ::=  part "*"
+                     
+                     |  "def"
+
+                     ;
+  
+  part             ::=  optionalPart "." 
+   
+                     |  zeroOrMoreParts "."
+                     
+                     |  "xyz"
+
+                     ;
+                     
+`;
+
+module.exports = exampleBNF;
+
+/*
+
+
   expression              ::= compoundExpression
 
                             | "(" expression ")"
@@ -17,13 +45,7 @@ const exampleBNF = `
 
   operator                ::= "+" | "-" | "/" | "*" ;
 
-  term                    ::= /\\d+/ ;
-`;
-
-module.exports = exampleBNF;
-
-/*
-
+  term                    ::= /\d+/ ;
 
   expression              ::= compoundExpression
 

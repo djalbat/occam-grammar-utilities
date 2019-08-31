@@ -1,22 +1,104 @@
 'use strict';
 
-const necessary = require('necessary');
-
 const partUtilities = require('./utilities/part'),
       ruleUtilities = require('./utilities/rule'),
+      arrayUtilities = require('./utilities/array'),
       NonRecursiveRule = require('./rule/nonRecursive'),
       ruleNameUtilities = require('./utilities/ruleName'),
       RightRecursiveRule = require('./rule/rightRecursive'),
       RecursiveDefinition = require('./definition/recursive'),
+      definitionUtilities = require('./utilities/definition'),
       NonRecursiveDefinition = require('./definition/nonRecursive');
 
-const { arrayUtilities } = necessary,
-      { first, last } = arrayUtilities,
-      { findRuleByName } = ruleUtilities,
+const { findRuleByName } = ruleUtilities,
       { isPartRuleNamePart } = partUtilities,
+      { first, last, forEachWithRemove } = arrayUtilities,
+      { ruleFromDefinition, isDDefinitionImmediateLeftRecursiveDefinition } = definitionUtilities,
       { resetRightRecursiveRuleNameCount, rightRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
 function eliminateLeftRecursion(rules) {
+  const map = {};
+
+  removeImmediateLeftRecursionFromRules(rules, map);
+}
+
+module.exports = eliminateLeftRecursion;
+
+function removeImmediateLeftRecursionFromRules(rules, map) {
+  rules.forEach((rule) => {
+    const ruleNames = [];
+
+    removeImmediateLeftRecursionFromRule(rule, ruleNames, rules, map);
+  });
+}
+
+function removeImmediateLeftRecursionFromRule(rule, ruleNames, rules, map) {
+  const ruleName = rule.getName(),
+        ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
+
+  if (ruleNamesIncludesRuleName) {
+    return;
+  }
+
+  ruleNames = [ ...ruleNames, ruleName ];
+
+  const definitions = rule.getDefinitions();
+
+  forEachWithRemove(definitions, (definition) => {
+    const firstRuleName = first(ruleNames),
+          ruleName = firstRuleName, ///
+          definitionImmediatelyLeftRecursiveDefinition = isDDefinitionImmediateLeftRecursiveDefinition(definition, ruleName);
+
+    if (definitionImmediatelyLeftRecursiveDefinition) {
+      if (!map[ruleName]) {
+        map[ruleName] = [];
+      }
+
+      const immediatelyLeftRecursiveDefinitions = map[ruleName],
+            immediatelyLeftRecursiveDefinition = definition;  ///
+
+      immediatelyLeftRecursiveDefinitions.push(immediatelyLeftRecursiveDefinition);
+
+      return true;
+    }
+
+    const rule = ruleFromDefinition(definition, rules);
+
+    if (rule !== null) {
+      removeImmediateLeftRecursionFromRule(rule, ruleNames, rules, map)
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function eliminateLeftRecursionFromRules(rules) {
   rules.forEach((rule) => {
     const ruleNames = [];
 
@@ -25,8 +107,6 @@ function eliminateLeftRecursion(rules) {
     eliminateLeftRecursionFromRule(rule, ruleNames, rules)
   });
 }
-
-module.exports = eliminateLeftRecursion;
 
 function eliminateLeftRecursionFromRule(rule, ruleNames, rules) {
   let ruleRecursive = false;

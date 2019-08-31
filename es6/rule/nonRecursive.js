@@ -1,13 +1,12 @@
 'use strict';
 
-const parsers = require('occam-parsers'),
-      necessary = require('necessary');
+const parsers = require('occam-parsers');
 
-const NonRecursiveNode = require('../node/nonRecursive'),
+const arrayUtilities = require('../utilities/array'),
+      NonRecursiveNode = require('../node/nonRecursive'),
       ruleNameUtilities = require('../utilities/ruleName');
 
 const { Rule } = parsers,
-      { arrayUtilities } = necessary,
       { last } = arrayUtilities,
       { nonRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 

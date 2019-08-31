@@ -6,6 +6,20 @@ const { Parts, partTypes } = parsers,
       { RuleNamePartType } = partTypes,
       { OptionalPartPart, RuleNamePart } = Parts;
 
+function ruleNameFromPart(part) {
+  let ruleName = null;
+
+  const partRuleNamePart = isPartRuleNamePart(part);
+
+  if (partRuleNamePart) {
+    const ruleNamePart = part;  ///
+
+    ruleName = ruleNamePart.getRuleName();
+  }
+
+  return ruleName;
+}
+
 function isPartRuleNamePart(part) {
   let partRuleNamePart = false;
 
@@ -37,6 +51,7 @@ function optionalRuleNamePartPartFromRuleName(ruleName) {
 }
 
 module.exports = {
+  ruleNameFromPart,
   isPartRuleNamePart,
   ruleNamePartFromRuleName,
   optionalRuleNamePartPartFromRuleName
