@@ -19,10 +19,10 @@ class Configuration {
     return this.rules;
   }
 
-  getRuleNames() {
-    const ruleNames = Object.keys(this.map);
+  getMappedRuleNames() {
+    const mappedRuleNames = Object.keys(this.map);
 
-    return ruleNames;
+    return mappedRuleNames;
   }
 
   getImmediatelyLeftRecursiveDefinitions(ruleName) {
@@ -42,10 +42,20 @@ class Configuration {
     this.rules.forEach(callback);
   }
 
-  forEachRuleName(callback) {
-    const ruleNames = this.getRuleNames();
+  forEachMappedRule(callback) {
+    const mappedRuleNames = this.getMappedRuleNames();
 
-    ruleNames.forEach(callback);
+    mappedRuleNames.forEach((mappedRuleName) => {
+      const mappedRule = this.findRule(mappedRuleName);
+
+      callback(mappedRule);
+    });
+  }
+
+  forEachMappedRuleName(callback) {
+    const mappedRuleNames = this.getMappedRuleNames();
+
+    mappedRuleNames.forEach(callback);
   }
 
   addNonRecursiveRule(nonRecursiveRule) {

@@ -74,8 +74,9 @@ function removeImmediateLeftRecursionFromRule(rule, ruleNames, configuration) {
 }
 
 function createRightRecursiveRules(configuration) {
-  configuration.forEachRuleName((ruleName) => {
-    const rule = configuration.findRule(ruleName),
+  configuration.forEachMappedRuleName((mappedRuleName) => {
+    const ruleName = mappedRuleName,  ///
+          rule = configuration.findRule(ruleName),
           immediatelyLeftRecursiveDefinitions = configuration.getImmediatelyLeftRecursiveDefinitions(ruleName);
 
     immediatelyLeftRecursiveDefinitions.forEach((immediatelyLeftRecursiveDefinition) => {
@@ -97,8 +98,9 @@ function createRightRecursiveRules(configuration) {
 }
 
 function createNonRecursiveRules(configuration) {
-  configuration.forEachRule((rule) => {
-    const nonRecursiveRule = NonRecursiveRule.fromRule(rule);
+  configuration.forEachMappedRule((mappedRule) => {
+    const rule = mappedRule,  ///
+          nonRecursiveRule = NonRecursiveRule.fromRule(rule);
 
     configuration.addNonRecursiveRule(nonRecursiveRule);
 
