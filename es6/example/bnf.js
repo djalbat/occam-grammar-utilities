@@ -2,6 +2,170 @@
 
 const exampleBNF = `
 
+
+
+    part                 ::= part "?"
+
+                           | part "!"
+
+                           | ruleName
+
+                           ;
+
+    ruleName             ::= [unassigned] ;
+
+
+
+
+
+`;
+
+module.exports = exampleBNF;
+
+/*
+
+
+
+  part             ::= zeroOrMoreParts
+
+                     | optionalPart
+
+                     | ruleName
+
+                     ;
+
+  zeroOrMoreParts  ::= part "*" ;
+
+  optionalPart     ::= part "?" ;
+
+  ruleName         ::= [unassigned] ;
+
+
+
+
+
+
+
+                 expression  ::=  arithmeticExpression
+
+                               |  "xyz"
+
+                               ;
+
+
+       arithmeticExpression  ::=  addition ;
+
+
+                   addition  ::=  expression "+" expression ;
+
+
+
+
+
+
+
+
+
+
+  definition     ::= part+ ;
+
+  optionalPart   ::= part "?" ;
+
+  part           ::= optionalPart
+
+                   | ruleName
+
+                   ;
+
+  ruleName       ::= [unassigned] ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+  definition      ::= part+ ;
+
+
+  optionalPart    ::= part "?" ;
+
+  lookAheadPart   ::= part "!" ;
+
+
+  part            ::= optionalPart
+
+                    | lookAheadPart
+
+                    | ruleName
+
+                    ;
+
+
+  ruleName        ::= [unassigned] ;
+
+
+
+
+
+
+
+
+
+
+
+  part           ::= part "?"
+
+                   | part "!"
+
+                   | ruleName
+
+                   ;
+
+
+  ruleName       ::= [unassigned] ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  part            ::= optionalPart
+
+                    | lookAheadPart
+
+                    | ruleName
+
+                    ;
+
+
+  optionalPart    ::= part "?" ;
+
+  lookAheadPart   ::= part "!" ;
+
+
+  ruleName        ::= [unassigned] ;
+
+
+
+
+
+
+
   expression              ::= compoundExpression
 
                             | "(" expression ")"
@@ -18,44 +182,13 @@ const exampleBNF = `
 
   operator                ::= "+" | "-" | "/" | "*" ;
 
-  term                    ::= /\\d+/ ;
-
-`;
-
-module.exports = exampleBNF;
-
-/*
+  term                    ::= /\d+/ ;
 
 
 
 
 
 
-
-
-
-
-
-
-  optionalPart     ::=  part "?"
-
-                     |  "abc"
-
-                     ;
-
-  zeroOrMoreParts  ::=  part "*"
-
-                     |  "def"
-
-                     ;
-
-  part             ::=  optionalPart "."
-
-                     |  zeroOrMoreParts "."
-
-                     |  "xyz"
-
-                     ;
 
 
 
@@ -74,6 +207,12 @@ module.exports = exampleBNF;
   term                    ::= /\d+/ ;
 
 
+
+
+
+
+
+
   expression              ::= intermediateExpression
 
                             | "(" expression ")"
@@ -89,5 +228,7 @@ module.exports = exampleBNF;
   operator                ::= "+" | "-" | "/" | "*" ;
 
   term                    ::= /\d+/ ;
+
+
 
  */

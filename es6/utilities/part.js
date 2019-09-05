@@ -2,8 +2,17 @@
 
 const parsers = require('occam-parsers');
 
+const arrayUtilities = require('../utilities/array');
+
+const { first } = arrayUtilities;
+
 const { Parts, partTypes } = parsers,
-      { RuleNamePartType } = partTypes,
+      { RuleNamePartType,
+        OptionalPartPartType,
+        GroupOfPartsPartType,
+        ChoiceOfPartsPartType,
+        OneOrMorePartsPartType,
+        ZeroOrMorePartsPartType } = partTypes,
       { OptionalPartPart, RuleNamePart } = Parts;
 
 function ruleNameFromPart(part) {
@@ -37,6 +46,52 @@ function isPartRuleNamePart(part) {
   return partRuleNamePart;
 }
 
+function isPartLeftRecursive(part) {
+  const leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part),
+        partLeftRecursive = (leftRecursiveRuleName !== null);
+
+  return partLeftRecursive;
+}
+
+function leftRecursiveRuleNameFromPart(part) {
+  let leftRecursiveRuleName = null;
+
+  const partNonTerminalPart = part.isNonTerminalPart();
+
+  if (partNonTerminalPart) {
+    const type = part.getType();
+
+    switch (type) {
+      case RuleNamePartType :
+        const ruleNamePart = part,  ///
+              ruleName = ruleNamePart.getRuleName();
+
+        leftRecursiveRuleName = ruleName; ///
+        break;
+
+      case OptionalPartPartType :
+      case OneOrMorePartsPartType :
+      case ZeroOrMorePartsPartType :
+        part = part.getPart();  ///
+
+        leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+        break;
+
+      case GroupOfPartsPartType :
+      case ChoiceOfPartsPartType :
+        const parts = part.getParts(),
+              firstPart = first(parts);
+
+        part = firstPart; ///
+
+        leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+        break;
+    }
+  }
+
+  return leftRecursiveRuleName;
+}
+
 function ruleNamePartFromRuleName(ruleName, noWhitespace = false, lookAhead = false) {
   const ruleNamePart = new RuleNamePart(ruleName, noWhitespace, lookAhead);
 
@@ -53,6 +108,8 @@ function optionalRuleNamePartPartFromRuleName(ruleName) {
 module.exports = {
   ruleNameFromPart,
   isPartRuleNamePart,
+  isPartLeftRecursive,
   ruleNamePartFromRuleName,
+  leftRecursiveRuleNameFromPart,
   optionalRuleNamePartPartFromRuleName
 };

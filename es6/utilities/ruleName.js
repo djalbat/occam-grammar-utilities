@@ -1,11 +1,5 @@
 'use strict';
 
-let count;
-
-function resetRightRecursiveRuleNameCount() {
-  count = 0;
-}
-
 function nonRecursiveRuleNameFromRuleName(ruleName) {
   const nonRecursiveRuleName = `${ruleName}_`;
 
@@ -13,11 +7,7 @@ function nonRecursiveRuleNameFromRuleName(ruleName) {
 }
 
 function rightRecursiveRuleNameFromRuleName(ruleName) {
-  const rightRecursiveRuleName = (count === 0) ?
-                                  `${ruleName}~` :
-                                    `${ruleName}${count}~`;
-
-  count++;
+  const rightRecursiveRuleName = `${ruleName}~`;
 
   return rightRecursiveRuleName;
 }
@@ -40,10 +30,7 @@ function checkNonRecursiveRuleNameMatchesRuleName(nonRecursiveRuleName, ruleName
   return nonRecursiveRuleNameMatchesRuleName;
 }
 
-resetRightRecursiveRuleNameCount();
-
 module.exports = {
-  resetRightRecursiveRuleNameCount,
   nonRecursiveRuleNameFromRuleName,
   rightRecursiveRuleNameFromRuleName,
   ruleNameFromNonRecursiveRuleName,
