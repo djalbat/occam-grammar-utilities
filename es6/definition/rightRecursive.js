@@ -2,33 +2,29 @@
 
 const parsers = require('occam-parsers');
 
-const partUtilities = require('../utilities/part');
+const partUtilities = require('../utilities/part'),
+      ruleNameUtilities = require('../utilities/ruleName');
 
 const { Definition } = parsers,
+      { rightRecursiveRuleNameFromRuleName } = ruleNameUtilities,
       { optionalRuleNamePartPartFromRuleName } = partUtilities;
 
 class RightRecursiveDefinition extends Definition {
-  constructor(parts, recursiveRuleName) {
-    super(parts);
+  static fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition) {
+    let ruleName = immediatelyLeftRecursiveDefinition.getRuleName();
 
-    this.recursiveRuleName = recursiveRuleName;
-  }
+    const parts = immediatelyLeftRecursiveDefinition.getParts(),
+          rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName);
 
-  getRecursiveRuleName() {
-    return this.recursiveRuleName;
-  }
+    ruleName = rightRecursiveRuleName;  ///
 
-  static fromDefinitionAndRightRecursiveRuleName(definition, rightRecursiveRuleName) {
-    const parts = definition.getParts(),
-          optionalRightRecursiveRuleNamePart = optionalRuleNamePartPartFromRuleName(rightRecursiveRuleName);
+    const optionalRightRecursiveRuleNamePart = optionalRuleNamePartPartFromRuleName(ruleName);
 
     parts.push(optionalRightRecursiveRuleNamePart);
 
-    const firstPart = parts.shift(),
-          ruleNamePart = firstPart, ///
-          ruleName = ruleNamePart.getRuleName(),
-          recursiveRuleName = ruleName, ///
-          rightRecursiveDefinition = new RightRecursiveDefinition(parts, recursiveRuleName);
+    parts.shift();  ///
+
+    const rightRecursiveDefinition = new RightRecursiveDefinition(parts);
 
     return rightRecursiveDefinition;
   }

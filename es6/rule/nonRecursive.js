@@ -34,8 +34,6 @@ class NonRecursiveRule extends Rule {
           nonRecursiveRule = new NonRecursiveRule(name, definitions, NonTerminalNode);
 
     return nonRecursiveRule;
-
-    return nonRecursiveRule;
   }
 }
 

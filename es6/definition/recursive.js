@@ -7,9 +7,27 @@ const partUtilities = require('../utilities/part'),
 
 const { Definition } = parsers,
       { ruleNamePartFromRuleName } = partUtilities,
-      { nonRecursiveRuleNameFromRuleName } = ruleNameUtilities;
+      { rightRecursiveRuleNameFromRuleName, nonRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
 class RecursiveDefinition extends Definition {
+  static fromRuleName(ruleName) {
+    const nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
+          rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName),
+          ruleNames = [
+            nonRecursiveRuleName,
+            rightRecursiveRuleName
+          ],
+          ruleNameParts = ruleNames.map((ruleName) => {
+            const ruleNamePart = ruleNamePartFromRuleName(ruleName);
+
+            return ruleNamePart;
+          }),
+          parts = ruleNameParts,  ///
+          recursiveDefinition = new Definition(parts);
+
+    return recursiveDefinition;
+  }
+
   static fromRecursiveRuleNameAndRightRecursiveRuleName(recursiveRuleName, rightRecursiveRuleName) {
     const ruleName = recursiveRuleName, ///
           nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),

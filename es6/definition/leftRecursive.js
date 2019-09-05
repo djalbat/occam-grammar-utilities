@@ -1,8 +1,10 @@
 'use strict';
 
-const definitionUtilities = require('../utilities/definition');
+const ruleUtilities = require('../utilities/rule'),
+      definitionUtilities = require('../utilities/definition');
 
-const { leftRecursiveRuleNameFromDefinition } = definitionUtilities;
+const { findRuleByName } = ruleUtilities,
+      { leftRecursiveRuleNameFromDefinition } = definitionUtilities;
 
 class LeftRecursiveDefinition {
   constructor(ruleName, definition, leftRecursiveRuleName) {
@@ -25,6 +27,13 @@ class LeftRecursiveDefinition {
 
   getLeftRecursiveRuleName() {
     return this.leftRecursiveRuleName;
+  }
+
+  findRule(rules) {
+    const name = this.leftRecursiveRuleName, ///
+          rule = findRuleByName(name, rules);
+
+    return rule;
   }
 
   isImmediatelyLeftRecursive(leftRecursiveDefinitions) {

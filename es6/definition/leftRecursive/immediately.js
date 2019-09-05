@@ -13,6 +13,14 @@ class ImmediatelyLeftRecursiveDefinition extends Definition {
     this.indirectlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition;
   }
 
+  getRuleName() {
+    return this.ruleName;
+  }
+
+  getIndirectlyLeftRecursiveDefinition() {
+    return this.indirectlyLeftRecursiveDefinition;
+  }
+
   static fromLeftRecursiveDefinitionAndIndirectlyLeftRecursiveDefinition(leftRecursiveDefinition, indirectlyLeftRecursiveDefinition) {
     const parts = leftRecursiveDefinition.getParts(),
           ruleName = leftRecursiveDefinition.getRuleName(),

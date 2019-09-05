@@ -2,34 +2,28 @@
 
 const parsers = require('occam-parsers');
 
-const RightRecursveNode = require('../node/rightRecursive'),
+const ruleNameUtilities = require('../utilities/ruleName'),
+      RightRecursiveNode = require('../node/rightRecursive'),
       RightRecursiveDefinition = require('../definition/rightRecursive');
 
-const { Rule } = parsers;
+const { Rule } = parsers,
+      { rightRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
 class RightRecursiveRule extends Rule {
-  addRightRecursiveDefinition(rightRecursiveDefinition) {
-    const definition = rightRecursiveDefinition;  ///
+  // static fromRightRecursiveRuleName(rightRecursiveRuleName) {
+  //   const name = rightRecursiveRuleName,  ///
+  //         definitions = [],
+  //         NonTerminalNode = RightRecursiveNode, ///
+  //         rightRecursiveRule = new RightRecursiveRule(name, definitions, NonTerminalNode);
+  //
+  //   return rightRecursiveRule;
+  // }
 
-    super.addDefinition(definition);
-  }
-
-  static fromRightRecursiveRuleName(rightRecursiveRuleName) {
-    const name = rightRecursiveRuleName,  ///
-          definitions = [],
-          NonTerminalNode = RightRecursveNode, ///
-          rightRecursiveRule = new RightRecursiveRule(name, definitions, NonTerminalNode);
-
-    return rightRecursiveRule;
-  }
-
-  static fromDefinitionAndRightRecursiveRuleName(definition, rightRecursiveRuleName) {
-    const rightRecursiveDefinition = RightRecursiveDefinition.fromDefinitionAndRightRecursiveRuleName(definition, rightRecursiveRuleName),
+  static fromRuleNameAndRightRecursiveDefinitions(ruleName, rightRecursiveDefinitions) {
+    const rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName),
           name = rightRecursiveRuleName,  ///
-          definitions = [
-            rightRecursiveDefinition
-          ],
-          NonTerminalNode = RightRecursveNode, ///
+          definitions = rightRecursiveDefinitions, ///
+          NonTerminalNode = RightRecursiveNode, ///
           rightRecursiveRule = new RightRecursiveRule(name, definitions, NonTerminalNode);
 
     return rightRecursiveRule;
