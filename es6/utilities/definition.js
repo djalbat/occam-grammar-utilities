@@ -1,34 +1,32 @@
 'use strict';
 
 const partUtilities = require('../utilities/part'),
-      ruleUtilities = require('../utilities/rule'),
       arrayUtilities = require('../utilities/array');
 
 const { first } = arrayUtilities,
-      { findRuleByName } = ruleUtilities,
-      { isPartLeftRecursive, leftRecursiveRuleNameFromPart } = partUtilities;
+      { ruleNamesFromPart, leftRecursiveRuleNameFromPart } = partUtilities;
 
-function ruleFromDefinition(definition, rules) {
-  let rule = null;
+function isDefinitionRecursive(definition) {
+  const ruleNames = ruleNamesFromDefinition(definition),
+        ruleNamesLength = ruleNames.length,
+        definitionRecursive = (ruleNamesLength > 0);
 
-  const parts = definition.getParts(),
-        firstPart = first(parts),
-        firstPartRuleName = ruleNameFromPart(firstPart);
+  return definitionRecursive
+}
 
-  if (firstPartRuleName !== null) {
-    const name = firstPartRuleName;
+function ruleNamesFromDefinition(definition, ruleNames = []) {
+  const parts = definition.getParts();
 
-    rule = findRuleByName(name, rules);
-  }
+  parts.forEach((part) => {
+    ruleNamesFromPart(part, ruleNames);
+  });
 
-  return rule;
+  return ruleNames;
 }
 
 function isDefinitionLeftRecursive(definition) {
-  const parts = definition.getParts(),
-        firstPart = first(parts),
-        firstPartLeftRecursive = isPartLeftRecursive(firstPart),
-        definitionLeftRecursive = firstPartLeftRecursive;  ///
+  const leftRecursiveRuleName = leftRecursiveRuleNameFromDefinition(definition),
+        definitionLeftRecursive = (leftRecursiveRuleName !== null);
 
   return definitionLeftRecursive;
 }
@@ -43,7 +41,8 @@ function leftRecursiveRuleNameFromDefinition(definition) {
 }
 
 module.exports = {
-  ruleFromDefinition,
+  isDefinitionRecursive,
+  ruleNamesFromDefinition,
   isDefinitionLeftRecursive,
   leftRecursiveRuleNameFromDefinition
 };

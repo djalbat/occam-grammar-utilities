@@ -6,44 +6,62 @@ const arrayUtilities = require('../utilities/array');
 
 const { first } = arrayUtilities;
 
-const { Parts, partTypes } = parsers,
+const { partTypes } = parsers,
       { RuleNamePartType,
         OptionalPartPartType,
         GroupOfPartsPartType,
         ChoiceOfPartsPartType,
         OneOrMorePartsPartType,
-        ZeroOrMorePartsPartType } = partTypes,
-      { OptionalPartPart, RuleNamePart } = Parts;
+        ZeroOrMorePartsPartType } = partTypes;
 
-function ruleNameFromPart(part) {
-  let ruleName = null;
+function isPartRecursive(part) {
+  const ruleNames = rulesNamesFromPart(part),
+        ruleNamesLength = ruleNames.length,
+        partRecursive = (ruleNamesLength > 0);
 
-  const partRuleNamePart = isPartRuleNamePart(part);
-
-  if (partRuleNamePart) {
-    const ruleNamePart = part;  ///
-
-    ruleName = ruleNamePart.getRuleName();
-  }
-
-  return ruleName;
+  return partRecursive;
 }
 
-function isPartRuleNamePart(part) {
-  let partRuleNamePart = false;
+function ruleNamesFromPart(part, ruleNames = []) {
+  let partRecursive = false;
 
   const partNonTerminalPart = part.isNonTerminalPart();
 
   if (partNonTerminalPart) {
-    const nonTerminalPart = part,  ///
-          type = nonTerminalPart.getType(),
-          typeRuleNamePartType = (type === RuleNamePartType),
-          nonTerminalPartRuleNamePart = typeRuleNamePartType;  ///
+    const type = part.getType();
 
-    partRuleNamePart = nonTerminalPartRuleNamePart;  ///
+    switch (type) {
+      case RuleNamePartType :
+        const ruleNamePart = part,  ///
+              ruleName = ruleNamePart.getRuleName(),
+              ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
+
+        if (!ruleNamesIncludesRuleName) {
+          ruleNames.push(ruleName);
+        }
+        break;
+
+      case OptionalPartPartType :
+      case OneOrMorePartsPartType :
+      case ZeroOrMorePartsPartType :
+        part = part.getPart();  ///
+
+        ruleNamesFromPart(part, ruleNames);
+        break;
+
+      case GroupOfPartsPartType :
+      case ChoiceOfPartsPartType : {
+          const parts = part.getParts();
+
+          partRecursive = parts.some((part) => {
+            ruleNamesFromPart(part, ruleNames);
+          });
+        }
+        break;
+    }
   }
 
-  return partRuleNamePart;
+  return partRecursive;
 }
 
 function isPartLeftRecursive(part) {
@@ -77,14 +95,26 @@ function leftRecursiveRuleNameFromPart(part) {
         leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
         break;
 
-      case GroupOfPartsPartType :
-      case ChoiceOfPartsPartType :
-        const parts = part.getParts(),
-              firstPart = first(parts);
+      case GroupOfPartsPartType : {
+          const parts = part.getParts(),
+                firstPart = first(parts),
+                part = firstPart; ///
 
-        part = firstPart; ///
+          leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+        }
+        break;
 
-        leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+      case ChoiceOfPartsPartType : {
+          const parts = part.getParts();
+
+          parts.some((part) => {
+            leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+
+            if (leftRecursiveRuleName !== null) {
+              return true;
+            }
+          });
+        }
         break;
     }
   }
@@ -92,24 +122,22 @@ function leftRecursiveRuleNameFromPart(part) {
   return leftRecursiveRuleName;
 }
 
-function ruleNamePartFromRuleName(ruleName, noWhitespace = false, lookAhead = false) {
-  const ruleNamePart = new RuleNamePart(ruleName, noWhitespace, lookAhead);
-
-  return ruleNamePart;
-}
-
-function optionalRuleNamePartPartFromRuleName(ruleName) {
-  const ruleNamePart = ruleNamePartFromRuleName(ruleName),
-        optionalRuleNamePartPart = new OptionalPartPart(ruleNamePart);
-
-  return optionalRuleNamePartPart;
-}
-
 module.exports = {
-  ruleNameFromPart,
-  isPartRuleNamePart,
+  isPartRecursive,
+  ruleNamesFromPart,
   isPartLeftRecursive,
-  ruleNamePartFromRuleName,
-  leftRecursiveRuleNameFromPart,
-  optionalRuleNamePartPartFromRuleName
+  leftRecursiveRuleNameFromPart
 };
+
+// function ruleNamePartFromRuleName(ruleName, noWhitespace = false, lookAhead = false) {
+//   const ruleNamePart = new RuleNamePart(ruleName, noWhitespace, lookAhead);
+//
+//   return ruleNamePart;
+// }
+//
+// function optionalRuleNamePartPartFromRuleName(ruleName) {
+//   const ruleNamePart = ruleNamePartFromRuleName(ruleName),
+//       optionalRuleNamePartPart = new OptionalPartPart(ruleNamePart);
+//
+//   return optionalRuleNamePartPart;
+// }

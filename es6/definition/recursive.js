@@ -1,63 +1,60 @@
 'use strict';
 
-const parsers = require('occam-parsers');
+const definitionUtilities = require('../utilities/definition');
 
-const partUtilities = require('../utilities/part'),
-      ruleNameUtilities = require('../utilities/ruleName');
+const { isDefinitionRecursive, leftRecursiveRuleNameFromDefinition } = definitionUtilities;
 
-const { Definition } = parsers,
-      { ruleNamePartFromRuleName } = partUtilities,
-      { rightRecursiveRuleNameFromRuleName, nonRecursiveRuleNameFromRuleName } = ruleNameUtilities;
-
-class RecursiveDefinition extends Definition {
-  static fromRuleName(ruleName) {
-    const nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
-          rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName),
-          ruleNames = [
-            nonRecursiveRuleName,
-            rightRecursiveRuleName
-          ],
-          ruleNameParts = ruleNames.map((ruleName) => {
-            const ruleNamePart = ruleNamePartFromRuleName(ruleName);
-
-            return ruleNamePart;
-          }),
-          parts = ruleNameParts,  ///
-          recursiveDefinition = new Definition(parts);
-
-    return recursiveDefinition;
+class RecursiveDefinition {
+  constructor(ruleName, definition, leftRecursiveRuleName, indirectlyLeftRecursiveDefinition) {
+    this.ruleName = ruleName;
+    this.definition = definition;
+    this.leftRecursiveRuleName = leftRecursiveRuleName;
+    this.indirectlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition;
   }
 
-  static fromRecursiveRuleNameAndRightRecursiveRuleName(recursiveRuleName, rightRecursiveRuleName) {
-    const ruleName = recursiveRuleName, ///
-          nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
-          ruleNames = [
-            nonRecursiveRuleName,
-            rightRecursiveRuleName
-          ],
-          ruleNameParts = ruleNames.map((ruleName) => {
-            const ruleNamePart = ruleNamePartFromRuleName(ruleName);
-
-            return ruleNamePart;
-          }),
-          parts = ruleNameParts,  ///
-          recursiveDefinition = new Definition(parts);
-
-    return recursiveDefinition;
+  getRuleName() {
+    return this.ruleName;
   }
 
-  static fromRuleNamePartAndRightRecursiveRuleName(ruleNamePart, rightRecursiveRuleName) {
-    const ruleName = ruleNamePart.getRuleName(),
-          lookAhead = ruleNamePart.isLookAhead(),
-          noWhitespace = ruleNamePart.hasNoWhitespace(),
-          nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
-          nonRecursiveRuleNamePart = ruleNamePartFromRuleName(nonRecursiveRuleName, noWhitespace, lookAhead),
-          rightRecursiveRuleNamePart = ruleNamePartFromRuleName(rightRecursiveRuleName),
-          parts = [
-            nonRecursiveRuleNamePart,
-            rightRecursiveRuleNamePart
-          ],
-          recursiveDefinition = new Definition(parts);
+  getDefinition() {
+    return this.definition;
+  }
+
+  getLeftRecursiveRuleName() {
+    return this.leftRecursiveRuleName;
+  }
+
+  getIndirectlyLeftRecursiveDefinition() {
+    return this.indirectlyLeftRecursiveDefinition;
+  }
+
+  isLeftRecursive() {
+    const leftRecursive = (this.leftRecursiveRuleName !== null);
+
+    return leftRecursive;
+  }
+
+  isStrictlyLeftRecursive() {
+    const strictlyLeftRecursive = (this.ruleName === this.leftRecursiveRuleName);
+
+    return strictlyLeftRecursive;
+  }
+
+  setIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition) {
+    this.indirectlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition;
+  }
+
+  static fromDefinitionAndRuleName(definition, ruleName) {
+    let recursiveDefinition = null;
+
+    const definitionRecursive = isDefinitionRecursive(definition);
+
+    if (definitionRecursive) {
+      const leftRecursiveRuleName = leftRecursiveRuleNameFromDefinition(definition),
+            indirectlyLeftRecursiveDefinition = null; ///
+
+      recursiveDefinition = new RecursiveDefinition(ruleName, definition, leftRecursiveRuleName, indirectlyLeftRecursiveDefinition);
+    }
 
     return recursiveDefinition;
   }
