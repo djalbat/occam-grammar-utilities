@@ -6,14 +6,14 @@ const ruleUtilities = require('./utilities/rule'),
       NonRecursiveRule = require('./rule/nonRecursive'),
       RightRecursiveRule = require('./rule/rightRecursive'),
       RecursiveDefinition = require('./definition/recursive'),
-      definitionUtilities = require('./utilities/definition'),
       NonRecursiveDefinition = require('./definition/nonRecursive'),
-      RightRecursiveDefinition = require('./definition/rightRecursive');
+      RightRecursiveDefinition = require('./definition/rightRecursive'),
+      recursiveDefinitionUtilities = require('./utilities/recursiveDefinition');
 
 const { addToArrayMap } = objectUtilities,
       { findRuleByName } = ruleUtilities,
       { first, forEachWithRemove } = arrayUtilities,
-      { findIndirectlyLeftRecursiveDefinition } = definitionUtilities;
+      { findIndirectlyLeftRecursiveDefinition } = recursiveDefinitionUtilities;
 
 function eliminateLeftRecursion(rules) {
   const firstRule = first(rules),
