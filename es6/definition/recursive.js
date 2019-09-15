@@ -2,22 +2,28 @@
 
 const definitionUtilities = require('../utilities/definition');
 
-const { isDefinitionRecursive, leftRecursiveRuleNameFromDefinition } = definitionUtilities;
+const { ruleNamesFromDefinition, leftRecursiveRuleNameFromDefinition } = definitionUtilities;
 
 class RecursiveDefinition {
-  constructor(ruleName, definition, leftRecursiveRuleName, indirectlyLeftRecursiveDefinition) {
-    this.ruleName = ruleName;
+  constructor(definition, ruleName, recursiveRuleNames, leftRecursiveRuleName, indirectlyLeftRecursiveDefinition) {
     this.definition = definition;
+
+    this.ruleName = ruleName;
+    this.recursiveRuleNames = recursiveRuleNames;
     this.leftRecursiveRuleName = leftRecursiveRuleName;
     this.indirectlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition;
+  }
+
+  getDefinition() {
+    return this.definition;
   }
 
   getRuleName() {
     return this.ruleName;
   }
 
-  getDefinition() {
-    return this.definition;
+  getRecursiveRuleNames() {
+    return this.recursiveRuleNames;
   }
 
   getLeftRecursiveRuleName() {
@@ -35,7 +41,7 @@ class RecursiveDefinition {
   }
 
   isStrictlyLeftRecursive() {
-    const strictlyLeftRecursive = (this.ruleName === this.leftRecursiveRuleName);
+    const strictlyLeftRecursive = (this.leftRecursiveRuleName === this.ruleName);
 
     return strictlyLeftRecursive;
   }
@@ -47,13 +53,16 @@ class RecursiveDefinition {
   static fromDefinitionAndRuleName(definition, ruleName) {
     let recursiveDefinition = null;
 
-    const definitionRecursive = isDefinitionRecursive(definition);
+    const ruleNames = ruleNamesFromDefinition(definition),
+          recursiveRuleNames = ruleNames, ///
+          recursiveRuleNamesLength = recursiveRuleNames.length,
+          definitionRecursive = (recursiveRuleNamesLength > 0);
 
     if (definitionRecursive) {
       const leftRecursiveRuleName = leftRecursiveRuleNameFromDefinition(definition),
             indirectlyLeftRecursiveDefinition = null; ///
 
-      recursiveDefinition = new RecursiveDefinition(ruleName, definition, leftRecursiveRuleName, indirectlyLeftRecursiveDefinition);
+      recursiveDefinition = new RecursiveDefinition(definition, ruleName, recursiveRuleNames, leftRecursiveRuleName, indirectlyLeftRecursiveDefinition);
     }
 
     return recursiveDefinition;
