@@ -3,6 +3,25 @@
 const exampleBNF = `
 
 
+    part                 ::= part "?"
+
+                           | part "!"
+
+                           | ruleName
+
+                           ;
+
+    ruleName             ::= [unassigned] ;
+
+
+
+
+`;
+
+module.exports = exampleBNF;
+
+/*
+
 S  ::= A C ;
 
 A  ::= "." B ;
@@ -14,25 +33,6 @@ C  ::= D E ;
 D  ::= C ;
 
 E  ::= "." ;
-
-
-
-
-`;
-
-module.exports = exampleBNF;
-
-/*
-
-    part                 ::= part "?"
-
-                           | part "!"
-
-                           | ruleName
-
-                           ;
-
-    ruleName             ::= [unassigned] ;
 
 
 

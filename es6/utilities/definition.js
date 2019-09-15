@@ -4,24 +4,14 @@ const partUtilities = require('../utilities/part'),
       arrayUtilities = require('../utilities/array');
 
 const { first } = arrayUtilities,
-      { ruleNamesFromPart, leftRecursiveRuleNameFromPart } = partUtilities;
+      { recursiveRuleNamesFromPart, leftRecursiveRuleNameFromPart } = partUtilities;
 
 function isDefinitionRecursive(definition) {
-  const ruleNames = ruleNamesFromDefinition(definition),
-        ruleNamesLength = ruleNames.length,
-        definitionRecursive = (ruleNamesLength > 0);
+  const recursiveRuleNames = recursiveRuleNamesFromDefinition(definition),
+        recursiveRuleNamesLength = recursiveRuleNames.length,
+        definitionRecursive = (recursiveRuleNamesLength > 0);
 
   return definitionRecursive
-}
-
-function ruleNamesFromDefinition(definition, ruleNames = []) {
-  const parts = definition.getParts();
-
-  parts.forEach((part) => {
-    ruleNamesFromPart(part, ruleNames);
-  });
-
-  return ruleNames;
 }
 
 function isDefinitionLeftRecursive(definition) {
@@ -29,6 +19,16 @@ function isDefinitionLeftRecursive(definition) {
         definitionLeftRecursive = (leftRecursiveRuleName !== null);
 
   return definitionLeftRecursive;
+}
+
+function recursiveRuleNamesFromDefinition(definition, recursiveRuleNames = []) {
+  const parts = definition.getParts();
+
+  parts.forEach((part) => {
+    recursiveRuleNamesFromPart(part, recursiveRuleNames);
+  });
+
+  return recursiveRuleNames;
 }
 
 function leftRecursiveRuleNameFromDefinition(definition) {
@@ -42,7 +42,7 @@ function leftRecursiveRuleNameFromDefinition(definition) {
 
 module.exports = {
   isDefinitionRecursive,
-  ruleNamesFromDefinition,
   isDefinitionLeftRecursive,
+  recursiveRuleNamesFromDefinition,
   leftRecursiveRuleNameFromDefinition
 };

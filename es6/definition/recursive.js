@@ -2,24 +2,23 @@
 
 const definitionUtilities = require('../utilities/definition');
 
-const { ruleNamesFromDefinition, leftRecursiveRuleNameFromDefinition } = definitionUtilities;
+const { recursiveRuleNamesFromDefinition, leftRecursiveRuleNameFromDefinition } = definitionUtilities;
 
 class RecursiveDefinition {
-  constructor(definition, ruleName, recursiveRuleNames, leftRecursiveRuleName, indirectlyLeftRecursiveDefinition) {
-    this.definition = definition;
-
+  constructor(ruleName, definition, recursiveRuleNames, leftRecursiveRuleName, indirectlyLeftRecursiveDefinition) {
     this.ruleName = ruleName;
+    this.definition = definition;
     this.recursiveRuleNames = recursiveRuleNames;
     this.leftRecursiveRuleName = leftRecursiveRuleName;
     this.indirectlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition;
   }
 
-  getDefinition() {
-    return this.definition;
-  }
-
   getRuleName() {
     return this.ruleName;
+  }
+
+  getDefinition() {
+    return this.definition;
   }
 
   getRecursiveRuleNames() {
@@ -53,8 +52,7 @@ class RecursiveDefinition {
   static fromDefinitionAndRuleName(definition, ruleName) {
     let recursiveDefinition = null;
 
-    const ruleNames = ruleNamesFromDefinition(definition),
-          recursiveRuleNames = ruleNames, ///
+    const recursiveRuleNames = recursiveRuleNamesFromDefinition(definition),
           recursiveRuleNamesLength = recursiveRuleNames.length,
           definitionRecursive = (recursiveRuleNamesLength > 0);
 
@@ -62,7 +60,7 @@ class RecursiveDefinition {
       const leftRecursiveRuleName = leftRecursiveRuleNameFromDefinition(definition),
             indirectlyLeftRecursiveDefinition = null; ///
 
-      recursiveDefinition = new RecursiveDefinition(definition, ruleName, recursiveRuleNames, leftRecursiveRuleName, indirectlyLeftRecursiveDefinition);
+      recursiveDefinition = new RecursiveDefinition(ruleName, definition, recursiveRuleNames, leftRecursiveRuleName, indirectlyLeftRecursiveDefinition);
     }
 
     return recursiveDefinition;
