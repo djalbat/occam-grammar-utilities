@@ -9,17 +9,17 @@ const { Definition } = parsers,
       { ruleNamePartFromRuleName } = partUtilities,
       { nonRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
-class NonRecursiveDefinition extends Definition {
+class NonRecursiveRuleNameDefinition extends Definition {
   static fromRuleName(ruleName) {
     const nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
           nonRecursiveRuleNamePart = ruleNamePartFromRuleName(nonRecursiveRuleName),
           parts = [
             nonRecursiveRuleNamePart
           ],
-          nonRecursiveDefinition = new NonRecursiveDefinition(parts);
+          nonRecursiveRuleNameDefinition = new NonRecursiveRuleNameDefinition(parts);
 
-    return nonRecursiveDefinition;
+    return nonRecursiveRuleNameDefinition;
   }
 }
 
-module.exports = NonRecursiveDefinition;
+module.exports = NonRecursiveRuleNameDefinition;

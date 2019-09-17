@@ -3,7 +3,11 @@
 const exampleBNF = `
 
 
-    part                 ::= ruleName
+    part                 ::= part "?"
+
+                           | part "!"
+
+                           | ruleName
 
                            ;
 

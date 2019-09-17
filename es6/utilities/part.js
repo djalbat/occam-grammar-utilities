@@ -6,13 +6,14 @@ const arrayUtilities = require('../utilities/array');
 
 const { first } = arrayUtilities;
 
-const { partTypes } = parsers,
+const { Parts, partTypes } = parsers,
       { RuleNamePartType,
         OptionalPartPartType,
         GroupOfPartsPartType,
         ChoiceOfPartsPartType,
         OneOrMorePartsPartType,
-        ZeroOrMorePartsPartType } = partTypes;
+        ZeroOrMorePartsPartType } = partTypes,
+      { RuleNamePart, OptionalPartPart } = Parts;
 
 function isPartRecursive(part) {
   const recursiveRuleNames = recursiveRuleNamesFromPart(part),
@@ -122,22 +123,24 @@ function leftRecursiveRuleNameFromPart(part) {
   return leftRecursiveRuleName;
 }
 
+function ruleNamePartFromRuleName(ruleName, noWhitespace = false, lookAhead = false) {
+  const ruleNamePart = new RuleNamePart(ruleName, noWhitespace, lookAhead);
+
+  return ruleNamePart;
+}
+
+function optionalRuleNamePartPartFromRuleName(ruleName) {
+  const ruleNamePart = ruleNamePartFromRuleName(ruleName),
+        optionalRuleNamePartPart = new OptionalPartPart(ruleNamePart);
+
+  return optionalRuleNamePartPart;
+}
+
 module.exports = {
   isPartRecursive,
   isPartLeftRecursive,
   recursiveRuleNamesFromPart,
-  leftRecursiveRuleNameFromPart
+  leftRecursiveRuleNameFromPart,
+  ruleNamePartFromRuleName,
+  optionalRuleNamePartPartFromRuleName
 };
-
-// function ruleNamePartFromRuleName(ruleName, noWhitespace = false, lookAhead = false) {
-//   const ruleNamePart = new RuleNamePart(ruleName, noWhitespace, lookAhead);
-//
-//   return ruleNamePart;
-// }
-//
-// function optionalRuleNamePartPartFromRuleName(ruleName) {
-//   const ruleNamePart = ruleNamePartFromRuleName(ruleName),
-//       optionalRuleNamePartPart = new OptionalPartPart(ruleNamePart);
-//
-//   return optionalRuleNamePartPart;
-// }

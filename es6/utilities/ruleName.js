@@ -12,6 +12,12 @@ function rightRecursiveRuleNameFromRuleName(ruleName) {
   return rightRecursiveRuleName;
 }
 
+function rightRecursiveRuleNameFromRecursiveRuleName(recursiveRuleName) {
+  const rightRecursiveRuleName = `${recursiveRuleName}~`;
+
+  return rightRecursiveRuleName;
+}
+
 function ruleNameFromNonRecursiveRuleName(nonRecursiveRuleName) {
   const ruleName = nonRecursiveRuleName.replace(/_$/, '');
 
@@ -33,6 +39,7 @@ function checkNonRecursiveRuleNameMatchesRuleName(nonRecursiveRuleName, ruleName
 module.exports = {
   nonRecursiveRuleNameFromRuleName,
   rightRecursiveRuleNameFromRuleName,
+  rightRecursiveRuleNameFromRecursiveRuleName,
   ruleNameFromNonRecursiveRuleName,
   checkNonRecursiveRuleNameMatchesRuleName
 };

@@ -13,6 +13,8 @@ class RecursiveDefinition {
     this.indirectlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition;
   }
 
+  getParts() { return this.definition.getParts(); }
+
   getRuleName() {
     return this.ruleName;
   }

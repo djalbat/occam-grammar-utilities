@@ -6,19 +6,16 @@ const partUtilities = require('../utilities/part'),
       ruleNameUtilities = require('../utilities/ruleName');
 
 const { Definition } = parsers,
-      { rightRecursiveRuleNameFromRuleName } = ruleNameUtilities,
-      { optionalRuleNamePartPartFromRuleName } = partUtilities;
+      { optionalRuleNamePartPartFromRuleName } = partUtilities,
+      { rightRecursiveRuleNameFromRecursiveRuleName } = ruleNameUtilities;
 
 class RightRecursiveDefinition extends Definition {
   static fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition) {
-    let ruleName = immediatelyLeftRecursiveDefinition.getRuleName();
-
     const parts = immediatelyLeftRecursiveDefinition.getParts(),
-          rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName);
-
-    ruleName = rightRecursiveRuleName;  ///
-
-    const optionalRightRecursiveRuleNamePart = optionalRuleNamePartPartFromRuleName(ruleName);
+          recursiveRleName = immediatelyLeftRecursiveDefinition.getRuleName(),
+          rightRecursiveRuleName = rightRecursiveRuleNameFromRecursiveRuleName(recursiveRleName),
+          ruleName = rightRecursiveRuleName,  ///
+          optionalRightRecursiveRuleNamePart = optionalRuleNamePartPartFromRuleName(ruleName);
 
     parts.push(optionalRightRecursiveRuleNamePart);
 
