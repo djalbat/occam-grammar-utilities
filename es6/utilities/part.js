@@ -39,30 +39,62 @@ function recursiveRuleNamesFromPart(part, recursiveRuleNames = []) {
     const type = part.getType();
 
     switch (type) {
-      case RuleNamePartType :
-        const ruleNamePart = part,  ///
-              ruleName = ruleNamePart.getRuleName(),
-              recursiveRuleNamesIncludesRuleName = recursiveRuleNames.includes(ruleName);
+      case RuleNamePartType : {
+          const ruleNamePart = part,  ///
+                ruleName = ruleNamePart.getRuleName(),
+                recursiveRuleNamesIncludesRuleName = recursiveRuleNames.includes(ruleName);
 
-        if (!recursiveRuleNamesIncludesRuleName) {
-          recursiveRuleNames.push(ruleName);
+          if (!recursiveRuleNamesIncludesRuleName) {
+            const recursiveRuleName = ruleName; ///
+
+            recursiveRuleNames.push(recursiveRuleName);
+          }
         }
         break;
 
-      case OptionalPartPartType :
-      case OneOrMorePartsPartType :
-      case ZeroOrMorePartsPartType :
-        part = part.getPart();  ///
+      case OptionalPartPartType : {
+          const optionalPartPart = part;  ///
 
-        recursiveRuleNamesFromPart(part, recursiveRuleNames);
+          part = optionalPartPart.getPart();
+
+          recursiveRuleNamesFromPart(part, recursiveRuleNames);
+        }
         break;
 
-      case GroupOfPartsPartType :
-      case ChoiceOfPartsPartType : {
-          const parts = part.getParts();
+      case OneOrMorePartsPartType : {
+          const oneOrMorePartsPart = part;  ///
+
+          part = oneOrMorePartsPart.getPart();
+
+          recursiveRuleNamesFromPart(part, recursiveRuleNames);
+        }
+        break;
+
+      case ZeroOrMorePartsPartType : {
+          const zeroOrMorePartsPart = part; ///
+
+          part = zeroOrMorePartsPart.getPart();  ///
+
+          recursiveRuleNamesFromPart(part, recursiveRuleNames);
+        }
+        break;
+
+      case GroupOfPartsPartType : {
+        const groupOfPartsPart = part,  ///
+              parts = groupOfPartsPart.getParts();
 
           partRecursive = parts.some((part) => {
-            recursiveRuleNamesFromPart(part, ruleNames);
+            recursiveRuleNamesFromPart(part, recursiveRuleNames);
+          });
+        }
+        break;
+
+      case ChoiceOfPartsPartType : {
+          const choiceOfPartsPart = part, ///
+                parts = choiceOfPartsPart.getParts();
+
+          partRecursive = parts.some((part) => {
+            recursiveRuleNamesFromPart(part, recursiveRuleNames);
           });
         }
         break;
@@ -81,32 +113,55 @@ function leftRecursiveRuleNameFromPart(part) {
     const type = part.getType();
 
     switch (type) {
-      case RuleNamePartType :
-        const ruleNamePart = part,  ///
-              ruleName = ruleNamePart.getRuleName();
+      case RuleNamePartType : {
+          const ruleNamePart = part,  ///
+                ruleName = ruleNamePart.getRuleName();
 
-        leftRecursiveRuleName = ruleName; ///
+          leftRecursiveRuleName = ruleName; ///
+        }
         break;
 
-      case OptionalPartPartType :
-      case OneOrMorePartsPartType :
-      case ZeroOrMorePartsPartType :
-        part = part.getPart();  ///
+      case OptionalPartPartType : {
+          const optionalPartPart = part; ///
 
-        leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+          part = optionalPartPart.getPart();
+
+          leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+        }
+        break;
+
+      case OneOrMorePartsPartType : {
+          const oneOrMorePartsPart = part;  ///
+
+          part = oneOrMorePartsPart.getPart();
+
+          leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+        }
+        break;
+
+      case ZeroOrMorePartsPartType : {
+          const zeroOrMorePartsPart = part; ///
+
+          part = zeroOrMorePartsPart.getPart();
+
+          leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+        }
         break;
 
       case GroupOfPartsPartType : {
-          const parts = part.getParts(),
-                firstPart = first(parts),
-                part = firstPart; ///
+          const groupOfPartsPart = part,  ///
+                parts = groupOfPartsPart.getParts(),
+                firstPart = first(parts);
+
+          part = firstPart; ///
 
           leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
         }
         break;
 
       case ChoiceOfPartsPartType : {
-          const parts = part.getParts();
+          const choiceOfPartsPart = part, ///
+                parts = choiceOfPartsPart.getParts();
 
           parts.some((part) => {
             leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
@@ -123,8 +178,9 @@ function leftRecursiveRuleNameFromPart(part) {
   return leftRecursiveRuleName;
 }
 
-function ruleNamePartFromRuleName(ruleName, noWhitespace = false, lookAhead = false) {
-  const ruleNamePart = new RuleNamePart(ruleName, noWhitespace, lookAhead);
+function ruleNamePartFromRuleName(ruleName, lookAhead = false) {
+  const noWhitespace = false, ///
+        ruleNamePart = new RuleNamePart(ruleName, noWhitespace, lookAhead);
 
   return ruleNamePart;
 }

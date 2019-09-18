@@ -13,10 +13,9 @@ class NonRecursiveAndRightRecursiveRuleNamesDefinition extends Definition {
   static fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition) {
     const ruleName = immediatelyLeftRecursiveDefinition.getRuleName(),
           lookAhead = immediatelyLeftRecursiveDefinition.isLookAhead(),
-          noWhiteSpace = immediatelyLeftRecursiveDefinition.hasNoWhitespace(),
           nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
           rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName),
-          nonRecursiveRuleNamePart = ruleNamePartFromRuleName(nonRecursiveRuleName, noWhiteSpace, lookAhead),
+          nonRecursiveRuleNamePart = ruleNamePartFromRuleName(nonRecursiveRuleName, lookAhead),
           rightRecursiveRuleNamePart = ruleNamePartFromRuleName(rightRecursiveRuleName),
           ruleNameParts = [
             nonRecursiveRuleNamePart,
