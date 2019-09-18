@@ -1,8 +1,10 @@
 'use strict';
 
-const definitionUtilities = require('../utilities/definition');
+const arrayUtilities = require('../utilities/array'),
+      definitionUtilities = require('../utilities/definition');
 
-const { recursiveRuleNamesFromDefinition, leftRecursiveRuleNameFromDefinition } = definitionUtilities;
+const { first } = arrayUtilities,
+      { recursiveRuleNamesFromDefinition, leftRecursiveRuleNameFromDefinition } = definitionUtilities;
 
 class RecursiveDefinition {
   constructor(ruleName, definition, recursiveRuleNames, leftRecursiveRuleName, indirectlyLeftRecursiveDefinition) {
@@ -14,6 +16,27 @@ class RecursiveDefinition {
   }
 
   getParts() { return this.definition.getParts(); }
+
+  getFirstPart () {
+    const parts = this.getParts(),
+          firstPart = first(parts);
+
+    return firstPart;
+  }
+
+  isLookAhead() {
+    const firstPart = this.getFirstPart(),
+          lookAhead = firstPart.isLookAhead();
+
+    return lookAhead;
+  }
+
+  hasNoWhitespace() {
+    const firstPart = this.getFirstPart(),
+          noWhitespace = firstPart.hasNoWhitespace();
+
+    return noWhitespace;
+  }
 
   getRuleName() {
     return this.ruleName;

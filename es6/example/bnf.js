@@ -1,6 +1,23 @@
 'use strict';
 
 const exampleBNF = `
+  
+    L ::= L! "c"
+    
+        | "a"
+        
+        | "a" "b"
+        
+        ;
+  
+
+`;
+
+module.exports = exampleBNF;
+
+/*
+
+
 
 
     part                 ::= part "?"
@@ -16,11 +33,9 @@ const exampleBNF = `
 
 
 
-`;
 
-module.exports = exampleBNF;
 
-/*
+
 
 S  ::= A C ;
 
