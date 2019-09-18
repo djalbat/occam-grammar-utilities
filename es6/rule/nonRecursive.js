@@ -15,16 +15,6 @@ class NonRecursiveRule extends Rule {
     super.addDefinition(definition);
   }
 
-  static fromRuleName(ruleName) {
-    const definitions = [],
-          nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
-          name = nonRecursiveRuleName,  ///
-          NonTerminalNode = NonRecursiveNode, ///
-          nonRecursiveRule = new NonRecursiveRule(name, definitions, NonTerminalNode);
-
-    return nonRecursiveRule;
-  }
-
   static fromRule(rule) {
     const ruleName = rule.getName(),
           definitions = rule.getDefinitions(),

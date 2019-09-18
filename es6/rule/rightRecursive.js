@@ -10,17 +10,9 @@ const { Rule } = parsers,
       { rightRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
 class RightRecursiveRule extends Rule {
-  // static fromRightRecursiveRuleName(rightRecursiveRuleName) {
-  //   const name = rightRecursiveRuleName,  ///
-  //         definitions = [],
-  //         NonTerminalNode = RightRecursiveNode, ///
-  //         rightRecursiveRule = new RightRecursiveRule(name, definitions, NonTerminalNode);
-  //
-  //   return rightRecursiveRule;
-  // }
-
-  static fromRuleNameAndRightRecursiveDefinitions(ruleName, rightRecursiveDefinitions) {
+  static fromRuleNameAndImmediatelyLeftRecursiveRecursiveDefinitions(ruleName, immediatelyLeftRecursiveDefinitions) {
     const rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName),
+          rightRecursiveDefinitions = immediatelyLeftRecursiveDefinitions.map((immediatelyLeftRecursiveDefinition) => RightRecursiveDefinition.fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition)),
           name = rightRecursiveRuleName,  ///
           definitions = rightRecursiveDefinitions, ///
           NonTerminalNode = RightRecursiveNode, ///
