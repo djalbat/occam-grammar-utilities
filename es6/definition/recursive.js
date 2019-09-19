@@ -35,13 +35,6 @@ class RecursiveDefinition {
     return lookAhead;
   }
 
-  hasNoWhitespace() {
-    const firstPart = this.getFirstPart(),
-          noWhitespace = firstPart.hasNoWhitespace();
-
-    return noWhitespace;
-  }
-
   getRuleName() {
     return this.ruleName;
   }

@@ -1,10 +1,10 @@
 'use strict';
 
-const partUtilities = require('../utilities/part'),
-      arrayUtilities = require('../utilities/array');
+const arrayUtilities = require('../utilities/array'),
+      recursivePartUtilities = require('../utilities/recursivePart');
 
 const { first } = arrayUtilities,
-      { recursiveRuleNamesFromPart, leftRecursiveRuleNameFromPart } = partUtilities;
+      { recursiveRuleNamesFromPart, leftRecursiveRuleNameFromPart } = recursivePartUtilities;
 
 function isDefinitionRecursive(definition) {
   const recursiveRuleNames = recursiveRuleNamesFromDefinition(definition),
