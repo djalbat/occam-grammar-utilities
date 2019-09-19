@@ -1,9 +1,13 @@
 'use strict';
 
+const parsers = require('occam-parsers');
+
 const arrayUtilities = require('../utilities/array'),
       definitionUtilities = require('../utilities/definition');
 
 const { first } = arrayUtilities,
+      { partTypes } = parsers,
+      { RuleNamePartType } = partTypes,
       { recursiveRuleNamesFromDefinition, leftRecursiveRuleNameFromDefinition } = definitionUtilities;
 
 class RecursiveDefinition {
@@ -56,6 +60,16 @@ class RecursiveDefinition {
 
   getIndirectlyLeftRecursiveDefinition() {
     return this.indirectlyLeftRecursiveDefinition;
+  }
+
+  isRewritable() {
+    const firstPart = this.getFirstPart(),
+          firstPartType = firstPart.getType(),
+          firstPartTypeRuleNamePartType = (firstPartType === RuleNamePartType),
+          firstPartRuleNamePart = firstPartTypeRuleNamePartType,  ///
+          rewritable = firstPartRuleNamePart; ///
+
+    return rewritable;
   }
 
   isLeftRecursive() {

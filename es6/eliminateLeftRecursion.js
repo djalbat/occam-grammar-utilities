@@ -12,7 +12,7 @@ const ruleUtilities = require('./utilities/rule'),
 
 const { findRuleByName } = ruleUtilities,
       { first, forEachWithRemove } = arrayUtilities,
-      { addToArrayMap, forEachKeyWithRemove } = objectUtilities,
+      { addToArrayMap, forEachNameValueWithRemove } = objectUtilities,
       { findIndirectlyLeftRecursiveDefinition } = recursiveDefinitionUtilities;
 
 function eliminateLeftRecursion(rules) {
@@ -24,6 +24,15 @@ function eliminateLeftRecursion(rules) {
   removeImmediatelyLeftRecursiveDefinitions(rule, recursiveDefinitions, immediatelyLeftRecursiveDefinitionsMap, rules);
 
   rewriteLeftRecursiveRules(immediatelyLeftRecursiveDefinitionsMap, rules);
+
+  const ruleNames = Object.keys(immediatelyLeftRecursiveDefinitionsMap),
+        ruleNamesLength = ruleNames.length;
+
+  if (ruleNamesLength > 0) {
+    const ruleNamesString = ruleNames.join(' ,');
+
+    throw new Error(`Left recursion cannot be eliminated from the ${ruleNamesString} rule or rules.`);
+  }
 }
 
 module.exports = eliminateLeftRecursion;
@@ -86,7 +95,22 @@ function removeImmediatelyLeftRecursiveDefinitions(rule, recursiveDefinitions, i
 }
 
 function rewriteLeftRecursiveRules(immediatelyLeftRecursiveDefinitionsMap, rules) {
-  forEachKeyWithRemove(immediatelyLeftRecursiveDefinitionsMap, (ruleName, immediatelyLeftRecursiveDefinitions) => {
+  forEachNameValueWithRemove(immediatelyLeftRecursiveDefinitionsMap, (ruleName, immediatelyLeftRecursiveDefinitions) => {
+    let remove = false;
+
+    remove = rewriteStrictlyLeftRecursiveRule(ruleName, immediatelyLeftRecursiveDefinitions, rules);
+
+    return remove;
+  });
+}
+
+function rewriteStrictlyLeftRecursiveRule(ruleName, immediatelyLeftRecursiveDefinitions, rules) {
+  let remove = false;
+
+  const ruleRewritable = immediatelyLeftRecursiveDefinitions.every((immediatelyLeftRecursiveDefinition) => immediatelyLeftRecursiveDefinition.isRewritable()),
+        ruleStrictlyLeftRecursive = immediatelyLeftRecursiveDefinitions.every((immediatelyLeftRecursiveDefinition) => immediatelyLeftRecursiveDefinition.isStrictlyLeftRecursive());
+
+  if (ruleRewritable && ruleStrictlyLeftRecursive) {
     const name = ruleName,  ///
           rule = findRuleByName(name, rules),
           nonRecursiveRule = NonRecursiveRule.fromRule(rule),
@@ -106,5 +130,9 @@ function rewriteLeftRecursiveRules(immediatelyLeftRecursiveDefinitionsMap, rules
           ];
 
     rule.setDefinitions(definitions);
-  });
+
+    remove = true;
+  }
+
+  return remove;
 }

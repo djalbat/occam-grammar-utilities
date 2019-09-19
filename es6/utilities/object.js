@@ -18,7 +18,7 @@ function addToArrayMap(object, name, element) {
   array.push(element);
 }
 
-function forEachKeyWithRemove(object, callback) {
+function forEachNameValueWithRemove(object, callback) {
   const keys = Object.keys(object);
 
   keys.forEach((key) => {
@@ -34,5 +34,5 @@ function forEachKeyWithRemove(object, callback) {
 
 module.exports = {
   addToArrayMap,
-  forEachKeyWithRemove
+  forEachNameValueWithRemove
 };
