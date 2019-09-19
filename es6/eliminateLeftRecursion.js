@@ -23,7 +23,7 @@ function eliminateLeftRecursion(rules) {
 
   removeImmediatelyLeftRecursiveDefinitions(rule, recursiveDefinitions, immediatelyLeftRecursiveDefinitionsMap, rules);
 
-  rewriteImmediatelyLeftRecursiveRules(immediatelyLeftRecursiveDefinitionsMap, rules);
+  rewriteLeftRecursiveRules(immediatelyLeftRecursiveDefinitionsMap, rules);
 }
 
 module.exports = eliminateLeftRecursion;
@@ -74,7 +74,7 @@ function removeImmediatelyLeftRecursiveDefinitions(rule, recursiveDefinitions, i
 
         if (!recursiveDefinitionRuleNamesIncludesRecursiveRuleName) {
           const name = recursiveRuleName,  ///
-              rule = findRuleByName(name, rules);
+                rule = findRuleByName(name, rules);
 
           if (rule !== null) {
             removeImmediatelyLeftRecursiveDefinitions(rule, recursiveDefinitions, immediatelyLeftRecursiveDefinitionsMap, rules);
@@ -85,7 +85,7 @@ function removeImmediatelyLeftRecursiveDefinitions(rule, recursiveDefinitions, i
   });
 }
 
-function rewriteImmediatelyLeftRecursiveRules(immediatelyLeftRecursiveDefinitionsMap, rules) {
+function rewriteLeftRecursiveRules(immediatelyLeftRecursiveDefinitionsMap, rules) {
   forEachKeyWithRemove(immediatelyLeftRecursiveDefinitionsMap, (ruleName, immediatelyLeftRecursiveDefinitions) => {
     const name = ruleName,  ///
           rule = findRuleByName(name, rules),
