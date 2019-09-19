@@ -5,14 +5,6 @@ const easy = require('easy');
 const { InputElement } = easy;
 
 class ParseTreeTextarea extends InputElement {
-  showError() {
-    this.addClass('error');
-  }
-
-  hideError() {
-    this.removeClass('error');
-  }
-
   setParseTree(parseTree) {
     if (parseTree !== null) {
       parseTree.shiftLine();  //
@@ -33,14 +25,10 @@ class ParseTreeTextarea extends InputElement {
   }
 
   parentContext() {
-    const showError = this.showError.bind(this),
-          hideError = this.hideError.bind(this),
-          setParseTree = this.setParseTree.bind(this),
+    const setParseTree = this.setParseTree.bind(this),
           clearParseTree = this.clearParseTree.bind(this);
 
     return ({
-      showError,
-      hideError,
       setParseTree,
       clearParseTree
     });

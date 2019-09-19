@@ -29,9 +29,15 @@ function eliminateLeftRecursion(rules) {
         ruleNamesLength = ruleNames.length;
 
   if (ruleNamesLength > 0) {
-    const ruleNamesString = ruleNames.join(' ,');
+    const ruleNamesString = ruleNames.reduce((ruleNamesString, ruleName) => {
+      ruleNamesString = (ruleNamesString !== '') ?
+                         `${ruleNamesString}, '${ruleName}'` :
+                          `'${ruleName}'`;
 
-    throw new Error(`Left recursion cannot be eliminated from the ${ruleNamesString} rule or rules.`);
+      return ruleNamesString;
+    }, '');
+
+    throw new Error(`Left recursion cannot be eliminated from the folliowing rule or rules: ${ruleNamesString}.`);
   }
 }
 

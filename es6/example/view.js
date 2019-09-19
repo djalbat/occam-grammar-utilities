@@ -7,6 +7,7 @@ const easy = require('easy'),
 
 const exampleBNF = require('../example/bnf'),
       BNFTextarea = require('./textarea/bnf'),
+      ErrorParagraph = require('./paragraph/error'),
       rulesUtilities = require('../utilities/rules'),
       exampleContent = require('../example/content'),
       ContentTextarea = require('./textarea/content'),
@@ -59,7 +60,7 @@ class View extends Element {
   }
 
   changeHandler() {
-    // try {
+    try {
       const bnf = this.getBNF(),
             tokens = bnfLexer.tokensFromBNF(bnf);
 
@@ -80,13 +81,14 @@ class View extends Element {
       const parseTree = this.getParseTree(rules);
 
       this.setParseTree(parseTree);
-    // } catch (error) {
-    //   this.showError();
-    //
-    //   this.clearAdjustedBNF();
-    //
-    //   this.clearParseTree();
-    // }
+
+    } catch (error) {
+      this.clearAdjustedBNF();
+
+      this.clearParseTree();
+
+      this.showError(error);
+    }
   }
 
   keyUpHandler() {
@@ -118,6 +120,7 @@ class View extends Element {
           </div>
           <h2>Content</h2>
           <ContentTextarea onKeyUp={keyUpHandler} />
+          <ErrorParagraph />
         </div>
       </div>
 
