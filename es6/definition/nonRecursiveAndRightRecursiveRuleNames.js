@@ -10,10 +10,8 @@ const { Definition } = parsers,
       { nonRecursiveRuleNameFromRuleName, rightRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
 class NonRecursiveAndRightRecursiveRuleNamesDefinition extends Definition {
-  static fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition) {
-    const ruleName = immediatelyLeftRecursiveDefinition.getRuleName(),
-          lookAhead = immediatelyLeftRecursiveDefinition.isLookAhead(),
-          nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
+  static fromRuleNameAndLookAhead(ruleName, lookAhead) {
+    const nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
           rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName),
           nonRecursiveRuleNamePart = ruleNamePartFromRuleName(nonRecursiveRuleName, lookAhead),
           rightRecursiveRuleNamePart = ruleNamePartFromRuleName(rightRecursiveRuleName),
