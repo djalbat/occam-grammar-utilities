@@ -2,17 +2,24 @@
 
 const exampleBNF = `
   
-    part                 ::= part "?"
 
-                           | part "!"
+  expression              ::= compoundExpression
 
-                           | ruleName
+                            | "(" expression ")"
 
-                           ;
+                            | term
 
-    ruleName             ::= [unassigned] ;
+                            ;
 
+  compoundExpression     ::= expression operator expression
 
+                            | "xyz"
+
+                            ;
+
+  operator                ::= "+" | "-" | "/" | "*" ;
+
+  term                    ::= /\\d+/ ;
 
 
 `;
@@ -20,6 +27,11 @@ const exampleBNF = `
 module.exports = exampleBNF;
 
 /*
+
+
+
+
+
 
 
 
@@ -35,19 +47,35 @@ module.exports = exampleBNF;
 
 
 
+    S  ::= A C ;
+
+    A  ::= "." B ;
+
+    B  ::= A | "." C ;
+
+    C  ::= D E ;
+
+    D  ::= C ;
+
+    E  ::= "." ;
 
 
-S  ::= A C ;
 
-A  ::= "." B ;
 
-B  ::= A | "." C ;
 
-C  ::= D E ;
 
-D  ::= C ;
+    part                 ::= part "?"
 
-E  ::= "." ;
+                           | part "!"
+
+                           | ruleName
+
+                           ;
+
+    ruleName             ::= [unassigned] ;
+
+
+
 
 
 
@@ -187,28 +215,6 @@ E  ::= "." ;
   ruleName        ::= [unassigned] ;
 
 
-
-
-
-
-
-  expression              ::= compoundExpression
-
-                            | "(" expression ")"
-
-                            | term
-
-                            ;
-
-  compoundExpression     ::= expression operator expression
-
-                            | "xyz"
-
-                            ;
-
-  operator                ::= "+" | "-" | "/" | "*" ;
-
-  term                    ::= /\d+/ ;
 
 
 

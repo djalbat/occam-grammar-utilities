@@ -77,6 +77,12 @@ class RecursiveDefinition {
     return strictlyLeftRecursive;
   }
 
+  matchDefinition(definition) {
+    const matches = (this.definition === definition);
+
+    return matches;
+  }
+
   setIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition) {
     this.indirectlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition;
   }

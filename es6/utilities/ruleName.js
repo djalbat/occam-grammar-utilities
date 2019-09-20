@@ -6,6 +6,12 @@ function nonRecursiveRuleNameFromRuleName(ruleName) {
   return nonRecursiveRuleName;
 }
 
+function nonRecursiveRuleNameFromLeftRecursiveRuleName(leftRecursiveRuleName) {
+  const nonRecursiveRuleName = `${leftRecursiveRuleName}_`;
+
+  return nonRecursiveRuleName;
+}
+
 function rightRecursiveRuleNameFromRuleName(ruleName) {
   const rightRecursiveRuleName = `${ruleName}~`;
 
@@ -38,6 +44,7 @@ function checkNonRecursiveRuleNameMatchesRuleName(nonRecursiveRuleName, ruleName
 
 module.exports = {
   nonRecursiveRuleNameFromRuleName,
+  nonRecursiveRuleNameFromLeftRecursiveRuleName,
   rightRecursiveRuleNameFromRuleName,
   rightRecursiveRuleNameFromRecursiveRuleName,
   ruleNameFromNonRecursiveRuleName,

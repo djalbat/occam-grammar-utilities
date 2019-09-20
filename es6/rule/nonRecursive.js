@@ -2,22 +2,38 @@
 
 const parsers = require('occam-parsers');
 
-const NonRecursiveNode = require('../node/nonRecursive'),
+const arrayUtilities = require('../utilities/array'),
+      NonRecursiveNode = require('../node/nonRecursive'),
       ruleNameUtilities = require('../utilities/ruleName');
 
 const { Rule } = parsers,
+      { filter } = arrayUtilities,
       { nonRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
 class NonRecursiveRule extends Rule {
-  addNonRecursiveDefinition(nonRecursiveDefinition) {
-    const definition = nonRecursiveDefinition;  ///
+  static fromIndirectlyLeftRecursiveRuleAndIndirectlyLeftRecursiveDefintion(indirectlyLeftRecursiveRule, indirectlyLeftRecursiveDefinition) {
+    const ruleName = indirectlyLeftRecursiveRule.getName(),
+          definitions = indirectlyLeftRecursiveRule.getDefinitions();
 
-    super.addDefinition(definition);
+    filter(definitions, (definition) => {
+      const indirectlyLeftRecursiveDefinitionMatchesDefinition = indirectlyLeftRecursiveDefinition.matchDefinition(definition);
+
+      if (!indirectlyLeftRecursiveDefinitionMatchesDefinition) {
+        return true;
+      }
+    });
+
+    const nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
+          name = nonRecursiveRuleName,  ///
+          NonTerminalNode = NonRecursiveNode, ///
+          nonRecursiveRule = new NonRecursiveRule(name, definitions, NonTerminalNode);
+
+    return nonRecursiveRule;
   }
 
-  static fromRule(rule) {
-    const ruleName = rule.getName(),
-          definitions = rule.getDefinitions(),
+  static fromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule) {
+    const ruleName = immediatelyLeftRecursiveRule.getName(),
+          definitions = immediatelyLeftRecursiveRule.getDefinitions(),
           nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
           name = nonRecursiveRuleName,  ///
           NonTerminalNode = NonRecursiveNode, ///
