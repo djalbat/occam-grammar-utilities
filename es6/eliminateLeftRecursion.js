@@ -1,21 +1,20 @@
 'use strict';
 
-const ruleUtilities = require('./utilities/rule'),
+const ReducedRule = require('./rule/reduced'),
+      ruleUtilities = require('./utilities/rule'),
       arrayUtilities = require('./utilities/array'),
       ruleNameUtilities = require('./utilities/ruleName'),
-      RuleNameDefinition = require('./definition/ruleName'),
       RightRecursiveRule = require('./rule/rightRecursive'),
       RecursiveDefinition = require('./definition/recursive'),
-      NonLeftRecursiveRule = require('./rule/nonLeftRecursive'),
       RightRecursiveDefinition = require('./definition/rightRecursive'),
+      ReducedRuleNameDefinition = require('./definition/reducedRuleName'),
       recursiveDefinitionUtilities = require('./utilities/recursiveDefinition'),
-      NonLeftRecursiveRuleNameDefinition = require('./definition/nonLeftRecursiveRuleName'),
-      NonLeftRecursiveAndRightRecursiveRuleNamesDefinition = require('./definition/nonLeftRecursiveAndRightRecursiveRuleNames');
+      ReducedAndRightRecursiveRuleNamesDefinition = require('./definition/reducedAndRightRecursiveRuleNames');
 
 const { findRule } = ruleUtilities,
       { first, forEachWithRemove } = arrayUtilities,
       { findIndirectlyLeftRecursiveDefinition } = recursiveDefinitionUtilities,
-      { rightRecursiveRuleNameFromRuleName, nonLeftRecursiveRuleNameFromRuleName } = ruleNameUtilities;
+      { rightRecursiveRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;
 
 function eliminateLeftRecursion(rules) {
   const firstRule = first(rules),
@@ -132,29 +131,29 @@ function rewriteStrictlyLeftRecursiveDefinition(immediatelyLeftRecursiveDefiniti
   if (strictlyLeftRecursive) {
     const ruleName = immediatelyLeftRecursiveDefinition.getRuleName(),
           rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName),
-          nonLeftRecursiveRuleName = nonLeftRecursiveRuleNameFromRuleName(ruleName);
+          reducedRuleName = reducedRuleNameFromRuleName(ruleName);
 
-    let nonLeftRecursiveRule = findRule(nonLeftRecursiveRuleName, rules);
+    let reducedRule = findRule(reducedRuleName, rules);
 
-    if (nonLeftRecursiveRule === null) {
+    if (reducedRule === null) {
       let definitions;
 
       const rule = findRule(ruleName, rules);
 
       definitions = rule.getDefinitions();
 
-      nonLeftRecursiveRule = NonLeftRecursiveRule.fromNonLeftRecursiveRuleNameAndDefinitions(nonLeftRecursiveRuleName, definitions);
+      reducedRule = ReducedRule.fromReducedRuleNameAndDefinitions(reducedRuleName, definitions);
 
-      rules.push(nonLeftRecursiveRule);
+      rules.push(reducedRule);
 
       const lookAhead = immediatelyLeftRecursiveDefinition.isLookAhead(),
             leftRecursiveRuleName = ruleName, ///
-            nonLeftRecursiveRuleNameDefinition = NonLeftRecursiveRuleNameDefinition.fromRuleName(ruleName),
-            nonLeftRecursiveAndRightRecursiveRuleNamesDefinition = NonLeftRecursiveAndRightRecursiveRuleNamesDefinition.fromRuleNameLeftRecursiveRuleNameAndLookAhead(ruleName, leftRecursiveRuleName, lookAhead);
+            reducedRuleNameDefinition = ReducedRuleNameDefinition.fromRuleName(ruleName),
+            reducedAndRightRecursiveRuleNamesDefinition = ReducedAndRightRecursiveRuleNamesDefinition.fromRuleNameLeftRecursiveRuleNameAndLookAhead(ruleName, leftRecursiveRuleName, lookAhead);
 
       definitions = [
-        nonLeftRecursiveAndRightRecursiveRuleNamesDefinition,
-        nonLeftRecursiveRuleNameDefinition
+        reducedAndRightRecursiveRuleNamesDefinition,
+        reducedRuleNameDefinition
       ];
 
       rule.setDefinitions(definitions);
@@ -163,10 +162,10 @@ function rewriteStrictlyLeftRecursiveDefinition(immediatelyLeftRecursiveDefiniti
             definitions = rule.getDefinitions(),
             firstDefinition = first(definitions),
             immediatelyLeftRecursiveDefinitionLookAhead = immediatelyLeftRecursiveDefinition.isLookAhead(),
-            nonLeftRecursiveAndRightRecursiveRuleNamesDefinition = firstDefinition, ///
-            nonLeftRecursiveAndRightRecursiveRuleNamesDefinitionLookAhead = nonLeftRecursiveAndRightRecursiveRuleNamesDefinition.isLookAhead();
+            reducedAndRightRecursiveRuleNamesDefinition = firstDefinition, ///
+            reducedAndRightRecursiveRuleNamesDefinitionLookAhead = reducedAndRightRecursiveRuleNamesDefinition.isLookAhead();
 
-      if (immediatelyLeftRecursiveDefinitionLookAhead !== nonLeftRecursiveAndRightRecursiveRuleNamesDefinitionLookAhead) {
+      if (immediatelyLeftRecursiveDefinitionLookAhead !== reducedAndRightRecursiveRuleNamesDefinitionLookAhead) {
         return false;
       }
     }
@@ -192,29 +191,29 @@ function rewriteImmediatelyAndIndirectlyLeftRecursiveDefinitions(immediatelyLeft
 
   if (!strictlyLeftRecursive) {
     const ruleName = immediatelyLeftRecursiveDefinition.getRuleName(),
-          nonLeftRecursiveRuleName = nonLeftRecursiveRuleNameFromRuleName(ruleName);
+          reducedRuleName = reducedRuleNameFromRuleName(ruleName);
 
-    let nonLeftRecursiveRule = findRule(nonLeftRecursiveRuleName, rules);
+    let reducedRule = findRule(reducedRuleName, rules);
 
-    if (nonLeftRecursiveRule === null) {
+    if (reducedRule === null) {
       let definitions;
 
       const rule = findRule(ruleName, rules);
 
       definitions = rule.getDefinitions();
 
-      nonLeftRecursiveRule = NonLeftRecursiveRule.fromNonLeftRecursiveRuleNameAndDefinitions(nonLeftRecursiveRuleName, definitions);
+      reducedRule = ReducedRule.fromReducedRuleNameAndDefinitions(reducedRuleName, definitions);
 
-      rules.push(nonLeftRecursiveRule);
+      rules.push(reducedRule);
 
       const lookAhead = immediatelyLeftRecursiveDefinition.isLookAhead(),
             leftRecursiveRuleName = ruleName, ///
-            nonLeftRecursiveRuleNameDefinition = NonLeftRecursiveRuleNameDefinition.fromRuleName(ruleName),
-            nonLeftRecursiveAndRightRecursiveRuleNamesDefinition = NonLeftRecursiveAndRightRecursiveRuleNamesDefinition.fromRuleNameLeftRecursiveRuleNameAndLookAhead(ruleName, leftRecursiveRuleName, lookAhead);
+            reducedRuleNameDefinition = ReducedRuleNameDefinition.fromRuleName(ruleName),
+            reducedAndRightRecursiveRuleNamesDefinition = ReducedAndRightRecursiveRuleNamesDefinition.fromRuleNameLeftRecursiveRuleNameAndLookAhead(ruleName, leftRecursiveRuleName, lookAhead);
 
       definitions = [
-        nonLeftRecursiveAndRightRecursiveRuleNamesDefinition,
-        nonLeftRecursiveRuleNameDefinition
+        reducedAndRightRecursiveRuleNamesDefinition,
+        reducedRuleNameDefinition
       ];
 
       rule.setDefinitions(definitions);
@@ -226,18 +225,18 @@ function rewriteImmediatelyAndIndirectlyLeftRecursiveDefinitions(immediatelyLeft
   /*
   let rule,
       definitions,
-      nonLeftRecursiveRule,
-      nonLeftRecursiveRuleNameDefinition;
+      reducedRule,
+      reducedRuleNameDefinition;
 
   rule = findRule(ruleName, rules);
 
   const immediatelyLeftRecursiveRule = rule;  ///
 
-  nonLeftRecursiveRule = NonLeftRecursiveRule.fromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule);
+  reducedRule = ReducedRule.fromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule);
 
   const rightRecursiveRule = RightRecursiveRule.fromRuleNameAndImmediatelyLeftRecursiveRecursiveDefinitions(ruleName, immediatelyLeftRecursiveDefinitions);
 
-  rules.push(nonLeftRecursiveRule);
+  rules.push(reducedRule);
 
   rules.push(rightRecursiveRule);
 
@@ -246,13 +245,13 @@ function rewriteImmediatelyAndIndirectlyLeftRecursiveDefinitions(immediatelyLeft
         lookAhead = firstLookAhead, ///
         leftRecursiveRuleName = firstLeftRecursiveRuleName; ///
 
-  nonLeftRecursiveRuleNameDefinition = NonLeftRecursiveRuleNameDefinition.fromRuleName(ruleName);
+  reducedRuleNameDefinition = ReducedRuleNameDefinition.fromRuleName(ruleName);
 
-  const nonLeftRecursiveAndRightRecursiveRuleNamesDefinition = NonLeftRecursiveAndRightRecursiveRuleNamesDefinition.fromRuleNameLeftRecursiveRuleNameAndLookAhead(ruleName, leftRecursiveRuleName, lookAhead);
+  const reducedAndRightRecursiveRuleNamesDefinition = ReducedAndRightRecursiveRuleNamesDefinition.fromRuleNameLeftRecursiveRuleNameAndLookAhead(ruleName, leftRecursiveRuleName, lookAhead);
 
   definitions = [
-    nonLeftRecursiveAndRightRecursiveRuleNamesDefinition,
-    nonLeftRecursiveRuleNameDefinition
+    reducedAndRightRecursiveRuleNamesDefinition,
+    reducedRuleNameDefinition
   ];
 
   immediatelyLeftRecursiveRule.setDefinitions(definitions);
@@ -263,19 +262,19 @@ function rewriteImmediatelyAndIndirectlyLeftRecursiveDefinitions(immediatelyLeft
         immediatelyLeftRecursiveDefinition = firstImmediatelyLeftRecursiveDefinition, ///
         indirectlyLeftRecursiveDefinition = immediatelyLeftRecursiveDefinition.getIndirectlyLeftRecursiveDefinition();
 
-  nonLeftRecursiveRule = NonLeftRecursiveRule.fromIndirectlyLeftRecursiveRuleAndIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveRule, indirectlyLeftRecursiveDefinition);
+  reducedRule = ReducedRule.fromIndirectlyLeftRecursiveRuleAndIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveRule, indirectlyLeftRecursiveDefinition);
 
   const ruleNameDefinition = RuleNameDefinition.fromRuleName(ruleName);
 
-  nonLeftRecursiveRuleNameDefinition = NonLeftRecursiveRuleNameDefinition.fromLeftRecursiveRuleName(leftRecursiveRuleName);
+  reducedRuleNameDefinition = ReducedRuleNameDefinition.fromLeftRecursiveRuleName(leftRecursiveRuleName);
 
   definitions = [
     ruleNameDefinition,
-    nonLeftRecursiveRuleNameDefinition
+    reducedRuleNameDefinition
   ];
 
   indirectlyLeftRecursiveRule.setDefinitions(definitions);
 
-  rules.push(nonLeftRecursiveRule);
+  rules.push(reducedRule);
   */
 }

@@ -9,32 +9,32 @@ const partUtilities = require('../utilities/part'),
 const { first } = arrayUtilities,
       { Definition } = parsers,
       { ruleNamePartFromRuleName } = partUtilities,
-      { nonLeftRecursiveRuleNameFromLeftRecursiveRuleName, rightRecursiveRuleNameFromRuleName } = ruleNameUtilities;
+      { reducedRuleNameFromLeftRecursiveRuleName, rightRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
-class NonLeftRecursiveAndRightRecursiveRuleNamesDefinition extends Definition {
+class ReducedAndRightRecursiveRuleNamesDefinition extends Definition {
   isLookAhead() {
     const parts = this.getParts(),
           firstPart = first(parts),
-          nonLeftRecursiveRuleNamePart = firstPart, ///
-          lookAhead = nonLeftRecursiveRuleNamePart.isLookAhead();
+          reducedRuleNamePart = firstPart, ///
+          lookAhead = reducedRuleNamePart.isLookAhead();
 
     return lookAhead;
   }
 
   static fromRuleNameLeftRecursiveRuleNameAndLookAhead(ruleName, leftRecursiveRuleName, lookAhead) {
-    const nonLeftRecursiveRuleName = nonLeftRecursiveRuleNameFromLeftRecursiveRuleName(leftRecursiveRuleName),
+    const reducedRuleName = reducedRuleNameFromLeftRecursiveRuleName(leftRecursiveRuleName),
           rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName),
-          nonLeftRecursiveRuleNamePart = ruleNamePartFromRuleName(nonLeftRecursiveRuleName, lookAhead),
+          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName, lookAhead),
           rightRecursiveRuleNamePart = ruleNamePartFromRuleName(rightRecursiveRuleName),
           ruleNameParts = [
-            nonLeftRecursiveRuleNamePart,
+            reducedRuleNamePart,
             rightRecursiveRuleNamePart
           ],
           parts = ruleNameParts,  ///
-          nonLeftRecursiveAndRightRecursiveRuleNamesDefinition = new NonLeftRecursiveAndRightRecursiveRuleNamesDefinition(parts);
+          reducedAndRightRecursiveRuleNamesDefinition = new ReducedAndRightRecursiveRuleNamesDefinition(parts);
 
-    return nonLeftRecursiveAndRightRecursiveRuleNamesDefinition;
+    return reducedAndRightRecursiveRuleNamesDefinition;
   }
 }
 
-module.exports = NonLeftRecursiveAndRightRecursiveRuleNamesDefinition;
+module.exports = ReducedAndRightRecursiveRuleNamesDefinition;

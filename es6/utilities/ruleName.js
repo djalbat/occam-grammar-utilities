@@ -1,15 +1,15 @@
 'use strict';
 
-function nonLeftRecursiveRuleNameFromRuleName(ruleName) {
-  const nonLeftRecursiveRuleName = `${ruleName}_`;
+function reducedRuleNameFromRuleName(ruleName) {
+  const reducedRuleName = `${ruleName}_`;
 
-  return nonLeftRecursiveRuleName;
+  return reducedRuleName;
 }
 
-function nonLeftRecursiveRuleNameFromLeftRecursiveRuleName(leftRecursiveRuleName) {
-  const nonLeftRecursiveRuleName = `${leftRecursiveRuleName}_`;
+function reducedRuleNameFromLeftRecursiveRuleName(leftRecursiveRuleName) {
+  const reducedRuleName = `${leftRecursiveRuleName}_`;
 
-  return nonLeftRecursiveRuleName;
+  return reducedRuleName;
 }
 
 function rightRecursiveRuleNameFromRuleName(ruleName) {
@@ -24,29 +24,29 @@ function rightRecursiveRuleNameFromRecursiveRuleName(recursiveRuleName) {
   return rightRecursiveRuleName;
 }
 
-function ruleNameFromNonLeftRecursiveRuleName(nonLeftRecursiveRuleName) {
-  const ruleName = nonLeftRecursiveRuleName.replace(/_$/, '');
+function ruleNameFromReducedRuleName(reducedRuleName) {
+  const ruleName = reducedRuleName.replace(/_$/, '');
 
   return ruleName;
 }
 
-function checkNonLeftRecursiveRuleNameMatchesRuleName(nonLeftRecursiveRuleName, ruleName) {
+function checkReducedRuleNameMatchesRuleName(reducedRuleName, ruleName) {
   const ruleNameA = ruleName; ///
 
-  ruleName = ruleNameFromNonLeftRecursiveRuleName(nonLeftRecursiveRuleName);
+  ruleName = ruleNameFromReducedRuleName(reducedRuleName);
 
   const ruleNameB = ruleName; ///
 
-  const nonLeftRecursiveRuleNameMatchesRuleName = (ruleNameA === ruleNameB);  ///
+  const reducedRuleNameMatchesRuleName = (ruleNameA === ruleNameB);  ///
 
-  return nonLeftRecursiveRuleNameMatchesRuleName;
+  return reducedRuleNameMatchesRuleName;
 }
 
 module.exports = {
-  nonLeftRecursiveRuleNameFromRuleName,
-  nonLeftRecursiveRuleNameFromLeftRecursiveRuleName,
+  reducedRuleNameFromRuleName,
+  reducedRuleNameFromLeftRecursiveRuleName,
   rightRecursiveRuleNameFromRuleName,
   rightRecursiveRuleNameFromRecursiveRuleName,
-  ruleNameFromNonLeftRecursiveRuleName,
-  checkNonLeftRecursiveRuleNameMatchesRuleName
+  ruleNameFromReducedRuleName,
+  checkReducedRuleNameMatchesRuleName
 };

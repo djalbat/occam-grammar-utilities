@@ -1,13 +1,13 @@
 'use strict';
 
-const ruleNameUtilities = require('./utilities/ruleName'),
-      RightRecursiveNode = require('./node/rightRecursive'),
-      NonLeftRecursiveNode = require('./node/nonLeftRecursive');
+const ReducedNode = require('./node/reduced'),
+      ruleNameUtilities = require('./utilities/ruleName'),
+      RightRecursiveNode = require('./node/rightRecursive');
 
-const { ruleNameFromNonLeftRecursiveRuleName, checkNonLeftRecursiveRuleNameMatchesRuleName } = ruleNameUtilities;
+const { ruleNameFromReducedRuleName, checkReducedRuleNameMatchesRuleName } = ruleNameUtilities;
 
 function removeIntermediateNodes(node) {
-  removeOrRenameNonLeftRecursiveNodes(node);
+  removeOrRenameReducedNodes(node);
 
   removeRightRecursiveNodes(node);
 }
@@ -50,7 +50,7 @@ function removeRightRecursiveChildNodes(childNodes) {
   return childNodes;
 }
 
-function removeOrRenameNonLeftRecursiveNodes(node) {
+function removeOrRenameReducedNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (nodeNonTerminalNode) {
@@ -59,51 +59,51 @@ function removeOrRenameNonLeftRecursiveNodes(node) {
 
     let childNodes = nonTerminalNode.getChildNodes();
 
-    childNodes = removeOrRenameNonLeftRecursiveChildNodes(childNodes, ruleName);
+    childNodes = removeOrRenameReducedChildNodes(childNodes, ruleName);
 
     nonTerminalNode.setChildNodes(childNodes)
   }
 }
 
-function removeOrRenameNonLeftRecursiveChildNodes(childNodes, ruleName) {
+function removeOrRenameReducedChildNodes(childNodes, ruleName) {
   const childNodesLength = childNodes.length;
 
   childNodes = childNodes.reduce((childNodes, childNode) => {
-    const childNodeNonLeftRecursiveNode = (childNode instanceof NonLeftRecursiveNode);
+    const childNodeReducedNode = (childNode instanceof ReducedNode);
 
-    if (childNodeNonLeftRecursiveNode) {
-      const nonLeftRecursiveNode = childNode, ///
-            nonLeftRecursiveNodeRuleName = nonLeftRecursiveNode.getRuleName(),
-            nonLeftRecursiveRuleName = nonLeftRecursiveNodeRuleName,  ///
-            nonLeftRecursiveRuleNameMatchesRuleName = checkNonLeftRecursiveRuleNameMatchesRuleName(nonLeftRecursiveRuleName, ruleName);
+    if (childNodeReducedNode) {
+      const reducedNode = childNode, ///
+            reducedNodeRuleName = reducedNode.getRuleName(),
+            reducedRuleName = reducedNodeRuleName,  ///
+            reducedRuleNameMatchesRuleName = checkReducedRuleNameMatchesRuleName(reducedRuleName, ruleName);
 
-      if (nonLeftRecursiveRuleNameMatchesRuleName) {
+      if (reducedRuleNameMatchesRuleName) {
         if (childNodesLength > 1) {
-          const ruleName = ruleNameFromNonLeftRecursiveRuleName(nonLeftRecursiveRuleName);
+          const ruleName = ruleNameFromReducedRuleName(reducedRuleName);
 
           childNode.setRuleName(ruleName);
 
-          removeOrRenameNonLeftRecursiveNodes(childNode);
+          removeOrRenameReducedNodes(childNode);
 
           childNodes.push(childNode);
         } else {
           let childNodeChildNodes = childNode.getChildNodes();
 
-          childNodeChildNodes = removeOrRenameNonLeftRecursiveChildNodes(childNodeChildNodes);
+          childNodeChildNodes = removeOrRenameReducedChildNodes(childNodeChildNodes);
 
           childNodes = childNodes.concat(childNodeChildNodes);
         }
       } else {
-        const ruleName = ruleNameFromNonLeftRecursiveRuleName(nonLeftRecursiveRuleName);
+        const ruleName = ruleNameFromReducedRuleName(reducedRuleName);
 
         childNode.setRuleName(ruleName);
 
-        removeOrRenameNonLeftRecursiveNodes(childNode);
+        removeOrRenameReducedNodes(childNode);
 
         childNodes.push(childNode);
       }
     } else {
-      removeOrRenameNonLeftRecursiveNodes(childNode);
+      removeOrRenameReducedNodes(childNode);
 
       childNodes.push(childNode);
     }
