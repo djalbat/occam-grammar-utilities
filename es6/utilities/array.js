@@ -2,52 +2,33 @@
 
 const necessary = require('necessary');
 
-const { arrayUtilities } = necessary,
-      { first } = arrayUtilities;
+const { arrayUtilities } = necessary;
 
-function areElementsEqual(elements) {
-  let elementsEqual = true;
+function forEachWithRemove(array, callback) {
+  let arrayLength = array.length;
 
-  const elementsLength = elements.length;
-
-  if (elementsLength > 0) {
-    const firstElement = first(elements);
-
-    elementsEqual = elements.every((element) => {
-      if (element === firstElement) {
-        return true;
-      }
-    });
-  }
-
-  return elementsEqual;
-}
-
-function forEachWithRemove(elements, callback) {
-  let elementsLength = elements.length;
-
-  for (let index = 0; index < elementsLength; index++) {
-    const element = elements[index],
+  for (let index = 0; index < arrayLength; index++) {
+    const element = array[index],
           remove = callback(element, index);
 
     if (remove) {
       const start = index,  ///
             deleteCount = 1;
 
-      elements.splice(start, deleteCount);
+      array.splice(start, deleteCount);
 
-      elementsLength--;
+      arrayLength--;
 
       index--;
     }
   }
 }
 
-function forEachWithReplace(elements, callback) {
-  const elementsLength = elements.length;
+function forEachWithReplace(array, callback) {
+  const arrayLength = array.length;
 
-  for (let index = 0; index < elementsLength; index++) {
-    let element = elements[index];
+  for (let index = 0; index < arrayLength; index++) {
+    let element = array[index];
 
     element = callback(element, index);
 
@@ -55,13 +36,12 @@ function forEachWithReplace(elements, callback) {
       const start = index,  ///
             deleteCount = 1;
 
-      elements.splice(start, deleteCount, element);
+      array.splice(start, deleteCount, element);
     }
   }
 }
 
 module.exports = Object.assign(arrayUtilities, {
-  areElementsEqual,
   forEachWithRemove,
   forEachWithReplace
 });

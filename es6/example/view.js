@@ -115,7 +115,7 @@ class View extends Element {
           <h2>Parse tree</h2>
           <ParseTreeTextarea />
           <div>
-            <RemoveIntermediateNodesCheckbox onChange={changeHandler} />
+            <RemoveIntermediateNodesCheckbox onChange={changeHandler} checked />
             <span>Remove intermediate nodes</span>
           </div>
           <h2>Content</h2>

@@ -1,7 +1,6 @@
 'use strict';
 
 const exampleBNF = `
-  
 
     L ::= L! "c"
 
@@ -11,13 +10,25 @@ const exampleBNF = `
 
         ;
 
-
-
 `;
 
 module.exports = exampleBNF;
 
 /*
+
+
+
+    part                 ::= part "?"
+
+                           | part "!"
+
+                           | ruleName
+
+                           ;
+
+    ruleName             ::= [custom] ;
+
+
 
 
 
@@ -64,24 +75,6 @@ module.exports = exampleBNF;
 
 
 
-
-
-    part                 ::= part "?"
-
-                           | part "!"
-
-                           | ruleName
-
-                           ;
-
-    ruleName             ::= [unassigned] ;
-
-
-
-
-
-
-
   part             ::= zeroOrMoreParts
 
                      | optionalPart
@@ -94,7 +87,7 @@ module.exports = exampleBNF;
 
   optionalPart     ::= part "?" ;
 
-  ruleName         ::= [unassigned] ;
+  ruleName         ::= [custom] ;
 
 
 
@@ -133,7 +126,7 @@ module.exports = exampleBNF;
 
                    ;
 
-  ruleName       ::= [unassigned] ;
+  ruleName       ::= [custom] ;
 
 
 
@@ -164,7 +157,7 @@ module.exports = exampleBNF;
                     ;
 
 
-  ruleName        ::= [unassigned] ;
+  ruleName        ::= [custom] ;
 
 
 
@@ -185,7 +178,7 @@ module.exports = exampleBNF;
                    ;
 
 
-  ruleName       ::= [unassigned] ;
+  ruleName       ::= [custom] ;
 
 
 
@@ -214,7 +207,7 @@ module.exports = exampleBNF;
   lookAheadPart   ::= part "!" ;
 
 
-  ruleName        ::= [unassigned] ;
+  ruleName        ::= [custom] ;
 
 
 
@@ -262,6 +255,212 @@ module.exports = exampleBNF;
   operator                ::= "+" | "-" | "/" | "*" ;
 
   term                    ::= /\d+/ ;
+
+
+
+
+
+
+
+  expression    ::= "(" expression ")" expression~
+
+                  | term expression~
+
+                  ;
+
+  expression~   ::= operator expression expression~
+
+                  | ε
+
+                  ;
+
+  operator      ::= "+"
+
+                  | "/"
+
+                  ;
+
+  term          ::= /\d+/ ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  expression                  ::= parenthesisedExpression compoundExpression~
+
+                                | negatedExpression compoundExpression~
+
+                                | term compoundExpression~
+
+                                ;
+
+
+  parenthesisedExpression     ::= "(" expression ")" ;
+
+
+  negatedExpression           ::= "-" expression ;
+
+
+  compoundExpression~         ::= "+" expression compoundExpression~
+
+                                | "/" expression compoundExpression~
+
+                                | ε
+
+                                ;
+
+
+  term                        ::= /\d+/ ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  expression                  ::= parenthesisedExpression quotient~ sum~
+
+                                | compoundExpression quotient~ sum~
+
+                                | term quotient~ sum~
+
+                                ;
+
+
+  parenthesisedExpression     ::= "(" expression ")" ;
+
+
+  compoundExpression          ::= negation
+
+                                ;
+
+
+  negation                    ::= "-" expression ;
+
+
+  term                        ::= /\d+/ ;
+
+
+  quotient~                   ::= "/" expression quotient~
+
+                                | ε
+
+                                ;
+
+
+  sum~                        ::= "+" expression sum~
+
+                                | ε
+
+                                ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  expression                  ::= parenthesisedExpression quotient~ sum~
+
+                                | compoundExpression quotient~ sum~
+
+                                | term quotient~ sum~
+
+                                ;
+
+
+  parenthesisedExpression     ::= "(" expression ")" ;
+
+
+  compoundExpression          ::= negation
+
+                                ;
+
+
+  negation                    ::= "-" expression ;
+
+
+  term                        ::= /\d+/ ;
+
+
+  quotient~                   ::= "/" expression quotient~
+
+                                | ε
+
+                                ;
+
+
+  sum~                        ::= "+" expression sum~
+
+                                | ε
+
+                                ;
+
+
+
+
+
+
+
 
 
 

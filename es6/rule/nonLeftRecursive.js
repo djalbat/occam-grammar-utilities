@@ -11,7 +11,7 @@ const { Rule } = parsers,
       { nonLeftRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
 class NonLeftRecursiveRule extends Rule {
-  static fromIndirectlyLeftRecursiveRuleAndIndirectlyLeftRecursiveDefintion(indirectlyLeftRecursiveRule, indirectlyLeftRecursiveDefinition) {
+  static fromIndirectlyLeftRecursiveRuleAndIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveRule, indirectlyLeftRecursiveDefinition) {
     const ruleName = indirectlyLeftRecursiveRule.getName(),
           definitions = indirectlyLeftRecursiveRule.getDefinitions();
 
@@ -31,11 +31,8 @@ class NonLeftRecursiveRule extends Rule {
     return nonLeftRecursiveRule;
   }
 
-  static fromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule) {
-    const ruleName = immediatelyLeftRecursiveRule.getName(),
-          definitions = immediatelyLeftRecursiveRule.getDefinitions(),
-          nonLeftRecursiveRuleName = nonLeftRecursiveRuleNameFromRuleName(ruleName),
-          name = nonLeftRecursiveRuleName,  ///
+  static fromNonLeftRecursiveRuleNameAndDefinitions(nonLeftRecursiveRuleName, definitions) {
+    const name = nonLeftRecursiveRuleName,  ///
           NonTerminalNode = NonLeftRecursiveNode, ///
           nonLeftRecursiveRule = new NonLeftRecursiveRule(name, definitions, NonTerminalNode);
 

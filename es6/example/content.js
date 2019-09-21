@@ -1,5 +1,5 @@
 'use strict';
 
-const exampleContent = 'test?!';
+const exampleContent = 'test!?';
 
 module.exports = exampleContent;
