@@ -77,6 +77,20 @@ class RecursiveDefinition {
     return strictlyLeftRecursive;
   }
 
+  isNonStrictlyLeftRecursive() {
+    let nonStrictlyLeftRecursive = false;
+
+    const leftRecursive = this.isLeftRecursive();
+
+    if (leftRecursive) {
+      const strictlyLeftRecursive = this.isStrictlyLeftRecursive();
+
+      nonStrictlyLeftRecursive = !strictlyLeftRecursive;
+    }
+
+    return nonStrictlyLeftRecursive;
+  }
+
   matchDefinition(definition) {
     const matches = (this.definition === definition);
 

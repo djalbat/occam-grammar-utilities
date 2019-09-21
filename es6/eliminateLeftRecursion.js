@@ -57,10 +57,10 @@ function removeStrictlyLeftRecursiveDefinition(recursiveDefinition, immediatelyL
   }
 }
 
-function removeImmediatelyLeftRecursiveDefinition(recursiveDefinition, recursiveDefinitions, immediatelyLeftRecursiveDefinitions) {
-  const recursiveDefinitionLeftRecursive = recursiveDefinition.isLeftRecursive();
+function removeNonStrictlyLeftRecursiveDefinition(recursiveDefinition, recursiveDefinitions, immediatelyLeftRecursiveDefinitions) {
+  const recursiveDefinitionNonStrictlyLeftRecursive = recursiveDefinition.isNonStrictlyLeftRecursive();
 
-  if (recursiveDefinitionLeftRecursive) {
+  if (recursiveDefinitionNonStrictlyLeftRecursive) {
     const leftRecursiveDefinition = recursiveDefinition,  ///
           indirectlyLeftRecursiveDefinition = findIndirectlyLeftRecursiveDefinition(leftRecursiveDefinition, recursiveDefinitions);
 
@@ -83,7 +83,7 @@ function removeImmediatelyLeftRecursiveDefinitions(rule, recursiveDefinitions, i
 
     if (recursiveDefinition !== null) {
       const remove = removeStrictlyLeftRecursiveDefinition(recursiveDefinition, immediatelyLeftRecursiveDefinitions)
-                   || removeImmediatelyLeftRecursiveDefinition(recursiveDefinition, recursiveDefinitions, immediatelyLeftRecursiveDefinitions);
+                   || removeNonStrictlyLeftRecursiveDefinition(recursiveDefinition, recursiveDefinitions, immediatelyLeftRecursiveDefinitions);
 
       if (remove) {
         return true;
@@ -187,9 +187,9 @@ function rewriteStrictlyLeftRecursiveDefinition(immediatelyLeftRecursiveDefiniti
 }
 
 function rewriteImmediatelyAndIndirectlyLeftRecursiveDefinitions(immediatelyLeftRecursiveDefinition, rules) {
-  const strictlyLeftRecursive = immediatelyLeftRecursiveDefinition.isStrictlyLeftRecursive();
+  const nonStrictlyLeftRecursive = immediatelyLeftRecursiveDefinition.isNonStrictlyLeftRecursive();
 
-  if (!strictlyLeftRecursive) {
+  if (nonStrictlyLeftRecursive) {
     const ruleName = immediatelyLeftRecursiveDefinition.getRuleName(),
           reducedRuleName = reducedRuleNameFromRuleName(ruleName);
 
