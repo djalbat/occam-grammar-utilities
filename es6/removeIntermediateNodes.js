@@ -1,13 +1,13 @@
 'use strict';
 
-const NonRecursiveNode = require('./node/nonRecursive'),
-      ruleNameUtilities = require('./utilities/ruleName'),
-      RightRecursiveNode = require('./node/rightRecursive');
+const ruleNameUtilities = require('./utilities/ruleName'),
+      RightRecursiveNode = require('./node/rightRecursive'),
+      NonLeftRecursiveNode = require('./node/nonLeftRecursive');
 
-const { ruleNameFromNonRecursiveRuleName, checkNonRecursiveRuleNameMatchesRuleName } = ruleNameUtilities;
+const { ruleNameFromNonLeftRecursiveRuleName, checkNonLeftRecursiveRuleNameMatchesRuleName } = ruleNameUtilities;
 
 function removeIntermediateNodes(node) {
-  removeOrRenameNonRecursiveNodes(node);
+  removeOrRenameNonLeftRecursiveNodes(node);
 
   removeRightRecursiveNodes(node);
 }
@@ -50,7 +50,7 @@ function removeRightRecursiveChildNodes(childNodes) {
   return childNodes;
 }
 
-function removeOrRenameNonRecursiveNodes(node) {
+function removeOrRenameNonLeftRecursiveNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (nodeNonTerminalNode) {
@@ -59,51 +59,51 @@ function removeOrRenameNonRecursiveNodes(node) {
 
     let childNodes = nonTerminalNode.getChildNodes();
 
-    childNodes = removeOrRenameNonRecursiveChildNodes(childNodes, ruleName);
+    childNodes = removeOrRenameNonLeftRecursiveChildNodes(childNodes, ruleName);
 
     nonTerminalNode.setChildNodes(childNodes)
   }
 }
 
-function removeOrRenameNonRecursiveChildNodes(childNodes, ruleName) {
+function removeOrRenameNonLeftRecursiveChildNodes(childNodes, ruleName) {
   const childNodesLength = childNodes.length;
 
   childNodes = childNodes.reduce((childNodes, childNode) => {
-    const childNodeNonRecursiveNode = (childNode instanceof NonRecursiveNode);
+    const childNodeNonLeftRecursiveNode = (childNode instanceof NonLeftRecursiveNode);
 
-    if (childNodeNonRecursiveNode) {
-      const nonRecursiveNode = childNode, ///
-            nonRecursiveNodeRuleName = nonRecursiveNode.getRuleName(),
-            nonRecursiveRuleName = nonRecursiveNodeRuleName,
-            nonRecursiveRuleNameMatchesRuleName = checkNonRecursiveRuleNameMatchesRuleName(nonRecursiveRuleName, ruleName);
+    if (childNodeNonLeftRecursiveNode) {
+      const nonLeftRecursiveNode = childNode, ///
+            nonLeftRecursiveNodeRuleName = nonLeftRecursiveNode.getRuleName(),
+            nonLeftRecursiveRuleName = nonLeftRecursiveNodeRuleName,  ///
+            nonLeftRecursiveRuleNameMatchesRuleName = checkNonLeftRecursiveRuleNameMatchesRuleName(nonLeftRecursiveRuleName, ruleName);
 
-      if (nonRecursiveRuleNameMatchesRuleName) {
+      if (nonLeftRecursiveRuleNameMatchesRuleName) {
         if (childNodesLength > 1) {
-          const ruleName = ruleNameFromNonRecursiveRuleName(nonRecursiveRuleName);
+          const ruleName = ruleNameFromNonLeftRecursiveRuleName(nonLeftRecursiveRuleName);
 
           childNode.setRuleName(ruleName);
 
-          removeOrRenameNonRecursiveNodes(childNode);
+          removeOrRenameNonLeftRecursiveNodes(childNode);
 
           childNodes.push(childNode);
         } else {
           let childNodeChildNodes = childNode.getChildNodes();
 
-          childNodeChildNodes = removeOrRenameNonRecursiveChildNodes(childNodeChildNodes);
+          childNodeChildNodes = removeOrRenameNonLeftRecursiveChildNodes(childNodeChildNodes);
 
           childNodes = childNodes.concat(childNodeChildNodes);
         }
       } else {
-        const ruleName = ruleNameFromNonRecursiveRuleName(nonRecursiveRuleName);
+        const ruleName = ruleNameFromNonLeftRecursiveRuleName(nonLeftRecursiveRuleName);
 
         childNode.setRuleName(ruleName);
 
-        removeOrRenameNonRecursiveNodes(childNode);
+        removeOrRenameNonLeftRecursiveNodes(childNode);
 
         childNodes.push(childNode);
       }
     } else {
-      removeOrRenameNonRecursiveNodes(childNode);
+      removeOrRenameNonLeftRecursiveNodes(childNode);
 
       childNodes.push(childNode);
     }
@@ -112,5 +112,4 @@ function removeOrRenameNonRecursiveChildNodes(childNodes, ruleName) {
   }, []);
 
   return childNodes;
-
 }

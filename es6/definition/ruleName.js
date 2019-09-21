@@ -13,9 +13,9 @@ class RuleNameDefinition extends Definition {
           parts = [
             ruleNamePart
           ],
-          nonRecursiveRuleNameDefinition = new RuleNameDefinition(parts);
+          ruleNameDefinition = new RuleNameDefinition(parts);
 
-    return nonRecursiveRuleNameDefinition;
+    return ruleNameDefinition;
   }
 }
 

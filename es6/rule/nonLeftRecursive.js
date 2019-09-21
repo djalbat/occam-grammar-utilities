@@ -3,14 +3,14 @@
 const parsers = require('occam-parsers');
 
 const arrayUtilities = require('../utilities/array'),
-      NonRecursiveNode = require('../node/nonRecursive'),
-      ruleNameUtilities = require('../utilities/ruleName');
+      ruleNameUtilities = require('../utilities/ruleName'),
+      NonLeftRecursiveNode = require('../node/nonLeftRecursive');
 
 const { Rule } = parsers,
       { filter } = arrayUtilities,
-      { nonRecursiveRuleNameFromRuleName } = ruleNameUtilities;
+      { nonLeftRecursiveRuleNameFromRuleName } = ruleNameUtilities;
 
-class NonRecursiveRule extends Rule {
+class NonLeftRecursiveRule extends Rule {
   static fromIndirectlyLeftRecursiveRuleAndIndirectlyLeftRecursiveDefintion(indirectlyLeftRecursiveRule, indirectlyLeftRecursiveDefinition) {
     const ruleName = indirectlyLeftRecursiveRule.getName(),
           definitions = indirectlyLeftRecursiveRule.getDefinitions();
@@ -23,24 +23,24 @@ class NonRecursiveRule extends Rule {
       }
     });
 
-    const nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
-          name = nonRecursiveRuleName,  ///
-          NonTerminalNode = NonRecursiveNode, ///
-          nonRecursiveRule = new NonRecursiveRule(name, definitions, NonTerminalNode);
+    const nonLeftRecursiveRuleName = nonLeftRecursiveRuleNameFromRuleName(ruleName),
+          name = nonLeftRecursiveRuleName,  ///
+          NonTerminalNode = NonLeftRecursiveNode, ///
+          nonLeftRecursiveRule = new NonLeftRecursiveRule(name, definitions, NonTerminalNode);
 
-    return nonRecursiveRule;
+    return nonLeftRecursiveRule;
   }
 
   static fromImmediatelyLeftRecursiveRule(immediatelyLeftRecursiveRule) {
     const ruleName = immediatelyLeftRecursiveRule.getName(),
           definitions = immediatelyLeftRecursiveRule.getDefinitions(),
-          nonRecursiveRuleName = nonRecursiveRuleNameFromRuleName(ruleName),
-          name = nonRecursiveRuleName,  ///
-          NonTerminalNode = NonRecursiveNode, ///
-          nonRecursiveRule = new NonRecursiveRule(name, definitions, NonTerminalNode);
+          nonLeftRecursiveRuleName = nonLeftRecursiveRuleNameFromRuleName(ruleName),
+          name = nonLeftRecursiveRuleName,  ///
+          NonTerminalNode = NonLeftRecursiveNode, ///
+          nonLeftRecursiveRule = new NonLeftRecursiveRule(name, definitions, NonTerminalNode);
 
-    return nonRecursiveRule;
+    return nonLeftRecursiveRule;
   }
 }
 
-module.exports = NonRecursiveRule;
+module.exports = NonLeftRecursiveRule;
