@@ -61,11 +61,12 @@ function removeNonStrictlyLeftRecursiveDefinition(recursiveDefinition, recursive
   const recursiveDefinitionNonStrictlyLeftRecursive = recursiveDefinition.isNonStrictlyLeftRecursive();
 
   if (recursiveDefinitionNonStrictlyLeftRecursive) {
-    const leftRecursiveDefinition = recursiveDefinition,  ///
+    const nonStrictlyLeftRecursiveDefinition = recursiveDefinition,  ///
+          leftRecursiveDefinition = nonStrictlyLeftRecursiveDefinition, ///
           indirectlyLeftRecursiveDefinition = findIndirectlyLeftRecursiveDefinition(leftRecursiveDefinition, recursiveDefinitions);
 
     if (indirectlyLeftRecursiveDefinition !== null) {
-      const immediatelyLeftRecursiveDefinition = leftRecursiveDefinition; ///
+      const immediatelyLeftRecursiveDefinition = nonStrictlyLeftRecursiveDefinition; ///
 
       immediatelyLeftRecursiveDefinitions.push(immediatelyLeftRecursiveDefinition);
 
