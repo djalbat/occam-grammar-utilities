@@ -2,73 +2,6 @@
 
 const exampleBNF = `
 
-  expression            ::=  compoundExpression
-
-                          |  "(" expression ")"
-
-                          |  term
-
-                          ;
-
-  compoundExpression    ::=  arithmeticExpression ;
-
-  arithmeticExpression  ::=  expression "+" expression 
-
-                          |  expression "/" expression 
-
-                          ;
-
-  term                  ::=  /\\d+/ ;
-  
- `;
-
-module.exports = exampleBNF;
-
-/*
-
-
-
-  expression          ::=  compoundExpression
-
-                        |  "(" expression ")"
-
-                        |  term
-
-                        ;
-
-  compoundExpression  ::=  expression operator expression
-
-                        |  "xyz"
-
-                        ;
-
-  operator            ::= "+" | "-" | "/" | "*" ;
-
-  term                ::= /\d+/ ;
-
-
-
-
-
-    part                 ::= part "?"
-
-                           | part "!"
-
-                           | ruleName
-
-                           ;
-
-    ruleName             ::= [custom] ;
-
-
-
-
-
-
-
-
-
-
     L ::= L! "c"
 
         | L "d"
@@ -85,195 +18,35 @@ module.exports = exampleBNF;
 
 
 
-  part             ::= zeroOrMoreParts
 
-                     | optionalPart
 
-                     | ruleName
+`;
 
-                     ;
+module.exports = exampleBNF;
 
-  zeroOrMoreParts  ::= part "*" ;
+/*
 
-  optionalPart     ::= part "?" ;
 
-  ruleName         ::= [custom] ;
+  expression                  ::= parenthesisedExpression
 
+                                | negatedExpression
 
+                                | term
 
+                                ;
 
 
+  parenthesisedExpression     ::= "(" expression ")" ;
 
 
+  negatedExpression           ::= "-" expression ;
 
 
+  term                        ::= /\d+/ ;
 
 
 
 
-
-
-
-                 expression  ::=  arithmeticExpression
-
-                               |  "xyz"
-
-                               ;
-
-
-       arithmeticExpression  ::=  addition ;
-
-
-                   addition  ::=  expression "+" expression ;
-
-
-
-
-
-
-
-
-
-
-  definition     ::= part+ ;
-
-  optionalPart   ::= part "?" ;
-
-  part           ::= optionalPart
-
-                   | ruleName
-
-                   ;
-
-  ruleName       ::= [custom] ;
-
-
-
-
-
-
-
-
-
-
-
-
-
-  definition      ::= part+ ;
-
-
-  optionalPart    ::= part "?" ;
-
-  lookAheadPart   ::= part "!" ;
-
-
-  part            ::= optionalPart
-
-                    | lookAheadPart
-
-                    | ruleName
-
-                    ;
-
-
-  ruleName        ::= [custom] ;
-
-
-
-
-
-
-
-
-
-
-
-  part           ::= part "?"
-
-                   | part "!"
-
-                   | ruleName
-
-                   ;
-
-
-  ruleName       ::= [custom] ;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  part            ::= optionalPart
-
-                    | lookAheadPart
-
-                    | ruleName
-
-                    ;
-
-
-  optionalPart    ::= part "?" ;
-
-  lookAheadPart   ::= part "!" ;
-
-
-  ruleName        ::= [custom] ;
-
-
-
-
-
-
-
-
-
-
-
-  expression              ::= compoundExpression
-
-                            | "(" expression ")"
-
-                            | term
-
-                            ;
-
-  compoundExpression     ::= expression operator expression ;
-
-  operator                ::= "+" | "-" | "/" | "*" ;
-
-  term                    ::= /\d+/ ;
-
-
-
-
-
-
-
-
-  expression              ::= intermediateExpression
-
-                            | "(" expression ")"
-
-                            | term
-
-                            ;
-
-  intermediateExpression  ::= compoundExpression ;
-
-  compoundExpression      ::= expression operator expression ;
-
-  operator                ::= "+" | "-" | "/" | "*" ;
-
-  term                    ::= /\d+/ ;
 
 
 
@@ -314,13 +87,21 @@ module.exports = exampleBNF;
 
 
 
+  expression              ::= intermediateExpression
 
+                            | "(" expression ")"
 
+                            | term
 
+                            ;
 
+  intermediateExpression  ::= compoundExpression ;
 
+  compoundExpression      ::= expression operator expression ;
 
+  operator                ::= "+" | "-" | "/" | "*" ;
 
+  term                    ::= /\d+/ ;
 
 
 
@@ -328,32 +109,30 @@ module.exports = exampleBNF;
 
 
 
-  expression                  ::= parenthesisedExpression compoundExpression~
 
-                                | negatedExpression compoundExpression~
 
-                                | term compoundExpression~
 
-                                ;
 
 
-  parenthesisedExpression     ::= "(" expression ")" ;
 
 
-  negatedExpression           ::= "-" expression ;
+  expression            ::=  compoundExpression
 
+                          |  "(" expression ")"
 
-  compoundExpression~         ::= "+" expression compoundExpression~
+                          |  term
 
-                                | "/" expression compoundExpression~
+                          ;
 
-                                | ε
+  compoundExpression    ::=  arithmeticExpression ;
 
-                                ;
+  arithmeticExpression  ::=  expression "+" expression
 
+                          |  expression "/" expression
 
-  term                        ::= /\d+/ ;
+                          ;
 
+  term                  ::=  /\d+/ ;
 
 
 
@@ -368,48 +147,47 @@ module.exports = exampleBNF;
 
 
 
+  expression          ::=  compoundExpression
 
+                        |  "(" expression ")"
 
+                        |  term
 
+                        ;
 
+  compoundExpression  ::=  expression operator expression
 
+                        |  "xyz"
 
+                        ;
 
-  expression                  ::= parenthesisedExpression quotient~ sum~
+  operator            ::= "+" | "-" | "/" | "*" ;
 
-                                | compoundExpression quotient~ sum~
+  term                ::= /\d+/ ;
 
-                                | term quotient~ sum~
 
-                                ;
 
 
-  parenthesisedExpression     ::= "(" expression ")" ;
 
 
-  compoundExpression          ::= negation
 
-                                ;
 
 
-  negation                    ::= "-" expression ;
 
 
-  term                        ::= /\d+/ ;
 
+    part                 ::= part "?"
 
-  quotient~                   ::= "/" expression quotient~
+                           | part "!"
 
-                                | ε
+                           | ruleName
 
-                                ;
+                           ;
 
+    ruleName             ::= [custom] ;
 
-  sum~                        ::= "+" expression sum~
 
-                                | ε
 
-                                ;
 
 
 
@@ -419,64 +197,19 @@ module.exports = exampleBNF;
 
 
 
+  part             ::= zeroOrMoreParts
 
+                     | optionalPart
 
+                     | ruleName
 
+                     ;
 
+  zeroOrMoreParts  ::= part "*" ;
 
+  optionalPart     ::= part "?" ;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-  expression                  ::= parenthesisedExpression quotient~ sum~
-
-                                | compoundExpression quotient~ sum~
-
-                                | term quotient~ sum~
-
-                                ;
-
-
-  parenthesisedExpression     ::= "(" expression ")" ;
-
-
-  compoundExpression          ::= negation
-
-                                ;
-
-
-  negation                    ::= "-" expression ;
-
-
-  term                        ::= /\d+/ ;
-
-
-  quotient~                   ::= "/" expression quotient~
-
-                                | ε
-
-                                ;
-
-
-  sum~                        ::= "+" expression sum~
-
-                                | ε
-
-                                ;
-
-
-
-
+  ruleName         ::= [custom] ;
 
 
 
