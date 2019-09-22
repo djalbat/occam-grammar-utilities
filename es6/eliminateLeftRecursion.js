@@ -5,10 +5,10 @@ const ReducedRule = require('./rule/reduced'),
       ruleUtilities = require('./utilities/rule'),
       arrayUtilities = require('./utilities/array'),
       ruleNameUtilities = require('./utilities/ruleName'),
+      RuleNameDefinition = require('./definition/ruleName'),
       RepeatedDefinition = require('./definition/repeated'),
       RewrittenDefinition = require('./definition/rewritten'),
       RecursiveDefinition = require('./definition/recursive'),
-      ReducedRuleNameDefinition = require('./definition/reducedRuleName'),
       recursiveDefinitionUtilities = require('./utilities/recursiveDefinition');
 
 const { findRule } = ruleUtilities,
@@ -146,7 +146,7 @@ function rewriteStrictlyLeftRecursiveDefinition(immediatelyLeftRecursiveDefiniti
 
       rules.push(reducedRule);
 
-      const reducedRuleNameDefinition = ReducedRuleNameDefinition.fromReducedRuleName(reducedRuleName);
+      const reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName);
 
       definitions = [
         reducedRuleNameDefinition
@@ -201,11 +201,9 @@ function rewriteImmediatelyAndIndirectlyLeftRecursiveDefinitions(immediatelyLeft
 
       const lookAhead = immediatelyLeftRecursiveDefinition.isLookAhead(),
             leftRecursiveRuleName = ruleName, ///
-            reducedRuleNameDefinition = ReducedRuleNameDefinition.fromRuleName(ruleName),
-            reducedAndRepeatedRuleNamesDefinition = ReducedAndRepeatedRuleNamesDefinition.fromRuleNameLeftRecursiveRuleNameAndLookAhead(ruleName, leftRecursiveRuleName, lookAhead);
+            reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName);
 
       definitions = [
-        reducedAndRepeatedRuleNamesDefinition,
         reducedRuleNameDefinition
       ];
 
@@ -238,7 +236,7 @@ function rewriteImmediatelyAndIndirectlyLeftRecursiveDefinitions(immediatelyLeft
         lookAhead = firstLookAhead, ///
         leftRecursiveRuleName = firstLeftRecursiveRuleName; ///
 
-  reducedRuleNameDefinition = ReducedRuleNameDefinition.fromRuleName(ruleName);
+  reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName);
 
   const reducedAndRepeatedRuleNamesDefinition = ReducedAndRepeatedRuleNamesDefinition.fromRuleNameLeftRecursiveRuleNameAndLookAhead(ruleName, leftRecursiveRuleName, lookAhead);
 
@@ -259,7 +257,7 @@ function rewriteImmediatelyAndIndirectlyLeftRecursiveDefinitions(immediatelyLeft
 
   const ruleNameDefinition = RuleNameDefinition.fromRuleName(ruleName);
 
-  reducedRuleNameDefinition = ReducedRuleNameDefinition.fromLeftRecursiveRuleName(leftRecursiveRuleName);
+  reducedRuleNameDefinition = RuleNameDefinition.fromLeftRecurreducedRiveRuleName(leftRecursiveRuleName);
 
   definitions = [
     ruleNameDefinition,

@@ -19,22 +19,6 @@ class RecursiveDefinition {
     this.indirectlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition;
   }
 
-  getParts() { return this.definition.getParts(); }
-
-  getFirstPart () {
-    const parts = this.getParts(),
-          firstPart = first(parts);
-
-    return firstPart;
-  }
-
-  isLookAhead() {
-    const firstPart = this.getFirstPart(),
-          lookAhead = firstPart.isLookAhead();
-
-    return lookAhead;
-  }
-
   getRuleName() {
     return this.ruleName;
   }
@@ -55,6 +39,22 @@ class RecursiveDefinition {
     return this.indirectlyLeftRecursiveDefinition;
   }
 
+  getParts() { return this.definition.getParts(); }
+
+  getFirstPart() {
+    const parts = this.getParts(),
+          firstPart = first(parts);
+
+    return firstPart;
+  }
+
+  isLookAhead() {
+    const firstPart = this.getFirstPart(),
+          lookAhead = firstPart.isLookAhead();
+
+    return lookAhead;
+  }
+
   isRewritable() {
     const firstPart = this.getFirstPart(),
           firstPartType = firstPart.getType(),
@@ -72,7 +72,13 @@ class RecursiveDefinition {
   }
 
   isStrictlyLeftRecursive() {
-    const strictlyLeftRecursive = (this.leftRecursiveRuleName === this.ruleName);
+    let strictlyLeftRecursive = false;
+
+    const leftRecursive = this.isLeftRecursive();
+
+    if (leftRecursive) {
+      strictlyLeftRecursive = (this.leftRecursiveRuleName === this.ruleName);
+    }
 
     return strictlyLeftRecursive;
   }
@@ -83,9 +89,7 @@ class RecursiveDefinition {
     const leftRecursive = this.isLeftRecursive();
 
     if (leftRecursive) {
-      const strictlyLeftRecursive = this.isStrictlyLeftRecursive();
-
-      nonStrictlyLeftRecursive = !strictlyLeftRecursive;
+      nonStrictlyLeftRecursive = (this.leftRecursiveRuleName !== this.ruleName);
     }
 
     return nonStrictlyLeftRecursive;

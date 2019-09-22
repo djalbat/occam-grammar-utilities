@@ -2,45 +2,6 @@
 
 const exampleBNF = `
 
-    L ::= L! "c"
-
-        | L "d"
-
-        | "a"
-
-        | "a" "b"
-
-        ;
-
-
-`;
-
-module.exports = exampleBNF;
-
-/*
-
-
-
-  L  ::= L_! "c" L~*
-
-       | L_ "d" L~*
-
-       | L_
-
-       ;
-
-  L_ ::= "a"
-
-       | "a" "b"
-
-       ;
-
-  L~ ::= "c"
-
-       | "d"
-
-       ;
-
   expression          ::=  compoundExpression
 
                         |  "(" expression ")"
@@ -57,6 +18,26 @@ module.exports = exampleBNF;
 
 
 
+`;
+
+module.exports = exampleBNF;
+
+/*
+
+
+
+    L ::= L! "c"
+
+        | L "d"
+
+        | "a"
+
+        | "a" "b"
+
+        ;
+
+
+
     part                 ::= part "?"
 
                            | part "!"
@@ -66,6 +47,13 @@ module.exports = exampleBNF;
                            ;
 
     ruleName             ::= [custom] ;
+
+
+
+
+
+
+
 
 
 
