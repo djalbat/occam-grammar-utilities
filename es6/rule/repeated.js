@@ -7,12 +7,6 @@ const RepeatedNode = require('../node/repeated');
 const { Rule } = parsers;
 
 class RepeatedRule extends Rule {
-  addRepeatedDefinition(repeatedDefinition) {
-    const definition = repeatedDefinition;  ///
-
-    this.addDefinition(definition);
-  }
-
   static fromRepeatedRuleName(repeatedRuleName) {
     const name = repeatedRuleName,  ///
           definitions = [],

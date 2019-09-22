@@ -19,10 +19,9 @@ class RewrittenDefinition extends Definition {
 
     parts.shift();  ///
 
-    const ruleName = immediatelyLeftRecursiveDefinition.getRuleName(),
-          lookAhead = immediatelyLeftRecursiveDefinition.isLookAhead(),
+    const lookAhead = immediatelyLeftRecursiveDefinition.isLookAhead(),
           leftRecursiveRuleName = immediatelyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
-          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+          repeatedRuleName = repeatedRuleNameFromRuleName(leftRecursiveRuleName),
           reducedLeftRecursiveRuleName = reducedRuleNameFromRuleName(leftRecursiveRuleName),
           zeroOrMoreRepeatedRuleNamePart = zeroOrMoreRuleNamePartPartFromRuleName(repeatedRuleName),
           reducedLeftRecursiveRuleNamePart = ruleNamePartFromRuleName(reducedLeftRecursiveRuleName, lookAhead),

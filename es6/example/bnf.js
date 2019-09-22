@@ -2,59 +2,21 @@
 
 const exampleBNF = `
 
-  expression          ::=  compoundExpression
+    part                 ::= part "?"
 
-                        |  "(" expression ")"
+                           | part "!"
 
-                        |  term
+                           | ruleName
 
-                        ;
+                           ;
 
-  compoundExpression  ::=  expression operator expression
-
-                        |  "xyz"
-
-                        ;
-
-  operator                ::= "+" | "-" | "/" | "*" ;
-
-  term                    ::= /\\d+/ ;
+    ruleName             ::= [custom] ;
 
 `;
 
 module.exports = exampleBNF;
 
 /*
-
-
-
-
-  expression          ::= compoundExpression
-
-                        | expression_
-
-                        ;
-
-  expression_         ::= "(" expression ")"
-
-                        | term
-
-                        ;
-
-  compoundExpression_ ::= "xyz" ;
-
-  compoundExpression  ::= expression_ operator expression compoundExpression~*
-
-                        | compoundExpression_
-
-                        ;
-
-  compoundExpression~ ::= operator expression ;
-
-  operator            ::= "+" | "-" | "/" | "*" ;
-
-  term                ::= /\d+/ ;
-
 
 
 
@@ -73,45 +35,29 @@ module.exports = exampleBNF;
 
 
 
-    part                 ::= part "?"
 
-                           | part "!"
+  expression          ::=  compoundExpression
 
-                           | ruleName
+                        |  "(" expression ")"
 
-                           ;
+                        |  term
 
-    ruleName             ::= [custom] ;
+                        ;
 
+  compoundExpression  ::=  expression operator expression
 
+                        |  "xyz"
 
+                        ;
 
+  operator            ::= "+" | "-" | "/" | "*" ;
 
-
-
-
-
-
-
+  term                ::= /\d+/ ;
 
 
 
 
 
-
-
-
-    S  ::= A C ;
-
-    A  ::= "." B ;
-
-    B  ::= A | "." C ;
-
-    C  ::= D E ;
-
-    D  ::= C ;
-
-    E  ::= "." ;
 
 
 
@@ -129,6 +75,15 @@ module.exports = exampleBNF;
   optionalPart     ::= part "?" ;
 
   ruleName         ::= [custom] ;
+
+
+
+
+
+
+
+
+
 
 
 

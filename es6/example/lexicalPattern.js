@@ -1,5 +1,5 @@
 'use strict';
 
-const exampleLexicalPattern = '.';
+const exampleLexicalPattern = '\\w+|.';
 
 module.exports = exampleLexicalPattern;
