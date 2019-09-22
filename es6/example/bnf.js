@@ -2,37 +2,29 @@
 
 const exampleBNF = `
 
-    part                 ::= part "?"
+  expression            ::=  compoundExpression
 
-                           | part "!"
+                          |  "(" expression ")"
 
-                           | ruleName
+                          |  term
 
-                           ;
+                          ;
 
-    ruleName             ::= [custom] ;
+  compoundExpression    ::=  arithmeticExpression ;
 
-`;
+  arithmeticExpression  ::=  expression "+" expression 
+
+                          |  expression "/" expression 
+
+                          ;
+
+  term                  ::=  /\\d+/ ;
+  
+ `;
 
 module.exports = exampleBNF;
 
 /*
-
-
-
-
-    L ::= L! "c"
-
-        | L "d"
-
-        | "a"
-
-        | "a" "b"
-
-        ;
-
-
-
 
 
 
@@ -55,6 +47,37 @@ module.exports = exampleBNF;
   term                ::= /\d+/ ;
 
 
+
+
+
+    part                 ::= part "?"
+
+                           | part "!"
+
+                           | ruleName
+
+                           ;
+
+    ruleName             ::= [custom] ;
+
+
+
+
+
+
+
+
+
+
+    L ::= L! "c"
+
+        | L "d"
+
+        | "a"
+
+        | "a" "b"
+
+        ;
 
 
 
