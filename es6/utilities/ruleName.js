@@ -6,20 +6,8 @@ function reducedRuleNameFromRuleName(ruleName) {
   return reducedRuleName;
 }
 
-function reducedRuleNameFromLeftRecursiveRuleName(leftRecursiveRuleName) {
-  const reducedRuleName = `${leftRecursiveRuleName}_`;
-
-  return reducedRuleName;
-}
-
 function repeatedRuleNameFromRuleName(ruleName) {
   const repeatedRuleName = `${ruleName}~`;
-
-  return repeatedRuleName;
-}
-
-function repeatedRuleNameFromRecursiveRuleName(recursiveRuleName) {
-  const repeatedRuleName = `${recursiveRuleName}~`;
 
   return repeatedRuleName;
 }
@@ -44,9 +32,7 @@ function checkReducedRuleNameMatchesRuleName(reducedRuleName, ruleName) {
 
 module.exports = {
   reducedRuleNameFromRuleName,
-  reducedRuleNameFromLeftRecursiveRuleName,
   repeatedRuleNameFromRuleName,
-  repeatedRuleNameFromRecursiveRuleName,
   ruleNameFromReducedRuleName,
   checkReducedRuleNameMatchesRuleName
 };

@@ -21,13 +21,14 @@ class RewrittenDefinition extends Definition {
 
     const ruleName = immediatelyLeftRecursiveDefinition.getRuleName(),
           lookAhead = immediatelyLeftRecursiveDefinition.isLookAhead(),
-          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+          leftRecursiveRuleName = immediatelyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
           repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
-          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName, lookAhead),
+          reducedLeftRecursiveRuleName = reducedRuleNameFromRuleName(leftRecursiveRuleName),
           zeroOrMoreRepeatedRuleNamePart = zeroOrMoreRuleNamePartPartFromRuleName(repeatedRuleName),
+          reducedLeftRecursiveRuleNamePart = ruleNamePartFromRuleName(reducedLeftRecursiveRuleName, lookAhead),
           rewrittenDefinition = new RewrittenDefinition(parts);
 
-    parts.unshift(reducedRuleNamePart);
+    parts.unshift(reducedLeftRecursiveRuleNamePart);
 
     parts.push(zeroOrMoreRepeatedRuleNamePart);
 

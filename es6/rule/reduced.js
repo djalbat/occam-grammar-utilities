@@ -2,33 +2,21 @@
 
 const parsers = require('occam-parsers');
 
-const ReducedNode = require('../node/reduced'),
-      arrayUtilities = require('../utilities/array'),
-      ruleNameUtilities = require('../utilities/ruleName');
+const ReducedNode = require('../node/reduced');
 
-const { Rule } = parsers,
-      { filter } = arrayUtilities,
-      { reducedRuleNameFromRuleName } = ruleNameUtilities;
+const { Rule } = parsers;
 
 class ReducedRule extends Rule {
-  static fromIndirectlyLeftRecursiveRuleAndIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveRule, indirectlyLeftRecursiveDefinition) {
-    const ruleName = indirectlyLeftRecursiveRule.getName(),
-          definitions = indirectlyLeftRecursiveRule.getDefinitions();
+  removeDefinition(definition) {
+    const definitions = this.getDefinitions(),
+          index = definitions.indexOf(definition);
 
-    filter(definitions, (definition) => {
-      const indirectlyLeftRecursiveDefinitionMatchesDefinition = indirectlyLeftRecursiveDefinition.matchDefinition(definition);
+    if (index !== -1) {
+      const start = index,  ///
+            deleteCount = 1;
 
-      if (!indirectlyLeftRecursiveDefinitionMatchesDefinition) {
-        return true;
-      }
-    });
-
-    const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          name = reducedRuleName,  ///
-          NonTerminalNode = ReducedNode, ///
-          reducedRule = new ReducedRule(name, definitions, NonTerminalNode);
-
-    return reducedRule;
+      definitions.splice(start, deleteCount);
+    }
   }
 
   static fromReducedRuleNameAndDefinitions(reducedRuleName, definitions) {
