@@ -9,9 +9,9 @@ const partUtilities = require('../utilities/part'),
 const { first } = arrayUtilities,
       { Definition } = parsers,
       { ruleNamePartFromRuleName } = partUtilities,
-      { reducedRuleNameFromLeftRecursiveRuleName, rightRecursiveRuleNameFromRuleName } = ruleNameUtilities;
+      { reducedRuleNameFromLeftRecursiveRuleName, repeatedRuleNameFromRuleName } = ruleNameUtilities;
 
-class ReducedAndRightRecursiveRuleNamesDefinition extends Definition {
+class ReducedAndRepeatedRuleNamesDefinition extends Definition {
   isLookAhead() {
     const parts = this.getParts(),
           firstPart = first(parts),
@@ -23,18 +23,18 @@ class ReducedAndRightRecursiveRuleNamesDefinition extends Definition {
 
   static fromRuleNameLeftRecursiveRuleNameAndLookAhead(ruleName, leftRecursiveRuleName, lookAhead) {
     const reducedRuleName = reducedRuleNameFromLeftRecursiveRuleName(leftRecursiveRuleName),
-          rightRecursiveRuleName = rightRecursiveRuleNameFromRuleName(ruleName),
+          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
           reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName, lookAhead),
-          rightRecursiveRuleNamePart = ruleNamePartFromRuleName(rightRecursiveRuleName),
+          repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
           ruleNameParts = [
             reducedRuleNamePart,
-            rightRecursiveRuleNamePart
+            repeatedRuleNamePart
           ],
           parts = ruleNameParts,  ///
-          reducedAndRightRecursiveRuleNamesDefinition = new ReducedAndRightRecursiveRuleNamesDefinition(parts);
+          reducedAndRepeatedRuleNamesDefinition = new ReducedAndRepeatedRuleNamesDefinition(parts);
 
-    return reducedAndRightRecursiveRuleNamesDefinition;
+    return reducedAndRepeatedRuleNamesDefinition;
   }
 }
 
-module.exports = ReducedAndRightRecursiveRuleNamesDefinition;
+module.exports = ReducedAndRepeatedRuleNamesDefinition;

@@ -2,11 +2,28 @@
 
 const exampleBNF = `
 
+    L ::= L! "c"
+
+        | L "d"
+
+        | "a"
+
+        | "a" "b"
+
+        ;
 
 
-  L  ::= L_! "c" L~?
+`;
 
-       | L_ "d" L~?
+module.exports = exampleBNF;
+
+/*
+
+
+
+  L  ::= L_! "c" L~*
+
+       | L_ "d" L~*
 
        | L_
 
@@ -18,27 +35,11 @@ const exampleBNF = `
 
        ;
 
-  L~ ::= "c" L~?
+  L~ ::= "c"
 
-       | "d" L~?
+       | "d"
 
        ;
-
-`;
-
-module.exports = exampleBNF;
-
-/*
-
-
-    L ::= L! "c"
-
-        | "a"
-
-        | "a" "b"
-
-        ;
-
 
   expression          ::=  compoundExpression
 

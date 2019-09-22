@@ -1,20 +1,20 @@
 'use strict';
 
 const ReducedNode = require('./node/reduced'),
-      ruleNameUtilities = require('./utilities/ruleName'),
-      RightRecursiveNode = require('./node/rightRecursive');
+      RepeatedNode = require('./node/repeated'),
+      ruleNameUtilities = require('./utilities/ruleName');
 
 const { ruleNameFromReducedRuleName, checkReducedRuleNameMatchesRuleName } = ruleNameUtilities;
 
 function removeIntermediateNodes(node) {
   removeOrRenameReducedNodes(node);
 
-  removeRightRecursiveNodes(node);
+  removeRepeatedNodes(node);
 }
 
 module.exports = removeIntermediateNodes;
 
-function removeRightRecursiveNodes(node) {
+function removeRepeatedNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (nodeNonTerminalNode) {
@@ -22,24 +22,24 @@ function removeRightRecursiveNodes(node) {
 
     let childNodes = nonTerminalNode.getChildNodes();
 
-    childNodes = removeRightRecursiveChildNodes(childNodes);
+    childNodes = removeRepeatedChildNodes(childNodes);
 
     nonTerminalNode.setChildNodes(childNodes)
   }
 }
 
-function removeRightRecursiveChildNodes(childNodes) {
+function removeRepeatedChildNodes(childNodes) {
   childNodes = childNodes.reduce((childNodes, childNode) => {
-    const childNodeRightRecursiveNode = (childNode instanceof RightRecursiveNode);
+    const childNodeRepeatedNode = (childNode instanceof RepeatedNode);
 
-    if (childNodeRightRecursiveNode) {
+    if (childNodeRepeatedNode) {
       let childNodeChildNodes = childNode.getChildNodes();
 
-      childNodeChildNodes = removeRightRecursiveChildNodes(childNodeChildNodes);
+      childNodeChildNodes = removeRepeatedChildNodes(childNodeChildNodes);
 
       childNodes = childNodes.concat(childNodeChildNodes);
     } else {
-      removeRightRecursiveNodes(childNode);
+      removeRepeatedNodes(childNode);
 
       childNodes.push(childNode);
     }

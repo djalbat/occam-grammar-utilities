@@ -9,27 +9,27 @@ const partUtilities = require('../utilities/part'),
 const { Definition } = parsers,
       { cloneParts } = partsUtilities,
       { optionalRuleNamePartPartFromRuleName } = partUtilities,
-      { rightRecursiveRuleNameFromRecursiveRuleName } = ruleNameUtilities;
+      { repeatedRuleNameFromRecursiveRuleName } = ruleNameUtilities;
 
-class RightRecursiveDefinition extends Definition {
+class RepeatedDefinition extends Definition {
   static fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition) {
     let parts = immediatelyLeftRecursiveDefinition.getParts();
 
     parts = cloneParts(parts);  ///
 
     const recursiveRleName = immediatelyLeftRecursiveDefinition.getRuleName(),
-          rightRecursiveRuleName = rightRecursiveRuleNameFromRecursiveRuleName(recursiveRleName),
-          ruleName = rightRecursiveRuleName,  ///
-          optionalRightRecursiveRuleNamePart = optionalRuleNamePartPartFromRuleName(ruleName);
+          repeatedRuleName = repeatedRuleNameFromRecursiveRuleName(recursiveRleName),
+          ruleName = repeatedRuleName,  ///
+          optionalRepeatedRuleNamePart = optionalRuleNamePartPartFromRuleName(ruleName);
 
-    parts.push(optionalRightRecursiveRuleNamePart);
+    parts.push(optionalRepeatedRuleNamePart);
 
     parts.shift();  ///
 
-    const rightRecursiveDefinition = new RightRecursiveDefinition(parts);
+    const repeatedDefinition = new RepeatedDefinition(parts);
 
-    return rightRecursiveDefinition;
+    return repeatedDefinition;
   }
 }
 
-module.exports = RightRecursiveDefinition;
+module.exports = RepeatedDefinition;
