@@ -158,17 +158,6 @@ function rewriteStrictlyLeftRecursiveDefinition(immediatelyLeftRecursiveDefiniti
       ];
 
       rule.setDefinitions(definitions);
-    } else {
-      const rule = findRule(ruleName, rules),
-            definitions = rule.getDefinitions(),
-            firstDefinition = first(definitions),
-            immediatelyLeftRecursiveDefinitionLookAhead = immediatelyLeftRecursiveDefinition.isLookAhead(),
-            reducedAndRightRecursiveRuleNamesDefinition = firstDefinition, ///
-            reducedAndRightRecursiveRuleNamesDefinitionLookAhead = reducedAndRightRecursiveRuleNamesDefinition.isLookAhead();
-
-      if (immediatelyLeftRecursiveDefinitionLookAhead !== reducedAndRightRecursiveRuleNamesDefinitionLookAhead) {
-        return false;
-      }
     }
 
     let rightRecursiveRule = findRule(rightRecursiveRuleName, rules);
