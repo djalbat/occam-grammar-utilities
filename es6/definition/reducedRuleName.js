@@ -2,17 +2,14 @@
 
 const parsers = require('occam-parsers');
 
-const partUtilities = require('../utilities/part'),
-      ruleNameUtilities = require('../utilities/ruleName');
+const partUtilities = require('../utilities/part');
 
 const { Definition } = parsers,
-      { ruleNamePartFromRuleName } = partUtilities,
-      { reducedRuleNameFromRuleName } = ruleNameUtilities;
+      { ruleNamePartFromRuleName } = partUtilities;
 
 class ReducedRuleNameDefinition extends Definition {
-  static fromRuleName(ruleName) {
-    const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
+  static fromReducedRuleName(reducedRuleName) {
+    const reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
           parts = [
             reducedRuleNamePart
           ],

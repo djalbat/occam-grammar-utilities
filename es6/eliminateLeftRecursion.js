@@ -1,18 +1,18 @@
 'use strict';
 
 const ReducedRule = require('./rule/reduced'),
+      RepeatedRule = require('./rule/repeated'),
       ruleUtilities = require('./utilities/rule'),
       arrayUtilities = require('./utilities/array'),
       ruleNameUtilities = require('./utilities/ruleName'),
-      RepeatedRule = require('./rule/repeated'),
-      RecursiveDefinition = require('./definition/recursive'),
       RepeatedDefinition = require('./definition/repeated'),
+      RewrittenDefinition = require('./definition/rewritten'),
+      RecursiveDefinition = require('./definition/recursive'),
       ReducedRuleNameDefinition = require('./definition/reducedRuleName'),
-      recursiveDefinitionUtilities = require('./utilities/recursiveDefinition'),
-      ReducedAndRepeatedRuleNamesDefinition = require('./definition/reducedAndRepeatedRuleNames');
+      recursiveDefinitionUtilities = require('./utilities/recursiveDefinition');
 
 const { findRule } = ruleUtilities,
-      { first, forEachWithRemove } = arrayUtilities,
+      { first, addInFrontOfLast, forEachWithRemove } = arrayUtilities,
       { findIndirectlyLeftRecursiveDefinition } = recursiveDefinitionUtilities,
       { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;
 
@@ -131,15 +131,14 @@ function rewriteStrictlyLeftRecursiveDefinition(immediatelyLeftRecursiveDefiniti
 
   if (strictlyLeftRecursive) {
     const ruleName = immediatelyLeftRecursiveDefinition.getRuleName(),
-          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
+          rule = findRule(ruleName, rules);
+
+    const reducedRuleName = reducedRuleNameFromRuleName(ruleName);
 
     let reducedRule = findRule(reducedRuleName, rules);
 
     if (reducedRule === null) {
       let definitions;
-
-      const rule = findRule(ruleName, rules);
 
       definitions = rule.getDefinitions();
 
@@ -147,18 +146,22 @@ function rewriteStrictlyLeftRecursiveDefinition(immediatelyLeftRecursiveDefiniti
 
       rules.push(reducedRule);
 
-      const lookAhead = immediatelyLeftRecursiveDefinition.isLookAhead(),
-            leftRecursiveRuleName = ruleName, ///
-            reducedRuleNameDefinition = ReducedRuleNameDefinition.fromRuleName(ruleName),
-            reducedAndRepeatedRuleNamesDefinition = ReducedAndRepeatedRuleNamesDefinition.fromRuleNameLeftRecursiveRuleNameAndLookAhead(ruleName, leftRecursiveRuleName, lookAhead);
+      const reducedRuleNameDefinition = ReducedRuleNameDefinition.fromReducedRuleName(reducedRuleName);
 
       definitions = [
-        reducedAndRepeatedRuleNamesDefinition,
         reducedRuleNameDefinition
       ];
 
       rule.setDefinitions(definitions);
     }
+
+    const rewrittenDefinition = RewrittenDefinition.fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition),
+          definitions = rule.getDefinitions(),
+          definition = rewrittenDefinition; ///
+
+    addInFrontOfLast(definitions, definition);
+
+    const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
 
     let repeatedRule = findRule(repeatedRuleName, rules);
 

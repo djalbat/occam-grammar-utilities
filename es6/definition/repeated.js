@@ -2,27 +2,16 @@
 
 const parsers = require('occam-parsers');
 
-const partUtilities = require('../utilities/part'),
-      partsUtilities = require('../utilities/parts'),
-      ruleNameUtilities = require('../utilities/ruleName');
+const partsUtilities = require('../utilities/parts');
 
 const { Definition } = parsers,
-      { cloneParts } = partsUtilities,
-      { optionalRuleNamePartPartFromRuleName } = partUtilities,
-      { repeatedRuleNameFromRecursiveRuleName } = ruleNameUtilities;
+      { cloneParts } = partsUtilities;
 
 class RepeatedDefinition extends Definition {
   static fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition) {
     let parts = immediatelyLeftRecursiveDefinition.getParts();
 
     parts = cloneParts(parts);  ///
-
-    const recursiveRleName = immediatelyLeftRecursiveDefinition.getRuleName(),
-          repeatedRuleName = repeatedRuleNameFromRecursiveRuleName(recursiveRleName),
-          ruleName = repeatedRuleName,  ///
-          optionalRepeatedRuleNamePart = optionalRuleNamePartPartFromRuleName(ruleName);
-
-    parts.push(optionalRepeatedRuleNamePart);
 
     parts.shift();  ///
 
