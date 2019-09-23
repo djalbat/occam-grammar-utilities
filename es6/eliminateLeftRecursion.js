@@ -94,10 +94,10 @@ function removeImmediatelyLeftRecursiveDefinitions(rule, recursiveDefinitions, i
 
       const recursiveRuleNames = recursiveDefinition.getRecursiveRuleNames(),
             allRecursiveDefinitions = [ ...recursiveDefinitions, recursiveDefinition ],
-            recursiveDefinitionRuleNames = allRecursiveDefinitions.map((recursiveDefinition) => recursiveDefinition.getRuleName());
+            allRecursiveDefinitionRuleNames = allRecursiveDefinitions.map((recursiveDefinition) => recursiveDefinition.getRuleName());
 
       recursiveRuleNames.forEach((recursiveRuleName) => {
-        const recursiveDefinitionRuleNamesIncludesRecursiveRuleName = recursiveDefinitionRuleNames.includes(recursiveRuleName);
+        const recursiveDefinitionRuleNamesIncludesRecursiveRuleName = allRecursiveDefinitionRuleNames.includes(recursiveRuleName);
 
         if (!recursiveDefinitionRuleNamesIncludesRecursiveRuleName) {
           const ruleName = recursiveRuleName,  ///

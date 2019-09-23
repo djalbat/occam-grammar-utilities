@@ -2,6 +2,34 @@
 
 const exampleBNF = `
 
+  S ::= A C ;
+
+  A ::= "." B ;
+
+  B ::= A | "." C ;
+
+  C ::= D E ;
+
+  D ::= C ;
+
+  E ::= "." ;
+
+
+
+
+
+
+
+
+
+`;
+
+module.exports = exampleBNF;
+
+/*
+
+
+
     L ::= L! "c"
 
         | L "d"
@@ -19,12 +47,6 @@ const exampleBNF = `
 
 
 
-
-`;
-
-module.exports = exampleBNF;
-
-/*
 
 
   expression                  ::= parenthesisedExpression
