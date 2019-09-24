@@ -1,6 +1,140 @@
 'use strict';
 
 const exampleBNF = `
+      document             ::=  ( rule | error )+ ;
+      
+      rule                 ::=  name "::=" definitions ";" ;
+      
+      definitions          ::=  definition ( "|" definition )* ;
+      
+      definition           ::=  part+ ;
+      
+      noWhitespacePart     ::=  "<NO_WHITESPACE>" part ;
+    
+      optionalPart         ::=  part<NO_WHITESPACE>"?" ;
+                              
+      zeroOrMoreParts      ::=  part<NO_WHITESPACE>"*" ;
+
+      oneOrMoreParts       ::=  part<NO_WHITESPACE>"+" ;
+      
+      lookAheadPart        ::=  part<NO_WHITESPACE>"!" ;
+
+      groupOfParts         ::=  "(" part part+ ")" ;
+      
+      choiceOfParts        ::=  "(" part ( "|" part )+ ")" ;
+    
+      part                 ::=  noWhitespacePart
+                    
+                             |  optionalPart  
+                    
+                             |  zeroOrMoreParts
+                    
+                             |  oneOrMoreParts  
+                    
+                             |  lookAheadPart
+
+                             |  groupOfParts
+                               
+                             |  choiceOfParts  
+                               
+                             |  ruleName
+                    
+                             |  regularExpression 
+                    
+                             |  significantTokenType 
+    
+                             |  terminalSymbol
+                              
+                             |  endOfLine
+                    
+                             |  epsilon
+    
+                             |  wildcard
+                                  
+                             ;
+    
+      name                 ::=  [name] ;
+
+      ruleName             ::=  [name] ;
+    
+      regularExpression    ::=  [regular-expression] ;
+      
+      significantTokenType ::=  [type] ;
+    
+      terminalSymbol       ::=  [string-literal] ;
+      
+      endOfLine            ::=  "<END_OF_LINE>" ;
+      
+      epsilon              ::=  "ε" ;
+    
+      wildcard             ::=  "." ;
+
+      error                ::=  . ;
+`;
+
+module.exports = exampleBNF;
+
+/*
+
+
+
+    part                 ::= part "?"
+
+                           | part "!"
+
+                           | ruleName
+
+                           ;
+
+    ruleName             ::= [custom] ;
+
+
+
+
+
+  expression                  ::= parenthesisedExpression
+
+                                | compoundExpression
+
+                                | negatedExpression
+
+                                | term
+
+                                ;
+
+
+  parenthesisedExpression     ::= "(" expression ")" ;
+
+  compoundExpression          ::= expression operator expression ;
+
+  negatedExpression           ::= "-"<NO_WHITESPACE>expression ;
+
+  operator                    ::= "+" | "-" | "/" | "*" ;
+
+  term                        ::= /\d+/ ;
+
+
+
+
+
+
+
+    L ::= L! "c"
+
+        | L "d"
+
+        | "a"
+
+        | "a" "b"
+
+        ;
+
+
+
+
+
+
+
 
   part             ::= zeroOrMoreParts
 
@@ -15,31 +149,6 @@ const exampleBNF = `
   optionalPart     ::= part "?" ;
 
   ruleName         ::= [custom] ;
-
-
-
-
-
-
-
-
-`;
-
-module.exports = exampleBNF;
-
-/*
-
-
-
-    L ::= L! "c"
-
-        | L "d"
-
-        | "a"
-
-        | "a" "b"
-
-        ;
 
 
 
@@ -71,25 +180,6 @@ module.exports = exampleBNF;
 
 
 
-
-
-
-  expression                  ::= parenthesisedExpression
-
-                                | negatedExpression
-
-                                | term
-
-                                ;
-
-
-  parenthesisedExpression     ::= "(" expression ")" ;
-
-
-  negatedExpression           ::= "-" expression ;
-
-
-  term                        ::= /\d+/ ;
 
 
 
@@ -217,21 +307,6 @@ module.exports = exampleBNF;
 
 
 
-
-
-
-
-
-
-    part                 ::= part "?"
-
-                           | part "!"
-
-                           | ruleName
-
-                           ;
-
-    ruleName             ::= [custom] ;
 
 
 

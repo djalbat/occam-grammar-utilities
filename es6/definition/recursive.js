@@ -71,28 +71,16 @@ class RecursiveDefinition {
     return leftRecursive;
   }
 
-  isStrictlyLeftRecursive() {
-    let strictlyLeftRecursive = false;
+  isDirectlyLeftRecursive() {
+    let directlyLeftRecursive = false;
 
     const leftRecursive = this.isLeftRecursive();
 
     if (leftRecursive) {
-      strictlyLeftRecursive = (this.leftRecursiveRuleName === this.ruleName);
+      directlyLeftRecursive = (this.leftRecursiveRuleName === this.ruleName);
     }
 
-    return strictlyLeftRecursive;
-  }
-
-  isNonStrictlyLeftRecursive() {
-    let nonStrictlyLeftRecursive = false;
-
-    const leftRecursive = this.isLeftRecursive();
-
-    if (leftRecursive) {
-      nonStrictlyLeftRecursive = (this.leftRecursiveRuleName !== this.ruleName);
-    }
-
-    return nonStrictlyLeftRecursive;
+    return directlyLeftRecursive;
   }
 
   setImplicitDefinition(implicitDefinition) {

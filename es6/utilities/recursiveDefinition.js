@@ -4,22 +4,22 @@ const arrayUtilities = require('../utilities/array');
 
 const { first } = arrayUtilities;
 
-function findIndirectlyLeftRecursiveDefinition(leftRecursiveDefinition, recursiveDefinitions) {
-  let indirectlyLeftRecursiveDefinition = null;
+function findImplicitlyLeftRecursiveDefinition(leftRecursiveDefinition, recursiveDefinitions) {
+  let implicitlyLeftRecursiveDefinition = null;
 
   const leftRecursiveDefinitionsCycle = findLeftRecursiveDefinitionsCycle(leftRecursiveDefinition, recursiveDefinitions);
 
   if (leftRecursiveDefinitionsCycle !== null) {
     const firstLeftRecursiveDefinition = first(leftRecursiveDefinitionsCycle);
 
-    indirectlyLeftRecursiveDefinition = firstLeftRecursiveDefinition;  ///
+    implicitlyLeftRecursiveDefinition = firstLeftRecursiveDefinition;  ///
   }
 
-  return indirectlyLeftRecursiveDefinition;
+  return implicitlyLeftRecursiveDefinition;
 }
 
 module.exports = {
-  findIndirectlyLeftRecursiveDefinition
+  findImplicitlyLeftRecursiveDefinition
 };
 
 function findRecursiveDefinitionsCycle(recursiveRuleName, recursiveDefinitions) {
