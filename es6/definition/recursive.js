@@ -95,12 +95,6 @@ class RecursiveDefinition {
     return nonStrictlyLeftRecursive;
   }
 
-  matchDefinition(definition) {
-    const matches = (this.definition === definition);
-
-    return matches;
-  }
-
   setImplicitDefinition(implicitDefinition) {
     this.implicitDefinition = implicitDefinition;
   }
