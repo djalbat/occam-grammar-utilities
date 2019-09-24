@@ -1,5 +1,5 @@
 'use strict';
 
-const exampleContent = '(1+2)/3';
+const exampleContent = 'test**';
 
 module.exports = exampleContent;

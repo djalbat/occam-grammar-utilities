@@ -4,13 +4,6 @@ const necessary = require('necessary');
 
 const { arrayUtilities } = necessary;
 
-function addInFrontOfLast(array, element) {
-  const start = -1,
-        deleteCount = 0;
-
-  array.splice(start, deleteCount, element);
-}
-
 function forEachWithRemove(array, callback) {
   let arrayLength = array.length;
 
@@ -49,7 +42,6 @@ function forEachWithReplace(array, callback) {
 }
 
 module.exports = Object.assign(arrayUtilities, {
-  addInFrontOfLast,
   forEachWithRemove,
   forEachWithReplace
 });

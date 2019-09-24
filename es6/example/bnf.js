@@ -2,6 +2,50 @@
 
 const exampleBNF = `
 
+    L ::= L! "c"
+
+        | L "d"
+
+        | "a"
+
+        | "a" "b"
+
+        ;
+
+
+
+
+
+`;
+
+module.exports = exampleBNF;
+
+/*
+
+
+
+
+  part             ::= zeroOrMoreParts
+
+                     | optionalPart
+
+                     | ruleName
+
+                     ;
+
+  zeroOrMoreParts  ::= part "*" ;
+
+  optionalPart     ::= part "?" ;
+
+  ruleName         ::= [custom] ;
+
+
+
+
+
+
+
+
   S ::= A C ;
 
   A ::= "." B ;
@@ -19,26 +63,6 @@ const exampleBNF = `
 
 
 
-
-
-
-`;
-
-module.exports = exampleBNF;
-
-/*
-
-
-
-    L ::= L! "c"
-
-        | L "d"
-
-        | "a"
-
-        | "a" "b"
-
-        ;
 
 
 
@@ -209,29 +233,6 @@ module.exports = exampleBNF;
     ruleName             ::= [custom] ;
 
 
-
-
-
-
-
-
-
-
-
-
-  part             ::= zeroOrMoreParts
-
-                     | optionalPart
-
-                     | ruleName
-
-                     ;
-
-  zeroOrMoreParts  ::= part "*" ;
-
-  optionalPart     ::= part "?" ;
-
-  ruleName         ::= [custom] ;
 
 
 

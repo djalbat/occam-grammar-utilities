@@ -12,7 +12,7 @@ const ReducedRule = require('./rule/reduced'),
       recursiveDefinitionUtilities = require('./utilities/recursiveDefinition');
 
 const { findRule } = ruleUtilities,
-      { first, addInFrontOfLast, forEachWithRemove } = arrayUtilities,
+      { first, forEachWithRemove } = arrayUtilities,
       { findIndirectlyLeftRecursiveDefinition } = recursiveDefinitionUtilities,
       { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;
 
@@ -118,50 +118,18 @@ function rewriteStrictlyLeftRecursiveDefinition(immediatelyLeftRecursiveDefiniti
   const strictlyLeftRecursive = immediatelyLeftRecursiveDefinition.isStrictlyLeftRecursive();
 
   if (strictlyLeftRecursive) {
-    let definitions;
-
     const ruleName = immediatelyLeftRecursiveDefinition.getRuleName(),
-          rule = findRule(ruleName, rules);
+          rule = findRule(ruleName, rules),
+          reducedRule = reducedRuleFromRule(rule, rules),
+          rewrittenDefinition = RewrittenDefinition.fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition);
 
-    const reducedRuleName = reducedRuleNameFromRuleName(ruleName);
+    (reducedRule === null) ?
+      rule.addDefinition(rewrittenDefinition) :
+        rule.addDefinition(rewrittenDefinition, -1);
 
-    let reducedRule = findRule(reducedRuleName, rules);
-
-    if (reducedRule === null) {
-      let definitions;
-
-      definitions = rule.getDefinitions();
-
-      reducedRule = ReducedRule.fromReducedRuleNameAndDefinitions(reducedRuleName, definitions);
-
-      rules.push(reducedRule);
-
-      const reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName);
-
-      definitions = [
-        reducedRuleNameDefinition
-      ];
-
-      rule.setDefinitions(definitions);
-    }
-
-    definitions = rule.getDefinitions();
-
-    const rewrittenDefinition = RewrittenDefinition.fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition);
-
-    addInFrontOfLast(definitions, rewrittenDefinition);
-
-    const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
-
-    let repeatedRule = findRule(repeatedRuleName, rules);
-
-    if (repeatedRule === null) {
-      repeatedRule = RepeatedRule.fromRepeatedRuleName(repeatedRuleName);
-
-      rules.push(repeatedRule);
-    }
-
-    const repeatedDefinition = RepeatedDefinition.fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition);
+    const leftRecursiveRuleName = immediatelyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
+          repeatedDefinition = RepeatedDefinition.fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition),
+          repeatedRule = repeatedRuleFromLeftRecursiveRuleName(leftRecursiveRuleName, rules);
 
     repeatedRule.addDefinition(repeatedDefinition);
 
@@ -173,74 +141,39 @@ function rewriteNonStrictlyLeftRecursiveDefinition(immediatelyLeftRecursiveDefin
   const nonStrictlyLeftRecursive = immediatelyLeftRecursiveDefinition.isNonStrictlyLeftRecursive();
 
   if (nonStrictlyLeftRecursive) {
-    let definitions;
-
     const ruleName = immediatelyLeftRecursiveDefinition.getRuleName(),
-          rule = findRule(ruleName, rules);
+          rule = findRule(ruleName, rules),
+          reducedRule = reducedRuleFromRule(rule, rules),
+          rewrittenDefinition = RewrittenDefinition.fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition);
 
-    const reducedRuleName = reducedRuleNameFromRuleName(ruleName);
-
-    let reducedRule = findRule(reducedRuleName, rules);
-
-    if (reducedRule === null) {
-      let definitions;
-
-      definitions = rule.getDefinitions();
-
-      reducedRule = ReducedRule.fromReducedRuleNameAndDefinitions(reducedRuleName, definitions);
-
-      rules.push(reducedRule);
-
-      const reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName);
-
-      definitions = [
-        reducedRuleNameDefinition
-      ];
-
-      rule.setDefinitions(definitions);
-    }
-
-    definitions = rule.getDefinitions();
-
-    const rewrittenDefinition = RewrittenDefinition.fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition);
-
-    addInFrontOfLast(definitions, rewrittenDefinition);
+    (reducedRule === null) ?
+      rule.addDefinition(rewrittenDefinition) :
+        rule.addDefinition(rewrittenDefinition, -1);
 
     const leftRecursiveRuleName = immediatelyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
-          repeatedRuleName = repeatedRuleNameFromRuleName(leftRecursiveRuleName);
-
-    let repeatedRule = findRule(repeatedRuleName, rules);
-
-    if (repeatedRule === null) {
-      repeatedRule = RepeatedRule.fromRepeatedRuleName(repeatedRuleName);
-
-      rules.push(repeatedRule);
-    }
-
-    const repeatedDefinition = RepeatedDefinition.fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition);
+          repeatedDefinition = RepeatedDefinition.fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition),
+          repeatedRule = repeatedRuleFromLeftRecursiveRuleName(leftRecursiveRuleName, rules);
 
     repeatedRule.addDefinition(repeatedDefinition);
 
-    const leftRecursiveRule = findRule(leftRecursiveRuleName, rules);
 
-    const reducedLeftRecursiveRuleName = reducedRuleNameFromRuleName(leftRecursiveRuleName);
+
+
+    
+    const leftRecursiveRule = findRule(leftRecursiveRuleName, rules),
+          reducedLeftRecursiveRuleName = reducedRuleNameFromRuleName(leftRecursiveRuleName);
 
     let reducedLeftRecursiveRule = findRule(reducedLeftRecursiveRuleName, rules);
 
     if (reducedLeftRecursiveRule === null) {
-      let definitions;
-
-      definitions = leftRecursiveRule.getDefinitions();
-
-      reducedLeftRecursiveRule = ReducedRule.fromReducedRuleNameAndDefinitions(reducedLeftRecursiveRuleName, definitions);
+      reducedLeftRecursiveRule = ReducedRule.fromReducedRuleNameAndRule(reducedLeftRecursiveRuleName, leftRecursiveRule);
 
       rules.push(reducedLeftRecursiveRule);
 
-      const reducedLeftRecursiveRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedLeftRecursiveRuleName);
-
-      definitions = [
-        reducedLeftRecursiveRuleNameDefinition
-      ];
+      const reducedLeftRecursiveRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedLeftRecursiveRuleName),
+            definitions = [
+              reducedLeftRecursiveRuleNameDefinition
+            ];
 
       leftRecursiveRule.setDefinitions(definitions);
     }
@@ -248,15 +181,9 @@ function rewriteNonStrictlyLeftRecursiveDefinition(immediatelyLeftRecursiveDefin
     const indirectlyLeftRecursiveDefinition = immediatelyLeftRecursiveDefinition.getIndirectlyLeftRecursiveDefinition(),
           definition = indirectlyLeftRecursiveDefinition.getDefinition();
 
-    definitions = leftRecursiveRule.getDefinitions();
-
     reducedLeftRecursiveRule.removeDefinition(definition);
 
-    const definitionsIncludesDefinition = definitions.includes(definition);
-
-    if (!definitionsIncludesDefinition) {
-      addInFrontOfLast(definitions, definition);
-    }
+    leftRecursiveRule.addDefinition(definition, -1);
 
     return true;
   }
@@ -275,4 +202,43 @@ function rewriteImmediatelyLeftRecursiveDefinitions(immediatelyLeftRecursiveDefi
       }
     }
   });
+}
+
+function repeatedRuleFromLeftRecursiveRuleName(leftRecursiveRuleName, rules) {
+  const ruleName = leftRecursiveRuleName, ///
+        repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
+
+  let repeatedRule = findRule(repeatedRuleName, rules);
+
+  if (repeatedRule === null) {
+    repeatedRule = RepeatedRule.fromRepeatedRuleName(repeatedRuleName);
+
+    rules.push(repeatedRule);
+  }
+
+  return repeatedRule;
+}
+
+function reducedRuleFromRule(rule, rules) {
+  const ruleName = rule.getName(),
+        reducedRuleName = reducedRuleNameFromRuleName(ruleName);
+
+  let reducedRule = findRule(reducedRuleName, rules);
+
+  if (reducedRule === null) {
+    reducedRule = ReducedRule.fromReducedRuleNameAndRule(reducedRuleName, rule);
+
+    if (reducedRule !== null) {
+      rules.push(reducedRule);
+
+      const reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName),
+            definitions = [
+              reducedRuleNameDefinition
+            ];
+
+      rule.setDefinitions(definitions);
+    }
+  }
+
+  return reducedRule;
 }
