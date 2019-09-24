@@ -2,29 +2,6 @@
 
 const exampleBNF = `
 
-    L ::= L! "c"
-
-        | L "d"
-
-        | "a"
-
-        | "a" "b"
-
-        ;
-
-
-
-
-
-`;
-
-module.exports = exampleBNF;
-
-/*
-
-
-
-
   part             ::= zeroOrMoreParts
 
                      | optionalPart
@@ -39,6 +16,30 @@ module.exports = exampleBNF;
 
   ruleName         ::= [custom] ;
 
+
+
+
+
+
+
+
+`;
+
+module.exports = exampleBNF;
+
+/*
+
+
+
+    L ::= L! "c"
+
+        | L "d"
+
+        | "a"
+
+        | "a" "b"
+
+        ;
 
 
 
