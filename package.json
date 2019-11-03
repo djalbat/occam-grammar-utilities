@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "necessary": "^1.7.5",
-    "occam-lexers": "^9.2.1",
-    "occam-parsers": "^9.2.31",
+    "occam-lexers": "^10.1.1",
+    "occam-parsers": "^10.1.3",
     "occam-tarjan": "^2.0.12"
   },
   "devDependencies": {

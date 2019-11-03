@@ -17,40 +17,38 @@
 
 This package provides the means to eliminate left recursion, the Achilles heel of top-down parsers, in both its immediate and indirect forms. Consider the following rules:
 ```
-  expression  ::= expression operator expression
+  expression     ::= expression operator expression
 
-                | "(" expression ")"
+                   | "(" expression ")"
 
-                | term
+                   | term
 
-                ;
+                   ;
 
-  operator    ::= "+" | "-" | "/" | "*" ;
+  operator       ::= "+" | "-" | "/" | "*" ;
 
-  term        ::= /\d+/ ;
+  term           ::= naturalNumber ;
+
+  naturalNumber  ::= /\d+/ ;
 ```
 Here the first rule is immediately left recursive. When the parser encounters this rule it will enter an infinite loop as it tries to evaluate the first definition, the first part of which is a reference to the same rule.
 
 To eliminate left recursion, the rules are rewritten as follows:
 
 ```
-  expression  ::= expression_ expression~
+  expression  ::= "(" expression ")" expression~
 
-                | expression_
-
-                ;
-
-  expression_ ::= "(" expression ")"
-
-                | term
+                | term expression~
 
                 ;
 
-  expression~ ::= operator expression expression~? ;
+  expression~ ::= operator expression expression~?
 
-  operator    ::= "+" | "-" | "/" | "*" ;
+                | ε
 
-  term        ::= /\d+/ ;
+                ;
+
+  ...
 ```
 Here is the parse tree of the expression `(1+2)/3` that results:
 ```

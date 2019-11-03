@@ -12,15 +12,15 @@ const { Definition } = parsers,
       { ruleNamePartFromRuleName, zeroOrMoreRuleNamePartPartFromRuleName } = partUtilities;
 
 class RewrittenDefinition extends Definition {
-  static fromImmediatelyLeftRecursiveDefinition(immediatelyLeftRecursiveDefinition) {
-    let parts = immediatelyLeftRecursiveDefinition.getParts();
+  static fromLeftRecursiveDefinition(leftRecursiveDefinition) {
+    let parts = leftRecursiveDefinition.getParts();
 
     parts = cloneParts(parts);  ///
 
     parts.shift();  ///
 
-    const lookAhead = immediatelyLeftRecursiveDefinition.isLookAhead(),
-          leftRecursiveRuleName = immediatelyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
+    const lookAhead = leftRecursiveDefinition.isLookAhead(),
+          leftRecursiveRuleName = leftRecursiveDefinition.getLeftRecursiveRuleName(),
           repeatedRuleName = repeatedRuleNameFromRuleName(leftRecursiveRuleName),
           reducedLeftRecursiveRuleName = reducedRuleNameFromRuleName(leftRecursiveRuleName),
           zeroOrMoreRepeatedRuleNamePart = zeroOrMoreRuleNamePartPartFromRuleName(repeatedRuleName),

@@ -1,81 +1,57 @@
 'use strict';
 
 const exampleBNF = `
-      document             ::=  ( rule | error )+ ;
-      
-      rule                 ::=  name "::=" definitions ";" ;
-      
-      definitions          ::=  definition ( "|" definition )* ;
-      
-      definition           ::=  part+ ;
-      
-      noWhitespacePart     ::=  "<NO_WHITESPACE>" part ;
-    
-      optionalPart         ::=  part<NO_WHITESPACE>"?" ;
-                              
-      zeroOrMoreParts      ::=  part<NO_WHITESPACE>"*" ;
 
-      oneOrMoreParts       ::=  part<NO_WHITESPACE>"+" ;
-      
-      lookAheadPart        ::=  part<NO_WHITESPACE>"!" ;
+  expression          ::=  compoundExpression
 
-      groupOfParts         ::=  "(" part part+ ")" ;
-      
-      choiceOfParts        ::=  "(" part ( "|" part )+ ")" ;
-    
-      part                 ::=  noWhitespacePart
-                    
-                             |  optionalPart  
-                    
-                             |  zeroOrMoreParts
-                    
-                             |  oneOrMoreParts  
-                    
-                             |  lookAheadPart
+                        |  "(" expression ")"
 
-                             |  groupOfParts
-                               
-                             |  choiceOfParts  
-                               
-                             |  ruleName
-                    
-                             |  regularExpression 
-                    
-                             |  significantTokenType 
-    
-                             |  terminalSymbol
-                              
-                             |  endOfLine
-                    
-                             |  epsilon
-    
-                             |  wildcard
-                                  
-                             ;
-    
-      name                 ::=  [name] ;
+                        |  term
 
-      ruleName             ::=  [name] ;
-    
-      regularExpression    ::=  [regular-expression] ;
-      
-      significantTokenType ::=  [type] ;
-    
-      terminalSymbol       ::=  [string-literal] ;
-      
-      endOfLine            ::=  "<END_OF_LINE>" ;
-      
-      epsilon              ::=  "ε" ;
-    
-      wildcard             ::=  "." ;
+                        ;
 
-      error                ::=  . ;
+  compoundExpression  ::=  expression operator expression
+
+                        |  "xyz"
+
+                        ;
+
+
+  operator            ::= "+" | "-" | "/" | "*" ;
+
+  term                ::= /\\d+/ ;
+
 `;
 
 module.exports = exampleBNF;
 
 /*
 
+  S ::= A C ;
+
+  A ::= "." B ;
+
+  B ::= A | "." C ;
+
+  C ::= D E ;
+
+  D ::= C ;
+
+  E ::= "." ;
+
+
+
+
+
+    L ::= L! "c"
+
+        | L "d"
+
+        | "a"
+
+        | "a" "b"
+
+        ;
 
 
     part                 ::= part "?"
@@ -118,24 +94,6 @@ module.exports = exampleBNF;
 
 
 
-
-    L ::= L! "c"
-
-        | L "d"
-
-        | "a"
-
-        | "a" "b"
-
-        ;
-
-
-
-
-
-
-
-
   part             ::= zeroOrMoreParts
 
                      | optionalPart
@@ -152,21 +110,6 @@ module.exports = exampleBNF;
 
 
 
-
-
-
-
-  S ::= A C ;
-
-  A ::= "." B ;
-
-  B ::= A | "." C ;
-
-  C ::= D E ;
-
-  D ::= C ;
-
-  E ::= "." ;
 
 
 

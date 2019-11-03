@@ -6,8 +6,7 @@ const { Parts } = parsers,
       { RuleNamePart, ZeroOrMorePartsPart } = Parts;
 
 function ruleNamePartFromRuleName(ruleName, lookAhead = false) {
-  const noWhitespace = false, ///
-        ruleNamePart = new RuleNamePart(ruleName, noWhitespace, lookAhead);
+  const ruleNamePart = new RuleNamePart(ruleName, lookAhead);
 
   return ruleNamePart;
 }
