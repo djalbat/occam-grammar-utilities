@@ -27,6 +27,33 @@ module.exports = exampleBNF;
 
 /*
 
+
+
+
+
+  expression              ::=  sumOfExpressions
+
+                            |  differenceOfExpressions
+
+                            |  "(" expression ")"
+
+                            |  term
+
+                            ;
+
+  sumOfExpressions        ::=  expression "+" expression ;
+
+  differenceOfExpressions ::=  expression "-" expression ;
+
+  term                    ::= /\d+/ ;
+
+
+
+
+
+
+
+
   S ::= A C ;
 
   A ::= "." B ;
