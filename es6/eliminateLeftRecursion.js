@@ -21,20 +21,7 @@ function eliminateLeftRecursion(rules) {
 
   rewriteRemovedLeftRecursiveDefinitions(removedLeftRecursiveDefinitions, rules);
 
-  const ruleNames = removedLeftRecursiveDefinitions.map((removedLeftRecursiveDefinition) => removedLeftRecursiveDefinition.getRuleName()),
-        ruleNamesLength = ruleNames.length;
-
-  if (ruleNamesLength > 0) {
-    const ruleNamesString = ruleNames.reduce((ruleNamesString, ruleName) => {
-      ruleNamesString = (ruleNamesString !== '') ?
-                         `${ruleNamesString}, '${ruleName}'` :
-                          `'${ruleName}'`;
-
-      return ruleNamesString;
-    }, '');
-
-    throw new Error(`Left recursion cannot be eliminated from the folliowing rule or rules: ${ruleNamesString}.`);
-  }
+  checkRemovedLeftRecursiveDefinitions(removedLeftRecursiveDefinitions);
 }
 
 module.exports = eliminateLeftRecursion;
@@ -146,4 +133,22 @@ function rewriteRemovedLeftRecursiveDefinitions(removedLeftRecursiveDefinitions,
 	    return true;
     }
   });
+}
+
+function checkRemovedLeftRecursiveDefinitions(removedLeftRecursiveDefinitions) {
+  const removedLeftRecursiveDefinitionsLength = removedLeftRecursiveDefinitions.length;
+
+  if (removedLeftRecursiveDefinitionsLength > 0) {
+    const ruleNames = removedLeftRecursiveDefinitions.map((removedLeftRecursiveDefinition) => removedLeftRecursiveDefinition.getRuleName()),
+          ruleNamesString = ruleNames.reduce((ruleNamesString, ruleName) => {
+            ruleNamesString = (ruleNamesString !== '') ?
+                               `${ruleNamesString}, '${ruleName}'` :
+                                `'${ruleName}'`;
+
+            return ruleNamesString;
+          }, '');
+
+    throw new Error(`Left recursion cannot be eliminated from the following rule or rules: ${ruleNamesString}.`);
+  }
+
 }
