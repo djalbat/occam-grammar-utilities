@@ -24,24 +24,6 @@ function forEachWithRemove(array, callback) {
   }
 }
 
-function forEachWithReplace(array, callback) {
-  const arrayLength = array.length;
-
-  for (let index = 0; index < arrayLength; index++) {
-    let element = array[index];
-
-    element = callback(element, index);
-
-    if (element) {
-      const start = index,  ///
-            deleteCount = 1;
-
-      array.splice(start, deleteCount, element);
-    }
-  }
-}
-
 module.exports = Object.assign(arrayUtilities, {
-  forEachWithRemove,
-  forEachWithReplace
+  forEachWithRemove
 });
