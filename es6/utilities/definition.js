@@ -4,10 +4,11 @@ const arrayUtilities = require('../utilities/array'),
       recursivePartUtilities = require('../utilities/recursivePart');
 
 const { first } = arrayUtilities,
-      { recursiveRuleNamesFromPart, leftRecursiveRuleNameFromPart } = recursivePartUtilities;
+      { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } = recursivePartUtilities;
 
-function recursiveRuleNamesFromDefinition(definition, recursiveRuleNames = []) {
-  const parts = definition.getParts();
+function recursiveRuleNamesFromDefinition(definition) {
+  const recursiveRuleNames = [],
+        parts = definition.getParts();
 
   parts.forEach((part) => {
     recursiveRuleNamesFromPart(part, recursiveRuleNames);
@@ -17,12 +18,29 @@ function recursiveRuleNamesFromDefinition(definition, recursiveRuleNames = []) {
 }
 
 function leftRecursiveRuleNameFromDefinition(definition) {
-  const parts = definition.getParts(),
-        firstPart = first(parts),
-        part = firstPart, ///
-        leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+  let leftRecursiveRuleName = null;
+
+  const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
+        leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length;
+
+  if (leftRecursiveRuleNamesLength > 0) {
+    const firstLeftRecursiveRuleName = first(leftRecursiveRuleNames);
+
+    leftRecursiveRuleName = firstLeftRecursiveRuleName; ///
+  }
 
   return leftRecursiveRuleName;
+}
+
+function leftRecursiveRuleNamesFromDefinition(definition) {
+  const leftRecursiveRuleNames = [],
+        parts = definition.getParts(),
+        firstPart = first(parts),
+        part = firstPart; ///
+
+  leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
+
+  return leftRecursiveRuleNames;
 }
 
 module.exports = {

@@ -151,5 +151,4 @@ function checkRemovedLeftRecursiveDefinitions(removedLeftRecursiveDefinitions) {
 
     throw new Error(`Left recursion cannot be eliminated from the following rule or rules: ${ruleNamesString}.`);
   }
-
 }

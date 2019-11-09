@@ -14,24 +14,7 @@ const { partTypes } = parsers,
         OneOrMorePartsPartType,
         ZeroOrMorePartsPartType } = partTypes;
 
-function isPartRecursive(part) {
-  const recursiveRuleNames = recursiveRuleNamesFromPart(part),
-        recursiveRuleNamesLength = recursiveRuleNames.length,
-        partRecursive = (recursiveRuleNamesLength > 0);
-
-  return partRecursive;
-}
-
-function isPartLeftRecursive(part) {
-  const leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part),
-        partLeftRecursive = (leftRecursiveRuleName !== null);
-
-  return partLeftRecursive;
-}
-
-function recursiveRuleNamesFromPart(part, recursiveRuleNames = []) {
-  let partRecursive = false;
-
+function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
   const partNonTerminalPart = part.isNonTerminalPart();
 
   if (partNonTerminalPart) {
@@ -82,30 +65,22 @@ function recursiveRuleNamesFromPart(part, recursiveRuleNames = []) {
         const groupOfPartsPart = part,  ///
               parts = groupOfPartsPart.getParts();
 
-          partRecursive = parts.some((part) => {
-            recursiveRuleNamesFromPart(part, recursiveRuleNames);
-          });
+          parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
         }
         break;
 
       case ChoiceOfPartsPartType : {
-          const choiceOfPartsPart = part, ///
-                parts = choiceOfPartsPart.getParts();
+        const choiceOfPartsPart = part, ///
+              parts = choiceOfPartsPart.getParts();
 
-          partRecursive = parts.some((part) => {
-            recursiveRuleNamesFromPart(part, recursiveRuleNames);
-          });
+          parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
         }
         break;
     }
   }
-
-  return partRecursive;
 }
 
-function leftRecursiveRuleNameFromPart(part) {
-  let leftRecursiveRuleName = null;
-
+function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
   const partNonTerminalPart = part.isNonTerminalPart();
 
   if (partNonTerminalPart) {
@@ -114,9 +89,14 @@ function leftRecursiveRuleNameFromPart(part) {
     switch (type) {
       case RuleNamePartType : {
           const ruleNamePart = part,  ///
-                ruleName = ruleNamePart.getRuleName();
+                ruleName = ruleNamePart.getRuleName(),
+                leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
 
-          leftRecursiveRuleName = ruleName; ///
+          if (!leftRecursiveRuleNamesIncludesRuleName) {
+            const leftRecursiveRuleName = ruleName; ///
+
+            leftRecursiveRuleNames.push(leftRecursiveRuleName);
+          }
         }
         break;
 
@@ -125,7 +105,7 @@ function leftRecursiveRuleNameFromPart(part) {
 
           part = optionalPartPart.getPart();
 
-          leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+          leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
         }
         break;
 
@@ -134,7 +114,7 @@ function leftRecursiveRuleNameFromPart(part) {
 
           part = oneOrMorePartsPart.getPart();
 
-          leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+          leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
         }
         break;
 
@@ -143,7 +123,7 @@ function leftRecursiveRuleNameFromPart(part) {
 
           part = zeroOrMorePartsPart.getPart();
 
-          leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+          leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
         }
         break;
 
@@ -154,7 +134,7 @@ function leftRecursiveRuleNameFromPart(part) {
 
           part = firstPart; ///
 
-          leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
+          leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
         }
         break;
 
@@ -162,24 +142,14 @@ function leftRecursiveRuleNameFromPart(part) {
           const choiceOfPartsPart = part, ///
                 parts = choiceOfPartsPart.getParts();
 
-          parts.some((part) => {
-            leftRecursiveRuleName = leftRecursiveRuleNameFromPart(part);
-
-            if (leftRecursiveRuleName !== null) {
-              return true;
-            }
-          });
+          parts.forEach((part) => leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames));
         }
         break;
     }
   }
-
-  return leftRecursiveRuleName;
 }
 
 module.exports = {
-  isPartRecursive,
-  isPartLeftRecursive,
   recursiveRuleNamesFromPart,
-  leftRecursiveRuleNameFromPart
+  leftRecursiveRuleNamesFromPart
 };
