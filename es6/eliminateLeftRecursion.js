@@ -57,18 +57,17 @@ function removeLeftRecursiveDefinitions(rule, recursiveDefinitions, removedLeftR
         definitions = rule.getDefinitions();
 
   forEachWithRemove(definitions, (definition) => {
+    let remove = false;
+
     const recursiveDefinition = RecursiveDefinition.fromDefinitionAndRuleName(definition, ruleName);
 
     if (recursiveDefinition !== null) {
 	    const leftRecursive = recursiveDefinition.isLeftRecursive();
 
 	    if (leftRecursive) {
-		    const leftRecursiveDefinition = recursiveDefinition,  ///
-              remove = removeLeftRecursiveDefinition(leftRecursiveDefinition, recursiveDefinitions, removedLeftRecursiveDefinitions);
+		    const leftRecursiveDefinition = recursiveDefinition;  ///
 
-	      if (remove) {
-	        return true;
-	      }
+        remove = removeLeftRecursiveDefinition(leftRecursiveDefinition, recursiveDefinitions, removedLeftRecursiveDefinitions);
 	    }
 
       const recursiveRuleNames = recursiveDefinition.getRecursiveRuleNames(),
@@ -90,6 +89,8 @@ function removeLeftRecursiveDefinitions(rule, recursiveDefinitions, removedLeftR
         }
       });
     }
+
+    return remove;
   });
 }
 
@@ -128,7 +129,7 @@ function rewriteRemovedLeftRecursiveDefinitions(removedLeftRecursiveDefinitions,
     const rewritable = removedLeftRecursiveDefinition.isRewritable();
 
     if (rewritable) {
-	    rewriteRemovedLeftRecursiveDefinition(removedLeftRecursiveDefinition, rules);
+      rewriteRemovedLeftRecursiveDefinition(removedLeftRecursiveDefinition, rules);
 
 	    return true;
     }
