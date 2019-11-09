@@ -17,21 +17,6 @@ function recursiveRuleNamesFromDefinition(definition) {
   return recursiveRuleNames;
 }
 
-function leftRecursiveRuleNameFromDefinition(definition) {
-  let leftRecursiveRuleName = null;
-
-  const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
-        leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length;
-
-  if (leftRecursiveRuleNamesLength > 0) {
-    const firstLeftRecursiveRuleName = first(leftRecursiveRuleNames);
-
-    leftRecursiveRuleName = firstLeftRecursiveRuleName; ///
-  }
-
-  return leftRecursiveRuleName;
-}
-
 function leftRecursiveRuleNamesFromDefinition(definition) {
   const leftRecursiveRuleNames = [],
         parts = definition.getParts(),
@@ -45,5 +30,5 @@ function leftRecursiveRuleNamesFromDefinition(definition) {
 
 module.exports = {
   recursiveRuleNamesFromDefinition,
-  leftRecursiveRuleNameFromDefinition
+  leftRecursiveRuleNamesFromDefinition
 };

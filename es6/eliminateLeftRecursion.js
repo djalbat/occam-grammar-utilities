@@ -20,8 +20,6 @@ function eliminateLeftRecursion(rules) {
   removeLeftRecursiveDefinitions(rule, recursiveDefinitions, removedLeftRecursiveDefinitions, rules);
 
   rewriteRemovedLeftRecursiveDefinitions(removedLeftRecursiveDefinitions, rules);
-
-  checkRemovedLeftRecursiveDefinitions(removedLeftRecursiveDefinitions);
 }
 
 module.exports = eliminateLeftRecursion;
@@ -65,9 +63,14 @@ function removeLeftRecursiveDefinitions(rule, recursiveDefinitions, removedLeftR
 	    const leftRecursive = recursiveDefinition.isLeftRecursive();
 
 	    if (leftRecursive) {
-		    const leftRecursiveDefinition = recursiveDefinition;  ///
+		    const leftRecursiveDefinition = recursiveDefinition,  ///
+              rewritable = leftRecursiveDefinition.isRewritable();
 
-        remove = removeLeftRecursiveDefinition(leftRecursiveDefinition, recursiveDefinitions, removedLeftRecursiveDefinitions);
+		    if (rewritable) {
+          remove = removeLeftRecursiveDefinition(leftRecursiveDefinition, recursiveDefinitions, removedLeftRecursiveDefinitions);
+        } else {
+          throw new Error(`Left recursion cannot be eliminated from the '${ruleName}' rule`);
+        }
 	    }
 
       const recursiveRuleNames = recursiveDefinition.getRecursiveRuleNames(),
@@ -134,21 +137,4 @@ function rewriteRemovedLeftRecursiveDefinitions(removedLeftRecursiveDefinitions,
 	    return true;
     }
   });
-}
-
-function checkRemovedLeftRecursiveDefinitions(removedLeftRecursiveDefinitions) {
-  const removedLeftRecursiveDefinitionsLength = removedLeftRecursiveDefinitions.length;
-
-  if (removedLeftRecursiveDefinitionsLength > 0) {
-    const ruleNames = removedLeftRecursiveDefinitions.map((removedLeftRecursiveDefinition) => removedLeftRecursiveDefinition.getRuleName()),
-          ruleNamesString = ruleNames.reduce((ruleNamesString, ruleName) => {
-            ruleNamesString = (ruleNamesString !== '') ?
-                               `${ruleNamesString}, '${ruleName}'` :
-                                `'${ruleName}'`;
-
-            return ruleNamesString;
-          }, '');
-
-    throw new Error(`Left recursion cannot be eliminated from the following rule or rules: ${ruleNamesString}.`);
-  }
 }
