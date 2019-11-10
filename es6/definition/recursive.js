@@ -7,7 +7,9 @@ const arrayUtilities = require('../utilities/array'),
 
 const { first } = arrayUtilities,
       { partTypes } = parsers,
-      { RuleNamePartType } = partTypes,
+      { RuleNamePartType,
+        GroupOfPartsPartType,
+        ChoiceOfPartsPartType } = partTypes,
       { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
 
 class RecursiveDefinition {
@@ -55,14 +57,42 @@ class RecursiveDefinition {
     return lookAhead;
   }
 
-  isRewritable() {
+  isUnary() {
+    let unary = false;
+
+    const parts = this.getParts(),
+          partsLength = parts.length;
+
+    if (partsLength === 1) {
+      const firstPart = this.getFirstPart(),
+            firstPartType = firstPart.getType(),
+            firstPartTypeGroupOfPartsPartType = (firstPartType === GroupOfPartsPartType),
+            firstPartTypeChoiceOfPartsPartType = (firstPartType === ChoiceOfPartsPartType),
+            firstPartGroupOfPartsPart = firstPartTypeGroupOfPartsPartType,  ///
+            firstPartChoiceOfPartsPart = firstPartTypeChoiceOfPartsPartType;  ///
+
+      unary = !firstPartGroupOfPartsPart && !firstPartChoiceOfPartsPart
+    }
+
+    return unary;
+  }
+
+  isComplex() {
     const firstPart = this.getFirstPart(),
           firstPartType = firstPart.getType(),
           firstPartTypeRuleNamePartType = (firstPartType === RuleNamePartType),
-          firstPartRuleNamePart = firstPartTypeRuleNamePartType,  ///
-          rewritable = firstPartRuleNamePart; ///
+          firstPartRuleNamePart = firstPartTypeRuleNamePartType,
+          complex = !firstPartRuleNamePart;
 
-    return rewritable;
+    return complex;
+  }
+
+  isNonRewritable() {
+    const unary = this.isUnary(),
+          complex = this.isComplex(),
+          nonRewritable = unary || complex;
+
+    return nonRewritable;
   }
 
   isLeftRecursive() {
@@ -73,15 +103,8 @@ class RecursiveDefinition {
   }
 
   isDirectlyLeftRecursive() {
-    let directlyLeftRecursive = false;
-
-    const leftRecursive = this.isLeftRecursive();
-
-    if (leftRecursive) {
-      const leftRecursiveRuleNamesIncludesRuleName = this.leftRecursiveRuleNames.includes(this.ruleName);
-
-      directlyLeftRecursive = leftRecursiveRuleNamesIncludesRuleName; ///
-    }
+    const leftRecursiveRuleName = this.getLeftRecursiveRuleName(),
+          directlyLeftRecursive = (this.ruleName === leftRecursiveRuleName);
 
     return directlyLeftRecursive;
   }
@@ -103,6 +126,8 @@ class RecursiveDefinition {
   setImplicitlyLeftRecursiveDefinition(implicitlyLeftRecursiveDefinition) {
     this.implicitlyLeftRecursiveDefinition = implicitlyLeftRecursiveDefinition;
   }
+
+  asString() { return this.definition.asString(); }
 
   static fromDefinitionAndRuleName(definition, ruleName) {
     let recursiveDefinition = null;

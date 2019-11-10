@@ -2,18 +2,10 @@
 
 const exampleBNF = `
 
-  S ::= A C ;
+  C ::= D "a" ;
 
-  A ::= "." B C ;
-
-  B ::= A | "." C ;
-
-  C ::= D E ;
-
-  D ::= C ;
-
-  E ::= "." ;
-
+  D ::= C "b" ;
+  
 `;
 
 module.exports = exampleBNF;
@@ -42,6 +34,34 @@ module.exports = exampleBNF;
                         ;
 
   term                ::= /\d+/ ;
+
+
+
+  S ::= A C ;
+
+  A ::= "." B C ;
+
+  B ::= A | "." C ;
+
+  C ::= D E ;
+
+  D ::= C "." ;
+
+  E ::= "." ;
+
+
+
+
+  C ::= D "e"
+
+      | "f"
+
+      ;
+
+  D ::= C ;
+
+
+
 
 
 
