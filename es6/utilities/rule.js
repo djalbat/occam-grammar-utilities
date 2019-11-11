@@ -2,10 +2,11 @@
 
 const ReducedRule = require('../rule/reduced'),
 			RepeatedRule = require('../rule/repeated'),
-			ruleNameUtilities = require('../utilities/ruleName'),
-			RuleNameDefinition = require('../definition/ruleName');
+      arrayUtilities = require('../utilities/array'),
+			ruleNameUtilities = require('../utilities/ruleName');
 
-const { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;
+const { filter } = arrayUtilities,
+      { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;
 
 function findRule(ruleName, rules) {
   const name = ruleName,  ///
@@ -20,6 +21,16 @@ function findRule(ruleName, rules) {
   return rule;
 }
 
+function removeRule(rule, rules) {
+  const removedRule = rule; ///
+
+  filter(rules, (rule) => {
+    if (rule !== removedRule) {
+      return true;
+    }
+  })
+}
+
 function reducedRuleFromRule(rule, rules) {
 	const ruleName = rule.getName(),
 				reducedRuleName = reducedRuleNameFromRuleName(ruleName);
@@ -29,16 +40,7 @@ function reducedRuleFromRule(rule, rules) {
 	if (reducedRule === null) {
 		reducedRule = ReducedRule.fromReducedRuleNameAndRule(reducedRuleName, rule);
 
-		if (reducedRule !== null) {
-			rules.push(reducedRule);
-
-			const reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName),
-						definitions = [
-							reducedRuleNameDefinition
-						];
-
-			rule.setDefinitions(definitions);
-		}
+    rules.push(reducedRule);
 	}
 
 	return reducedRule;
@@ -61,6 +63,7 @@ function repeatedRuleFromLeftRecursiveRuleName(leftRecursiveRuleName, rules) {
 
 module.exports = {
   findRule,
+  removeRule,
 	reducedRuleFromRule,
 	repeatedRuleFromLeftRecursiveRuleName
 };
