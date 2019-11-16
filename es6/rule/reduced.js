@@ -14,9 +14,8 @@ class ReducedRule extends Rule {
     return empty;
   }
 
-  static fromReducedRuleNameAndRule(reducedRuleName, rule) {
-    const definitions = rule.getDefinitions(),
-          name = reducedRuleName,  ///
+  static fromReducedRuleNameAndDefinitions(reducedRuleName, definitions) {
+    const name = reducedRuleName,  ///
           NonTerminalNode = ReducedNode,///
           reducedRule = new ReducedRule(name, definitions, NonTerminalNode);
 

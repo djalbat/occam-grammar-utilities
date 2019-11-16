@@ -38,9 +38,17 @@ function reducedRuleFromRule(rule, rules) {
 	let reducedRule = findRule(reducedRuleName, rules);
 
 	if (reducedRule === null) {
-		reducedRule = ReducedRule.fromReducedRuleNameAndRule(reducedRuleName, rule);
+    let definitions;
+
+    definitions = rule.getDefinitions();
+
+    reducedRule = ReducedRule.fromReducedRuleNameAndDefinitions(reducedRuleName, definitions);
 
     rules.push(reducedRule);
+
+    definitions = [];
+
+    rule.setDefinitions(definitions);
 	}
 
 	return reducedRule;

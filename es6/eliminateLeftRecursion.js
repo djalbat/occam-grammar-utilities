@@ -49,11 +49,11 @@ function removeLeftRecursiveDefinition(leftRecursiveDefinition, recursiveDefinit
           leftRecursiveDefinitionString = leftRecursiveDefinition.asString();
 
     if (unary) {
-      throw new Error(`The '${leftRecursiveDefinitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
+      throw new Error(`The '${leftRecursiveDefinitionString}' directly or indirectly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
     }
 
     if (complex) {
-      throw new Error(`The '${leftRecursiveDefinitionString}' directly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+      throw new Error(`The '${leftRecursiveDefinitionString}' directly or indirectly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
     }
 
     leftRecursiveDefinitions.push(leftRecursiveDefinition);
@@ -133,12 +133,9 @@ function rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition,
   }
 
   const reducedRuleName = reducedRule.getName(),
-        reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName),
-        definitions = [
-          reducedRuleNameDefinition
-        ];
+        reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName);
 
-  rule.setDefinitions(definitions);
+  rule.addDefinition(reducedRuleNameDefinition);
 
   const leftRecursiveDefinition = directlyLeftRecursiveDefinition,  ///
         rewrittenDefinition = RewrittenDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition);
@@ -165,15 +162,22 @@ function rewriteIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinit
 
     rule.addDefinition(rewrittenDefinition);
   } else {
+    const reducedRuleName = reducedRule.getName(),
+          reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName);
+
+    rule.addDefinition(reducedRuleNameDefinition);
+
     rule.addDefinition(rewrittenDefinition, -1);
   }
 
-  return;
+  const leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
+        repeatedDefinition = RepeatedDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition),
+        repeatedRule = repeatedRuleFromLeftRecursiveRuleName(leftRecursiveRuleName, rules);
 
-  const implicitlyLeftRecursiveDefinition = leftRecursiveDefinition.getImplicitlyLeftRecursiveDefinition();
+  repeatedRule.addDefinition(repeatedDefinition);
 
-  const definition = implicitlyLeftRecursiveDefinition.getDefinition(),
-        leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
+  const implicitlyLeftRecursiveDefinition = leftRecursiveDefinition.getImplicitlyLeftRecursiveDefinition(),
+        definition = implicitlyLeftRecursiveDefinition.getDefinition(),
         implicitlyLeftRecursiveRuleName = leftRecursiveRuleName,  ///
         implicitlyLeftRecursiveRule = findRule(implicitlyLeftRecursiveRuleName, rules),
         reducedLeftRecursiveRule = reducedRuleFromRule(implicitlyLeftRecursiveRule, rules);
@@ -182,12 +186,16 @@ function rewriteIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinit
 
   reducedLeftRecursiveRule.removeDefinition(definition);
 
-  const reducedLeftRecursiveRuleDefinitions = reducedLeftRecursiveRule.getDefinitions(),
-        reducedLeftRecursiveRuleDefinitionsLength = reducedLeftRecursiveRuleDefinitions.length;
+  const reducedLeftRecursiveRuleName = reducedLeftRecursiveRule.getName(),
+        reducedLeftRecursiveRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedLeftRecursiveRuleName);
 
-  if (reducedLeftRecursiveRuleDefinitionsLength === 0) {
-    const reducedLeftRecursiveRuleName = reducedLeftRecursiveRule.getName();
+  implicitlyLeftRecursiveRule.addDefinition(reducedLeftRecursiveRuleNameDefinition);
 
-    throw new Error(`The reduced '${reducedLeftRecursiveRuleName}' rule has no definitions.`);
+  const reducedLeftRecursiveRuleEmpty = reducedLeftRecursiveRule.isEmpty();
+
+  if (reducedLeftRecursiveRuleEmpty) {
+    const implicitlyLeftRecursiveRule = implicitlyLeftRecursiveRule.getName();
+
+    throw new Error(`The '${implicitlyLeftRecursiveRule}' rule has no non-recursive definitions and therefore cannot be rewritten.`);
   }
 }
