@@ -4,26 +4,22 @@ const necessary = require('necessary');
 
 const { arrayUtilities } = necessary;
 
-function forEachWithRemove(array, callback) {
+function forEachWithReplace(array, callback) {
   let arrayLength = array.length;
 
   for (let index = 0; index < arrayLength; index++) {
-    const element = array[index],
-          remove = callback(element, index);
+    const oldElement = array[index],
+          newElement = callback(oldElement, index);
 
-    if (remove) {
+    if (newElement !== null) {
       const start = index,  ///
             deleteCount = 1;
 
-      array.splice(start, deleteCount);
-
-      arrayLength--;
-
-      index--;
+      array.splice(start, deleteCount, newElement);
     }
   }
 }
 
 module.exports = Object.assign(arrayUtilities, {
-  forEachWithRemove
+  forEachWithReplace
 });
