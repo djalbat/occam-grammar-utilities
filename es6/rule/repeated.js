@@ -2,13 +2,17 @@
 
 const parsers = require('occam-parsers');
 
-const RepeatedNode = require('../node/repeated');
+const RepeatedNode = require('../node/repeated'),
+      ruleNameUtilities = require('../utilities/ruleName');
 
-const { Rule } = parsers;
+const { Rule } = parsers,
+      { repeatedRuleNameFromRuleName } = ruleNameUtilities;
 
 class RepeatedRule extends Rule {
-  static fromRepeatedRuleName(repeatedRuleName) {
-    const name = repeatedRuleName,  ///
+  static fromRule(rule) {
+    const ruleName = rule.getName(),
+          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+          name = repeatedRuleName,  ///
           definitions = [],
           NonTerminalNode = RepeatedNode, ///
           repeatedRule = new RepeatedRule(name, definitions, NonTerminalNode);

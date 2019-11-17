@@ -11,7 +11,7 @@ const ruleUtilities = require('./utilities/rule'),
 
 const { first, forEachWithReplace } = arrayUtilities,
 			{ findImplicitlyLeftRecursiveDefinition } = recursiveDefinitionUtilities,
-			{ findRule, reducedRuleFromRule, repeatedRuleFromLeftRecursiveRuleName } = ruleUtilities;
+			{ findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } = ruleUtilities;
 
 function eliminateLeftRecursion(rules) {
   const firstRule = first(rules),
@@ -127,26 +127,20 @@ function rewriteLeftRecursiveDefinitions(placeHolderDefinitions, rules) {
 function rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition, placeHolderDefinition, rules) {
   const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
         rule = findRule(ruleName, rules),
+        rewrittenRule = rewrittenRuleFromRule(rule, rules),
         reducedRule = reducedRuleFromRule(rule, rules),
+        repeatedRule = repeatedRuleFromRule(rule, rules),
         reducedRuleEmpty = reducedRule.isEmpty();
 
   if (reducedRuleEmpty) {
     throw new Error(`The '${ruleName}' rule has no non-recursive definitions and therefore cannot be rewritten.`);
   }
 
-  const reducedRuleName = reducedRule.getName(),
-        reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName);
-
-  rule.addDefinition(reducedRuleNameDefinition);
-
   const leftRecursiveDefinition = directlyLeftRecursiveDefinition,  ///
-        rewrittenDefinition = RewrittenDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition);
+        rewrittenDefinition = RewrittenDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition),
+        repeatedDefinition = RepeatedDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition);
 
-  rule.replaceDefinition(placeHolderDefinition, rewrittenDefinition);
-
-  const leftRecursiveRuleName = directlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
-        repeatedDefinition = RepeatedDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition),
-        repeatedRule = repeatedRuleFromLeftRecursiveRuleName(leftRecursiveRuleName, rules);
+  rewrittenRule.replaceDefinition(placeHolderDefinition, rewrittenDefinition);
 
   repeatedRule.addDefinition(repeatedDefinition);
 }

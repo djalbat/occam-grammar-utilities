@@ -2,11 +2,11 @@
 
 const ReducedRule = require('../rule/reduced'),
 			RepeatedRule = require('../rule/repeated'),
+      RewrittenRule = require('../rule/rewritten'),
       arrayUtilities = require('../utilities/array'),
-			ruleNameUtilities = require('../utilities/ruleName'),
-      PlaceHolderDefinition = require('../definition/placeHolder');
+			ruleNameUtilities = require('../utilities/ruleName');
 
-const { filter, separate } = arrayUtilities,
+const { filter } = arrayUtilities,
       { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;
 
 function findRule(ruleName, rules) {
@@ -39,43 +39,40 @@ function reducedRuleFromRule(rule, rules) {
 	let reducedRule = findRule(reducedRuleName, rules);
 
 	if (reducedRule === null) {
-    let definitions;
-
-    definitions = rule.getDefinitions();
-
-    const placeHolderDefinitions = [],
-          nonPlaceHolderDefinitions = [];
-
-    separate(definitions, placeHolderDefinitions, nonPlaceHolderDefinitions, (definition) => {
-      const definitionPlaceHolderDefinition = (definition instanceof PlaceHolderDefinition);
-
-      if (definitionPlaceHolderDefinition) {
-        return true;
-      }
-    });
-
-    definitions = nonPlaceHolderDefinitions;  ///
-
-    reducedRule = ReducedRule.fromReducedRuleNameAndDefinitions(reducedRuleName, definitions);
+    reducedRule = ReducedRule.fromRule(rule);
 
     rules.push(reducedRule);
-
-    definitions = placeHolderDefinitions; ///
-
-    rule.setDefinitions(definitions);
 	}
 
 	return reducedRule;
 }
 
-function repeatedRuleFromLeftRecursiveRuleName(leftRecursiveRuleName, rules) {
-	const ruleName = leftRecursiveRuleName, ///
+function rewrittenRuleFromRule(rule, rules) {
+  let rewrittenRule;
+
+  const ruleRewrittenRule = (rule instanceof RewrittenRule);
+
+  if (ruleRewrittenRule) {
+    rewrittenRule = rule; ///
+  } else {
+    removeRule(rule, rules);
+
+    rewrittenRule = RewrittenRule.fromRule(rule);
+
+    rules.push(rewrittenRule);
+  }
+
+  return rewrittenRule;
+}
+
+function repeatedRuleFromRule(rule, rules) {
+	const ruleName = rule.getName(),
 				repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
 
 	let repeatedRule = findRule(repeatedRuleName, rules);
 
 	if (repeatedRule === null) {
-		repeatedRule = RepeatedRule.fromRepeatedRuleName(repeatedRuleName);
+		repeatedRule = RepeatedRule.fromRule(rule);
 
 		rules.push(repeatedRule);
 	}
@@ -87,5 +84,6 @@ module.exports = {
   findRule,
   removeRule,
 	reducedRuleFromRule,
-	repeatedRuleFromLeftRecursiveRuleName
+  repeatedRuleFromRule,
+  rewrittenRuleFromRule
 };
