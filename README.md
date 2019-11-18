@@ -15,9 +15,9 @@
 
 ## Introduction
 
-This package provides the means to eliminate left recursion, the Achilles heel of top-down parsers, in both its immediate and indirect forms.
+_This project is undergoing a major rewrite and are effectively broken! Please come back another day._
 
-This project is currently undergoing a major rewrite and is effectively offline. Come back another day!
+This package provides the means to eliminate left recursion, the Achilles heel of top-down parsers, in both its immediate and indirect forms.
 
 Consider the following rules:
 ```
