@@ -2,6 +2,22 @@
 
 const exampleBNF = `
 
+  expression          ::=  expression operator expression
+
+                        |  "(" expression ")"
+
+                        |  term
+
+                        ;
+
+
+
+`;
+
+module.exports = exampleBNF;
+
+/*
+
     L ::= L! "c"
 
         | L "d"
@@ -12,13 +28,6 @@ const exampleBNF = `
 
         ;
 
-
-
-`;
-
-module.exports = exampleBNF;
-
-/*
 
   expression          ::=  compoundExpression
 
