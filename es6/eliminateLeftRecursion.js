@@ -2,183 +2,85 @@
 
 const ruleUtilities = require('./utilities/rule'),
       arrayUtilities = require('./utilities/array'),
-      RuleNameDefinition = require('./definition/ruleName'),
-      RepeatedDefinition = require('./definition/repeated'),
-      RewrittenDefinition = require('./definition/rewritten'),
-      RecursiveDefinition = require('./definition/recursive'),
-      PlaceHolderDefinition = require('./definition/placeHolder'),
-      recursiveDefinitionUtilities = require('./utilities/recursiveDefinition');
+      definitionUtilities = require('./utilities/definition'),
+      LeftRecursiveDefinition = require('./definition/leftRecursive'),
+      DirectlyLeftRecursiveDefinition = require('./definition/leftRecursive/directly'),
+      IndirectlyLeftRecursiveDefinition = require('./definition/leftRecursive/indirectly');
 
-const { first, forEachWithReplace } = arrayUtilities,
-			{ findImplicitlyLeftRecursiveDefinition } = recursiveDefinitionUtilities,
-			{ findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } = ruleUtilities;
+const { findRule } = ruleUtilities,
+      { first, forEachWithReplace } = arrayUtilities,
+      { recursiveRuleNamesFromDefinition } = definitionUtilities;
 
 function eliminateLeftRecursion(rules) {
   const firstRule = first(rules),
         rule = firstRule, ///
-        recursiveDefinitions = [],
-        placeHolderDefinitions = [];
+        recursiveRuleNames = [],
+        replacementDefinitions = [];
 
-  removeLeftRecursiveDefinitions(rule, recursiveDefinitions, placeHolderDefinitions, rules);
+  replaceDefinitions(rule, recursiveRuleNames, replacementDefinitions, rules);
 
-  rewriteLeftRecursiveDefinitions(placeHolderDefinitions, rules);
+  replacementDefinitions.forEach((replacementDefinition) => replacementDefinition.rewrite(rules));
 }
 
 module.exports = eliminateLeftRecursion;
 
-function removeLeftRecursiveDefinition(leftRecursiveDefinition, recursiveDefinitions, placeHolderDefinitions) {
-  let placeHolderDefinition = null;
-
-	const directlyLeftRecursive = leftRecursiveDefinition.isDirectlyLeftRecursive();
-
-  let indirectlyLeftRecursive = false;
-
-	if (!directlyLeftRecursive) {
-    const implicitlyLeftRecursiveDefinition = findImplicitlyLeftRecursiveDefinition(leftRecursiveDefinition, recursiveDefinitions);
-
-    indirectlyLeftRecursive = (implicitlyLeftRecursiveDefinition !== null);
-
-    if (indirectlyLeftRecursive) {
-      leftRecursiveDefinition.setImplicitlyLeftRecursiveDefinition(implicitlyLeftRecursiveDefinition);
-    }
-  }
-
-  if (directlyLeftRecursive || indirectlyLeftRecursive) {
-    const unary = leftRecursiveDefinition.isUnary(),
-          complex = leftRecursiveDefinition.isComplex(),
-          ruleName = leftRecursiveDefinition.getRuleName(),
-          leftRecursiveDefinitionString = leftRecursiveDefinition.asString();
-
-    if (unary) {
-      throw new Error(`The '${leftRecursiveDefinitionString}' directly or indirectly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
-    }
-
-    if (complex) {
-      throw new Error(`The '${leftRecursiveDefinitionString}' directly or indirectly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
-    }
-
-    placeHolderDefinition = PlaceHolderDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition);
-
-    placeHolderDefinitions.push(placeHolderDefinition);
-  }
-
-	return placeHolderDefinition;
-}
-
-function removeLeftRecursiveDefinitions(rule, recursiveDefinitions, placeHolderDefinitions, rules) {
+function replaceDefinitions(rule, recursiveRuleNames, replacementDefinitions, rules) {
   const ruleName = rule.getName(),
         definitions = rule.getDefinitions();
 
   forEachWithReplace(definitions, (definition) => {
-    let placeHolderDefinition = null;
+    let replacementDefinition = null;
 
-    const recursiveDefinition = RecursiveDefinition.fromDefinitionAndRuleName(definition, ruleName);
+    const definitionLeftRecursiveDefinition = (definition instanceof LeftRecursiveDefinition);
 
-    if (recursiveDefinition !== null) {
-	    const leftRecursive = recursiveDefinition.isLeftRecursive();
+    if (!definitionLeftRecursiveDefinition) {
+      if (replacementDefinition === null) {
+        const directlyLeftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
 
-	    if (leftRecursive) {
-		    const leftRecursiveDefinition = recursiveDefinition;  ///
+        if (directlyLeftRecursiveDefinition !== null) {
+          replacementDefinition = directlyLeftRecursiveDefinition;  ///
+        }
+      }
 
-        placeHolderDefinition = removeLeftRecursiveDefinition(leftRecursiveDefinition, recursiveDefinitions, placeHolderDefinitions);
-	    }
+      if (replacementDefinition === null) {
+        const indirectlyLeftRecursiveDefinition = IndirectlyLeftRecursiveDefinition.fromRuleNameDefinitionAndRecursiveRuleNames(ruleName, definition, recursiveRuleNames);
 
-      const recursiveRuleNames = recursiveDefinition.getRecursiveRuleNames(),
-            allRecursiveDefinitions = [ ...recursiveDefinitions, recursiveDefinition ],
-            allRecursiveDefinitionRuleNames = allRecursiveDefinitions.map((recursiveDefinition) => recursiveDefinition.getRuleName());
+        if (indirectlyLeftRecursiveDefinition !== null) {
+          replacementDefinition = indirectlyLeftRecursiveDefinition;  ///
+        }
+      }
+    }
+
+    if (replacementDefinition !== null) {
+      replacementDefinitions.push(replacementDefinition);
+    }
+
+    const previousRecursiveRuleNames = recursiveRuleNames;  ///
+
+    recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
+
+    const recursiveRuleNamesLength = recursiveRuleNames.length,
+          definitionRecursive = (recursiveRuleNamesLength > 0);
+
+    if (definitionRecursive) {
+      const recursiveRuleName = ruleName; ///
+
+      recursiveRuleNames = [ ...previousRecursiveRuleNames, recursiveRuleName ];
 
       recursiveRuleNames.forEach((recursiveRuleName) => {
-        const recursiveDefinitionRuleNamesIncludesRecursiveRuleName = allRecursiveDefinitionRuleNames.includes(recursiveRuleName);
+        const recursiveRuleNamesIncludesRecursiveRuleName = recursiveRuleNames.includes(recursiveRuleName);
 
-        if (!recursiveDefinitionRuleNamesIncludesRecursiveRuleName) {
+        if (!recursiveRuleNamesIncludesRecursiveRuleName) {
           const ruleName = recursiveRuleName,  ///
                 rule = findRule(ruleName, rules);
 
           if (rule !== null) {
-            const recursiveDefinitions = allRecursiveDefinitions;  ///
-
-            removeLeftRecursiveDefinitions(rule, recursiveDefinitions, placeHolderDefinitions, rules);
+            replaceDefinitions(rule, recursiveRuleNames, replacementDefinitions, rules);
           }
         }
       });
     }
 
-    return placeHolderDefinition;
+    return replacementDefinition;
   });
-}
-
-function rewriteLeftRecursiveDefinitions(placeHolderDefinitions, rules) {
-  placeHolderDefinitions.forEach((placeHolderDefinition) => {
-    const leftRecursiveDefinition = placeHolderDefinition.getLeftRecursiveDefinition(),
-          directlyLeftRecursive = leftRecursiveDefinition.isDirectlyLeftRecursive();
-
-    if (directlyLeftRecursive) {
-      const directlyLeftRecursiveDefinition = leftRecursiveDefinition;  ///
-
-      rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition, placeHolderDefinition, rules);
-    } else {
-      const indirectlyLeftRecursiveDefinition = leftRecursiveDefinition;  ///
-
-      rewriteIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, placeHolderDefinition, rules);
-    }
-  });
-}
-
-function rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition, placeHolderDefinition, rules) {
-  const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
-        rule = findRule(ruleName, rules),
-        rewrittenRule = rewrittenRuleFromRule(rule, rules),
-        reducedRule = reducedRuleFromRule(rule, rules),
-        repeatedRule = repeatedRuleFromRule(rule, rules),
-        reducedRuleEmpty = reducedRule.isEmpty();
-
-  if (reducedRuleEmpty) {
-    throw new Error(`The '${ruleName}' rule has no non-recursive definitions and therefore cannot be rewritten.`);
-  }
-
-  const leftRecursiveDefinition = directlyLeftRecursiveDefinition,  ///
-        rewrittenDefinition = RewrittenDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition),
-        repeatedDefinition = RepeatedDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition);
-
-  rewrittenRule.replaceDefinition(placeHolderDefinition, rewrittenDefinition);
-
-  repeatedRule.addDefinition(repeatedDefinition);
-}
-
-function rewriteIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, placeHolderDefinition, rules) {
-  const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
-        rule = findRule(ruleName, rules),
-        leftRecursiveDefinition = indirectlyLeftRecursiveDefinition,  ///
-        rewrittenDefinition = RewrittenDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition);
-
-  rule.replaceDefinition(placeHolderDefinition, rewrittenDefinition);
-
-  const leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
-        repeatedDefinition = RepeatedDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition),
-        repeatedRule = repeatedRuleFromLeftRecursiveRuleName(leftRecursiveRuleName, rules);
-
-  repeatedRule.addDefinition(repeatedDefinition);
-
-  const implicitlyLeftRecursiveDefinition = leftRecursiveDefinition.getImplicitlyLeftRecursiveDefinition(),
-        definition = implicitlyLeftRecursiveDefinition.getDefinition(),
-        implicitlyLeftRecursiveRuleName = leftRecursiveRuleName,  ///
-        implicitlyLeftRecursiveRule = findRule(implicitlyLeftRecursiveRuleName, rules),
-        reducedLeftRecursiveRule = reducedRuleFromRule(implicitlyLeftRecursiveRule, rules);
-
-  implicitlyLeftRecursiveRule.addDefinition(definition, -1);
-
-  reducedLeftRecursiveRule.removeDefinition(definition);
-
-  const reducedLeftRecursiveRuleName = reducedLeftRecursiveRule.getName(),
-        reducedLeftRecursiveRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedLeftRecursiveRuleName);
-
-  implicitlyLeftRecursiveRule.addDefinition(reducedLeftRecursiveRuleNameDefinition);
-
-  const reducedLeftRecursiveRuleEmpty = reducedLeftRecursiveRule.isEmpty();
-
-  // if (reducedLeftRecursiveRuleEmpty) {
-  //   const implicitlyLeftRecursiveRuleName = implicitlyLeftRecursiveRule.getName();
-  //
-  //   throw new Error(`The '${implicitlyLeftRecursiveRuleName}' rule has no non-recursive definitions and therefore cannot be rewritten.`);
-  // }
 }

@@ -4,23 +4,25 @@ const parsers = require('occam-parsers');
 
 const partUtilities = require('../utilities/part'),
       partsUtilities = require('../utilities/parts'),
-      ruleNameUtilities = require('../utilities/ruleName');
+      ruleNameUtilities = require('../utilities/ruleName'),
+      definitionUtilities = require('../utilities/definition');
 
 const { Definition } = parsers,
       { cloneParts } = partsUtilities,
+      { isDefinitionLookAhead } = definitionUtilities,
       { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities,
       { ruleNamePartFromRuleName, zeroOrMoreRuleNamePartPartFromRuleName } = partUtilities;
 
 class RewrittenDefinition extends Definition {
-  static fromLeftRecursiveDefinition(leftRecursiveDefinition) {
-    let parts = leftRecursiveDefinition.getParts();
+  static fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName) {
+    let parts = definition.getParts();
 
     parts = cloneParts(parts);  ///
 
     parts.shift();  ///
 
-    const lookAhead = leftRecursiveDefinition.isLookAhead(),
-          leftRecursiveRuleName = leftRecursiveDefinition.getLeftRecursiveRuleName(),
+    const definitionLookAhead = isDefinitionLookAhead(definition),
+          lookAhead = definitionLookAhead,  ///
           repeatedRuleName = repeatedRuleNameFromRuleName(leftRecursiveRuleName),
           reducedLeftRecursiveRuleName = reducedRuleNameFromRuleName(leftRecursiveRuleName),
           zeroOrMoreRepeatedRuleNamePart = zeroOrMoreRuleNamePartPartFromRuleName(repeatedRuleName),

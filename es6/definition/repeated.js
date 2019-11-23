@@ -8,8 +8,8 @@ const { Definition } = parsers,
       { cloneParts } = partsUtilities;
 
 class RepeatedDefinition extends Definition {
-  static fromLeftRecursiveDefinition(leftRecursiveDefinition) {
-    let parts = leftRecursiveDefinition.getParts();
+  static fromDefinition(definition) {
+    let parts = definition.getParts();
 
     parts = cloneParts(parts);  ///
 

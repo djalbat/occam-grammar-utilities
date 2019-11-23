@@ -4,7 +4,7 @@ const parsers = require('occam-parsers');
 
 const ruleNameUtilities = require('../utilities/ruleName'),
       RuleNameDefinition = require('../definition/ruleName'),
-      PlaceHolderDefinition = require('../definition/placeHolder');
+      LeftRecursiveDefinition = require('../definition/leftRecursive');
 
 const { Rule } = parsers,
       { reducedRuleNameFromRuleName } = ruleNameUtilities;
@@ -16,16 +16,16 @@ class RewrittenRule extends Rule {
     const ruleName = rule.getName(),
           reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName),
-          placeHolderDefinitions = definitions.filter((definition) => {
-            const definitionPlaceHolderDefinition = (definition instanceof PlaceHolderDefinition);
+          leftRecursiveDefinitions = definitions.filter((definition) => {
+            const definitionLeftRecursiveDefinition = (definition instanceof LeftRecursiveDefinition);
 
-            if (definitionPlaceHolderDefinition) {
+            if (definitionLeftRecursiveDefinition) {
               return true;
             }
           });
 
     definitions = [
-      ...placeHolderDefinitions,
+      ...leftRecursiveDefinitions,
       reducedRuleNameDefinition
     ];
 

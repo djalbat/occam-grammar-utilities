@@ -8,14 +8,14 @@ function forEachWithReplace(array, callback) {
   let arrayLength = array.length;
 
   for (let index = 0; index < arrayLength; index++) {
-    const oldElement = array[index],
-          newElement = callback(oldElement, index);
+    const replacedElement = array[index],
+          replacementElement = callback(replacedElement, index);
 
-    if (newElement !== null) {
+    if (replacementElement !== null) {
       const start = index,  ///
             deleteCount = 1;
 
-      array.splice(start, deleteCount, newElement);
+      array.splice(start, deleteCount, replacementElement);
     }
   }
 }
