@@ -2,80 +2,103 @@
 
 const ruleUtilities = require('./utilities/rule'),
       arrayUtilities = require('./utilities/array'),
-      definitionUtilities = require('./utilities/definition'),
-      LeftRecursiveDefinition = require('./definition/leftRecursive'),
+      RecursiveDefinition = require('./definition/recursive'),
       DirectlyLeftRecursiveDefinition = require('./definition/leftRecursive/directly'),
       IndirectlyLeftRecursiveDefinition = require('./definition/leftRecursive/indirectly');
 
 const { findRule } = ruleUtilities,
-      { first, forEachWithReplace } = arrayUtilities,
-      { recursiveRuleNamesFromDefinition } = definitionUtilities;
+      { first, forEachWithReplace } = arrayUtilities;
 
 function eliminateLeftRecursion(rules) {
   const firstRule = first(rules),
         rule = firstRule, ///
-        recursiveRuleNames = [],
+        recursiveDefinitions = [],
         replacementDefinitions = [];
 
-  replaceDefinitions(rule, recursiveRuleNames, replacementDefinitions, rules);
+  replaceDefinitions(rule, recursiveDefinitions, replacementDefinitions, rules);
 
   replacementDefinitions.forEach((replacementDefinition) => replacementDefinition.rewrite(rules));
 }
 
 module.exports = eliminateLeftRecursion;
 
-function replaceDefinitions(rule, recursiveRuleNames, replacementDefinitions, rules) {
+function replaceDefinition(ruleName, definition, recursiveDefinitions, replacementDefinitions) {
+  let replacementDefinition = null;
+
+  const definitionRecursiveDefinition = (definition instanceof RecursiveDefinition);
+
+  if (!definitionRecursiveDefinition) {
+    if (replacementDefinition === null) {
+      const directlyLeftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
+
+      if (directlyLeftRecursiveDefinition !== null) {
+        replacementDefinition = directlyLeftRecursiveDefinition;  ///
+      }
+    }
+
+    if (replacementDefinition === null) {
+      const indirectlyLeftRecursiveDefinition = IndirectlyLeftRecursiveDefinition.fromRuleNameDefinitionAndRecursiveDefinitions(ruleName, definition, recursiveDefinitions);
+
+      if (indirectlyLeftRecursiveDefinition !== null) {
+        replacementDefinition = indirectlyLeftRecursiveDefinition;  ///
+      }
+    }
+
+    if (replacementDefinition === null) {
+      const recursiveDefinition = RecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
+
+      if (recursiveDefinition !== null) {
+        replacementDefinition = recursiveDefinition;  ///
+      }
+    }
+  }
+
+  if (replacementDefinition !== null) {
+    replacementDefinitions.push(replacementDefinition);
+  }
+
+  return replacementDefinition;
+}
+
+function replaceDefinitions(rule, recursiveDefinitions, replacementDefinitions, rules) {
   const ruleName = rule.getName(),
         definitions = rule.getDefinitions();
 
   forEachWithReplace(definitions, (definition) => {
-    let replacementDefinition = null;
+    const replacementDefinition = replaceDefinition(ruleName, definition, recursiveDefinitions, replacementDefinitions);
 
-    const definitionLeftRecursiveDefinition = (definition instanceof LeftRecursiveDefinition);
+    let recursiveDefinition = replacementDefinition;  ///
 
-    if (!definitionLeftRecursiveDefinition) {
-      if (replacementDefinition === null) {
-        const directlyLeftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
+    if (recursiveDefinition === null) {
+      const definitionRecursiveDefinition = (definition instanceof RecursiveDefinition);
 
-        if (directlyLeftRecursiveDefinition !== null) {
-          replacementDefinition = directlyLeftRecursiveDefinition;  ///
-        }
-      }
-
-      if (replacementDefinition === null) {
-        const indirectlyLeftRecursiveDefinition = IndirectlyLeftRecursiveDefinition.fromRuleNameDefinitionAndRecursiveRuleNames(ruleName, definition, recursiveRuleNames);
-
-        if (indirectlyLeftRecursiveDefinition !== null) {
-          replacementDefinition = indirectlyLeftRecursiveDefinition;  ///
-        }
+      if (definitionRecursiveDefinition) {
+        recursiveDefinition = definition; ///
       }
     }
 
-    if (replacementDefinition !== null) {
-      replacementDefinitions.push(replacementDefinition);
-    }
+    if (recursiveDefinition !== null) {
+      const previousRecursiveDefinitions = recursiveDefinitions;  ///
 
-    const previousRecursiveRuleNames = recursiveRuleNames;  ///
+      recursiveDefinitions = [ ...previousRecursiveDefinitions, recursiveDefinition ];
 
-    recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
+      recursiveDefinitions.forEach((recursiveDefinition) => {
+        const recursiveDefinitionRuleName = recursiveDefinition.getRuleName(),
+              recursiveRuleName = recursiveDefinitionRuleName,  ///
+              recursiveRuleNames = recursiveDefinitions.map((recursiveDefinition) => {
+                const recursiveDefinitionRuleName = recursiveDefinition.getRuleName(),
+                      recursiveRuleName = recursiveDefinitionRuleName;  ///
 
-    const recursiveRuleNamesLength = recursiveRuleNames.length,
-          definitionRecursive = (recursiveRuleNamesLength > 0);
-
-    if (definitionRecursive) {
-      const recursiveRuleName = ruleName; ///
-
-      recursiveRuleNames = [ ...previousRecursiveRuleNames, recursiveRuleName ];
-
-      recursiveRuleNames.forEach((recursiveRuleName) => {
-        const recursiveRuleNamesIncludesRecursiveRuleName = recursiveRuleNames.includes(recursiveRuleName);
+                return recursiveRuleName;
+              }),
+              recursiveRuleNamesIncludesRecursiveRuleName = recursiveRuleNames.includes(recursiveRuleName);
 
         if (!recursiveRuleNamesIncludesRecursiveRuleName) {
           const ruleName = recursiveRuleName,  ///
                 rule = findRule(ruleName, rules);
 
           if (rule !== null) {
-            replaceDefinitions(rule, recursiveRuleNames, replacementDefinitions, rules);
+            replaceDefinitions(rule, recursiveDefinitions, replacementDefinitions, rules);
           }
         }
       });

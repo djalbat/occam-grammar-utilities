@@ -4,10 +4,10 @@ const arrayUtilities = require('../utilities/array');
 
 const { first } = arrayUtilities;
 
-function findImplicitlyLeftRecursiveDefinition(leftRecursiveDefinition, recursiveRuleNames) {
+function findImplicitlyLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions) {
   let implicitlyLeftRecursiveDefinition = null;
 
-  const leftRecursiveDefinitionsCycle = findLeftRecursiveDefinitionsCycle(leftRecursiveDefinition, recursiveRuleNames);
+  const leftRecursiveDefinitionsCycle = findLeftRecursiveDefinitionsCycle(leftRecursiveRuleName, recursiveDefinitions);
 
   if (leftRecursiveDefinitionsCycle !== null) {
     const firstLeftRecursiveDefinition = first(leftRecursiveDefinitionsCycle);
@@ -22,16 +22,15 @@ module.exports = {
   findImplicitlyLeftRecursiveDefinition
 };
 
-function findRecursiveDefinitionsCycle(leftRecursiveDefinition, recursiveRuleNames) {
+function findRecursiveDefinitionsCycle(recursiveRuleName, recursiveDefinitions) {
   let recursiveDefinitionsCycle = null;
 
-  const leftRecursiveDefinitionRuleName = leftRecursiveDefinition.getRuleName();
+  recursiveDefinitions.some((recursiveDefinition, index) => {
+    const recursiveDefinitionRuleName = recursiveDefinition.getRuleName(),
+          recursiveDefinitionRuleNameLeftRecursiveRuleName = (recursiveDefinitionRuleName === recursiveRuleName);
 
-  recursiveRuleNames.some((recursiveRuleName, index) => {
-    const leftRecursiveDefinitionRuleNameRecursiveRuleName = (leftRecursiveDefinitionRuleName === recursiveRuleName);
-
-    if (leftRecursiveDefinitionRuleNameRecursiveRuleName) {
-      recursiveDefinitionsCycle = recursiveRuleNames.slice(index);
+    if (recursiveDefinitionRuleNameLeftRecursiveRuleName) {
+      recursiveDefinitionsCycle = recursiveDefinitions.slice(index);
 
       return true;
     }
@@ -40,12 +39,11 @@ function findRecursiveDefinitionsCycle(leftRecursiveDefinition, recursiveRuleNam
   return recursiveDefinitionsCycle;
 }
 
-function findLeftRecursiveDefinitionsCycle(leftRecursiveDefinition, recursiveRuleNames) {
+function findLeftRecursiveDefinitionsCycle(leftRecursiveRuleName, recursiveDefinitions) {
   let leftRecursiveDefinitionsCycle = null;
 
-  const leftRecursiveRuleName = leftRecursiveDefinition.getLeftRecursiveRuleName(),
-        recursiveRuleName = leftRecursiveRuleName,  ///
-        recursiveDefinitionsCycle = findRecursiveDefinitionsCycle(recursiveRuleName, recursiveRuleNames);
+  const recursiveRuleName = leftRecursiveRuleName,  ///
+        recursiveDefinitionsCycle = findRecursiveDefinitionsCycle(recursiveRuleName, recursiveDefinitions);
 
   if (recursiveDefinitionsCycle !== null) {
     const recursiveDefinitionsCycleLeftRecursive = isRecursiveDefinitionsCycleLeftRecursive(recursiveDefinitionsCycle);

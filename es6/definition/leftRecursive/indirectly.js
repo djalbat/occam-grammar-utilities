@@ -11,9 +11,19 @@ const LeftRecursiveDefinition = require('../../definition/leftRecursive');
 const { first } = arrayUtilities,
       { findImplicitlyLeftRecursiveDefinition } = recursiveDefinitionUtilities,
       { findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } = ruleUtilities,
-      { isDefinitionUnary, isDefinitionComplex, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
+      { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
 
 class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
+  constructor(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition) {
+    super(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+
+    this.implicitlyLeftRecursiveDefinition = implicitlyLeftRecursiveDefinition;
+  }
+
+  getImplicitlyLeftRecursiveDefinition() {
+    return this.implicitlyLeftRecursiveDefinition;
+  }
+
   rewrite(rules) {
     const ruleName = this.getRuleName(),
           rule = findRule(ruleName, rules),
@@ -53,7 +63,7 @@ class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
     // }
   }
 
-  static fromRuleNameDefinitionAndRecursiveRuleNames(ruleName, definition, recursiveRuleNames) {
+  static fromRuleNameDefinitionAndRecursiveDefinitions(ruleName, definition, recursiveDefinitions) {
     let indirectlyLeftRecursiveDefinition = null;
 
     const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
@@ -66,7 +76,7 @@ class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
             ruleNameLeftRecursiveRuleName = (ruleName === leftRecursiveRuleName);
 
       if (!ruleNameLeftRecursiveRuleName) {
-        const implicitlyLeftRecursiveDefinition = null; ///
+        const implicitlyLeftRecursiveDefinition = findImplicitlyLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions);
 
         if (implicitlyLeftRecursiveDefinition !== null) {
           const definitionUnary = isDefinitionUnary(definition);
@@ -74,7 +84,7 @@ class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
           if (definitionUnary) {
             const definitionString = definition.asString();
 
-            throw new Error(`The '${definitionString}' left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
+            throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
           }
 
           const definitionComplex = isDefinitionComplex(definition);
@@ -82,15 +92,16 @@ class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
           if (definitionComplex) {
             const definitionString = definition.asString();
 
-            throw new Error(`The '${definitionString}' left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+            throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
           }
 
           const deltaPart = new DeltaPart(),
                 parts = [
                   deltaPart
-                ];
+                ],
+                recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-          indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(parts, ruleName, definition, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition);
+          indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition);
         }
       }
     }

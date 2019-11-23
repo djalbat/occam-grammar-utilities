@@ -11,7 +11,7 @@ const LeftRecursiveDefinition = require('../../definition/leftRecursive');
 
 const { first } = arrayUtilities,
       { findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } = ruleUtilities,
-      { isDefinitionUnary, isDefinitionComplex, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
+      { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
 
 class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   rewrite(rules) {
@@ -55,7 +55,7 @@ class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
         if (definitionUnary) {
           const definitionString = definition.asString();
 
-          throw new Error(`The '${definitionString}' left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
+          throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
         }
 
         const definitionComplex = isDefinitionComplex(definition);
@@ -63,15 +63,16 @@ class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
         if (definitionComplex) {
           const definitionString = definition.asString();
 
-          throw new Error(`The '${definitionString}' left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+          throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
         }
 
         const deltaPart = new DeltaPart(),
               parts = [
                 deltaPart
-              ];
+              ],
+              recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-        directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, definition, leftRecursiveRuleNames);
+        directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
       }
     }
 

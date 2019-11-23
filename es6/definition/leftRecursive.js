@@ -1,22 +1,14 @@
 'use strict';
 
-const parsers = require('occam-parsers');
+const RecursiveDefinition = require('../definition/recursive');
 
-const { Definition } = parsers;
-
-class LeftRecursiveDefinition extends Definition {
-  constructor(parts, ruleName, definition, leftRecursiveRuleNames) {
-    super(parts);
-
-    this.ruleName = ruleName;
+class LeftRecursiveDefinition extends RecursiveDefinition {
+  constructor(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames) {
+    super(parts, ruleName, recursiveRuleNames);
 
     this.definition = definition;
 
     this.leftRecursiveRuleNames = leftRecursiveRuleNames;
-  }
-
-  getRuleName() {
-    return this.ruleName;
   }
 
   getDefinition() {
@@ -27,20 +19,10 @@ class LeftRecursiveDefinition extends Definition {
     return this.leftRecursiveRuleNames;
   }
 
-  static fromRuleNameAndDefinition(Class, ruleName, definition, ...remainingArguments) {
-    let leftRecursiveDefinition = null;
+  isLeftRecursive() {
+    const leftRecursive = true;
 
-    const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
-          leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length,
-          definitionLeftRecursive = (leftRecursiveRuleNamesLength > 0);
-
-    if (definitionLeftRecursive) {
-      const parts = definition.getParts();
-
-      leftRecursiveDefinition = new Class(parts, ruleName, definition, leftRecursiveRuleNames, ...remainingArguments);
-    }
-
-    return leftRecursiveDefinition;
+    return leftRecursive;
   }
 }
 

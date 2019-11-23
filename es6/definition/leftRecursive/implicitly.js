@@ -3,7 +3,9 @@
 const LeftRecursiveDefinition = require('../../definition/leftRecursive');
 
 class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
-  rewrite(rules) {}
+  rewrite(rules) {
+    ///
+  }
 }
 
 module.exports = ImplicitlyLeftRecursiveDefinition;
