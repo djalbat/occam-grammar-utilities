@@ -5,9 +5,8 @@ const DeltaPart = require('../../part/delta'),
       arrayUtilities = require('../../utilities/array'),
       RepeatedDefinition = require('../../definition/repeated'),
       RewrittenDefinition = require('../../definition/rewritten'),
-      definitionUtilities = require('../../utilities/definition');
-
-const LeftRecursiveDefinition = require('../../definition/leftRecursive');
+      definitionUtilities = require('../../utilities/definition'),
+      LeftRecursiveDefinition = require('../../definition/leftRecursive');
 
 const { first } = arrayUtilities,
       { findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } = ruleUtilities,

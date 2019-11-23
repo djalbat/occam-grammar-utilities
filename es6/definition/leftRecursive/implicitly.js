@@ -3,8 +3,15 @@
 const LeftRecursiveDefinition = require('../../definition/leftRecursive');
 
 class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
-  rewrite(rules) {
-    ///
+  static fromLeftRecursiveDefinition(leftRecursiveDefinition) {
+    const ruleName = leftRecursiveDefinition.getRuleName(),
+          definition = leftRecursiveDefinition.getDefinition(),
+          recursiveRuleNames = leftRecursiveDefinition.getRecursiveRuleNames(),
+          leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames(),
+          parts = definition.getParts(),
+          implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+
+    return implicitlyLeftRecursiveDefinition;
   }
 }
 

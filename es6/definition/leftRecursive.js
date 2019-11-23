@@ -1,6 +1,9 @@
 'use strict';
 
-const RecursiveDefinition = require('../definition/recursive');
+const definitionUtilities = require('../utilities/definition'),
+      RecursiveDefinition = require('../definition/recursive');
+
+const { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
 
 class LeftRecursiveDefinition extends RecursiveDefinition {
   constructor(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames) {
@@ -23,6 +26,23 @@ class LeftRecursiveDefinition extends RecursiveDefinition {
     const leftRecursive = true;
 
     return leftRecursive;
+  }
+
+  static fromRuleNameAndDefinition(ruleName, definition) {
+    let leftRecursiveDefinition = null;
+
+    const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
+          leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length,
+          definitionLeftRecursive = (leftRecursiveRuleNamesLength > 0);
+
+    if (definitionLeftRecursive) {
+      const parts = definition.getParts(),
+            recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
+
+      leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+    }
+
+    return leftRecursiveDefinition;
   }
 }
 

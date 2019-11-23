@@ -1,6 +1,7 @@
 'use strict';
 
-const arrayUtilities = require('../utilities/array');
+const arrayUtilities = require('../utilities/array'),
+      ImplicitlyLeftRecursiveDefinition = require('../definition/leftRecursive/implicitly');
 
 const { first } = arrayUtilities;
 
@@ -10,9 +11,10 @@ function findImplicitlyLeftRecursiveDefinition(leftRecursiveRuleName, recursiveD
   const leftRecursiveDefinitionsCycle = findLeftRecursiveDefinitionsCycle(leftRecursiveRuleName, recursiveDefinitions);
 
   if (leftRecursiveDefinitionsCycle !== null) {
-    const firstLeftRecursiveDefinition = first(leftRecursiveDefinitionsCycle);
+    const firstLeftRecursiveDefinition = first(leftRecursiveDefinitionsCycle),
+          leftRecursiveDefinition = firstLeftRecursiveDefinition; ///
 
-    implicitlyLeftRecursiveDefinition = firstLeftRecursiveDefinition;  ///
+    implicitlyLeftRecursiveDefinition = ImplicitlyLeftRecursiveDefinition.fromLeftRecursiveDefinition(leftRecursiveDefinition);
   }
 
   return implicitlyLeftRecursiveDefinition;
