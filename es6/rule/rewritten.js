@@ -2,12 +2,14 @@
 
 const parsers = require('occam-parsers');
 
-const ruleNameUtilities = require('../utilities/ruleName'),
+const types = require('../types'),
+      ruleNameUtilities = require('../utilities/ruleName'),
       RuleNameDefinition = require('../definition/ruleName'),
-      LeftRecursiveDefinition = require('../definition/leftRecursive');
+      RecursiveDefinition = require('../definition/recursive');
 
 const { Rule } = parsers,
-      { reducedRuleNameFromRuleName } = ruleNameUtilities;
+      { reducedRuleNameFromRuleName } = ruleNameUtilities,
+      { DIRECTLY_LEFT_RECURSIVE_TYPE, INDIRECTLY_LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } = types;
 
 class RewrittenRule extends Rule {
   static fromRule(rule) {
@@ -15,17 +17,27 @@ class RewrittenRule extends Rule {
 
     const ruleName = rule.getName(),
           reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName),
-          leftRecursiveDefinitions = definitions.filter((definition) => {
-            const definitionLeftRecursiveDefinition = (definition instanceof LeftRecursiveDefinition);
+          reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName);
 
-            if (definitionLeftRecursiveDefinition) {
-              return true;
-            }
-          });
+    definitions = definitions.filter((definition) => {
+      let keep = false;
+
+      const definitionRecursiveDefinition = (definition instanceof RecursiveDefinition);
+
+      if (definitionRecursiveDefinition) {
+        const recursiveDefinition = definition, ///
+              type = recursiveDefinition.getType();
+
+        keep = (type === DIRECTLY_LEFT_RECURSIVE_TYPE) ||
+               (type === INDIRECTLY_LEFT_RECURSIVE_TYPE) ||
+               (type === IMPLICITLY_LEFT_RECURSIVE_TYPE);
+      }
+
+      return keep;
+    });
 
     definitions = [
-      ...leftRecursiveDefinitions,
+      ...definitions,
       reducedRuleNameDefinition
     ];
 

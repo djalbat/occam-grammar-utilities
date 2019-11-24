@@ -2,12 +2,14 @@
 
 const parsers = require('occam-parsers');
 
-const ReducedNode = require('../node/reduced'),
+const types = require('../types'),
+      ReducedNode = require('../node/reduced'),
       ruleNameUtilities = require('../utilities/ruleName'),
-      LeftRecursiveDefinition = require('../definition/leftRecursive');
+      RecursiveDefinition = require('../definition/recursive');
 
 const { Rule } = parsers,
-      { reducedRuleNameFromRuleName } = ruleNameUtilities;
+      { reducedRuleNameFromRuleName } = ruleNameUtilities,
+      { DIRECTLY_LEFT_RECURSIVE_TYPE, INDIRECTLY_LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } = types;
 
 class ReducedRule extends Rule {
   isEmpty() {
@@ -21,16 +23,24 @@ class ReducedRule extends Rule {
     let definitions = rule.getDefinitions();
 
     const ruleName = rule.getName(),
-          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          nonLeftRecursiveDefinitions = definitions.filter((definition) => {
-            const definitionLeftRecursiveDefinition = (definition instanceof LeftRecursiveDefinition);
+          reducedRuleName = reducedRuleNameFromRuleName(ruleName);
 
-            if (!definitionLeftRecursiveDefinition) {
-              return true;
-            }
-          });
+    definitions = definitions.filter((definition) => {
+      let keep = true;
 
-    definitions = nonLeftRecursiveDefinitions;  ///
+      const definitionRecursiveDefinition = (definition instanceof RecursiveDefinition);
+
+      if (definitionRecursiveDefinition) {
+        const recursiveDefinition = definition, ///
+              type = recursiveDefinition.getType();
+
+        keep = (type !== DIRECTLY_LEFT_RECURSIVE_TYPE) &&
+               (type !== INDIRECTLY_LEFT_RECURSIVE_TYPE) &&
+               (type !== IMPLICITLY_LEFT_RECURSIVE_TYPE);
+      }
+
+      return keep
+    });
 
     const name = reducedRuleName,
           NonTerminalNode = ReducedNode,  ///

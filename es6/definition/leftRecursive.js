@@ -1,13 +1,15 @@
 'use strict';
 
-const definitionUtilities = require('../utilities/definition'),
+const types = require('../types'),
+      definitionUtilities = require('../utilities/definition'),
       RecursiveDefinition = require('../definition/recursive');
 
-const { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
+const { LEFT_RECURSIVE_TYPE } = types,
+      { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
 
 class LeftRecursiveDefinition extends RecursiveDefinition {
-  constructor(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames) {
-    super(parts, ruleName, definition, recursiveRuleNames);
+  constructor(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames) {
+    super(type, parts, ruleName, definition, recursiveRuleNames);
 
     this.leftRecursiveRuleNames = leftRecursiveRuleNames;
   }
@@ -24,10 +26,11 @@ class LeftRecursiveDefinition extends RecursiveDefinition {
           definitionLeftRecursive = (leftRecursiveRuleNamesLength > 0);
 
     if (definitionLeftRecursive) {
-      const parts = definition.getParts(),
+      const type = LEFT_RECURSIVE_TYPE,
+            parts = definition.getParts(),
             recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-      leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+      leftRecursiveDefinition = new LeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
     }
 
     return leftRecursiveDefinition;

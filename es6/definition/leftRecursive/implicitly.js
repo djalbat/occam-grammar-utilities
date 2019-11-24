@@ -2,10 +2,12 @@
 
 const necessary = require('necessary');
 
-const LeftRecursiveDefinition = require('../../definition/leftRecursive');
+const types = require('../../types'),
+      LeftRecursiveDefinition = require('../../definition/leftRecursive');
 
 const { arrayUtilities } = necessary,
-      { first } = arrayUtilities;
+      { first } = arrayUtilities,
+      { IMPLICITLY_LEFT_RECURSIVE_TYPE } = types;
 
 class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   static fromLeftRecursiveRuleNameAndRecursiveDefinitions(leftRecursiveRuleName, recursiveDefinitions) {
@@ -14,13 +16,14 @@ class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
     const leftRecursiveDefinition = findLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions);
 
     if (leftRecursiveDefinition !== null) {
-      const parts = leftRecursiveDefinition.getParts(),
+      const type = IMPLICITLY_LEFT_RECURSIVE_TYPE,
+            parts = leftRecursiveDefinition.getParts(),
             ruleName = leftRecursiveDefinition.getRuleName(),
             definition = leftRecursiveDefinition.getDefinition(),
             recursiveRuleNames = leftRecursiveDefinition.getRecursiveRuleNames(),
             leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames();
 
-      implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+      implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
     }
 
     return implicitlyLeftRecursiveDefinition;

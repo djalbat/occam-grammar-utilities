@@ -2,7 +2,8 @@
 
 const necessary = require('necessary');
 
-const DeltaPart = require('../../part/delta'),
+const types = require('../../types'),
+      DeltaPart = require('../../part/delta'),
       ReducedRule = require('../../rule/reduced'),
       RepeatedRule = require('../../rule/repeated'),
       RewrittenRule = require('../../rule/rewritten'),
@@ -14,6 +15,7 @@ const DeltaPart = require('../../part/delta'),
 
 const { arrayUtilities } = necessary,
       { first } = arrayUtilities,
+      { DIRECTLY_LEFT_RECURSIVE_TYPE } = types,
       { findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } = ruleUtilities,
       { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
 
@@ -22,7 +24,7 @@ class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
     const definition = this.getDefinition(),
           ruleName = this.getRuleName(),
           rule = findRule(ruleName, rules),
-          reducedRule = reducedRuleFromRule(rule, rules),
+          reducedRule = reducedRuleFromRule(rule, rules, ReducedRule),
           reducedRuleEmpty = reducedRule.isEmpty();
 
     if (reducedRuleEmpty) {
@@ -73,12 +75,13 @@ class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
         }
 
         const deltaPart = new DeltaPart(),
+              type = DIRECTLY_LEFT_RECURSIVE_TYPE,
               parts = [
                 deltaPart
               ],
               recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-        directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+        directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
       }
     }
 

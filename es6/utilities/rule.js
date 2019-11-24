@@ -1,12 +1,8 @@
 'use strict';
 
-const necessary = require('necessary');
-
 const ruleNameUtilities = require('../utilities/ruleName');
 
-const { arrayUtilities } = necessary,
-      { filter } = arrayUtilities,
-      { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;
+const { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;
 
 function findRule(ruleName, rules) {
   const name = ruleName,  ///
@@ -19,16 +15,6 @@ function findRule(ruleName, rules) {
         }) || null; ///
 
   return rule;
-}
-
-function removeRule(rule, rules) {
-  const removedRule = rule; ///
-
-  filter(rules, (rule) => {
-    if (rule !== removedRule) {
-      return true;
-    }
-  })
 }
 
 function reducedRuleFromRule(rule, rules, ReducedRule) {
@@ -69,11 +55,12 @@ function rewrittenRuleFromRule(rule, rules, RewrittenRule) {
   if (ruleRewrittenRule) {
     rewrittenRule = rule; ///
   } else {
-    removeRule(rule, rules);
-
     rewrittenRule = RewrittenRule.fromRule(rule);
 
-    rules.push(rewrittenRule);
+    const replacedRule = rule,  ///
+          replacementRule = rewrittenRule;  ///
+
+    replaceRule(replacedRule, replacementRule, rules);
   }
 
   return rewrittenRule;
@@ -81,8 +68,18 @@ function rewrittenRuleFromRule(rule, rules, RewrittenRule) {
 
 module.exports = {
   findRule,
-  removeRule,
 	reducedRuleFromRule,
   repeatedRuleFromRule,
   rewrittenRuleFromRule
 };
+
+function replaceRule(replacedRule, replacementRule, rules) {
+  const index = rules.indexOf(replacedRule);
+
+  if (index > -1) {
+    const start = index,
+          deleteCount = 1;
+
+    rules.splice(start, deleteCount, replacementRule);
+  }
+}

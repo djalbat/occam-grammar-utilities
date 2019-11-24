@@ -64,7 +64,7 @@ function replaceDefinitions(rule, recursiveDefinitions, replacementDefinitions, 
                                     replaceDefinition(ruleName, definition, recursiveDefinitions, replacementDefinitions, rules);
 
     if (recursiveDefinition !== null) {
-      const previousRecursiveDefinitions = [ ...recursiveDefinitions ],
+      const previousRecursiveDefinitions = [ ...recursiveDefinitions, recursiveDefinition ],
             previousRecursiveRuleNames = previousRecursiveDefinitions.map((previousRecursiveDefinition) => recursiveRuleNameFromRecursiveDefinition(previousRecursiveDefinition)),
             recursiveRuleNames = recursiveDefinition.getRecursiveRuleNames();
 
@@ -73,10 +73,11 @@ function replaceDefinitions(rule, recursiveDefinitions, replacementDefinitions, 
 
         if (!previousRecursiveRuleNamesIncludesRecursiveRuleName) {
           const ruleName = recursiveRuleName,  ///
-                rule = findRule(ruleName, rules),
-                recursiveDefinitions = [ ...previousRecursiveDefinitions, recursiveDefinition ];
+                rule = findRule(ruleName, rules);
 
           if (rule !== null) {
+            const recursiveDefinitions = previousRecursiveDefinitions;  ///
+
             replaceDefinitions(rule, recursiveDefinitions, replacementDefinitions, rules);
           }
         }
