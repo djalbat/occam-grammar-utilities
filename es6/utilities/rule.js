@@ -1,12 +1,11 @@
 'use strict';
 
-const ReducedRule = require('../rule/reduced'),
-			RepeatedRule = require('../rule/repeated'),
-      RewrittenRule = require('../rule/rewritten'),
-      arrayUtilities = require('../utilities/array'),
-			ruleNameUtilities = require('../utilities/ruleName');
+const necessary = require('necessary');
 
-const { filter } = arrayUtilities,
+const ruleNameUtilities = require('../utilities/ruleName');
+
+const { arrayUtilities } = necessary,
+      { filter } = arrayUtilities,
       { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;
 
 function findRule(ruleName, rules) {
@@ -32,7 +31,7 @@ function removeRule(rule, rules) {
   })
 }
 
-function reducedRuleFromRule(rule, rules) {
+function reducedRuleFromRule(rule, rules, ReducedRule) {
 	const ruleName = rule.getName(),
 				reducedRuleName = reducedRuleNameFromRuleName(ruleName);
 
@@ -47,7 +46,22 @@ function reducedRuleFromRule(rule, rules) {
 	return reducedRule;
 }
 
-function rewrittenRuleFromRule(rule, rules) {
+function repeatedRuleFromRule(rule, rules, RepeatedRule) {
+  const ruleName = rule.getName(),
+        repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
+
+  let repeatedRule = findRule(repeatedRuleName, rules);
+
+  if (repeatedRule === null) {
+    repeatedRule = RepeatedRule.fromRule(rule);
+
+    rules.push(repeatedRule);
+  }
+
+  return repeatedRule;
+}
+
+function rewrittenRuleFromRule(rule, rules, RewrittenRule) {
   let rewrittenRule;
 
   const ruleRewrittenRule = (rule instanceof RewrittenRule);
@@ -63,21 +77,6 @@ function rewrittenRuleFromRule(rule, rules) {
   }
 
   return rewrittenRule;
-}
-
-function repeatedRuleFromRule(rule, rules) {
-	const ruleName = rule.getName(),
-				repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
-
-	let repeatedRule = findRule(repeatedRuleName, rules);
-
-	if (repeatedRule === null) {
-		repeatedRule = RepeatedRule.fromRule(rule);
-
-		rules.push(repeatedRule);
-	}
-
-	return repeatedRule;
 }
 
 module.exports = {

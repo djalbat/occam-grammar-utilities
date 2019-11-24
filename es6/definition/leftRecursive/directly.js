@@ -1,37 +1,44 @@
 'use strict';
 
+const necessary = require('necessary');
+
 const DeltaPart = require('../../part/delta'),
+      ReducedRule = require('../../rule/reduced'),
+      RepeatedRule = require('../../rule/repeated'),
+      RewrittenRule = require('../../rule/rewritten'),
       ruleUtilities = require('../../utilities/rule'),
-      arrayUtilities = require('../../utilities/array'),
       RepeatedDefinition = require('../../definition/repeated'),
       RewrittenDefinition = require('../../definition/rewritten'),
       definitionUtilities = require('../../utilities/definition'),
       LeftRecursiveDefinition = require('../../definition/leftRecursive');
 
-const { first } = arrayUtilities,
+const { arrayUtilities } = necessary,
+      { first } = arrayUtilities,
       { findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } = ruleUtilities,
       { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
 
 class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   rewrite(rules) {
-    const ruleName = this.getRuleName(),
+    const definition = this.getDefinition(),
+          ruleName = this.getRuleName(),
           rule = findRule(ruleName, rules),
-          rewrittenRule = rewrittenRuleFromRule(rule, rules),
           reducedRule = reducedRuleFromRule(rule, rules),
-          repeatedRule = repeatedRuleFromRule(rule, rules),
           reducedRuleEmpty = reducedRule.isEmpty();
 
     if (reducedRuleEmpty) {
       throw new Error(`The '${ruleName}' rule has non-left recursive definitions and therefore cannot be rewritten.`);
     }
 
-    const definition = this.getDefinition(),
-          leftRecursiveRuleName = ruleName, ///
-          repeatedDefinition = RepeatedDefinition.fromDefinition(definition),
-          rewrittenDefinition = RewrittenDefinition.fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName),
-          replacementDefinition = this; ///
+    const leftRecursiveRuleName = ruleName; ///
+
+    const repeatedRule = repeatedRuleFromRule(rule, rules, RepeatedRule),
+          repeatedDefinition = RepeatedDefinition.fromDefinition(definition);
 
     repeatedRule.addDefinition(repeatedDefinition);
+
+    const rewrittenRule = rewrittenRuleFromRule(rule, rules, RewrittenRule),
+          rewrittenDefinition = RewrittenDefinition.fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName),
+          replacementDefinition = this; ///
 
     rewrittenRule.replaceDefinition(replacementDefinition, rewrittenDefinition);
   }

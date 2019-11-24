@@ -1,10 +1,10 @@
 'use strict';
 
-const parsers = require('occam-parsers');
+const parsers = require('occam-parsers'),
+      necessary = require('necessary');
 
-const arrayUtilities = require('../utilities/array');
-
-const { first } = arrayUtilities;
+const { arrayUtilities } = necessary,
+      { first } = arrayUtilities;
 
 const { partTypes } = parsers,
       { RuleNamePartType,

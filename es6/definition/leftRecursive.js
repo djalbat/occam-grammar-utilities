@@ -7,25 +7,13 @@ const { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition }
 
 class LeftRecursiveDefinition extends RecursiveDefinition {
   constructor(parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames) {
-    super(parts, ruleName, recursiveRuleNames);
-
-    this.definition = definition;
+    super(parts, ruleName, definition, recursiveRuleNames);
 
     this.leftRecursiveRuleNames = leftRecursiveRuleNames;
   }
 
-  getDefinition() {
-    return this.definition;
-  }
-
   getLeftRecursiveRuleNames() {
     return this.leftRecursiveRuleNames;
-  }
-
-  isLeftRecursive() {
-    const leftRecursive = true;
-
-    return leftRecursive;
   }
 
   static fromRuleNameAndDefinition(ruleName, definition) {

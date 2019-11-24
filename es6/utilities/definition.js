@@ -1,11 +1,12 @@
 'use strict';
 
-const parsers = require('occam-parsers');
+const parsers = require('occam-parsers'),
+      necessary = require('necessary');
 
-const arrayUtilities = require('../utilities/array'),
-      recursivePartUtilities = require('../utilities/recursivePart');
+const recursivePartUtilities = require('../utilities/recursivePart');
 
-const { first } = arrayUtilities,
+const { arrayUtilities } = necessary,
+      { first } = arrayUtilities,
       { partTypes } = parsers,
       { RuleNamePartType } = partTypes,
       { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } = recursivePartUtilities;

@@ -1,11 +1,7 @@
 'use strict';
 
 function cloneParts(parts) {
-  parts = parts.map((part) => {
-    part = part.clone();
-
-    return part;
-  });
+  parts = parts.map((part) => part.clone());
 
   return parts;
 }
