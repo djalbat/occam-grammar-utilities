@@ -7,7 +7,7 @@ const types = require('../../types'),
 
 const { arrayUtilities } = necessary,
       { first } = arrayUtilities,
-      { IMPLICITLY_LEFT_RECURSIVE_TYPE } = types;
+      { LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } = types;
 
 class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   static fromLeftRecursiveRuleNameAndRecursiveDefinitions(leftRecursiveRuleName, recursiveDefinitions) {
@@ -19,7 +19,7 @@ class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
       const type = IMPLICITLY_LEFT_RECURSIVE_TYPE,
             parts = leftRecursiveDefinition.getParts(),
             ruleName = leftRecursiveDefinition.getRuleName(),
-            definition = leftRecursiveDefinition.getDefinition(),
+            definition = leftRecursiveDefinition, ///
             recursiveRuleNames = leftRecursiveDefinition.getRecursiveRuleNames(),
             leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames();
 
@@ -51,9 +51,9 @@ function findRecursiveDefinitionsCycle(recursiveRuleName, recursiveDefinitions) 
 
   recursiveDefinitions.some((recursiveDefinition, index) => {
     const recursiveDefinitionRuleName = recursiveDefinition.getRuleName(),
-          recursiveDefinitionRuleNameLeftRecursiveRuleName = (recursiveDefinitionRuleName === recursiveRuleName);
+          recursiveDefinitionRuleNameRecursiveRuleName = (recursiveDefinitionRuleName === recursiveRuleName);
 
-    if (recursiveDefinitionRuleNameLeftRecursiveRuleName) {
+    if (recursiveDefinitionRuleNameRecursiveRuleName) {
       recursiveDefinitionsCycle = recursiveDefinitions.slice(index);
 
       return true;
@@ -82,9 +82,9 @@ function findLeftRecursiveDefinitionsCycle(leftRecursiveRuleName, recursiveDefin
 
 function isRecursiveDefinitionsCycleLeftRecursive(recursiveDefinitionsCycle) {
   const recursiveDefinitionsCycleLeftRecursive = recursiveDefinitionsCycle.every((recursiveDefinition) => {
-    const recursiveDefinitionLeftRecursiveDefinition = (recursiveDefinition instanceof LeftRecursiveDefinition);
+    const type = recursiveDefinition.getType();
 
-    if (recursiveDefinitionLeftRecursiveDefinition) {
+    if (type === LEFT_RECURSIVE_TYPE) {
       return true;
     }
   });
