@@ -11,9 +11,8 @@ const types = require('../../types'),
       RepeatedDefinition = require('../../definition/repeated'),
       RewrittenDefinition = require('../../definition/rewritten'),
       definitionUtilities = require('../../utilities/definition'),
+      LeftRecursiveDefinition = require('../../definition/leftRecursive'),
       ImplicitlyLeftRecursiveDefinition = require('../../definition/leftRecursive/implicitly');
-
-const LeftRecursiveDefinition = require('../../definition/leftRecursive');
 
 const { arrayUtilities } = necessary,
       { first } = arrayUtilities,

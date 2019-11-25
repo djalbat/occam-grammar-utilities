@@ -17,42 +17,40 @@
 
 _This project is undergoing a major rewrite and is effectively broken! Please come back another day._
 
-This package provides the means to eliminate left recursion, the Achilles heel of top-down parsers, in both its immediate and indirect forms.
-
-Consider the following rules:
+This package provides the means to eliminate left recursion, the Achilles heel of top-down parsers, in both its direct and indirect forms. Consider the following rules:
 ```
-  expression     ::= expression operator expression
+expression    ::= expression operator expression
 
-                   | "(" expression ")"
+                | "(" expression ")"
 
-                   | term
-
-                   ;
-
-  operator       ::= "+" | "-" | "/" | "*" ;
-
-  term           ::= naturalNumber ;
-
-  naturalNumber  ::= /\d+/ ;
-```
-Here the first rule is immediately left recursive. When the parser encounters this rule it will enter an infinite loop as it tries to evaluate the first definition, the first part of which is a reference to the same rule.
-
-To eliminate left recursion, the rules are rewritten as follows:
-
-```
-  expression  ::= "(" expression ")" expression~
-
-                | term expression~
+                | term
 
                 ;
 
-  expression~ ::= operator expression expression~?
+operator      ::= "+" | "-" | "/" | "*" ;
 
-                | ε
+term          ::= naturalNumber ;
 
-                ;
+naturalNumber ::= /\d+/ ;
+```
+Here the first definition of the `expression` rule is directly left recursive. When the parser encounters this definition it will encounter a reference to the `expression` rule and, trying to execute it again, will enter an infinite loop.
 
-  ...
+In order to eliminate left recursion, the rules have traditionally been rewritten as follows:
+
+```
+expression  ::= "(" expression ")" expression~
+
+              | term expression~
+
+              ;
+
+expression~ ::= operator expression expression~?
+
+              | ε
+
+              ;
+
+...
 ```
 Here is the parse tree of the expression `(1+2)/3` that results:
 ```
