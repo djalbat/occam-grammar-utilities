@@ -42,16 +42,23 @@ class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
           leftRecursiveRuleName = firstLeftRecursiveRuleName, ///
           leftRecursiveRule = findRule(leftRecursiveRuleName, rules);
 
+    const reducedRule = reducedRuleFromRule(leftRecursiveRule, rules, ReducedRule),
+          reducedRuleEmpty = reducedRule.isEmpty();
+
+    if (reducedRuleEmpty) {
+      throw new Error(`The '${leftRecursiveRuleName}' rule has non-left recursive definitions and therefore cannot be rewritten.`);
+    }
+
     const repeatedRule = repeatedRuleFromRule(leftRecursiveRule, rules, RepeatedRule),
           repeatedDefinition = RepeatedDefinition.fromDefinition(definition);
 
     repeatedRule.addDefinition(repeatedDefinition);
 
-    const rewrittenRule = rewrittenRuleFromRule(rule, rules, RewrittenRule),
+    const rewrittenRule = rewrittenRuleFromRule(leftRecursiveRule, rules, RewrittenRule),
           rewrittenDefinition = RewrittenDefinition.fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName),
           replacementDefinition = this; ///
 
-    rewrittenRule.replaceDefinition(replacementDefinition, rewrittenDefinition);
+    rule.replaceDefinition(replacementDefinition, rewrittenDefinition);
 
     // const implicitlyLeftRecursiveDefinition = this.getImplicitlyLeftRecursiveDefinition(),
     //       definition = implicitlyLeftRecursiveDefinition.getDefinition(),

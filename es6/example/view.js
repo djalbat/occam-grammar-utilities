@@ -60,7 +60,7 @@ class View extends Element {
   }
 
   changeHandler() {
-    // try {
+    try {
       const bnf = this.getBNF(),
             tokens = bnfLexer.tokensFromBNF(bnf);
 
@@ -81,13 +81,13 @@ class View extends Element {
       const parseTree = this.getParseTree(rules);
 
       this.setParseTree(parseTree);
-    // } catch (error) {
-    //   this.clearAdjustedBNF();
-    //
-    //   this.clearParseTree();
-    //
-    //   this.showError(error);
-    // }
+    } catch (error) {
+      this.clearAdjustedBNF();
+
+      this.clearParseTree();
+
+      this.showError(error);
+    }
   }
 
   keyUpHandler() {

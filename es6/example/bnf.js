@@ -30,6 +30,10 @@ module.exports = exampleBNF;
 
                         ;
 
+  operator            ::= "+" | "-" | "/" | "*" ;
+
+  term                ::= /\d+/ ;
+
 
 
 

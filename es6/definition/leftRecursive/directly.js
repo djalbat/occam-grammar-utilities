@@ -23,8 +23,9 @@ class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   rewrite(rules) {
     const definition = this.getDefinition(),
           ruleName = this.getRuleName(),
-          rule = findRule(ruleName, rules),
-          reducedRule = reducedRuleFromRule(rule, rules, ReducedRule),
+          rule = findRule(ruleName, rules);
+
+    const reducedRule = reducedRuleFromRule(rule, rules, ReducedRule),
           reducedRuleEmpty = reducedRule.isEmpty();
 
     if (reducedRuleEmpty) {
