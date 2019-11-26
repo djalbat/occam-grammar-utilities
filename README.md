@@ -58,7 +58,7 @@ expression~ ::= operator expression expression~
 
 ...
 ```
-The left recursive definition has been removed and a reference to the right recursive `expression~` rule has been prepended to each of the remaining definitions. The second definition of this rule contains a single `ε` part that executes without consuming any tokens, thus giving the parser the opportunity to terminate.
+The left recursive definition has been removed and a reference to the right recursive `expression~` rule has been prepended to each of the remaining definitions. The second definition of this rule contains a single `ε` part that will execute without consuming any tokens, thus giving the parser the opportunity to terminate.
 
 Now consider the following rules, where the left recursion is still present, but this time in indirect form:
 ```
