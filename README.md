@@ -19,7 +19,7 @@ _This project is undergoing a major rewrite and is effectively broken! Please co
 
 This package provides the means to eliminate left recursion, the Achilles heel of top-down parsers, in both its direct and indirect forms.
 
-There is a paper to accompany this project:
+There is an accompanying paper:
 
 * [Eliminating Left Recursion without the Epsilon](https://arxiv.org/abs/1908.10888)
 
@@ -58,7 +58,7 @@ expression~ ::= operator expression expression~
 
 ...
 ```
-The left recursive definition has been removed and a reference to the right recursive `expression~` rule has been prepended to each of the remaining definitions. The second definition of this rule contains a single `ε` part that will execute without consuming any tokens, thus giving the parser the opportunity to terminate.
+The left recursive definition has been removed and a reference to the right recursive `expression~` rule has been prepended to each of the definitions that remain. The second definition of this rule contains a single `ε` part that will execute without consuming any tokens, thus giving the parser the opportunity to terminate.
 
 Now consider the following rules, where the left recursion is still present, but this time in indirect form:
 ```
