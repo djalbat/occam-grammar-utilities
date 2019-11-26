@@ -17,15 +17,13 @@
 
 _This project is undergoing a major rewrite and is effectively broken! Please come back another day._
 
-https://arxiv.org/abs/1908.10888
-
 This package provides the means to eliminate left recursion, the Achilles heel of top-down parsers, in both its direct and indirect forms.
 
 There is a paper to accompany this project:
 
 * [Eliminating Left Recursion without the Epsilon](https://arxiv.org/abs/1908.10888)
 
-As well as providing the usual installation instructions, etc, this readme file also contains many of hte listings given in the paper, the reason being that it is much easier to copy them from here. Some short explanatory notes are also given in the remainder of this introduction, for those who do not want to tackle the paper but nonetheless want an idea of what this is all about.
+As well as providing the usual installation instructions, etc, this readme file also contains many of the listings to be found in the paper, the reason being that it is much easier to copy them from here. Some short explanatory notes are also given in the remainder of this introduction, for those who do not want to tackle the paper but nonetheless want an idea of what this is all about.
 
 Consider the following rules:
 ```
