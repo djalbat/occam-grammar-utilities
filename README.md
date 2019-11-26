@@ -110,27 +110,27 @@ Here we have created a reduced `expression_` rule to hold all of the original `e
 If we are careful in removing or renaming the nodes in the parse tree corresponding to our intermediate `expression_` and `expression~` rules, we get what is effectively the ideal parse tree, too:
 
 ```
-                                                     expression(0-6)
-                                                            |
-                                                 compoundExpression(0-6)
-                                                            |
-                                 ------------------------------------------------------
-                                 |                                       |            |
-                          expression(0-4)                           operator(5) expression(6)
-                                 |                                       |            |
-      -------------------------------------------------------      /[custom](5)    term(6)
-      |                          |                          |                         |
-([custom](0)              expression(1-3)             )[custom](4)              3[custom](6)
-                                 |
-                      compoundExpression(1-3)
-                                 |
-                   ----------------------------
-                   |             |            |
-             expression(1)  operator(2) expression(3)
-                   |             |            |
-                term(1)    +[custom](2)    term(3)
-                   |                          |
-             1[custom](1)               2[custom](3)
+                                                         expression(0-6)
+                                                                |
+                                                     compoundExpression(0-6)
+                                                                |
+                                     ------------------------------------------------------
+                                     |                                       |            |
+                              expression(0-4)                           operator(5) expression(6)
+                                     |                                       |            |
+          -------------------------------------------------------      /[custom](5)    term(6)
+          |                          |                          |                         |
+    ([custom](0)              expression(1-3)             )[custom](4)              3[custom](6)
+                                     |
+                          compoundExpression(1-3)
+                                     |
+                       ----------------------------
+                       |             |            |
+                 expression(1)  operator(2) expression(3)
+                       |             |            |
+                    term(1)    +[custom](2)    term(3)
+                       |                          |
+                 1[custom](1)               2[custom](3)
 ```
 
 ## Installation
