@@ -58,7 +58,7 @@ expression~ ::= operator expression expression~
 
 ...
 ```
-Essentially the left recursive definition is removed and a reference to the right recursive `expression~` rule is prepended to each of the remaining definitions. Typically parsers that are susceptible to left recursion nad not susceptible to right recursion.
+The left recursive definition has been removed and a reference to the right recursive `expression~` rule has been prepended to each of the remaining definitions. The second definition of this rule contains a single `ε` part that executes without consuming any tokens, thus giving the parser the opportunity to terminate.
 
 Now consider the following rules, where the left recursion is still present, but this time in indirect form:
 ```
