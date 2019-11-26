@@ -72,11 +72,15 @@ expression         ::= compoundExpression
 
 compoundExpression ::= expression operator expression
 
-operator           ::= "+" | "-" | "/" | "*" ;
-
-term               ::= /\d+/ ;
+...
 ```
-The indirection is still there, albeit indirectly.
+The indirection is still here, albeit indirectly.
+
+Traditionally, left recursion of this form has been eliminated by an algorithm that reorganises the rules in such a way that indirect left recursion is always transformed into direct left recursion and, whenever this occurs, it is removed by the aforementioned algorithm. For example, the `compoundExpression` rule, coming as it does after the `expression` rule, is substituted into the `expression` rule, resulting in direct left recursion.
+
+This approach is fine in practice, however there are two major drawbacks. The first one is that rules are subsumed by others, meaning that the usefulness of the rules themselves is eroded. What if, say, we wanted a way to detect compound expressions in larger expressions? With the presence of the `compoundExpression` rule, it would be a straightforward job to traverse the parse trees, looking for the nodes that correspond to the rule. If that rule has been subsumed, however, the problem becomes a less than straightforward one. The other drawback is that substituting rules into one another in this way results in ambiguity and, worse still, the size and complexity of the rules grows alarmingly. This happens even in relatively simple cases, and results in the parser simply being unable to function without running out of stack or heap space.
+
+1. Each definition of a the rule
 
 https://arxiv.org/abs/1908.10888
 
