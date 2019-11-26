@@ -39,7 +39,7 @@ operator      ::= "+" | "-" | "/" | "*" ;
 
 term          ::= /\d+/ ;
 ```
-Here the first definition of the `expression` rule is directly left recursive. When the parser encounters this definition it will encounter a reference to the `expression` rule and, trying to execute it again, will enter an infinite loop.
+Here the first definition of the `expression` rule is directly left recursive. When the parser encounters this definition it happens across a reference to the `expression` rule and, trying to execute that rule again, will enter an infinite loop.
 
 In order to eliminate left recursion, the rules have traditionally been rewritten as follows:
 
@@ -50,7 +50,7 @@ expression  ::= "(" expression ")" expression~
 
               ;
 
-expression~ ::= operator expression expression~?
+expression~ ::= operator expression expression~
 
               | ε
 
@@ -58,7 +58,9 @@ expression~ ::= operator expression expression~?
 
 ...
 ```
-This is fine as far as it goes, however such rewrites only deal with direct left recursion, not indirect left recursion. Consider the following rules:
+Essentially the left recursive definition is removed and a reference to the right recursive `expression~` rule is prepended to each of the remaining definitions. Typically parsers that are susceptible to left recursion nad not susceptible to right recursion.
+
+Now consider the following rules, where the left recursion is still present, but this time in indirect form:
 ```
 expression         ::= compoundExpression
 
