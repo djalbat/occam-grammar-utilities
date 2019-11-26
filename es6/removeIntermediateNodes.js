@@ -6,13 +6,13 @@ const ReducedNode = require('./node/reduced'),
 
 const { ruleNameFromReducedRuleName, checkReducedRuleNameMatchesRuleName } = ruleNameUtilities;
 
-function removeIntermediateNodes(node) {
+function removeOrRenameIntermediateNodes(node) {
   removeOrRenameReducedNodes(node);
 
   removeRepeatedNodes(node);
 }
 
-module.exports = removeIntermediateNodes;
+module.exports = removeOrRenameIntermediateNodes;
 
 function removeRepeatedNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
