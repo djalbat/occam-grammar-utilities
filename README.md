@@ -82,7 +82,9 @@ This approach is fine in theory, however there are two major drawbacks in practi
 
 2. Substituting rules into one another in this way results in ambiguity and, worse still, the size and complexity of the rules grows alarmingly. This happens even in relatively simple cases, and results in the parser simply being unable to function without running out of stack or heap space.
 
-So we are forced to think of a more efficient and less destructive way of eliminating indirect left recursion. Consider the following rewritten rules:
+So we are forced to think of a more efficient and less destructive way of eliminating indirect left recursion.
+
+Consider the following rewritten rules:
 
 ```
 expression         ::= compoundExpression
@@ -103,6 +105,7 @@ expression~        ::= operator expression ;
 
 ...
 ```
+Here we have created a reduced `expression_` rule to hold all of the original `expression` rule's definitions bar the first. And we get to keep the `compoundExpression` rule, the rewritten definition of which references this reduced rule followed by a repeated `expression~` rule. This is analogous to the right recursive rule of the same name created earlier, however note that we have done away with the need for right recursion by making use of the `+` modifier when referencing it. An additional bonus is that the definition with a single `ε` part can be left out as the parser can terminate without it.
 
 ## Installation
 
