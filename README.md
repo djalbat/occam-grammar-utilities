@@ -85,7 +85,7 @@ This approach is fine in theory, however there are two major drawbacks in practi
 
 So we are forced to think of a more efficient and less destructive way of eliminating indirect left recursion.
 
-Consider the following rewritten rules:
+Consider the following rewritten rules, which are close to the rules produced by our algorithm:
 
 ```
 expression         ::= compoundExpression
@@ -106,7 +106,7 @@ expression~        ::= operator expression ;
 
 ...
 ```
-Here we have created a reduced `expression_` rule to hold all of the original `expression` rule's definitions bar the first. And we get to keep the `compoundExpression` rule, the rewritten definition of which consisting of a reference this reduced rule followed by a reference to the repeated `expression~` rule. This is analogous to the right recursive rule of the same name created earlier, however note that we have done away with the need for right recursion by making use of the `+` modifier when referencing it. An additional bonus is that the definition with a single `ε` part can be left out of the repeated rule as the parser can terminate without it.
+Here we have created a reduced `expression_` rule to hold all of the original `expression` rule's definitions bar the first. And we get to keep the `compoundExpression` rule, the rewritten definition of which consists of a reference to this reduced rule followed by a reference to the repeated `expression~` rule. This is analogous to the right recursive rule of the same name created earlier, however note that we have done away with the need for right recursion by making use of the `+` modifier when referencing it. An additional bonus is that the definition with a single `ε` part can be left out of the repeated rule, as the presence of the `+` modifier means that the parser can terminate without it.
 
 If we are careful in removing or renaming the nodes in the parse tree corresponding to our intermediate `expression_` and `expression~` rules, we get what is effectively the ideal parse tree, too:
 
@@ -133,6 +133,7 @@ If we are careful in removing or renaming the nodes in the parse tree correspond
                        |                          |
                  1[custom](1)               2[custom](3)
 ```
+Further details can be found in the aforementioned paper.
 
 ## Installation
 
