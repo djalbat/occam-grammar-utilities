@@ -15,7 +15,7 @@ function rulesAsString(rules, multiLine) {
           rulesString += ruleString;
 
           return rulesString;
-        }, '');
+        }, '').replace(/^\n\n/, '');
 
   return rulesString;
 }

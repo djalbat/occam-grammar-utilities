@@ -1,8 +1,6 @@
 'use strict';
 
-const exampleBNF = `
-
-expression         ::=  compoundExpression
+const exampleBNF = `expression         ::=  compoundExpression
 
                      |  "(" expression ")"
 
