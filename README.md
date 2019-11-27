@@ -160,7 +160,7 @@ const lexers = require('occam-lexers'),
 
 const { BasicLexer } = lexers,
       { BasicParser } = parsers,
-      { eliminateLeftRecursion, removeIntermediateNodes } = grammarUtilities;
+      { eliminateLeftRecursion, removeOrRenameIntermediateNodes } = grammarUtilities;
 
 const rules = ... ,
       entries = ... ,
@@ -173,8 +173,9 @@ const basicLexer = BasicLexer.fromEntries(entries),
       tokens = basicLexer.tokenise(content),
       node = basicParser.parse(tokens);
 
-removeIntermediateNodes(node);
+removeOrRenameIntermediateNodes(node);
 ```
+The removal or renaming of intermediate nodes is recommended, although optional, which is why it is provided as a separate function.
 
 ## Examples
 

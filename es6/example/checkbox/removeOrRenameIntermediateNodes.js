@@ -4,7 +4,7 @@ const easy = require('easy');
 
 const { Element } = easy;
 
-class RemoveIntermediateNodesCheckbox extends Element {
+class RemoveOrRenameIntermediateNodesCheckbox extends Element {
   constructor(selector, changeHandler) {
     super(selector);
 
@@ -29,33 +29,33 @@ class RemoveIntermediateNodesCheckbox extends Element {
   }
 
   parentContext() {
-    const isRemoveIntermediateNodesCheckboxChecked = this.isChecked.bind(this); ///
+    const isRemoveOrRenameIntermediateNodesCheckboxChecked = this.isChecked.bind(this); ///
 
     return ({
-      isRemoveIntermediateNodesCheckboxChecked
+      isRemoveOrRenameIntermediateNodesCheckboxChecked
     });
   }
 
   static fromProperties(properties) {
     const { onChange } = properties,
           changeHandler = onChange, ///
-          removeIntermediateNodesCheckbox = Element.fromProperties(RemoveIntermediateNodesCheckbox, properties, changeHandler);
+          removeOrRenameIntermediateNodesCheckbox = Element.fromProperties(RemoveOrRenameIntermediateNodesCheckbox, properties, changeHandler);
 
-    return removeIntermediateNodesCheckbox;
+    return removeOrRenameIntermediateNodesCheckbox;
   }}
 
-Object.assign(RemoveIntermediateNodesCheckbox, {
+Object.assign(RemoveOrRenameIntermediateNodesCheckbox, {
   tagName: 'input',
   defaultProperties: {
     type: 'checkbox',
-    className: 'remove-intermediate-nodes'
+    className: 'remove-or-rename-intermediate-nodes'
   },
   ignoredProperties: [
     'onChange'
   ]
 });
 
-module.exports = RemoveIntermediateNodesCheckbox;
+module.exports = RemoveOrRenameIntermediateNodesCheckbox;
 
 function defaultIntermediateChangeHandler(changeHandler, event, targetElement) {
   const checkbox = targetElement, ///

@@ -17,8 +17,8 @@ const exampleBNF = require('../example/bnf'),
       MainVerticalSplitter = require('./verticalSplitter/main'),
       exampleLexicalPattern = require('../example/lexicalPattern'),
       eliminateLeftRecursion = require('../eliminateLeftRecursion'),
-      removeIntermediateNodes = require('../removeIntermediateNodes'),
-      RemoveIntermediateNodesCheckbox = require('./checkbox/removeIntermediateNodes');
+      removeOrRenameIntermediateNodes = require('../removeOrRenameIntermediateNodes'),
+      RemoveOrRenameIntermediateNodesCheckbox = require('./checkbox/removeOrRenameIntermediateNodes');
 
 const { Element } = easy,
       { rulesAsString } = rulesUtilities,
@@ -47,10 +47,10 @@ class View extends Element {
           node = basicParser.parse(tokens);
 
     if (node !== null) {
-      const removeIntermediateNodesCheckboxChecked = this.isRemoveIntermediateNodesCheckboxChecked();
+      const removeOrRenameIntermediateNodesCheckboxChecked = this.isRemoveOrRenameIntermediateNodesCheckboxChecked();
 
-      if (removeIntermediateNodesCheckboxChecked) {
-        removeIntermediateNodes(node);
+      if (removeOrRenameIntermediateNodesCheckboxChecked) {
+        removeOrRenameIntermediateNodes(node);
       }
 
       parseTree = node.asParseTree(tokens);
@@ -114,7 +114,7 @@ class View extends Element {
           <h2>Parse tree</h2>
           <ParseTreeTextarea />
           <div>
-            <RemoveIntermediateNodesCheckbox onChange={changeHandler} checked />
+            <RemoveOrRenameIntermediateNodesCheckbox onChange={changeHandler} checked />
             <span>Remove intermediate nodes</span>
           </div>
           <h2>Content</h2>
