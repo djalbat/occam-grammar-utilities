@@ -74,7 +74,7 @@ compoundExpression ::= expression operator expression ;
 
 ...
 ```
-The standard algorithm for eliminating indirect left recursion reorganises the rules in such a way that indirect left recursion is always transformed into direct left recursion and, whenever this occurs, the direct left recursion is removed in the aforementioned way. The reorganisation itself essentially involves removing cycles by making substitutions. For example, the `compoundExpression` rule, coming as it does after the `expression` rule, is substituted into the `expression` rule, resulting in direct left recursion.
+The standard algorithm for eliminating indirect left recursion reorganises the rules in such a way that indirect left recursion is always transformed into direct left recursion which, whenever it occurs, is removed in the aforementioned way. The reorganisation itself essentially involves removing cycles by making substitutions. For example, the `compoundExpression` rule, coming as it does after the `expression` rule, is substituted into the `expression` rule, resulting in direct left recursion.
 
 This approach is fine in theory, however there are two major drawbacks in practice:
 
