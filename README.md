@@ -74,7 +74,7 @@ compoundExpression ::= expression operator expression ;
 
 ...
 ```
-The standard algorithm for eliminating indirect left recursion reorganises the rules in such a way that indirect left recursion is always transformed into direct left recursion which, whenever it occurs, is eliminated in the aforementioned way. The reorganisation itself essentially involves removing cycles by making substitutions. For example, the `compoundExpression` rule, coming as it does after the `expression` rule, is substituted into the `expression` rule, resulting in direct left recursion.
+The standard algorithm for eliminating indirect left recursion reorganises the rules in such a way that indirect left recursion is always transformed into direct left recursion which, whenever it occurs, is then eliminated in the aforementioned way. The reorganisation itself essentially involves removing cycles by making substitutions. For example, the `compoundExpression` rule, coming as it does after the `expression` rule, is substituted for its reference in the first definition of the `expression` rule, resulting in fact in the same case of direct left recursion as before.
 
 This approach is fine in theory, however there are two major drawbacks in practice:
 
@@ -108,7 +108,7 @@ expression~        ::= operator expression ;
 ```
 Here we have created a reduced `expression_` rule to hold all of the original `expression` rule's definitions bar the first. And we get to keep the `compoundExpression` rule, the rewritten definition of which consists of a reference to this reduced rule followed by a reference to the repeated `expression~` rule. This is analogous to the right recursive rule of the same name created earlier, however note that we have done away with the need for right recursion by making use of the `+` modifier when referencing it. An additional bonus is that the definition with a single `ε` part can be left out of the repeated rule, as the presence of the `+` modifier means that the parser can terminate without it.
 
-If we are careful in removing or renaming the nodes in the parse tree corresponding to our intermediate `expression_` and `expression~` rules, we get what is effectively the ideal parse tree, too:
+A bonus of this approach is that, if we are careful in removing or renaming the nodes in the parse tree corresponding to our intermediate `expression_` and `expression~` rules, we get what is effectively the ideal parse tree to boot:
 
 ```
                                                          expression(0-6)
