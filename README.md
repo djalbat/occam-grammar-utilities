@@ -179,26 +179,9 @@ The removal or renaming of intermediate nodes is recommended but optional, which
 
 ## Examples
 
-There is one example although the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. The following are some rules that you can try:
-```
-  expression          ::= compoundExpression
+There is one example although the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. You may need to change the lexical pattern in order to pick out the necessary tokens to make the parser work. The default is to pick out any decimal digit and then to default to any character.
 
-                        | "(" expression ")"
-
-                        | term
-
-                        ;
-
-  compoundExpression  ::= expression operator expression
-
-                        | "xyz"
-
-                        ;
-
-  operator            ::= "+" | "-" | "/" | "*" ;
-
-  term                ::= /\d+/ ;
-```
+The following are some rules that you can try, which closely match the listings in the paper:
 ```
   L  ::=  L! "c"
 
@@ -208,14 +191,6 @@ There is one example although the BNF can be changed dynamically. To view it, op
 
        ;
 ```
-```
-  expression~ ::= operator expression expression~
-
-                | ε
-
-                ;
-```
-This last has been included to make it easy to copy and paste the troublesome `ε`, although the algorithms themselves no longer require it.
 
 ## Building
 
