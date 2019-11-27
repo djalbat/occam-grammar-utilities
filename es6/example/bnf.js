@@ -24,18 +24,6 @@ module.exports = exampleBNF;
 
 
 
-S ::= A C ;
-
-A ::= "." B ;
-
-B ::= A | "." C ;
-
-C ::= D E ;
-
-D ::= C "." ;
-
-E ::= "." ;
-
 
 
   C ::= D "a" ;

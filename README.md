@@ -226,20 +226,54 @@ operator               ::= "+" | "-" | "/" | "*" ;
 term                   ::= /\d+/ ;
 ```
 
-In these rules the indirect left recursion occurs between the `C` and `D` rules:
+Here the indirect left recursion occurs between the `C` and `D` rules:
 ```
 S ::= A C ;
 
-A ::= "." B ;
+A ::= "a" B ;
 
-B ::= A | "." C ;
+B ::= A | "b" C ;
 
-C ::= D E ;
+C ::= D E | "c" ;
 
-D ::= C "." ;
+D ::= C "d" ;
 
 E ::= "." ;
 ```
+
+This rule results in an error because there are no non-left recursive definitions alongside the directly left recursive definition:
+```
+C ::= C "a" ;
+```
+
+This rule results in an error because the directly left recursive definition is unary:
+```
+C ::= C | "e" ;
+```
+
+These rules result in an error because there are no non-left recursive definitions alongisde the implicitly left recursive definition:
+```
+C ::= D "a" ;
+
+D ::= C "b" ;
+```
+
+These rules are not permissible because the indirectly left recursive definition is unary>
+```
+C ::= D "e" | "f" ;
+
+D ::= C ;
+
+```
+
+These rules are permissible results in an error because the although the implicitly left recursive definition is unary, the indirectly left recursive definition is not:
+```
+C ::= D | "f" ;
+
+D ::= C "e" ;
+```
+
+
 
 ## Building
 
