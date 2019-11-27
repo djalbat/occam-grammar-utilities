@@ -175,7 +175,7 @@ const basicLexer = BasicLexer.fromEntries(entries),
 
 removeOrRenameIntermediateNodes(node);
 ```
-The removal or renaming of intermediate nodes is recommended, although optional, which is why it is provided as a separate function.
+The removal or renaming of intermediate nodes is recommended but optional, which is why it is provided as a separate function.
 
 ## Examples
 
