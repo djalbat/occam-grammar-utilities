@@ -41,7 +41,7 @@ term          ::= /\d+/ ;
 ```
 Here the first definition of the `expression` rule is directly left recursive. When the parser encounters this definition it happens across a reference to the `expression` rule and, trying to execute that rule again, will enter an infinite loop.
 
-In order to eliminate left recursion, the rules have traditionally been rewritten as follows:
+THe standard algorithm for eliminating left recursion would rewrite the rules as follows:
 
 ```
 expression  ::= "(" expression ")" expression~
@@ -74,7 +74,7 @@ compoundExpression ::= expression operator expression ;
 
 ...
 ```
-Traditionally, left recursion of this form has been eliminated by an algorithm that reorganises the rules in such a way that indirect left recursion is always transformed into direct left recursion and, whenever this occurs, the direct left recursion is removed in the aforementioned was. The reorganisation itself involves avoiding cycles by substitutions. For example, the `compoundExpression` rule, coming as it does after the `expression` rule, is substituted into the `expression` rule, resulting in direct left recursion.
+The standard algorithm for eliminating left recursion of this form reorganises the rules in such a way that indirect left recursion is always transformed into direct left recursion and, whenever this occurs, the direct left recursion is removed in the aforementioned was. The reorganisation itself involves avoiding cycles by substitutions. For example, the `compoundExpression` rule, coming as it does after the `expression` rule, is substituted into the `expression` rule, resulting in direct left recursion.
 
 This approach is fine in theory, however there are two major drawbacks in practice:
 
