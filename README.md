@@ -106,7 +106,7 @@ expression~        ::= operator expression ;
 
 ...
 ```
-Here we have created a reduced `expression_` rule to hold all of the original `expression` rule's definitions bar the first. And we get to keep the `compoundExpression` rule, the rewritten definition of which consists of a reference to this reduced rule followed by a reference to the repeated `expression~` rule. This is analogous to the right recursive rule of the same name created earlier, however note that we have done away with the need for right recursion by making use of the `+` modifier when referencing it. An additional bonus is that the definition with a single `ε` part can be left out of the repeated rule, as the presence of the `+` modifier means that the parser can terminate without it.
+Here we have created a reduced `expression_` rule to hold all of the original `expression` rule's definitions bar the first. And we get to keep the `compoundExpression` rule, the rewritten definition of which consists of a reference to this reduced rule followed by a reference to the repeated `expression~` rule. This is analogous to the right recursive rule of the same name created earlier, however note that we have done away with the need for right recursion by making use of the `+` quantifier when referencing it. An additional bonus is that the definition with a single `ε` part can be left out of the repeated rule, as the presence of the `+` quantifier means that the parser can terminate without it.
 
 A bonus of this approach is that, if we are careful in removing or renaming the nodes in the parse tree corresponding to our intermediate `expression_` and `expression~` rules, we get what is effectively the ideal parse tree to boot:
 
@@ -179,18 +179,53 @@ Note that the functionality for the removal or renaming of intermediate nodes is
 
 ## Examples
 
-There is one example although the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. You may need to change the lexical pattern in order to pick out the necessary tokens to make the parser work. The default is to pick out any decimal digit and then to default to any character.
+There is one example although the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. You may need to change the lexical pattern in order to pick out the necessary tokens to make the parser work. The default lexical pattern picks out decimal digits and then defaults to picking out any character. The remainder of this section gives listings that appear in the paper along with brief explanations.
 
-The following are some rules that you can try, which closely match the listings in the paper:
+THe following rule is an example of the algorithm's handling of look-ahead:
 ```
-  L  ::=  L! "c"
+L ::= L! "c"
 
-       |  "a"
+    | "a"
 
-       |  "a" "b"
+    | "a" "b"
 
-       ;
+    ;
 ```
+Without the `!` look-ahead modifier, the content `abc` will not parse.
+
+THe following rule is an another example of look-ahead, however here there are two left recursive definitions, one with look-ahead and one without:
+```
+L ::= L! "c"
+
+    | "a"
+
+    | L "d"
+
+    | "a" "b"
+
+    ;
+```
+This results in a repeated rule with two definitions, each corresponding to one of the left-recursive definitions.
+
+The following rules are similar to the first example of indirect left recursion given earlier. Here, however, the depth is 2, not 1.
+```
+expression             ::=  intermediateExpression
+
+                         |  "(" expression ")"
+
+                         |  term
+
+                         ;
+
+intermediateExpression ::=  compoundExpression ;
+
+compoundExpression     ::=  expression operator expression ;
+
+operator               ::= "+" | "-" | "/" | "*" ;
+
+term                   ::= /\d+/ ;
+```
+
 
 ## Building
 
