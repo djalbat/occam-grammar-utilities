@@ -7,7 +7,7 @@
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Example](#example)
+- [Examples](#examples)
 - [Algorithms](#algorithms)
 - [Building](#building)
 - [Resources](#resources)
@@ -23,7 +23,7 @@ There is an accompanying paper:
 
 * [Eliminating Left Recursion without the Epsilon](https://arxiv.org/abs/1908.10888)
 
-As well as providing the usual installation instructions, etc, this readme file also contains many of the listings to be found in the paper, the reason being that it is much easier to copy them from here. Some short explanatory notes are also given in the remainder of this introduction, for those who do not want to tackle the paper but nonetheless want an idea of what this is all about.
+As well as providing the usual installation instructions, etc, this readme file also contains many of the listings to be found in the paper by way of the examples, the reason being that it is much easier to copy them from here. Some short explanatory notes are also given in the remainder of this introduction, for those who do not want to tackle the paper but nonetheless want an idea of what this is all about.
 
 Consider the following rules:
 ```
@@ -41,7 +41,7 @@ term          ::= /\d+/ ;
 ```
 Here the first definition of the `expression` rule is directly left recursive. When the parser encounters this definition it happens across a reference to the `expression` rule and, trying to execute that rule again, will enter an infinite loop.
 
-THe standard algorithm for eliminating left recursion would rewrite the rules as follows:
+The standard algorithm for eliminating left recursion would rewrite the rules as follows:
 
 ```
 expression  ::= "(" expression ")" expression~
@@ -58,7 +58,7 @@ expression~ ::= operator expression expression~
 
 ...
 ```
-The left recursive definition has been removed and a reference to the right recursive `expression~` rule has been prepended to each of the definitions that remain. The second definition of this rule contains a single `ε` part that will execute without consuming any tokens, thus giving the parser the opportunity to terminate.
+The left recursive definition has been removed and a reference to the right recursive `expression~` rule has been prepended to each of the definitions that remain. Note that the second definition of the right recursive rule contains a single `ε` part that will execute without consuming any tokens, thus giving the parser the opportunity to terminate.
 
 Now consider the following rules, where the left recursion is still present but in indirect form:
 ```
@@ -74,7 +74,7 @@ compoundExpression ::= expression operator expression ;
 
 ...
 ```
-The standard algorithm for eliminating left recursion of this form reorganises the rules in such a way that indirect left recursion is always transformed into direct left recursion and, whenever this occurs, the direct left recursion is removed in the aforementioned was. The reorganisation itself involves avoiding cycles by substitutions. For example, the `compoundExpression` rule, coming as it does after the `expression` rule, is substituted into the `expression` rule, resulting in direct left recursion.
+The standard algorithm for eliminating indirect left recursion reorganises the rules in such a way that indirect left recursion is always transformed into direct left recursion and, whenever this occurs, the direct left recursion is removed in the aforementioned way. The reorganisation itself essentially involves removing cycles by making substitutions. For example, the `compoundExpression` rule, coming as it does after the `expression` rule, is substituted into the `expression` rule, resulting in direct left recursion.
 
 This approach is fine in theory, however there are two major drawbacks in practice:
 
@@ -174,7 +174,7 @@ const basicLexer = BasicLexer.fromEntries(entries),
 removeIntermediateNodes(node);
 ```
 
-## Example
+## Examples
 
 There is one example although the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. The following are some rules that you can try:
 ```
