@@ -193,7 +193,7 @@ L ::= L! "c"
 ```
 Without the `!` look-ahead modifier, the content `abc` will not parse.
 
-THe following rule is an another example of look-ahead, however here there are two left recursive definitions, one with look-ahead and one without:
+The following rule is an another example of look-ahead, however here there are two left recursive definitions, one with look-ahead and one without:
 ```
 L ::= L! "c"
 
@@ -207,7 +207,7 @@ L ::= L! "c"
 ```
 This results in a repeated rule with two definitions, each corresponding to one of the left-recursive definitions.
 
-The following rules are similar to the first example of indirect left recursion given earlier. Here, however, the depth is 2, not 1.
+The following rules are similar to the first example of indirect left recursion given earlier. Here, however, the depth is 2, not 1:
 ```
 expression             ::=  intermediateExpression
 
@@ -226,6 +226,20 @@ operator               ::= "+" | "-" | "/" | "*" ;
 term                   ::= /\d+/ ;
 ```
 
+In these rules the indirect left recursion occurs between the `C` and `D` rules:
+```
+S ::= A C ;
+
+A ::= "." B ;
+
+B ::= A | "." C ;
+
+C ::= D E ;
+
+D ::= C "." ;
+
+E ::= "." ;
+```
 
 ## Building
 
