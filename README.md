@@ -78,7 +78,7 @@ The standard algorithm for eliminating indirect left recursion reorganises the r
 
 This approach is fine in theory, however there are two major drawbacks in practice:
 
-1. The `compoundExpression` rule, or the fact that it is, or rather was, referenced by the expression rule, is lost for good. Unfortunately, it is these kinds of relationships between roles that give parse trees their utility in practice, and we cannot afford to simply throw them away. What if, for example, we wanted a way to detect compound expressions in larger expressions? With the presence of the `compoundExpression` rule, it would be a straightforward job to traverse parse trees looking for the nodes that correspond to that rule. If that rule has been lost, however, the problem becomes a less than straightforward one.
+1. The `compoundExpression` rule, or the fact that it is, or rather was, referenced by the expression rule, is lost for good. It is these relationships between roles that give parse trees their utility in practice, however, and we cannot afford to simply throw them away. What if, for example, we wanted a way to detect compound expressions in larger expressions? With the presence of the `compoundExpression` rule, it would be a straightforward job to traverse parse trees looking for the nodes that correspond to that rule. If that rule has been lost, however, the problem becomes a less than straightforward one.
 
 
 2. It is easy to see that if such substitutions are done on many occasions, we may get exponential blow up both in the number of definitions overall and in their length. Rules that create such blow ups are alarmingly commonplace in practice, in fact, and result in the parser simply being unable to function without running out of stack or heap space.
@@ -238,7 +238,20 @@ C ::= D E | "c" ;
 
 D ::= C "d" ;
 
-E ::= "." ;
+E ::= "e" ;
+```
+
+Here there is a loss of refinement, say, when the left recursion is removed:
+```
+L ::= L! "c"
+
+    | L "d"
+
+    | "a" "b" "c" "d"
+
+    | "a" "b"
+
+    ;
 ```
 
 This rule results in an error because the directly left recursive definition is unary:
