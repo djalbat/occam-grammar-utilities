@@ -276,6 +276,7 @@ These rules are not permissible because the indirectly left recursive definition
 C ::= D "e" | "f" ;
 
 D ::= C ;
+```
 
 
 These rules fail because there are no non-left recursive definitions alongisde the implicitly left recursive definition:
@@ -283,7 +284,6 @@ These rules fail because there are no non-left recursive definitions alongisde t
 C ::= D "a" ;
 
 D ::= C "b" ;
-```
 ```
 
 ## Building
