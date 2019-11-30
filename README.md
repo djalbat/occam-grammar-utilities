@@ -264,6 +264,13 @@ This rule results in an error because there are no non-left recursive definition
 C ::= C "a" ;
 ```
 
+These rules are permissible because although the implicitly left recursive definition is unary, the corresponding indirectly left recursive definition is not.
+```
+C  ::= D | "f" ;
+
+D  ::= C "e" ;
+```
+
 These rules fail because there are no non-left recursive definitions alongisde the implicitly left recursive definition:
 ```
 C ::= D "a" ;

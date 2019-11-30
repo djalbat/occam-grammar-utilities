@@ -29,7 +29,9 @@ class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
           reducedRuleEmpty = reducedRule.isEmpty();
 
     if (reducedRuleEmpty) {
-      throw new Error(`The '${ruleName}' rule has non-left recursive definitions and therefore cannot be rewritten.`);
+      const definitionString = definition.asString();
+
+      throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule has no sibling non-left recursive definitions and therefore cannot be rewritten.`);
     }
 
     const leftRecursiveRuleName = ruleName; ///
