@@ -1,18 +1,14 @@
 'use strict';
 
-const exampleBNF = `expression         ::=  compoundExpression
+const exampleBNF = `
 
-                     |  "(" expression ")"
+S ::= C ;
 
-                     |  term
+C ::= D E | "c" ;
 
-                     ;
+D ::= E "d" ;
 
-compoundExpression ::=  expression operator expression ;
-
-operator           ::= "+" | "-" | "/" | "*" ;
-
-term               ::= /\\d+/ ;
+E ::= C "e" ;
 
 `;
 

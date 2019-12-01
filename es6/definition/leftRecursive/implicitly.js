@@ -3,13 +3,33 @@
 const necessary = require('necessary');
 
 const types = require('../../types'),
+      ruleUtilities = require('../../utilities/rule'),
       LeftRecursiveDefinition = require('../../definition/leftRecursive');
 
-const { arrayUtilities } = necessary,
+const { findRule } = ruleUtilities,
+      { arrayUtilities } = necessary,
       { first } = arrayUtilities,
       { LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } = types;
 
 class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
+  constructor(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinition) {
+    super(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+
+    this.leftRecursiveDefinition = leftRecursiveDefinition;
+  }
+
+  getLeftRecursiveDefinition() {
+    this.leftRecursiveDefinition = leftRecursiveDefinition;
+  }
+
+  replace(rules) {
+    const rule = findRule(this.ruleName, rules),
+          replacedDefinition = this.leftRecursiveDefinition,  ///
+          replacementDefinition = this; ///
+
+    rule.replaceDefinition(replacedDefinition, replacementDefinition);
+  }
+
   static fromLeftRecursiveRuleNameAndRecursiveDefinitions(leftRecursiveRuleName, recursiveDefinitions) {
     let implicitlyLeftRecursiveDefinition = null;
 
@@ -19,11 +39,11 @@ class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
       const type = IMPLICITLY_LEFT_RECURSIVE_TYPE,
             parts = leftRecursiveDefinition.getParts(),
             ruleName = leftRecursiveDefinition.getRuleName(),
-            definition = leftRecursiveDefinition, ///
+            definition = null, ///
             recursiveRuleNames = leftRecursiveDefinition.getRecursiveRuleNames(),
             leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames();
 
-      implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+      implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinition);
     }
 
     return implicitlyLeftRecursiveDefinition;

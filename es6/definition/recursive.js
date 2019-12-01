@@ -42,7 +42,7 @@ class RecursiveDefinition extends Definition {
 
   replace(rules) {
     const rule = findRule(this.ruleName, rules),
-          replacedDefinition = this.definition,
+          replacedDefinition = this.definition, ///
           replacementDefinition = this; ///
 
     rule.replaceDefinition(replacedDefinition, replacementDefinition);
