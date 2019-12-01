@@ -18,6 +18,10 @@ class LeftRecursiveDefinition extends RecursiveDefinition {
     return this.leftRecursiveRuleNames;
   }
 
+  rewrite(rules) {
+    ///
+  }
+
   static fromRuleNameAndDefinition(ruleName, definition) {
     let leftRecursiveDefinition = null;
 

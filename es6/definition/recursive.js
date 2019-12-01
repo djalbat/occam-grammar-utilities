@@ -40,10 +40,6 @@ class RecursiveDefinition extends Definition {
     return this.recursiveRuleNames;
   }
 
-  rewrite(rules) {
-    ///
-  }
-
   replace(rules) {
     const rule = findRule(this.ruleName, rules),
           replacedDefinition = this.definition,
