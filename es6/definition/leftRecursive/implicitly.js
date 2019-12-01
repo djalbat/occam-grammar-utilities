@@ -35,10 +35,10 @@ module.exports = ImplicitlyLeftRecursiveDefinition;
 function findLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions) {
   let leftRecursiveDefinition = null;
 
-  const leftRecursiveDefinitionsCycle = findLeftRecursiveDefinitionsCycle(leftRecursiveRuleName, recursiveDefinitions);
+  const leftRecursiveDefinitionsPath = findLeftRecursiveDefinitionsPath(leftRecursiveRuleName, recursiveDefinitions);
 
-  if (leftRecursiveDefinitionsCycle !== null) {
-    const firstLeftRecursiveDefinition = first(leftRecursiveDefinitionsCycle);
+  if (leftRecursiveDefinitionsPath !== null) {
+    const firstLeftRecursiveDefinition = first(leftRecursiveDefinitionsPath);
 
     leftRecursiveDefinition = firstLeftRecursiveDefinition; ///
   }
@@ -46,42 +46,42 @@ function findLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions
   return leftRecursiveDefinition;
 }
 
-function findRecursiveDefinitionsCycle(recursiveRuleName, recursiveDefinitions) {
-  let recursiveDefinitionsCycle = null;
+function findRecursiveDefinitionsPath(recursiveRuleName, recursiveDefinitions) {
+  let recursiveDefinitionsPath = null;
 
   recursiveDefinitions.some((recursiveDefinition, index) => {
     const recursiveDefinitionRuleName = recursiveDefinition.getRuleName(),
           recursiveDefinitionRuleNameRecursiveRuleName = (recursiveDefinitionRuleName === recursiveRuleName);
 
     if (recursiveDefinitionRuleNameRecursiveRuleName) {
-      recursiveDefinitionsCycle = recursiveDefinitions.slice(index);
+      recursiveDefinitionsPath = recursiveDefinitions.slice(index);
 
       return true;
     }
   });
 
-  return recursiveDefinitionsCycle;
+  return recursiveDefinitionsPath;
 }
 
-function findLeftRecursiveDefinitionsCycle(leftRecursiveRuleName, recursiveDefinitions) {
-  let leftRecursiveDefinitionsCycle = null;
+function findLeftRecursiveDefinitionsPath(leftRecursiveRuleName, recursiveDefinitions) {
+  let leftRecursiveDefinitionsPath = null;
 
   const recursiveRuleName = leftRecursiveRuleName,  ///
-      recursiveDefinitionsCycle = findRecursiveDefinitionsCycle(recursiveRuleName, recursiveDefinitions);
+      recursiveDefinitionsPath = findRecursiveDefinitionsPath(recursiveRuleName, recursiveDefinitions);
 
-  if (recursiveDefinitionsCycle !== null) {
-    const recursiveDefinitionsCycleLeftRecursive = isRecursiveDefinitionsCycleLeftRecursive(recursiveDefinitionsCycle);
+  if (recursiveDefinitionsPath !== null) {
+    const recursiveDefinitionsPathLeftRecursive = isRecursiveDefinitionsPathLeftRecursive(recursiveDefinitionsPath);
 
-    if (recursiveDefinitionsCycleLeftRecursive) {
-      leftRecursiveDefinitionsCycle = recursiveDefinitionsCycle;  ///
+    if (recursiveDefinitionsPathLeftRecursive) {
+      leftRecursiveDefinitionsPath = recursiveDefinitionsPath;  ///
     }
   }
 
-  return leftRecursiveDefinitionsCycle;
+  return leftRecursiveDefinitionsPath;
 }
 
-function isRecursiveDefinitionsCycleLeftRecursive(recursiveDefinitionsCycle) {
-  const recursiveDefinitionsCycleLeftRecursive = recursiveDefinitionsCycle.every((recursiveDefinition) => {
+function isRecursiveDefinitionsPathLeftRecursive(recursiveDefinitionsPath) {
+  const recursiveDefinitionsPathLeftRecursive = recursiveDefinitionsPath.every((recursiveDefinition) => {
     const type = recursiveDefinition.getType();
 
     if (type === LEFT_RECURSIVE_TYPE) {
@@ -89,5 +89,5 @@ function isRecursiveDefinitionsCycleLeftRecursive(recursiveDefinitionsCycle) {
     }
   });
 
-  return recursiveDefinitionsCycleLeftRecursive;
+  return recursiveDefinitionsPathLeftRecursive;
 }
