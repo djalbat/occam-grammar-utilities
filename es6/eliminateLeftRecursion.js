@@ -15,14 +15,18 @@ const { arrayUtilities } = necessary,
       { INDIRECTLY_LEFT_RECURSIVE_TYPE } = types;
 
 function eliminateLeftRecursion(rules) {
-  const firstRule = first(rules),
-        rule = firstRule, ///
-        recursiveDefinitions = [],
-        leftRecursiveDefinitions = [];
+  const rulesLength = rules.length;
 
-  replaceRecursiveDefinitions(rule, recursiveDefinitions, leftRecursiveDefinitions, rules);
+  if (rulesLength > 0) {
+    const firstRule = first(rules),
+          rule = firstRule, ///
+          recursiveDefinitions = [],
+          leftRecursiveDefinitions = [];
 
-  rewriteLeftRecursiveDefinitions(leftRecursiveDefinitions, rules);
+    replaceRecursiveDefinitions(rule, recursiveDefinitions, leftRecursiveDefinitions, rules);
+
+    rewriteLeftRecursiveDefinitions(leftRecursiveDefinitions, rules);
+  }
 }
 
 module.exports = eliminateLeftRecursion;
