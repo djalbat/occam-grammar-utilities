@@ -73,40 +73,42 @@ class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
           definitionLeftRecursive = (leftRecursiveRuleNamesLength > 0);
 
     if (definitionLeftRecursive) {
-      const firstLeftRecursiveRuleName = first(leftRecursiveRuleNames),
-            leftRecursiveRuleName = firstLeftRecursiveRuleName, ///
-            ruleNameLeftRecursiveRuleName = (ruleName === leftRecursiveRuleName);
+      leftRecursiveRuleNames.some((leftRecursiveRuleName) => {
+        const ruleNameLeftRecursiveRuleName = (ruleName === leftRecursiveRuleName);
 
-      if (!ruleNameLeftRecursiveRuleName) {
-        const implicitlyLeftRecursiveDefinition = ImplicitlyLeftRecursiveDefinition.fromLeftRecursiveRuleNameAndRecursiveDefinitions(leftRecursiveRuleName, recursiveDefinitions);
+        if (!ruleNameLeftRecursiveRuleName) {
+          const implicitlyLeftRecursiveDefinition = ImplicitlyLeftRecursiveDefinition.fromLeftRecursiveRuleNameAndRecursiveDefinitions(leftRecursiveRuleName, recursiveDefinitions);
 
-        if (implicitlyLeftRecursiveDefinition !== null) {
-          const definitionUnary = isDefinitionUnary(definition);
+          if (implicitlyLeftRecursiveDefinition !== null) {
+            const definitionUnary = isDefinitionUnary(definition);
 
-          if (definitionUnary) {
-            const definitionString = definition.asString();
+            if (definitionUnary) {
+              const definitionString = definition.asString();
 
-            throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
+              throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
+            }
+
+            const definitionComplex = isDefinitionComplex(definition);
+
+            if (definitionComplex) {
+              const definitionString = definition.asString();
+
+              throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+            }
+
+            const deltaPart = new DeltaPart(),
+                  type = INDIRECTLY_LEFT_RECURSIVE_TYPE,
+                  parts = [
+                    deltaPart
+                  ],
+                  recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
+
+            indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition);
+
+            return true;
           }
-
-          const definitionComplex = isDefinitionComplex(definition);
-
-          if (definitionComplex) {
-            const definitionString = definition.asString();
-
-            throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
-          }
-
-          const deltaPart = new DeltaPart(),
-                type = INDIRECTLY_LEFT_RECURSIVE_TYPE,
-                parts = [
-                  deltaPart
-                ],
-                recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
-
-          indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition);
         }
-      }
+      });
     }
 
     return indirectlyLeftRecursiveDefinition;

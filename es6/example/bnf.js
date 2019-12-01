@@ -2,7 +2,7 @@
 
 const exampleBNF = `
 
-S ::= ( S C | "a" ;
+S ::= ( B | S ) "b" | "a" ;
 
 `;
 
