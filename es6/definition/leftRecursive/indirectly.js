@@ -45,7 +45,11 @@ class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
           reducedRuleEmpty = reducedRule.isEmpty();
 
     if (reducedRuleEmpty) {
-      throw new Error(`The '${leftRecursiveRuleName}' rule has non-left recursive definitions and therefore cannot be rewritten.`);
+      const definitionString = definition.asString(),
+            implicitlyLeftRecursiveDefinition = this.getImplicitlyLeftRecursiveDefinition(),
+            implicitlyLeftRecursiveDefinitionString = implicitlyLeftRecursiveDefinition.asString();
+
+      throw new Error(`The '${implicitlyLeftRecursiveDefinitionString}' implicitly left recursive definition of the '${leftRecursiveRuleName}' rule has no sibling non-left recursive definitions and therefore the '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule cannot be rewritten.`);
     }
 
     const repeatedRule = repeatedRuleFromRule(leftRecursiveRule, rules, RepeatedRule),
@@ -53,34 +57,12 @@ class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
 
     repeatedRule.addDefinition(repeatedDefinition);
 
-    const rewrittenRule = rewrittenRuleFromRule(leftRecursiveRule, rules, RewrittenRule),
-          rewrittenDefinition = RewrittenDefinition.fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName),
+    rewrittenRuleFromRule(leftRecursiveRule, rules, RewrittenRule);
+
+    const rewrittenDefinition = RewrittenDefinition.fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName),
           replacementDefinition = this; ///
 
     rule.replaceDefinition(replacementDefinition, rewrittenDefinition);
-
-    // const implicitlyLeftRecursiveDefinition = this.getImplicitlyLeftRecursiveDefinition(),
-    //       definition = implicitlyLeftRecursiveDefinition.getDefinition(),
-    //       implicitlyLeftRecursiveRuleName = leftRecursiveRuleName,  ///
-    //       implicitlyLeftRecursiveRule = findRule(implicitlyLeftRecursiveRuleName, rules),
-    //       reducedLeftRecursiveRule = reducedRuleFromRule(implicitlyLeftRecursiveRule, rules);
-    //
-    // implicitlyLeftRecursiveRule.addDefinition(definition, -1);
-    //
-    // reducedLeftRecursiveRule.removeDefinition(definition);
-    //
-    // const reducedLeftRecursiveRuleName = reducedLeftRecursiveRule.getName(),
-    //       reducedLeftRecursiveRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedLeftRecursiveRuleName);
-    //
-    // implicitlyLeftRecursiveRule.addDefinition(reducedLeftRecursiveRuleNameDefinition);
-    //
-    // const reducedLeftRecursiveRuleEmpty = reducedLeftRecursiveRule.isEmpty();
-
-    // if (reducedLeftRecursiveRuleEmpty) {
-    //   const implicitlyLeftRecursiveRuleName = implicitlyLeftRecursiveRule.getName();
-    //
-    //   throw new Error(`The '${implicitlyLeftRecursiveRuleName}' rule has no non-recursive definitions and therefore cannot be rewritten.`);
-    // }
   }
 
   static fromRuleNameDefinitionAndRecursiveDefinitions(ruleName, definition, recursiveDefinitions) {

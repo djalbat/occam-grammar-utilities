@@ -278,8 +278,7 @@ C ::= D "e" | "f" ;
 D ::= C ;
 ```
 
-
-These rules fail because there are no non-left recursive definitions alongisde the implicitly left recursive definition:
+These rules fail because the implicitly left recursive definition has no sibling non-left recursive definitions:
 ```
 C ::= D "a" ;
 
