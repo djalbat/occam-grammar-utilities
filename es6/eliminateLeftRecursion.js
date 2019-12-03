@@ -2,17 +2,15 @@
 
 const necessary = require('necessary');
 
-const types = require('./types'),
-      ruleUtilities = require('./utilities/rule'),
+const ruleUtilities = require('./utilities/rule'),
       RecursiveDefinition = require('./definition/recursive'),
       LeftRecursiveDefinition = require('./definition/leftRecursive'),
       DirectlyLeftRecursiveDefinition = require('./definition/leftRecursive/directly'),
       IndirectlyLeftRecursiveDefinition = require('./definition/leftRecursive/indirectly');
 
 const { arrayUtilities } = necessary,
-      { first } = arrayUtilities,
       { findRule } = ruleUtilities,
-      { INDIRECTLY_LEFT_RECURSIVE_TYPE } = types;
+      { first } = arrayUtilities;
 
 function eliminateLeftRecursion(rules) {
   const rulesLength = rules.length;
@@ -37,11 +35,9 @@ function replaceRecursiveDefinition(ruleName, definition, recursiveDefinitions, 
                                   LeftRecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
 
   if (leftRecursiveDefinition !== null) {
-    const type = leftRecursiveDefinition.getType(),
-          typeIndirectlyLeftRecursiveType = (type === INDIRECTLY_LEFT_RECURSIVE_TYPE),
-          recursiveDefinitionIndirectlyLeftRecursiveDefinition = typeIndirectlyLeftRecursiveType;  ///
+    const leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
 
-    if (recursiveDefinitionIndirectlyLeftRecursiveDefinition) {
+    if (leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition) {
       const indirectlyLeftRecursiveDefinition = leftRecursiveDefinition,  ///
             implicitlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getImplicitlyLeftRecursiveDefinition();
 
