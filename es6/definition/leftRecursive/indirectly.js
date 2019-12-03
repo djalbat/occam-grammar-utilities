@@ -77,7 +77,7 @@ class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
         const ruleNameLeftRecursiveRuleName = (ruleName === leftRecursiveRuleName);
 
         if (!ruleNameLeftRecursiveRuleName) {
-          const implicitlyLeftRecursiveDefinition = ImplicitlyLeftRecursiveDefinition.fromLeftRecursiveRuleNameAndRecursiveDefinitions(leftRecursiveRuleName, recursiveDefinitions);
+          const implicitlyLeftRecursiveDefinition = ImplicitlyLeftRecursiveDefinition.fromRuleNameLeftRecursiveRuleNameAndRecursiveDefinitions(ruleName, leftRecursiveRuleName, recursiveDefinitions);
 
           if (implicitlyLeftRecursiveDefinition !== null) {
             const definitionUnary = isDefinitionUnary(definition);

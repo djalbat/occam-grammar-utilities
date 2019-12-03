@@ -30,10 +30,10 @@ class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
     rule.replaceDefinition(replacedDefinition, replacementDefinition);
   }
 
-  static fromLeftRecursiveRuleNameAndRecursiveDefinitions(leftRecursiveRuleName, recursiveDefinitions) {
+  static fromRuleNameLeftRecursiveRuleNameAndRecursiveDefinitions(ruleName, leftRecursiveRuleName, recursiveDefinitions) {
     let implicitlyLeftRecursiveDefinition = null;
 
-    const leftRecursiveDefinition = findLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions);
+    const leftRecursiveDefinition = findLeftRecursiveDefinition(ruleName, leftRecursiveRuleName, recursiveDefinitions);
 
     if (leftRecursiveDefinition !== null) {
       const type = IMPLICITLY_LEFT_RECURSIVE_TYPE,
@@ -52,10 +52,10 @@ class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
 
 module.exports = ImplicitlyLeftRecursiveDefinition;
 
-function findLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions) {
+function findLeftRecursiveDefinition(ruleName, leftRecursiveRuleName, recursiveDefinitions) {
   let leftRecursiveDefinition = null;
 
-  const leftRecursiveDefinitionsPath = findLeftRecursiveDefinitionsPath(leftRecursiveRuleName, recursiveDefinitions);
+  const leftRecursiveDefinitionsPath = findLeftRecursiveDefinitionsPath(ruleName, leftRecursiveRuleName, recursiveDefinitions);
 
   if (leftRecursiveDefinitionsPath !== null) {
     const firstLeftRecursiveDefinition = first(leftRecursiveDefinitionsPath);
@@ -66,7 +66,7 @@ function findLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions
   return leftRecursiveDefinition;
 }
 
-function findRecursiveDefinitionsPath(recursiveRuleName, recursiveDefinitions) {
+function findRecursiveDefinitionsPath(ruleName, recursiveRuleName, recursiveDefinitions) {
   let recursiveDefinitionsPath = null;
 
   recursiveDefinitions.some((recursiveDefinition, index) => {
@@ -83,14 +83,14 @@ function findRecursiveDefinitionsPath(recursiveRuleName, recursiveDefinitions) {
   return recursiveDefinitionsPath;
 }
 
-function findLeftRecursiveDefinitionsPath(leftRecursiveRuleName, recursiveDefinitions) {
+function findLeftRecursiveDefinitionsPath(ruleName, leftRecursiveRuleName, recursiveDefinitions) {
   let leftRecursiveDefinitionsPath = null;
 
   const recursiveRuleName = leftRecursiveRuleName,  ///
-      recursiveDefinitionsPath = findRecursiveDefinitionsPath(recursiveRuleName, recursiveDefinitions);
+      recursiveDefinitionsPath = findRecursiveDefinitionsPath(ruleName, recursiveRuleName, recursiveDefinitions);
 
   if (recursiveDefinitionsPath !== null) {
-    const recursiveDefinitionsPathLeftRecursive = isRecursiveDefinitionsPathLeftRecursive(recursiveDefinitionsPath);
+    const recursiveDefinitionsPathLeftRecursive = isRecursiveDefinitionsPathLeftRecursive(ruleName, recursiveDefinitionsPath);
 
     if (recursiveDefinitionsPathLeftRecursive) {
       leftRecursiveDefinitionsPath = recursiveDefinitionsPath;  ///
@@ -100,14 +100,34 @@ function findLeftRecursiveDefinitionsPath(leftRecursiveRuleName, recursiveDefini
   return leftRecursiveDefinitionsPath;
 }
 
-function isRecursiveDefinitionsPathLeftRecursive(recursiveDefinitionsPath) {
-  const recursiveDefinitionsPathLeftRecursive = recursiveDefinitionsPath.every((recursiveDefinition) => {
-    const type = recursiveDefinition.getType();
+function isRecursiveDefinitionsPathLeftRecursive(ruleName, recursiveDefinitionsPath) {
+  const ruleNames = ruleNamesFromRuleNameAndRecursiveDefinitionsPath(ruleName, recursiveDefinitionsPath),
+        recursiveDefinitionsPathLeftRecursive = recursiveDefinitionsPath.every((recursiveDefinition, index) => {
+          const type = recursiveDefinition.getType();
 
-    if (type === LEFT_RECURSIVE_TYPE) {
-      return true;
-    }
-  });
+          if (type === LEFT_RECURSIVE_TYPE) {
+            const ruleName = ruleNames[index],
+                  leftRecursiveRuleNames = recursiveDefinition.getLeftRecursiveRuleNames(),
+                  leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
+
+            if (leftRecursiveRuleNamesIncludesRuleName) {
+              return true;
+            }
+          }
+        });
 
   return recursiveDefinitionsPathLeftRecursive;
+}
+
+function ruleNamesFromRuleNameAndRecursiveDefinitionsPath(ruleName, recursiveDefinitionsPath) {
+  const ruleNames = recursiveDefinitionsPath.map((recursiveDefinition) => recursiveDefinition.getRuleName());
+
+  ruleNames.push(ruleName);
+
+  const firstRuleName = ruleNames.shift(),
+        lastRuleName = firstRuleName; ///
+
+  ruleNames.push(lastRuleName);
+
+  return ruleNames;
 }
