@@ -1,7 +1,6 @@
 'use strict';
 
 const types = require('../../types'),
-      DeltaPart = require('../../part/delta'),
       ReducedRule = require('../../rule/reduced'),
       RepeatedRule = require('../../rule/repeated'),
       RewrittenRule = require('../../rule/rewritten'),
@@ -72,11 +71,8 @@ class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
             throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
           }
 
-          const deltaPart = new DeltaPart(),
-                type = DIRECTLY_LEFT_RECURSIVE_TYPE,
-                parts = [
-                  deltaPart
-                ],
+          const type = DIRECTLY_LEFT_RECURSIVE_TYPE,
+                parts = [],
                 recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
           directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);

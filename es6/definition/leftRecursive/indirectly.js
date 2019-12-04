@@ -3,7 +3,6 @@
 const necessary = require('necessary');
 
 const types = require('../../types'),
-      DeltaPart = require('../../part/delta'),
       ReducedRule = require('../../rule/reduced'),
       RepeatedRule = require('../../rule/repeated'),
       RewrittenRule = require('../../rule/rewritten'),
@@ -96,11 +95,8 @@ class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
               throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
             }
 
-            const deltaPart = new DeltaPart(),
-                  type = INDIRECTLY_LEFT_RECURSIVE_TYPE,
-                  parts = [
-                    deltaPart
-                  ],
+            const type = INDIRECTLY_LEFT_RECURSIVE_TYPE,
+                  parts = [],
                   recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
             indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition);
