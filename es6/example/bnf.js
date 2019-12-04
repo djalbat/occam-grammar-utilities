@@ -1,15 +1,15 @@
 'use strict';
 
-const exampleBNF = `
+const exampleBNF = `expression    ::= expression operator expression
 
-S ::= C ;
+                | "(" expression ")"
 
-C ::= D | "c" ;
+                | term
 
-D ::= ( F | ( "a" E ) ) "d" ;
+                ;
 
-E ::= C "e" ;
+operator      ::= "+" | "-" | "/" | "*" ;
 
-`;
+term          ::= /\\d+/ ;`;
 
 module.exports = exampleBNF;
