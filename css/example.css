@@ -51,10 +51,6 @@ textarea {
   margin-top: 0.5rem;
 }
 
-textarea.error {
-  border-color: red;
-}
-
 textarea.bnf {
   margin-bottom: 0.5rem;
   height: 15rem;
