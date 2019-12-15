@@ -2,9 +2,11 @@
 
 const ReducedNode = require('./node/reduced'),
       RepeatedNode = require('./node/repeated'),
+      classUtilities = require('./utilities/class'),
       ruleNameUtilities = require('./utilities/ruleName');
 
-const { ruleNameFromReducedRuleName, checkReducedRuleNameMatchesRuleName } = ruleNameUtilities;
+const { isInstanceOf } = classUtilities,
+      { ruleNameFromReducedRuleName, checkReducedRuleNameMatchesRuleName } = ruleNameUtilities;
 
 function removeOrRenameIntermediateNodes(node) {
   removeOrRenameReducedNodes(node);
@@ -30,7 +32,7 @@ function removeRepeatedNodes(node) {
 
 function removeRepeatedChildNodes(childNodes) {
   childNodes = childNodes.reduce((childNodes, childNode) => {
-    const childNodeRepeatedNode = (childNode instanceof RepeatedNode);
+    const childNodeRepeatedNode = isInstanceOf(childNode, RepeatedNode);
 
     if (childNodeRepeatedNode) {
       let childNodeChildNodes = childNode.getChildNodes();
@@ -69,7 +71,7 @@ function removeOrRenameReducedChildNodes(childNodes, ruleName) {
   const childNodesLength = childNodes.length;
 
   childNodes = childNodes.reduce((childNodes, childNode) => {
-    const childNodeReducedNode = (childNode instanceof ReducedNode);
+    const childNodeReducedNode = isInstanceOf(childNode, ReducedNode);
 
     if (childNodeReducedNode) {
       const reducedNode = childNode, ///

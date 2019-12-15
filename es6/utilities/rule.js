@@ -1,8 +1,10 @@
 'use strict';
 
-const ruleNameUtilities = require('../utilities/ruleName');
+const classUtilities = require('../utilities/class'),
+      ruleNameUtilities = require('../utilities/ruleName');
 
-const { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;
+const { isInstanceOf } = classUtilities,
+      { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;
 
 function findRule(ruleName, rules) {
   const name = ruleName,  ///
@@ -50,7 +52,7 @@ function repeatedRuleFromRule(rule, rules, RepeatedRule) {
 function rewrittenRuleFromRule(rule, rules, RewrittenRule) {
   let rewrittenRule;
 
-  const ruleRewrittenRule = (rule instanceof RewrittenRule);
+  const ruleRewrittenRule = isInstanceOf(rule, RewrittenRule);
 
   if (ruleRewrittenRule) {
     rewrittenRule = rule; ///

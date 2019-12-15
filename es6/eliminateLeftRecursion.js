@@ -3,12 +3,14 @@
 const necessary = require('necessary');
 
 const ruleUtilities = require('./utilities/rule'),
+      classUtilities = require('./utilities/class'),
       RecursiveDefinition = require('./definition/recursive'),
       LeftRecursiveDefinition = require('./definition/leftRecursive'),
       DirectlyLeftRecursiveDefinition = require('./definition/leftRecursive/directly'),
       IndirectlyLeftRecursiveDefinition = require('./definition/leftRecursive/indirectly');
 
 const { arrayUtilities } = necessary,
+      { isInstanceOf } = classUtilities,
       { findRule } = ruleUtilities,
       { first } = arrayUtilities;
 
@@ -35,7 +37,7 @@ function replaceRecursiveDefinition(ruleName, definition, recursiveDefinitions, 
                                   LeftRecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
 
   if (leftRecursiveDefinition !== null) {
-    const leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
+    const leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = isInstanceOf(leftRecursiveDefinition, IndirectlyLeftRecursiveDefinition);
 
     if (leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition) {
       const indirectlyLeftRecursiveDefinition = leftRecursiveDefinition,  ///
@@ -63,7 +65,7 @@ function replaceRecursiveDefinitions(rule, recursiveDefinitions, leftRecursiveDe
         definitions = rule.getDefinitions();
 
   definitions.forEach((definition) => {
-    const definitionRecursiveDefinition = (definition instanceof RecursiveDefinition),
+    const definitionRecursiveDefinition = isInstanceOf(definition, RecursiveDefinition),
           recursiveDefinition = definitionRecursiveDefinition ?
                                   definition :  ///
                                     replaceRecursiveDefinition(ruleName, definition, recursiveDefinitions, leftRecursiveDefinitions, rules);

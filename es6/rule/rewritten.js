@@ -3,11 +3,13 @@
 const parsers = require('occam-parsers');
 
 const types = require('../types'),
+      classUtilities = require('../utilities/class'),
       ruleNameUtilities = require('../utilities/ruleName'),
       RuleNameDefinition = require('../definition/ruleName'),
       RecursiveDefinition = require('../definition/recursive');
 
 const { Rule } = parsers,
+      { isInstanceOf } = classUtilities,
       { reducedRuleNameFromRuleName } = ruleNameUtilities,
       { DIRECTLY_LEFT_RECURSIVE_TYPE, INDIRECTLY_LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } = types;
 
@@ -22,7 +24,7 @@ class RewrittenRule extends Rule {
     definitions = definitions.filter((definition) => {
       let keep = false;
 
-      const definitionRecursiveDefinition = (definition instanceof RecursiveDefinition);
+      const definitionRecursiveDefinition = isInstanceOf(definition, RecursiveDefinition);
 
       if (definitionRecursiveDefinition) {
         const recursiveDefinition = definition, ///
