@@ -25,8 +25,7 @@
     "easy": "^7.10.0",
     "easy-layout": "^2.1.46",
     "juxtapose": "^1.0.89",
-    "occam-lexers": "^10.1.33",
-    "occam-parsers": "^10.1.42"
+    "occam-lexers": "^10.1.33"
   },
   "scripts": {
     "clean": "rm -rf ./lib",
