@@ -102,22 +102,34 @@ class View extends Element {
 
       <div className="columns">
         <SizeableElement>
-          <h2>Lexical pattern</h2>
+          <h2>
+            Lexical pattern
+          </h2>
           <LexicalPatternInput onKeyUp={keyUpHandler} />
-          <h2>BNF</h2>
+          <h2>
+            BNF
+          </h2>
           <BNFTextarea onKeyUp={keyUpHandler} />
-          <h2>Adjusted BNF</h2>
+          <h2>
+            Adjusted BNF
+          </h2>
           <AdjustedBNFTextarea />
         </SizeableElement>
         <MainVerticalSplitter />
         <div className="column">
-          <h2>Parse tree</h2>
+          <h2>
+            Parse tree
+          </h2>
           <ParseTreeTextarea />
           <div>
             <RemoveOrRenameIntermediateNodesCheckbox onChange={changeHandler} checked />
-            <span>Remove intermediate nodes</span>
+            <span>
+              Remove intermediate nodes
+            </span>
           </div>
-          <h2>Content</h2>
+          <h2>
+            Content
+          </h2>
           <ContentTextarea onKeyUp={keyUpHandler} />
           <ErrorParagraph />
         </div>
