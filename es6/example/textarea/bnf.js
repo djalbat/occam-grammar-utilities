@@ -1,19 +1,17 @@
-'use strict';
+"use strict";
 
-const easy = require('easy');
+import Textarea from "../textarea";
 
-const { InputElement } = easy;
-
-class BNFTextarea extends InputElement {
+export default class BNFTextarea extends Textarea {
   getBNF() {
     const value = this.getValue(),
-          bnf = value;  ///
+          bnf = value; ///
 
     return bnf;
   }
 
   setBNF(bnf) {
-    const value = bnf;  ///
+    const value = bnf;
 
     this.setValue(value);
   }
@@ -28,15 +26,8 @@ class BNFTextarea extends InputElement {
     });
   }
 
-  static fromProperties(properties) { return InputElement.fromProperties(BNFTextarea, properties); }
+  static defaultProperties = {
+    className: "bnf",
+    spellCheck: "false"
+  };
 }
-
-Object.assign(BNFTextarea, {
-  tagName: 'textarea',
-  defaultProperties: {
-    className: 'bnf',
-    spellCheck: 'false'
-  }
-});
-
-module.exports = BNFTextarea;

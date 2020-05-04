@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
-const easy = require('easy');
+import withStyle from "easy-with-style";  ///
 
-const { InputElement } = easy;
+import { Input } from "easy";
 
-class LexicalPatternInput extends InputElement {
+class LexicalPatternInput extends Input {
   getLexicalPattern() {
     const value = this.getValue(),
-          lexicalPattern = value;  ///
+          lexicalPattern = value; ///
 
     return lexicalPattern;
   }
@@ -28,16 +28,17 @@ class LexicalPatternInput extends InputElement {
     });
   }
 
-  static fromProperties(properties) { return InputElement.fromProperties(LexicalPatternInput, properties); }
+  static defaultProperties = {
+    className: "lexical-pattern",
+    spellCheck: "false"
+  };
 }
 
-Object.assign(LexicalPatternInput, {
-  tagName: 'input',
-  defaultProperties: {
-    type: 'text',
-    className: 'lexical-pattern',
-    spellCheck: 'false'
-  }
-});
+export default withStyle(LexicalPatternInput)`
 
-module.exports = LexicalPatternInput;
+  border: 1px solid darkgrey;
+  padding: 0.25rem;
+  font-size: 1.2rem;
+  font-family: monospace;
+  
+`;

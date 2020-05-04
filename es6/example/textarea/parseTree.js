@@ -1,10 +1,8 @@
-'use strict';
+"use strict";
 
-const easy = require('easy');
+import Textarea from "../textarea";
 
-const { InputElement } = easy;
-
-class ParseTreeTextarea extends InputElement {
+export default class ParseTreeTextarea extends Textarea {
   setParseTree(parseTree) {
     if (parseTree !== null) {
       parseTree.shiftLine();  //
@@ -19,7 +17,7 @@ class ParseTreeTextarea extends InputElement {
   }
 
   clearParseTree() {
-    const value = '';
+    const value = "";
 
     this.setValue(value);
   }
@@ -34,16 +32,9 @@ class ParseTreeTextarea extends InputElement {
     });
   }
 
-  static fromProperties(properties) { return InputElement.fromProperties(ParseTreeTextarea, properties); }
-}
-
-Object.assign(ParseTreeTextarea, {
-  tagName: 'textarea',
-  defaultProperties: {
-    className: 'parse-tree',
-    spellCheck: 'false',
+  static defaultProperties = {
+    className: "tokens",
+    spellCheck: "false",
     readOnly: true
-  }
-});
-
-module.exports = ParseTreeTextarea;
+  };
+}

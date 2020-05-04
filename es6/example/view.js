@@ -1,35 +1,56 @@
-'use strict';
+"use strict";
 
-const easy = require('easy'),
-      lexers = require('occam-lexers'),
-      parsers = require('occam-parsers'),
-      easyLayout = require('easy-layout');
+import { Element } from "easy";
+import { ColumnsDiv } from "easy-layout";
+import { BNFLexer, BasicLexer } from "occam-lexers";
+import { BNFParser, BasicParser } from "occam-parsers";
 
-const exampleBNF = require('../example/bnf'),
-      BNFTextarea = require('./textarea/bnf'),
-      ErrorParagraph = require('./paragraph/error'),
-      rulesUtilities = require('../utilities/rules'),
-      exampleContent = require('../example/content'),
-      ContentTextarea = require('./textarea/content'),
-      ParseTreeTextarea = require('./textarea/parseTree'),
-      LexicalPatternInput = require('./input/lexicalPattern'),
-      AdjustedBNFTextarea = require('./textarea/adjustedBNF'),
-      MainVerticalSplitter = require('./verticalSplitter/main'),
-      exampleLexicalPattern = require('../example/lexicalPattern'),
-      eliminateLeftRecursion = require('../eliminateLeftRecursion'),
-      removeOrRenameIntermediateNodes = require('../removeOrRenameIntermediateNodes'),
-      RemoveOrRenameIntermediateNodesCheckbox = require('./checkbox/removeOrRenameIntermediateNodes');
+import Heading from "./heading";
+import ColumnDiv from "./div/column";
+import Paragraph from "./paragraph";
+import SubHeading from "./subHeading";
+import SizeableDiv from "./div/sizeable";
+import BNFTextarea from "./textarea/bnf";
+import ContentTextarea from "./textarea/content";
+import ParseTreeTextarea from "./textarea/parseTree";
+import LexicalPatternInput from "./input/lexicalPattern";
+import AdjustedBNFTextarea from "./textarea/adjustedBNF";
+import VerticalSplitterDiv from "./div/splitter/vertical";
+import eliminateLeftRecursion from "../eliminateLeftRecursion";
+import removeOrRenameIntermediateNodes from "../removeOrRenameIntermediateNodes";
+import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIntermediateNodes"
 
-const { Element } = easy,
-      { rulesAsString } = rulesUtilities,
-      { SizeableElement } = easyLayout,
-      { BasicLexer, BNFLexer } = lexers,
-      { BasicParser, BNFParser } = parsers;
+import { rulesAsString } from "../utilities/rules";
+import { findRuleByName } from "../utilities/rule";
 
-const bnfLexer = BNFLexer.fromNothing(),
-      bnfParser = BNFParser.fromNothing();
+export default class View extends Element {
+  constructor(selectorOrDOMElement, bnfLexer, bnfParser) {
+    super(selectorOrDOMElement);
 
-class View extends Element {
+    this.bnfLexer = bnfLexer;
+    this.bnfParser = bnfParser;
+  }
+
+  initialBNF = `
+  
+    expression    ::= expression operator expression
+  
+                  | "(" expression ")"
+  
+                  | term
+  
+                  ;
+  
+    operator      ::= "+" | "-" | "/" | "*" ;
+    
+    term          ::= /\\d+/ ;
+    
+  `;
+
+  initialContent = "(1+2)/3";
+
+  initialLexicalPattern = "\\d+|.";
+
   getParseTree(rules) {
     let parseTree = null;
 
@@ -62,11 +83,11 @@ class View extends Element {
   changeHandler() {
     try {
       const bnf = this.getBNF(),
-            tokens = bnfLexer.tokensFromBNF(bnf);
+            tokens = this.bnfLexer.tokensFromBNF(bnf);
 
       let rules;
 
-      rules = bnfParser.rulesFromTokens(tokens);
+      rules = this.bnfParser.rulesFromTokens(tokens);
 
       eliminateLeftRecursion(rules);
 
@@ -74,19 +95,17 @@ class View extends Element {
             rulesString = rulesAsString(rules, multiLine),
             adjustedBNF = rulesString;  ///
 
-      this.hideError();
-
       this.setAdjustedBNF(adjustedBNF);
 
       const parseTree = this.getParseTree(rules);
 
       this.setParseTree(parseTree);
     } catch (error) {
-      this.clearAdjustedBNF();
+      console.log(error);
 
       this.clearParseTree();
 
-      this.showError(error);
+      this.clearAdjustedBNF();
     }
   }
 
@@ -98,52 +117,52 @@ class View extends Element {
     const keyUpHandler = this.keyUpHandler.bind(this),
           changeHandler = this.changeHandler.bind(this);
 
-    return (
+    return ([
 
-      <div className="columns">
-        <SizeableElement>
-          <h2>
+      <Heading>
+        Grammar utilities example
+      </Heading>,
+      <ColumnsDiv>
+        <SizeableDiv>
+          <SubHeading>
             Lexical pattern
-          </h2>
+          </SubHeading>
           <LexicalPatternInput onKeyUp={keyUpHandler} />
-          <h2>
+          <SubHeading>
             BNF
-          </h2>
+          </SubHeading>
           <BNFTextarea onKeyUp={keyUpHandler} />
-          <h2>
+          <SubHeading>
             Adjusted BNF
-          </h2>
-          <AdjustedBNFTextarea />
-        </SizeableElement>
-        <MainVerticalSplitter />
-        <div className="column">
-          <h2>
-            Parse tree
-          </h2>
-          <ParseTreeTextarea />
-          <div>
-            <RemoveOrRenameIntermediateNodesCheckbox onChange={changeHandler} checked />
-            <span>
-              Remove intermediate nodes
-            </span>
-          </div>
-          <h2>
+          </SubHeading>
+          <AdjustedBNFTextarea onKeyUp={keyUpHandler} />
+        </SizeableDiv>
+        <VerticalSplitterDiv />
+        <ColumnDiv>
+          <SubHeading>
             Content
-          </h2>
+          </SubHeading>
           <ContentTextarea onKeyUp={keyUpHandler} />
-          <ErrorParagraph />
-        </div>
-      </div>
+          <SubHeading>
+            Parse tree
+          </SubHeading>
+          <ParseTreeTextarea />
+          <Paragraph>
+            <RemoveOrRenameIntermediateNodesCheckbox onChange={changeHandler} checked />
+            Remove or rename intermediate nodes
+          </Paragraph>
+        </ColumnDiv>
+      </ColumnsDiv>
 
-    );
+    ]);
   }
 
-  initialise() {
+  initialise(properties) {
     this.assignContext();
 
-    const bnf = exampleBNF, ///
-          content = exampleContent, ///
-          lexicalPattern = exampleLexicalPattern; ///
+    const bnf = this.initialBNF, ///
+          content = this.initialContent, ///
+          lexicalPattern = this.initialLexicalPattern; ///
 
     this.setBNF(bnf);
 
@@ -154,20 +173,15 @@ class View extends Element {
     this.keyUpHandler();
   }
 
-  static fromProperties(properties) {
-    const view = Element.fromProperties(View, properties);
+  static tagName = "div";
 
-    view.initialise();
+  static fromClass(Class, properties) {
+    const bnfLexer = BNFLexer.fromNothing(),
+          bnfParser = BNFParser.fromNothing(),
+          exampleView = Element.fromClass(Class, properties, bnfLexer, bnfParser);
 
-    return view
+    exampleView.initialise(properties);
+
+    return exampleView
   }
 }
-
-Object.assign(View, {
-  tagName: 'div',
-  defaultProperties: {
-    className: 'view'
-  }
-});
-
-module.exports = View;
