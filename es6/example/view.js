@@ -97,7 +97,7 @@ export default class View extends Element {
 
       const multiLine = true,
             rulesString = rulesAsString(rules, multiLine),
-          adjustedBNF = rulesString;  ///
+            adjustedBNF = rulesString;  ///
 
       this.setAdjustedBNF(adjustedBNF);
 
