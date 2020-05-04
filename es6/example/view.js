@@ -24,13 +24,6 @@ import { rulesAsString } from "../utilities/rules";
 import { findRuleByName } from "../utilities/rule";
 
 export default class View extends Element {
-  constructor(selectorOrDOMElement, bnfLexer, bnfParser) {
-    super(selectorOrDOMElement);
-
-    this.bnfLexer = bnfLexer;
-    this.bnfParser = bnfParser;
-  }
-
   initialBNF = `
   
     expression    ::= expression operator expression
@@ -50,6 +43,13 @@ export default class View extends Element {
   initialContent = "(1+2)/3";
 
   initialLexicalPattern = "\\d+|.";
+
+  constructor(selectorOrDOMElement, bnfLexer, bnfParser) {
+    super(selectorOrDOMElement);
+
+    this.bnfLexer = bnfLexer;
+    this.bnfParser = bnfParser;
+  }
 
   getParseTree(rules) {
     let parseTree = null;
@@ -80,6 +80,10 @@ export default class View extends Element {
     return parseTree;
   }
 
+  keyUpHandler() {
+    this.changeHandler();
+  }
+
   changeHandler() {
     try {
       const bnf = this.getBNF(),
@@ -93,7 +97,7 @@ export default class View extends Element {
 
       const multiLine = true,
             rulesString = rulesAsString(rules, multiLine),
-            adjustedBNF = rulesString;  ///
+          adjustedBNF = rulesString;  ///
 
       this.setAdjustedBNF(adjustedBNF);
 
@@ -107,10 +111,6 @@ export default class View extends Element {
 
       this.clearAdjustedBNF();
     }
-  }
-
-  keyUpHandler() {
-    this.changeHandler();
   }
 
   childElements(properties) {

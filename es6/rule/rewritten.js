@@ -9,7 +9,7 @@ import { isInstanceOf } from "../utilities/class";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 import { DIRECTLY_LEFT_RECURSIVE_TYPE, INDIRECTLY_LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } from "../types";
 
-class RewrittenRule extends Rule {
+export default class RewrittenRule extends Rule {
   static fromRule(rule) {
     let definitions = rule.getDefinitions();
 
@@ -46,5 +46,3 @@ class RewrittenRule extends Rule {
     return rewrittenRule;
   }
 }
-
-module.exports = RewrittenRule;

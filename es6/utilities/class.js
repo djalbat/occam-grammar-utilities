@@ -1,6 +1,6 @@
 "use strict";
 
-function isInstanceOf(instance, Class) {
+export function isInstanceOf(instance, Class) {
   const constructor = instance.constructor;
 
   if (constructor) {
@@ -15,10 +15,6 @@ function isInstanceOf(instance, Class) {
 
   return false;
 }
-
-module.exports = {
-  isInstanceOf
-};
 
 function isPrototypeInstanceOf(prototype, Class) {
   if (prototype) {

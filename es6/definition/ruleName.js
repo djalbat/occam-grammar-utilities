@@ -4,7 +4,7 @@ import { Definition } from "occam-parsers";
 
 import { ruleNamePartFromRuleName } from "../utilities/part";
 
-class RuleNameDefinition extends Definition {
+export default class RuleNameDefinition extends Definition {
   static fromRuleName(ruleName) {
     const ruleNamePart = ruleNamePartFromRuleName(ruleName),
           parts = [
@@ -15,5 +15,3 @@ class RuleNameDefinition extends Definition {
     return ruleNameDefinition;
   }
 }
-
-module.exports = RuleNameDefinition;

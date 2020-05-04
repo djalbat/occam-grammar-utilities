@@ -1,11 +1,7 @@
 "use strict";
 
-function cloneParts(parts) {
+export function cloneParts(parts) {
   parts = parts.map((part) => part.clone());
 
   return parts;
 }
-
-module.exports = {
-  cloneParts
-};

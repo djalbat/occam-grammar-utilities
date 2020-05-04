@@ -5,7 +5,7 @@ import RecursiveDefinition from "../definition/recursive";
 import { LEFT_RECURSIVE_TYPE } from "../types";
 import { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../utilities/definition";
 
-class LeftRecursiveDefinition extends RecursiveDefinition {
+export default class LeftRecursiveDefinition extends RecursiveDefinition {
   constructor(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames) {
     super(type, parts, ruleName, definition, recursiveRuleNames);
 
@@ -38,5 +38,3 @@ class LeftRecursiveDefinition extends RecursiveDefinition {
     return leftRecursiveDefinition;
   }
 }
-
-module.exports = LeftRecursiveDefinition;

@@ -11,7 +11,7 @@ import { DIRECTLY_LEFT_RECURSIVE_TYPE } from "../../types";
 import { findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } from "../../utilities/rule";
 import { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
-class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
+export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   rewrite(rules) {
     const definition = this.getDefinition(),
           ruleName = this.getRuleName(),
@@ -82,5 +82,3 @@ class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
     return directlyLeftRecursiveDefinition;
   }
 }
-
-module.exports = DirectlyLeftRecursiveDefinition;

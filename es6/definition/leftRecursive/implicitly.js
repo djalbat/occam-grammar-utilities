@@ -10,7 +10,7 @@ import { findRule } from "../../utilities/rule";
 
 const { first } = arrayUtilities;
 
-class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
+export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   constructor(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinition) {
     super(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
 
@@ -48,8 +48,6 @@ class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
     return implicitlyLeftRecursiveDefinition;
   }
 }
-
-module.exports = ImplicitlyLeftRecursiveDefinition;
 
 function findLeftRecursiveDefinition(ruleName, leftRecursiveRuleName, recursiveDefinitions) {
   let leftRecursiveDefinition = null;

@@ -8,7 +8,7 @@ import { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "../u
 const { first } = arrayUtilities,
       { RuleNamePartType } = partTypes;
 
-function isDefinitionUnary(definition) {
+export function isDefinitionUnary(definition) {
   const parts = definition.getParts(),
         partsLength = parts.length,
         definitionUnary = (partsLength === 1);
@@ -16,7 +16,7 @@ function isDefinitionUnary(definition) {
   return definitionUnary;
 }
 
-function isDefinitionComplex(definition) {
+export function isDefinitionComplex(definition) {
   const parts = definition.getParts(),
         firstPart = first(parts),
         firstPartType = firstPart.getType(),
@@ -27,7 +27,7 @@ function isDefinitionComplex(definition) {
   return definitionComplex;
 }
 
-function isDefinitionLookAhead(definition) {
+export function isDefinitionLookAhead(definition) {
   let lookAhead = false;
 
   const parts = definition.getParts(),
@@ -45,7 +45,7 @@ function isDefinitionLookAhead(definition) {
   return lookAhead;
 }
 
-function recursiveRuleNamesFromDefinition(definition) {
+export function recursiveRuleNamesFromDefinition(definition) {
   const recursiveRuleNames = [],
         parts = definition.getParts();
 
@@ -56,7 +56,7 @@ function recursiveRuleNamesFromDefinition(definition) {
   return recursiveRuleNames;
 }
 
-function leftRecursiveRuleNamesFromDefinition(definition) {
+export function leftRecursiveRuleNamesFromDefinition(definition) {
   const leftRecursiveRuleNames = [],
         parts = definition.getParts(),
         firstPart = first(parts),
@@ -66,11 +66,3 @@ function leftRecursiveRuleNamesFromDefinition(definition) {
 
   return leftRecursiveRuleNames;
 }
-
-module.exports = {
-  isDefinitionUnary,
-  isDefinitionComplex,
-  isDefinitionLookAhead,
-  recursiveRuleNamesFromDefinition,
-  leftRecursiveRuleNamesFromDefinition
-};

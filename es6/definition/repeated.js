@@ -4,7 +4,7 @@ import { Definition } from "occam-parsers";
 
 import { cloneParts } from "../utilities/parts";
 
-class RepeatedDefinition extends Definition {
+export default class RepeatedDefinition extends Definition {
   static fromDefinition(definition) {
     let parts = definition.getParts();
 
@@ -17,5 +17,3 @@ class RepeatedDefinition extends Definition {
     return repeatedDefinition;
   }
 }
-
-module.exports = RepeatedDefinition;

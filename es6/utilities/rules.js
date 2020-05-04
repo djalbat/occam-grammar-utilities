@@ -1,6 +1,6 @@
 "use strict";
 
-function rulesAsString(rules, multiLine) {
+export function rulesAsString(rules, multiLine) {
   const maximumRuleNameLength = rules.reduce((maximumRuleNameLength, rule) => {
           const ruleName = rule.getName(),
                 ruleNameLength = ruleName.length;
@@ -19,7 +19,3 @@ function rulesAsString(rules, multiLine) {
 
   return rulesString;
 }
-
-module.exports = {
-  rulesAsString
-};

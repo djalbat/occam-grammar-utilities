@@ -16,7 +16,7 @@ import { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinitio
 
 const { first } = arrayUtilities;
 
-class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
+export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   constructor(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition) {
     super(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
 
@@ -107,5 +107,3 @@ class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
     return indirectlyLeftRecursiveDefinition;
   }
 }
-
-module.exports = IndirectlyLeftRecursiveDefinition;

@@ -7,7 +7,7 @@ import { isDefinitionLookAhead } from "../utilities/definition";
 import { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } from "../utilities/ruleName";
 import { ruleNamePartFromRuleName, zeroOrMoreRuleNamePartPartFromRuleName } from "../utilities/part";
 
-class RewrittenDefinition extends Definition {
+export default class RewrittenDefinition extends Definition {
   static fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName) {
     let parts = definition.getParts();
 
@@ -30,5 +30,3 @@ class RewrittenDefinition extends Definition {
     return rewrittenDefinition;
   }
 }
-
-module.exports = RewrittenDefinition;

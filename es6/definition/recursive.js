@@ -6,7 +6,7 @@ import { findRule } from "../utilities/rule";
 import { RECURSIVE_TYPE } from "../types";
 import { recursiveRuleNamesFromDefinition } from "../utilities/definition";
 
-class RecursiveDefinition extends Definition {
+export default class RecursiveDefinition extends Definition {
   constructor(type, parts, ruleName, definition, recursiveRuleNames) {
     super(parts);
 
@@ -59,5 +59,3 @@ class RecursiveDefinition extends Definition {
     return recursiveDefinition;
   }
 }
-
-module.exports = RecursiveDefinition;

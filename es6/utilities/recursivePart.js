@@ -11,7 +11,7 @@ const { first } = arrayUtilities,
         OneOrMorePartsPartType,
         ZeroOrMorePartsPartType } = partTypes;
 
-function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
+export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
   const partNonTerminalPart = part.isNonTerminalPart();
 
   if (partNonTerminalPart) {
@@ -77,7 +77,7 @@ function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
   }
 }
 
-function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
+export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
   const partNonTerminalPart = part.isNonTerminalPart();
 
   if (partNonTerminalPart) {
@@ -145,8 +145,3 @@ function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
     }
   }
 }
-
-module.exports = {
-  recursiveRuleNamesFromPart,
-  leftRecursiveRuleNamesFromPart
-};

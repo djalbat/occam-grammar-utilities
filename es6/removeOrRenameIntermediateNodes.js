@@ -6,13 +6,11 @@ import RepeatedNode from "./node/repeated";
 import { isInstanceOf } from "./utilities/class";
 import { ruleNameFromReducedRuleName, checkReducedRuleNameMatchesRuleName } from "./utilities/ruleName";
 
-function removeOrRenameIntermediateNodes(node) {
+export default function removeOrRenameIntermediateNodes(node) {
   removeOrRenameReducedNodes(node);
 
   removeRepeatedNodes(node);
 }
-
-module.exports = removeOrRenameIntermediateNodes;
 
 function removeRepeatedNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();

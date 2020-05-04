@@ -6,7 +6,7 @@ import RepeatedNode from "../node/repeated";
 
 import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 
-class RepeatedRule extends Rule {
+export default class RepeatedRule extends Rule {
   static fromRule(rule) {
     const ruleName = rule.getName(),
           repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
@@ -18,5 +18,3 @@ class RepeatedRule extends Rule {
     return repeatedRule;
   }
 }
-
-module.exports = RepeatedRule;

@@ -9,7 +9,7 @@ import { isInstanceOf } from "../utilities/class";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 import { DIRECTLY_LEFT_RECURSIVE_TYPE, INDIRECTLY_LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } from "../types";
 
-class ReducedRule extends Rule {
+export default class ReducedRule extends Rule {
   isEmpty() {
     const definitionsLength = this.definitions.length,
           empty = (definitionsLength === 0);
@@ -47,5 +47,3 @@ class ReducedRule extends Rule {
     return reducedRule;
   }
 }
-
-module.exports = ReducedRule;

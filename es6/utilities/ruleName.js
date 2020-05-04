@@ -1,24 +1,24 @@
 "use strict";
 
-function reducedRuleNameFromRuleName(ruleName) {
+export function reducedRuleNameFromRuleName(ruleName) {
   const reducedRuleName = `${ruleName}_`;
 
   return reducedRuleName;
 }
 
-function repeatedRuleNameFromRuleName(ruleName) {
+export function repeatedRuleNameFromRuleName(ruleName) {
   const repeatedRuleName = `${ruleName}~`;
 
   return repeatedRuleName;
 }
 
-function ruleNameFromReducedRuleName(reducedRuleName) {
+export function ruleNameFromReducedRuleName(reducedRuleName) {
   const ruleName = reducedRuleName.replace(/_$/, "");
 
   return ruleName;
 }
 
-function checkReducedRuleNameMatchesRuleName(reducedRuleName, ruleName) {
+export function checkReducedRuleNameMatchesRuleName(reducedRuleName, ruleName) {
   const ruleNameA = ruleName; ///
 
   ruleName = ruleNameFromReducedRuleName(reducedRuleName);
@@ -29,10 +29,3 @@ function checkReducedRuleNameMatchesRuleName(reducedRuleName, ruleName) {
 
   return reducedRuleNameMatchesRuleName;
 }
-
-module.exports = {
-  reducedRuleNameFromRuleName,
-  repeatedRuleNameFromRuleName,
-  ruleNameFromReducedRuleName,
-  checkReducedRuleNameMatchesRuleName
-};

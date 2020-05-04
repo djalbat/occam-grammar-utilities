@@ -3,7 +3,7 @@
 import { isInstanceOf } from "../utilities/class";
 import { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
-function findRule(ruleName, rules) {
+export function findRule(ruleName, rules) {
   const name = ruleName,  ///
         rule = rules.find((rule) => {
           const ruleName = rule.getName();
@@ -16,7 +16,7 @@ function findRule(ruleName, rules) {
   return rule;
 }
 
-function reducedRuleFromRule(rule, rules, ReducedRule) {
+export function reducedRuleFromRule(rule, rules, ReducedRule) {
 	const ruleName = rule.getName(),
 				reducedRuleName = reducedRuleNameFromRuleName(ruleName);
 
@@ -31,7 +31,7 @@ function reducedRuleFromRule(rule, rules, ReducedRule) {
 	return reducedRule;
 }
 
-function repeatedRuleFromRule(rule, rules, RepeatedRule) {
+export function repeatedRuleFromRule(rule, rules, RepeatedRule) {
   const ruleName = rule.getName(),
         repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
 
@@ -46,7 +46,7 @@ function repeatedRuleFromRule(rule, rules, RepeatedRule) {
   return repeatedRule;
 }
 
-function rewrittenRuleFromRule(rule, rules, RewrittenRule) {
+export function rewrittenRuleFromRule(rule, rules, RewrittenRule) {
   let rewrittenRule;
 
   const ruleRewrittenRule = isInstanceOf(rule, RewrittenRule);
@@ -64,13 +64,6 @@ function rewrittenRuleFromRule(rule, rules, RewrittenRule) {
 
   return rewrittenRule;
 }
-
-module.exports = {
-  findRule,
-	reducedRuleFromRule,
-  repeatedRuleFromRule,
-  rewrittenRuleFromRule
-};
 
 function replaceRule(replacedRule, replacementRule, rules) {
   const index = rules.indexOf(replacedRule);

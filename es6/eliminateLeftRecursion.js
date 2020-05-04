@@ -12,7 +12,7 @@ import { isInstanceOf } from "./utilities/class";
 
 const { first } = arrayUtilities;
 
-function eliminateLeftRecursion(rules) {
+export default function eliminateLeftRecursion(rules) {
   const rulesLength = rules.length;
 
   if (rulesLength > 0) {
@@ -26,8 +26,6 @@ function eliminateLeftRecursion(rules) {
     rewriteLeftRecursiveDefinitions(leftRecursiveDefinitions, rules);
   }
 }
-
-module.exports = eliminateLeftRecursion;
 
 function replaceRecursiveDefinition(ruleName, definition, recursiveDefinitions, leftRecursiveDefinitions, rules) {
   const leftRecursiveDefinition = IndirectlyLeftRecursiveDefinition.fromRuleNameDefinitionAndRecursiveDefinitions(ruleName, definition, recursiveDefinitions) ||
