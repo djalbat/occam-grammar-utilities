@@ -1,4 +1,4 @@
-# Grammar Utilities
+# Occam Grammar Utilities
 
 [Occam](https://github.com/jecs-imperial/occam)'s grammar utilities.
 
@@ -151,14 +151,10 @@ You will need to do this if you want to look at the example.
 
 ## Usage
 
-```js
-const lexers = require('occam-lexers'),
-      parsers = require('occam-parsers'),
-      grammarUtilities = require('occam-grammar-utilities');
-
-const { BasicLexer } = lexers,
-      { BasicParser } = parsers,
-      { eliminateLeftRecursion, removeOrRenameIntermediateNodes } = grammarUtilities;
+```
+import { BasicLexer } from "occam-lexers";
+import { BasicParser } from "occam-parsers";
+import { eliminateLeftRecursion, removeOrRenameIntermediateNodes } from "occam-grammar-utilities";
 
 const rules = ... ,
       entries = ... ,
