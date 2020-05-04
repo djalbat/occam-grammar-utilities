@@ -1,23 +1,20 @@
 "use strict";
 
-const necessary = require("necessary");
+import { arrayUtilities } from "necessary";
 
-const types = require("../../types"),
-      ReducedRule = require("../../rule/reduced"),
-      RepeatedRule = require("../../rule/repeated"),
-      RewrittenRule = require("../../rule/rewritten"),
-      ruleUtilities = require("../../utilities/rule"),
-      RepeatedDefinition = require("../../definition/repeated"),
-      RewrittenDefinition = require("../../definition/rewritten"),
-      definitionUtilities = require("../../utilities/definition"),
-      LeftRecursiveDefinition = require("../../definition/leftRecursive"),
-      ImplicitlyLeftRecursiveDefinition = require("../../definition/leftRecursive/implicitly");
+import ReducedRule from "../../rule/reduced";
+import RepeatedRule from "../../rule/repeated";
+import RewrittenRule from "../../rule/rewritten";
+import RepeatedDefinition from "../../definition/repeated";
+import RewrittenDefinition from "../../definition/rewritten";
+import LeftRecursiveDefinition from "../../definition/leftRecursive";
+import ImplicitlyLeftRecursiveDefinition from "../../definition/leftRecursive/implicitly";
 
-const { arrayUtilities } = necessary,
-      { first } = arrayUtilities,
-      { INDIRECTLY_LEFT_RECURSIVE_TYPE } = types,
-      { findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } = ruleUtilities,
-      { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
+import { INDIRECTLY_LEFT_RECURSIVE_TYPE } from "../../types";
+import { findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } from "../../utilities/rule";
+import { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+
+const { first } = arrayUtilities;
 
 class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   constructor(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition) {

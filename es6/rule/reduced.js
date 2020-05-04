@@ -1,17 +1,13 @@
 "use strict";
 
-const parsers = require("occam-parsers");
+import { Rule } from "occam-parsers";
 
-const types = require("../types"),
-      ReducedNode = require("../node/reduced"),
-      classUtilities = require("../utilities/class"),
-      ruleNameUtilities = require("../utilities/ruleName"),
-      RecursiveDefinition = require("../definition/recursive");
+import ReducedNode from "../node/reduced";
+import RecursiveDefinition from "../definition/recursive";
 
-const { Rule } = parsers,
-      { isInstanceOf } = classUtilities,
-      { reducedRuleNameFromRuleName } = ruleNameUtilities,
-      { DIRECTLY_LEFT_RECURSIVE_TYPE, INDIRECTLY_LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } = types;
+import { isInstanceOf } from "../utilities/class";
+import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
+import { DIRECTLY_LEFT_RECURSIVE_TYPE, INDIRECTLY_LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } from "../types";
 
 class ReducedRule extends Rule {
   isEmpty() {

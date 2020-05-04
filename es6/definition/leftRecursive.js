@@ -1,11 +1,9 @@
 "use strict";
 
-const types = require("../types"),
-      definitionUtilities = require("../utilities/definition"),
-      RecursiveDefinition = require("../definition/recursive");
+import RecursiveDefinition from "../definition/recursive";
 
-const { LEFT_RECURSIVE_TYPE } = types,
-      { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
+import { LEFT_RECURSIVE_TYPE } from "../types";
+import { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../utilities/definition";
 
 class LeftRecursiveDefinition extends RecursiveDefinition {
   constructor(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames) {

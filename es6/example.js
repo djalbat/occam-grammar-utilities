@@ -1,12 +1,10 @@
 "use strict";
 
-require("juxtapose");
+import "juxtapose";
 
-const easy = require("easy");
+import { Body } from "easy";
 
-const View = require("./example/view");
-
-const { Body } = easy;
+import View from "./example/view";
 
 const body = new Body();
 

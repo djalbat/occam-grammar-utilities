@@ -1,18 +1,15 @@
 "use strict";
 
-const types = require("../../types"),
-      ReducedRule = require("../../rule/reduced"),
-      RepeatedRule = require("../../rule/repeated"),
-      RewrittenRule = require("../../rule/rewritten"),
-      ruleUtilities = require("../../utilities/rule"),
-      RepeatedDefinition = require("../../definition/repeated"),
-      RewrittenDefinition = require("../../definition/rewritten"),
-      definitionUtilities = require("../../utilities/definition"),
-      LeftRecursiveDefinition = require("../../definition/leftRecursive");
+import ReducedRule from "../../rule/reduced";
+import RepeatedRule from "../../rule/repeated";
+import RewrittenRule from "../../rule/rewritten";
+import RepeatedDefinition from "../../definition/repeated";
+import RewrittenDefinition from "../../definition/rewritten";
+import LeftRecursiveDefinition from "../../definition/leftRecursive";
 
-const { DIRECTLY_LEFT_RECURSIVE_TYPE } = types,
-      { findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } = ruleUtilities,
-      { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;
+import { DIRECTLY_LEFT_RECURSIVE_TYPE } from "../../types";
+import { findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } from "../../utilities/rule";
+import { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   rewrite(rules) {

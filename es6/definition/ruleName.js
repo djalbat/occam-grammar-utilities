@@ -1,11 +1,8 @@
 "use strict";
 
-const parsers = require("occam-parsers");
+import { Definition } from "occam-parsers";
 
-const partUtilities = require("../utilities/part");
-
-const { Definition } = parsers,
-      { ruleNamePartFromRuleName } = partUtilities;
+import { ruleNamePartFromRuleName } from "../utilities/part";
 
 class RuleNameDefinition extends Definition {
   static fromRuleName(ruleName) {

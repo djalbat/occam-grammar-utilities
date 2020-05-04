@@ -1,18 +1,16 @@
 "use strict";
 
-const necessary = require("necessary");
+import { arrayUtilities } from "necessary";
 
-const ruleUtilities = require("./utilities/rule"),
-      classUtilities = require("./utilities/class"),
-      RecursiveDefinition = require("./definition/recursive"),
-      LeftRecursiveDefinition = require("./definition/leftRecursive"),
-      DirectlyLeftRecursiveDefinition = require("./definition/leftRecursive/directly"),
-      IndirectlyLeftRecursiveDefinition = require("./definition/leftRecursive/indirectly");
+import RecursiveDefinition from "./definition/recursive";
+import LeftRecursiveDefinition from "./definition/leftRecursive";
+import DirectlyLeftRecursiveDefinition from "./definition/leftRecursive/directly";
+import IndirectlyLeftRecursiveDefinition from "./definition/leftRecursive/indirectly";
 
-const { arrayUtilities } = necessary,
-      { isInstanceOf } = classUtilities,
-      { findRule } = ruleUtilities,
-      { first } = arrayUtilities;
+import { findRule } from "./utilities/rule";
+import { isInstanceOf } from "./utilities/class";
+
+const { first } = arrayUtilities;
 
 function eliminateLeftRecursion(rules) {
   const rulesLength = rules.length;

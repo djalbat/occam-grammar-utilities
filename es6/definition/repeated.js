@@ -1,11 +1,8 @@
 "use strict";
 
-const parsers = require("occam-parsers");
+import { Definition } from "occam-parsers";
 
-const partsUtilities = require("../utilities/parts");
-
-const { Definition } = parsers,
-      { cloneParts } = partsUtilities;
+import { cloneParts } from "../utilities/parts";
 
 class RepeatedDefinition extends Definition {
   static fromDefinition(definition) {

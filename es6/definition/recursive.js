@@ -1,15 +1,10 @@
 "use strict";
 
-const parsers = require("occam-parsers");
+import { Definition } from "occam-parsers";
 
-const types = require("../types"),
-      ruleUtilities = require("../utilities/rule"),
-      definitionUtilities = require("../utilities/definition");
-
-const { findRule } = ruleUtilities,
-      { Definition } = parsers,
-      { RECURSIVE_TYPE } = types,
-      { recursiveRuleNamesFromDefinition } = definitionUtilities;
+import { findRule } from "../utilities/rule";
+import { RECURSIVE_TYPE } from "../types";
+import { recursiveRuleNamesFromDefinition } from "../utilities/definition";
 
 class RecursiveDefinition extends Definition {
   constructor(type, parts, ruleName, definition, recursiveRuleNames) {

@@ -1,9 +1,8 @@
 "use strict";
 
-const parsers = require("occam-parsers");
+import { Parts } from "occam-parsers";
 
-const { Parts } = parsers,
-      { RuleNamePart, ZeroOrMorePartsPart } = Parts;
+const { RuleNamePart, ZeroOrMorePartsPart } = Parts;
 
 function ruleNamePartFromRuleName(ruleName, lookAhead = false) {
   const ruleNamePart = new RuleNamePart(ruleName, lookAhead);

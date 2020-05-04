@@ -1,12 +1,10 @@
 "use strict";
 
-const ReducedNode = require("./node/reduced"),
-      RepeatedNode = require("./node/repeated"),
-      classUtilities = require("./utilities/class"),
-      ruleNameUtilities = require("./utilities/ruleName");
+import ReducedNode from "./node/reduced";
+import RepeatedNode from "./node/repeated";
 
-const { isInstanceOf } = classUtilities,
-      { ruleNameFromReducedRuleName, checkReducedRuleNameMatchesRuleName } = ruleNameUtilities;
+import { isInstanceOf } from "./utilities/class";
+import { ruleNameFromReducedRuleName, checkReducedRuleNameMatchesRuleName } from "./utilities/ruleName";
 
 function removeOrRenameIntermediateNodes(node) {
   removeOrRenameReducedNodes(node);

@@ -1,15 +1,12 @@
 "use strict";
 
-const parsers = require("occam-parsers"),
-      necessary = require("necessary");
+import { partTypes } from "occam-parsers";
+import { arrayUtilities } from "necessary";
 
-const recursivePartUtilities = require("../utilities/recursivePart");
+import { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "../utilities/recursivePart";
 
-const { arrayUtilities } = necessary,
-      { first } = arrayUtilities,
-      { partTypes } = parsers,
-      { RuleNamePartType } = partTypes,
-      { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } = recursivePartUtilities;
+const { first } = arrayUtilities,
+      { RuleNamePartType } = partTypes;
 
 function isDefinitionUnary(definition) {
   const parts = definition.getParts(),

@@ -1,17 +1,11 @@
 "use strict";
 
-const parsers = require("occam-parsers");
+import { Definition } from "occam-parsers";
 
-const partUtilities = require("../utilities/part"),
-      partsUtilities = require("../utilities/parts"),
-      ruleNameUtilities = require("../utilities/ruleName"),
-      definitionUtilities = require("../utilities/definition");
-
-const { Definition } = parsers,
-      { cloneParts } = partsUtilities,
-      { isDefinitionLookAhead } = definitionUtilities,
-      { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities,
-      { ruleNamePartFromRuleName, zeroOrMoreRuleNamePartPartFromRuleName } = partUtilities;
+import { cloneParts } from "../utilities/parts";
+import { isDefinitionLookAhead } from "../utilities/definition";
+import { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } from "../utilities/ruleName";
+import { ruleNamePartFromRuleName, zeroOrMoreRuleNamePartPartFromRuleName } from "../utilities/part";
 
 class RewrittenDefinition extends Definition {
   static fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName) {

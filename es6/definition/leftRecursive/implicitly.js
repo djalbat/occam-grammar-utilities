@@ -1,15 +1,14 @@
 "use strict";
 
-const necessary = require("necessary");
+import { arrayUtilities } from "necessary";
 
-const types = require("../../types"),
-      ruleUtilities = require("../../utilities/rule"),
-      LeftRecursiveDefinition = require("../../definition/leftRecursive");
+import LeftRecursiveDefinition from "../../definition/leftRecursive";
 
-const { findRule } = ruleUtilities,
-      { arrayUtilities } = necessary,
-      { first } = arrayUtilities,
-      { LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } = types;
+import { LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } from "../../types";
+
+import { findRule } from "../../utilities/rule";
+
+const { first } = arrayUtilities;
 
 class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   constructor(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinition) {

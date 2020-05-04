@@ -1,12 +1,10 @@
 "use strict";
 
-const parsers = require("occam-parsers");
+import { Rule } from "occam-parsers";
 
-const RepeatedNode = require("../node/repeated"),
-      ruleNameUtilities = require("../utilities/ruleName");
+import RepeatedNode from "../node/repeated";
 
-const { Rule } = parsers,
-      { repeatedRuleNameFromRuleName } = ruleNameUtilities;
+import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 
 class RepeatedRule extends Rule {
   static fromRule(rule) {

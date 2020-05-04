@@ -1,10 +1,7 @@
 "use strict";
 
-const classUtilities = require("../utilities/class"),
-      ruleNameUtilities = require("../utilities/ruleName");
-
-const { isInstanceOf } = classUtilities,
-      { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;
+import { isInstanceOf } from "../utilities/class";
+import { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
 function findRule(ruleName, rules) {
   const name = ruleName,  ///
