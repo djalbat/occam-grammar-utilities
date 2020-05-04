@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const classUtilities = require('../utilities/class'),
-      ruleNameUtilities = require('../utilities/ruleName');
+const classUtilities = require("../utilities/class"),
+      ruleNameUtilities = require("../utilities/ruleName");
 
 const { isInstanceOf } = classUtilities,
       { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } = ruleNameUtilities;

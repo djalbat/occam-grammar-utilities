@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 function reducedRuleNameFromRuleName(ruleName) {
   const reducedRuleName = `${ruleName}_`;
@@ -13,7 +13,7 @@ function repeatedRuleNameFromRuleName(ruleName) {
 }
 
 function ruleNameFromReducedRuleName(reducedRuleName) {
-  const ruleName = reducedRuleName.replace(/_$/, '');
+  const ruleName = reducedRuleName.replace(/_$/, "");
 
   return ruleName;
 }

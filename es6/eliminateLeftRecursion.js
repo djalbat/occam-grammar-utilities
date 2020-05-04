@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
-const necessary = require('necessary');
+const necessary = require("necessary");
 
-const ruleUtilities = require('./utilities/rule'),
-      classUtilities = require('./utilities/class'),
-      RecursiveDefinition = require('./definition/recursive'),
-      LeftRecursiveDefinition = require('./definition/leftRecursive'),
-      DirectlyLeftRecursiveDefinition = require('./definition/leftRecursive/directly'),
-      IndirectlyLeftRecursiveDefinition = require('./definition/leftRecursive/indirectly');
+const ruleUtilities = require("./utilities/rule"),
+      classUtilities = require("./utilities/class"),
+      RecursiveDefinition = require("./definition/recursive"),
+      LeftRecursiveDefinition = require("./definition/leftRecursive"),
+      DirectlyLeftRecursiveDefinition = require("./definition/leftRecursive/directly"),
+      IndirectlyLeftRecursiveDefinition = require("./definition/leftRecursive/indirectly");
 
 const { arrayUtilities } = necessary,
       { isInstanceOf } = classUtilities,

@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const parsers = require('occam-parsers');
+const parsers = require("occam-parsers");
 
-const RepeatedNode = require('../node/repeated'),
-      ruleNameUtilities = require('../utilities/ruleName');
+const RepeatedNode = require("../node/repeated"),
+      ruleNameUtilities = require("../utilities/ruleName");
 
 const { Rule } = parsers,
       { repeatedRuleNameFromRuleName } = ruleNameUtilities;

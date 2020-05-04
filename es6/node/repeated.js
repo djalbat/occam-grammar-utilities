@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const parsers = require('occam-parsers');
+const parsers = require("occam-parsers");
 
 const { NonTerminalNode } = parsers;
 

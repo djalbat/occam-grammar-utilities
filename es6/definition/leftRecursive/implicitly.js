@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
-const necessary = require('necessary');
+const necessary = require("necessary");
 
-const types = require('../../types'),
-      ruleUtilities = require('../../utilities/rule'),
-      LeftRecursiveDefinition = require('../../definition/leftRecursive');
+const types = require("../../types"),
+      ruleUtilities = require("../../utilities/rule"),
+      LeftRecursiveDefinition = require("../../definition/leftRecursive");
 
 const { findRule } = ruleUtilities,
       { arrayUtilities } = necessary,

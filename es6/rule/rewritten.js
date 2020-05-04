@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-const parsers = require('occam-parsers');
+const parsers = require("occam-parsers");
 
-const types = require('../types'),
-      classUtilities = require('../utilities/class'),
-      ruleNameUtilities = require('../utilities/ruleName'),
-      RuleNameDefinition = require('../definition/ruleName'),
-      RecursiveDefinition = require('../definition/recursive');
+const types = require("../types"),
+      classUtilities = require("../utilities/class"),
+      ruleNameUtilities = require("../utilities/ruleName"),
+      RuleNameDefinition = require("../definition/ruleName"),
+      RecursiveDefinition = require("../definition/recursive");
 
 const { Rule } = parsers,
       { isInstanceOf } = classUtilities,

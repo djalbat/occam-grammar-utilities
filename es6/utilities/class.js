@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 function isInstanceOf(instance, Class) {
   const constructor = instance.constructor;

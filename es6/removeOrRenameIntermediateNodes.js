@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const ReducedNode = require('./node/reduced'),
-      RepeatedNode = require('./node/repeated'),
-      classUtilities = require('./utilities/class'),
-      ruleNameUtilities = require('./utilities/ruleName');
+const ReducedNode = require("./node/reduced"),
+      RepeatedNode = require("./node/repeated"),
+      classUtilities = require("./utilities/class"),
+      ruleNameUtilities = require("./utilities/ruleName");
 
 const { isInstanceOf } = classUtilities,
       { ruleNameFromReducedRuleName, checkReducedRuleNameMatchesRuleName } = ruleNameUtilities;

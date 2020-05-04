@@ -1,17 +1,17 @@
-'use strict';
+"use strict";
 
-const necessary = require('necessary');
+const necessary = require("necessary");
 
-const types = require('../../types'),
-      ReducedRule = require('../../rule/reduced'),
-      RepeatedRule = require('../../rule/repeated'),
-      RewrittenRule = require('../../rule/rewritten'),
-      ruleUtilities = require('../../utilities/rule'),
-      RepeatedDefinition = require('../../definition/repeated'),
-      RewrittenDefinition = require('../../definition/rewritten'),
-      definitionUtilities = require('../../utilities/definition'),
-      LeftRecursiveDefinition = require('../../definition/leftRecursive'),
-      ImplicitlyLeftRecursiveDefinition = require('../../definition/leftRecursive/implicitly');
+const types = require("../../types"),
+      ReducedRule = require("../../rule/reduced"),
+      RepeatedRule = require("../../rule/repeated"),
+      RewrittenRule = require("../../rule/rewritten"),
+      ruleUtilities = require("../../utilities/rule"),
+      RepeatedDefinition = require("../../definition/repeated"),
+      RewrittenDefinition = require("../../definition/rewritten"),
+      definitionUtilities = require("../../utilities/definition"),
+      LeftRecursiveDefinition = require("../../definition/leftRecursive"),
+      ImplicitlyLeftRecursiveDefinition = require("../../definition/leftRecursive/implicitly");
 
 const { arrayUtilities } = necessary,
       { first } = arrayUtilities,

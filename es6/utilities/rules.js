@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 function rulesAsString(rules, multiLine) {
   const maximumRuleNameLength = rules.reduce((maximumRuleNameLength, rule) => {
@@ -15,7 +15,7 @@ function rulesAsString(rules, multiLine) {
           rulesString += ruleString;
 
           return rulesString;
-        }, '').replace(/^\n\n/, '');
+        }, "").replace(/^\n\n/, "");
 
   return rulesString;
 }

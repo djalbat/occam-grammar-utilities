@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const types = require('../types'),
-      definitionUtilities = require('../utilities/definition'),
-      RecursiveDefinition = require('../definition/recursive');
+const types = require("../types"),
+      definitionUtilities = require("../utilities/definition"),
+      RecursiveDefinition = require("../definition/recursive");
 
 const { LEFT_RECURSIVE_TYPE } = types,
       { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } = definitionUtilities;

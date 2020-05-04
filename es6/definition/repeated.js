@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const parsers = require('occam-parsers');
+const parsers = require("occam-parsers");
 
-const partsUtilities = require('../utilities/parts');
+const partsUtilities = require("../utilities/parts");
 
 const { Definition } = parsers,
       { cloneParts } = partsUtilities;

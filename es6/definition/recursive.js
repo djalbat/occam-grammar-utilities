@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
-const parsers = require('occam-parsers');
+const parsers = require("occam-parsers");
 
-const types = require('../types'),
-      ruleUtilities = require('../utilities/rule'),
-      definitionUtilities = require('../utilities/definition');
+const types = require("../types"),
+      ruleUtilities = require("../utilities/rule"),
+      definitionUtilities = require("../utilities/definition");
 
 const { findRule } = ruleUtilities,
       { Definition } = parsers,
