@@ -22,6 +22,7 @@ import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIn
 
 import { rulesAsString } from "../utilities/rules";
 import { findRuleByName } from "../utilities/rule";
+import { UNASSIGNED_ENTRY } from "../constants";
 
 export default class View extends Element {
   initialBNF = `
@@ -55,7 +56,7 @@ export default class View extends Element {
     let parseTree = null;
 
     const lexicalPattern = this.getLexicalPattern(),
-          unassigned = '^.*$',
+          unassigned = UNASSIGNED_ENTRY,
           custom = lexicalPattern,  ///
           entries = [
             { custom },
