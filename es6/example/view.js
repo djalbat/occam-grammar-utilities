@@ -1,7 +1,7 @@
 "use strict";
 
 import { Element } from "easy";
-import { ColumnsDiv } from "easy-layout";
+import { RowsDiv, ColumnsDiv } from "easy-layout";
 import { BNFLexer, BasicLexer } from "occam-lexers";
 import { BNFParser, BasicParser } from "occam-parsers";
 
@@ -125,33 +125,37 @@ export default class View extends Element {
       </Heading>,
       <ColumnsDiv>
         <SizeableDiv>
-          <SubHeading>
-            Lexical pattern
-          </SubHeading>
-          <LexicalPatternInput onKeyUp={keyUpHandler} />
-          <SubHeading>
-            BNF
-          </SubHeading>
-          <BNFTextarea onKeyUp={keyUpHandler} />
-          <SubHeading>
-            Adjusted BNF
-          </SubHeading>
-          <AdjustedBNFTextarea onKeyUp={keyUpHandler} />
+          <RowsDiv>
+            <SubHeading>
+              Lexical pattern
+            </SubHeading>
+            <LexicalPatternInput onKeyUp={keyUpHandler} />
+            <SubHeading>
+              BNF
+            </SubHeading>
+            <BNFTextarea onKeyUp={keyUpHandler} />
+            <SubHeading>
+              Adjusted BNF
+            </SubHeading>
+            <AdjustedBNFTextarea onKeyUp={keyUpHandler} />
+          </RowsDiv>
         </SizeableDiv>
         <VerticalSplitterDiv />
         <ColumnDiv>
-          <SubHeading>
-            Content
-          </SubHeading>
-          <ContentTextarea onKeyUp={keyUpHandler} />
-          <SubHeading>
-            Parse tree
-          </SubHeading>
-          <ParseTreeTextarea />
-          <Paragraph>
-            <RemoveOrRenameIntermediateNodesCheckbox onChange={changeHandler} checked />
-            Remove or rename intermediate nodes
-          </Paragraph>
+          <RowsDiv>
+            <SubHeading>
+              Content
+            </SubHeading>
+            <ContentTextarea onKeyUp={keyUpHandler} />
+            <SubHeading>
+              Parse tree
+            </SubHeading>
+            <ParseTreeTextarea />
+            <Paragraph>
+              <RemoveOrRenameIntermediateNodesCheckbox onChange={changeHandler} checked />
+              Remove or rename intermediate nodes
+            </Paragraph>
+          </RowsDiv>
         </ColumnDiv>
       </ColumnsDiv>
 
