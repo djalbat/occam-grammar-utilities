@@ -14,7 +14,7 @@ const body = new Body();
 
 renderStyles();
 
-body.append(
+body.prepend(
 
   <View />
 
