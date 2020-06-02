@@ -4,6 +4,7 @@ import { Element } from "easy";
 import { RowsDiv, ColumnsDiv } from "easy-layout";
 import { BNFLexer, BasicLexer } from "occam-lexers";
 import { BNFParser, BasicParser } from "occam-parsers";
+import { eliminateLeftRecursion, removeOrRenameIntermediateNodes } from "../index"; ///
 
 import Heading from "./heading";
 import ColumnDiv from "./div/column";
@@ -16,8 +17,6 @@ import ParseTreeTextarea from "./textarea/parseTree";
 import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import VerticalSplitterDiv from "./div/splitter/vertical";
-import eliminateLeftRecursion from "../eliminateLeftRecursion";
-import removeOrRenameIntermediateNodes from "../removeOrRenameIntermediateNodes";
 import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIntermediateNodes"
 
 import { rulesAsString } from "../utilities/rules";
