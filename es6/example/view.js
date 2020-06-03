@@ -113,7 +113,7 @@ export default class View extends Element {
     }
   }
 
-  childElements(properties) {
+  childElements() {
     const keyUpHandler = this.keyUpHandler.bind(this),
           changeHandler = this.changeHandler.bind(this);
 
@@ -161,7 +161,7 @@ export default class View extends Element {
     ]);
   }
 
-  initialise(properties) {
+  initialise() {
     this.assignContext();
 
     const bnf = this.initialBNF, ///
@@ -184,7 +184,7 @@ export default class View extends Element {
           bnfParser = BNFParser.fromNothing(),
           exampleView = Element.fromClass(Class, properties, bnfLexer, bnfParser);
 
-    exampleView.initialise(properties);
+    exampleView.initialise();
 
     return exampleView
   }
