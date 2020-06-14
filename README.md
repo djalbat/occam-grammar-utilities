@@ -192,7 +192,7 @@ Any combination of lexer and parser can be used, not just the basic ones. The po
 
 ## Examples
 
-There is one example although the BNF can be changed dynamically. To view it, open the `example.html` file in the root of the repository. You may need to change the lexical pattern in order to pick out the necessary tokens to make the parser work. The default lexical pattern picks out decimal digits and then defaults to picking out any character. The remainder of this section gives listings that appear in the paper along with brief explanations.
+There is one example although the BNF can be changed dynamically. To view it, open the `index.html` file in the root of the repository. You may need to change the lexical pattern in order to pick out the necessary tokens to make the parser work. The default lexical pattern picks out decimal digits and then defaults to picking out any character. The remainder of this section gives listings that appear in the paper along with brief explanations.
 
 THe following rule is an example of the algorithm's handling of look-ahead:
 ```
@@ -304,6 +304,12 @@ Automation is done with [npm scripts](https://docs.npmjs.com/misc/scripts), have
 
     npm run build-debug
     npm run watch-debug
+
+You can also start a small development server:
+
+    npm start
+
+The example will then be available at http://localhost:8888/ and will reload automatically when changes are made.
 
 ## Contact
 
