@@ -12,12 +12,12 @@ import { findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromR
 import { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
-  rewrite(rules) {
+  rewrite(ruleMap) {
     const definition = this.getDefinition(),
           ruleName = this.getRuleName(),
-          rule = findRule(ruleName, rules);
+          rule = ruleMap[ruleName] || null;
 
-    const reducedRule = reducedRuleFromRule(rule, rules, ReducedRule),
+    const reducedRule = reducedRuleFromRule(rule, ruleMap, ReducedRule),
           reducedRuleEmpty = reducedRule.isEmpty();
 
     if (reducedRuleEmpty) {
@@ -28,12 +28,12 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
 
     const leftRecursiveRuleName = ruleName; ///
 
-    const repeatedRule = repeatedRuleFromRule(rule, rules, RepeatedRule),
+    const repeatedRule = repeatedRuleFromRule(rule, ruleMap, RepeatedRule),
           repeatedDefinition = RepeatedDefinition.fromDefinition(definition);
 
     repeatedRule.addDefinition(repeatedDefinition);
 
-    const rewrittenRule = rewrittenRuleFromRule(rule, rules, RewrittenRule),
+    const rewrittenRule = rewrittenRuleFromRule(rule, ruleMap, RewrittenRule),
           rewrittenDefinition = RewrittenDefinition.fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName),
           replacementDefinition = this; ///
 

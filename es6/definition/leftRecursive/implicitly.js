@@ -6,8 +6,6 @@ import LeftRecursiveDefinition from "../../definition/leftRecursive";
 
 import { LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } from "../../types";
 
-import { findRule } from "../../utilities/rule";
-
 const { first } = arrayUtilities;
 
 export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
@@ -21,8 +19,8 @@ export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefi
     this.leftRecursiveDefinition = leftRecursiveDefinition;
   }
 
-  replace(rules) {
-    const rule = findRule(this.ruleName, rules),
+  replace(ruleMap) {
+    const rule = ruleMap[this.ruleName] || null,
           replacedDefinition = this.leftRecursiveDefinition,  ///
           replacementDefinition = this; ///
 

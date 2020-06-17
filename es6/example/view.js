@@ -1,6 +1,7 @@
 "use strict";
 
 import { Element } from "easy";
+import { arrayUtilities } from "necessary";
 import { RowsDiv, ColumnsDiv } from "easy-layout";
 import { BNFLexer, BasicLexer } from "occam-lexers";
 import { BNFParser, BasicParser } from "occam-parsers";
@@ -22,6 +23,8 @@ import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIn
 import { rulesAsString } from "../utilities/rules";
 import { findRuleByName } from "../utilities/rule";
 import { UNASSIGNED_ENTRY } from "../constants";
+
+const { first } = arrayUtilities;
 
 export default class View extends Element {
   initialBNF = `
@@ -51,7 +54,7 @@ export default class View extends Element {
     this.bnfParser = bnfParser;
   }
 
-  getParseTree(rules) {
+  getParseTree(startRule, ruleMap) {
     let parseTree = null;
 
     const lexicalPattern = this.getLexicalPattern(),
@@ -62,7 +65,7 @@ export default class View extends Element {
             { unassigned }
           ],
           basicLexer = BasicLexer.fromEntries(entries),
-          basicParser = BasicParser.fromRules(rules),
+          basicParser = new BasicParser(startRule, ruleMap),  ///
           content = this.getContent(),
           tokens = basicLexer.tokenise(content),
           node = basicParser.parse(tokens);
@@ -89,11 +92,27 @@ export default class View extends Element {
       const bnf = this.getBNF(),
             tokens = this.bnfLexer.tokensFromBNF(bnf);
 
-      let rules;
+      let rules,
+          startRule;
 
       rules = this.bnfParser.rulesFromTokens(tokens);
 
-      eliminateLeftRecursion(rules);
+      const firstRule = first(rules);
+
+      startRule = firstRule;  ///
+
+      const startRuleName = startRule.getName(),
+            ruleMap = rules.reduce((ruleMap, rule) => {
+              const ruleName = rule.getName();
+
+              ruleMap[ruleName] = rule;
+
+              return ruleMap;
+            }, {});
+
+      eliminateLeftRecursion(startRule, ruleMap);
+
+      startRule = ruleMap[startRuleName];
 
       const multiLine = true,
             rulesString = rulesAsString(rules, multiLine),
@@ -101,7 +120,7 @@ export default class View extends Element {
 
       this.setAdjustedBNF(adjustedBNF);
 
-      const parseTree = this.getParseTree(rules);
+      const parseTree = this.getParseTree(startRule, ruleMap);
 
       this.setParseTree(parseTree);
     } catch (error) {

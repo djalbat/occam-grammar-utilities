@@ -3,50 +3,37 @@
 import { isInstanceOf } from "../utilities/class";
 import { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
-export function findRule(ruleName, rules) {
-  const name = ruleName,  ///
-        rule = rules.find((rule) => {
-          const ruleName = rule.getName();
-
-          if (ruleName === name) {
-            return true;
-          }
-        }) || null; ///
-
-  return rule;
-}
-
-export function reducedRuleFromRule(rule, rules, ReducedRule) {
+export function reducedRuleFromRule(rule, ruleMap, ReducedRule) {
 	const ruleName = rule.getName(),
 				reducedRuleName = reducedRuleNameFromRuleName(ruleName);
 
-	let reducedRule = findRule(reducedRuleName, rules);
+	let reducedRule = ruleMap[reducedRuleName] || null;
 
 	if (reducedRule === null) {
     reducedRule = ReducedRule.fromRule(rule);
 
-    rules.push(reducedRule);
+    ruleMap[reducedRuleName] = reducedRule;
 	}
 
 	return reducedRule;
 }
 
-export function repeatedRuleFromRule(rule, rules, RepeatedRule) {
+export function repeatedRuleFromRule(rule, ruleMap, RepeatedRule) {
   const ruleName = rule.getName(),
         repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
 
-  let repeatedRule = findRule(repeatedRuleName, rules);
+  let repeatedRule = ruleMap[repeatedRuleName] || null;
 
   if (repeatedRule === null) {
     repeatedRule = RepeatedRule.fromRule(rule);
 
-    rules.push(repeatedRule);
+    ruleMap[repeatedRuleName] = repeatedRule;
   }
 
   return repeatedRule;
 }
 
-export function rewrittenRuleFromRule(rule, rules, RewrittenRule) {
+export function rewrittenRuleFromRule(rule, ruleMap, RewrittenRule) {
   let rewrittenRule;
 
   const ruleRewrittenRule = isInstanceOf(rule, RewrittenRule);
@@ -59,19 +46,17 @@ export function rewrittenRuleFromRule(rule, rules, RewrittenRule) {
     const replacedRule = rule,  ///
           replacementRule = rewrittenRule;  ///
 
-    replaceRule(replacedRule, replacementRule, rules);
+    replaceRule(replacedRule, replacementRule, ruleMap);
   }
 
   return rewrittenRule;
 }
 
-function replaceRule(replacedRule, replacementRule, rules) {
-  const index = rules.indexOf(replacedRule);
+function replaceRule(replacedRule, replacementRule, ruleMap) {
+  const replacedRuleName = replacedRule.getName(),
+        replacementRuleName = replacementRule.getName();
 
-  if (index > -1) {
-    const start = index,
-          deleteCount = 1;
+  delete ruleMap[replacedRuleName];
 
-    rules.splice(start, deleteCount, replacementRule);
-  }
+  ruleMap[replacementRuleName] = replacementRule;
 }

@@ -16,7 +16,7 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return this.leftRecursiveRuleNames;
   }
 
-  rewrite(rules) {
+  rewrite(ruleMap) {
     ///
   }
 
