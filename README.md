@@ -184,9 +184,9 @@ const ruleMap = rules.reduce((ruleMap, rule) => {
 
 startRule = eliminateLeftRecursion(startRule, ruleMap);
 ```
-Note that a new start rule is returned, because the initial start rule may be left recursive. In this case it will be replaced with a new rule, albeit with the same name.
+Note that a new start rule is returned because the initial start rule may be left recursive. In these cases the old start rule will be replaced in the rule map with a new rule, albeit with the same name. It is this new rule that is returned.
 
-On the other hand the `removeOrRenameIntermediateNodes(...)` function works on a node generated, say, as follows:
+The `removeOrRenameIntermediateNodes(...)` function works on a node generated, say, as follows:
 ```
 import { BasicLexer } from "occam-lexers";
 import { BasicParser } from "occam-parsers";
