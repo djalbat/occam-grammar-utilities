@@ -7,10 +7,8 @@
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Examples](#examples)
-- [Algorithms](#algorithms)
+- [Example](#example)
 - [Building](#building)
-- [Resources](#resources)
 - [Contact](#contact)
 
 ## Introduction
