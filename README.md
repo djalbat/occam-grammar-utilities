@@ -151,12 +151,15 @@ You will need to do this if you want to look at the example.
 
 ## Usage
 
-The `eliminateLeftRecursion(...)` function should typically be passed an array of rules generated as follows:
+The `eliminateLeftRecursion(...)` function should typically be passed a start rule and a map of rules generated as follows:
 
 ```
 import { BNFLexer } from "occam-lexers";
 import { BNFParser } from "occam-parsers";
+import { arrayUtilities } from "necessary";
 import { eliminateLeftRecursion } from "occam-grammar-utilities";
+
+const { first } = arrayUtilities;
 
 const bnfLexer = BNFLexer.fromNothing(),
       bnfParser = BNFParser.fromNothing(),
@@ -166,10 +169,23 @@ const bnfLexer = BNFLexer.fromNothing(),
 
       `,
       tokens = bnfLexer.tokensFromBNF(bnf),
-      rules = bnfParser.rulesFromTokens(tokens);
+      rules = bnfParser.rulesFromTokens(tokens),
+      firstRule = first(rules);
 
-eliminateLeftRecursion(rules);
+let startRule = firstRule;  ///
+
+const ruleMap = rules.reduce((ruleMap, rule) => {
+        const ruleName = rule.getName();
+
+        ruleMap[ruleName] = rule;
+
+        return ruleMap;
+      }, {});
+
+startRule = eliminateLeftRecursion(startRule, ruleMap);
 ```
+Note that a new start rule is returned, because the initial start rule may be left recursive. In this case it will be replaced with a new rule, albeit with the same name.
+
 On the other hand the `removeOrRenameIntermediateNodes(...)` function works on a node generated, say, as follows:
 ```
 import { BasicLexer } from "occam-lexers";

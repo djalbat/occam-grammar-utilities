@@ -15,6 +15,12 @@ export default function eliminateLeftRecursion(startRule, ruleMap) {
   replaceRecursiveDefinitions(rule, recursiveDefinitions, leftRecursiveDefinitions, ruleMap);
 
   rewriteLeftRecursiveDefinitions(leftRecursiveDefinitions, ruleMap);
+
+  const startRuleName = startRule.getName();
+
+  startRule = ruleMap[startRuleName]; ///
+
+  return startRule;
 }
 
 function replaceRecursiveDefinition(ruleName, definition, recursiveDefinitions, leftRecursiveDefinitions, ruleMap) {
