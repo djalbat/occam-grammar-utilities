@@ -168,17 +168,16 @@ const bnfLexer = BNFLexer.fromNothing(),
       `,
       tokens = bnfLexer.tokensFromBNF(bnf),
       rules = bnfParser.rulesFromTokens(tokens),
-      firstRule = first(rules);
-
-let startRule = firstRule;  ///
-
-const ruleMap = rules.reduce((ruleMap, rule) => {
+      firstRule = first(rules),
+      ruleMap = rules.reduce((ruleMap, rule) => {
         const ruleName = rule.getName();
 
         ruleMap[ruleName] = rule;
 
         return ruleMap;
       }, {});
+
+let startRule = firstRule;  ///
 
 startRule = eliminateLeftRecursion(startRule, ruleMap);
 ```
