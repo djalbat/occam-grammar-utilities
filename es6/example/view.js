@@ -24,26 +24,34 @@ import { rulesAsString } from "../utilities/rules";
 import { findRuleByName } from "../utilities/rule";
 import { UNASSIGNED_ENTRY } from "../constants";
 
-const { first } = arrayUtilities;
+const { first, filter } = arrayUtilities;
 
 export default class View extends Element {
   initialBNF = `
   
-    expression    ::= expression operator expression
-  
-                  | "(" expression ")"
-  
-                  | term
-  
-                  ;
-  
-    operator      ::= "+" | "-" | "/" | "*" ;
+expression            ::=   expression "-" division
+
+                        |   division
+
+                        ;
+
+division              ::=   division "/" base
+
+                        |   base
+
+                        ; 
+
+base                  ::=   "(" expression ")"
+
+                        |   term
+
+                        ; 
     
-    term          ::= /\\d+/ ;
+term                  ::=   /\\d+/ ;
     
   `;
 
-  initialContent = "(1+2)/3";
+  initialContent = "(1-2)/3";
 
   initialLexicalPattern = "\\d+|.";
 
@@ -110,17 +118,26 @@ export default class View extends Element {
               return ruleMap;
             }, {});
 
-      eliminateLeftRecursion(startRule, ruleMap);
+      startRule = eliminateLeftRecursion(startRule, ruleMap);
 
-      startRule = ruleMap[startRuleName];
+      rules = Object.values(ruleMap);
 
-      const multiLine = true,
+      filter(rules, (rule) => {
+        const ruleName = rule.getName();
+
+        if (ruleName !== startRuleName) {
+          return true;
+        }
+      });
+
+      rules.unshift(startRule);
+
+      const parseTree = this.getParseTree(startRule, ruleMap),
+            multiLine = true,
             rulesString = rulesAsString(rules, multiLine),
             adjustedBNF = rulesString;  ///
 
       this.setAdjustedBNF(adjustedBNF);
-
-      const parseTree = this.getParseTree(startRule, ruleMap);
 
       this.setParseTree(parseTree);
     } catch (error) {
