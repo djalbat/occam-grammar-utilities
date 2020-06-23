@@ -20,11 +20,11 @@ import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import VerticalSplitterDiv from "./div/splitter/vertical";
 import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIntermediateNodes"
 
-import { rulesAsString } from "../utilities/rules";
 import { findRuleByName } from "../utilities/rule";
 import { UNASSIGNED_ENTRY } from "../constants";
+import { rulesAsString, ruleMapFromRules, rulesFromStartRuleAndRuleMap } from "../utilities/rules";
 
-const { first, filter } = arrayUtilities;
+const { first } = arrayUtilities;
 
 export default class View extends Element {
   initialBNF = `
@@ -109,37 +109,20 @@ term                  ::=   /\\d+/ ;
 
       startRule = firstRule;  ///
 
-      const startRuleName = startRule.getName(),
-            ruleMap = rules.reduce((ruleMap, rule) => {
-              const ruleName = rule.getName();
-
-              ruleMap[ruleName] = rule;
-
-              return ruleMap;
-            }, {});
+      const ruleMap = ruleMapFromRules(rules);
 
       startRule = eliminateLeftRecursion(startRule, ruleMap);
 
-      rules = Object.values(ruleMap);
+      rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap);
 
-      filter(rules, (rule) => {
-        const ruleName = rule.getName();
-
-        if (ruleName !== startRuleName) {
-          return true;
-        }
-      });
-
-      rules.unshift(startRule);
-
-      const parseTree = this.getParseTree(startRule, ruleMap),
-            multiLine = true,
+      const multiLine = true,
+            parseTree = this.getParseTree(startRule, ruleMap),
             rulesString = rulesAsString(rules, multiLine),
             adjustedBNF = rulesString;  ///
 
-      this.setAdjustedBNF(adjustedBNF);
-
       this.setParseTree(parseTree);
+
+      this.setAdjustedBNF(adjustedBNF);
     } catch (error) {
       console.log(error);
 
