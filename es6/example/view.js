@@ -27,31 +27,19 @@ import { rulesAsString, startRuleFromRules, ruleMapFromRules, rulesFromStartRule
 const { first } = arrayUtilities;
 
 export default class View extends Element {
-  initialBNF = `
-  
-expression            ::=   expression "-" division
+  initialBNF = `expression    ::= expression operator expression
 
-                        |   division
+                | "(" expression ")"
 
-                        ;
+                | term
 
-division              ::=   division "/" base
+                ;
 
-                        |   base
+operator      ::= "+" | "-" | "/" | "*" ;
 
-                        ; 
+term          ::= /\\d+/ ;`;
 
-base                  ::=   "(" expression ")"
-
-                        |   term
-
-                        ; 
-    
-term                  ::=   /\\d+/ ;
-    
-  `;
-
-  initialContent = "(1-2)/3";
+  initialContent = "(1+2)/3";
 
   initialLexicalPattern = "\\d+|.";
 
