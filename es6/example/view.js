@@ -22,7 +22,7 @@ import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIn
 
 import { findRuleByName } from "../utilities/rule";
 import { UNASSIGNED_ENTRY } from "../constants";
-import { rulesAsString, ruleMapFromRules, rulesFromStartRuleAndRuleMap } from "../utilities/rules";
+import { rulesAsString, startRuleFromRules, ruleMapFromRules, rulesFromStartRuleAndRuleMap } from "../utilities/rules";
 
 const { first } = arrayUtilities;
 
@@ -100,14 +100,8 @@ term                  ::=   /\\d+/ ;
       const bnf = this.getBNF(),
             tokens = this.bnfLexer.tokensFromBNF(bnf);
 
-      let rules,
-          startRule;
-
-      rules = this.bnfParser.rulesFromTokens(tokens);
-
-      const firstRule = first(rules);
-
-      startRule = firstRule;  ///
+      let rules = this.bnfParser.rulesFromTokens(tokens),
+          startRule = startRuleFromRules(rules);
 
       const ruleMap = ruleMapFromRules(rules);
 

@@ -2,7 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
-const { filter } = arrayUtilities;
+const { first, filter } = arrayUtilities;
 
 export function rulesAsString(rules, multiLine) {
   const maximumRuleNameLength = rules.reduce((maximumRuleNameLength, rule) => {
@@ -34,6 +34,13 @@ export function ruleMapFromRules(rules) {
   }, {});
 
   return ruleMap;
+}
+
+export function startRuleFromRules(rules) {
+  const firstRule = first(rules),
+        startRule = firstRule;  ///
+
+  return startRule;
 }
 
 export function rulesFromStartRuleAndRuleMap(startRule, ruleMap) {
