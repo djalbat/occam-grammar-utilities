@@ -134,7 +134,7 @@ term          ::= /\\d+/ ;`;
             <SubHeading>
               Adjusted BNF
             </SubHeading>
-            <AdjustedBNFTextarea onKeyUp={keyUpHandler} />
+            <AdjustedBNFTextarea readOnly />
           </RowsDiv>
         </SizeableDiv>
         <VerticalSplitterDiv />
