@@ -6,7 +6,7 @@ import { arrayUtilities } from "necessary";
 const { first } = arrayUtilities,
       { RuleNamePartType,
         OptionalPartPartType,
-        GroupOfPartsPartType,
+        SequenceOfPartsPartType,
         ChoiceOfPartsPartType,
         OneOrMorePartsPartType,
         ZeroOrMorePartsPartType } = partTypes;
@@ -58,9 +58,9 @@ export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
         }
         break;
 
-      case GroupOfPartsPartType : {
-        const groupOfPartsPart = part,  ///
-              parts = groupOfPartsPart.getParts();
+      case SequenceOfPartsPartType : {
+        const sequenceOfPartsPart = part,  ///
+              parts = sequenceOfPartsPart.getParts();
 
           parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
         }
@@ -124,9 +124,9 @@ export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
         }
         break;
 
-      case GroupOfPartsPartType : {
-          const groupOfPartsPart = part,  ///
-                parts = groupOfPartsPart.getParts(),
+      case SequenceOfPartsPartType : {
+          const sequenceOfPartsPart = part,  ///
+                parts = sequenceOfPartsPart.getParts(),
                 firstPart = first(parts);
 
           part = firstPart; ///

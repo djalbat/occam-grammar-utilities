@@ -24,7 +24,8 @@ import { UNASSIGNED_ENTRY } from "../constants";
 import { rulesAsString, startRuleFromRules, ruleMapFromRules, rulesFromStartRuleAndRuleMap } from "../utilities/rules";
 
 export default class View extends Element {
-  initialBNF = `expression    ::= expression operator expression
+  initialBNF = `
+expression    ::= expression operator expression
 
                 | "(" expression ")"
 
@@ -34,7 +35,8 @@ export default class View extends Element {
 
 operator      ::= "+" | "-" | "/" | "*" ;
 
-term          ::= /\\d+/ ;`;
+term          ::= /\\d+/ ;
+`;
 
   initialContent = "(1+2)/3";
 
