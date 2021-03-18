@@ -1,6 +1,6 @@
 # Occam Grammar Utilities
 
-[Occam](https://github.com/jecs-imperial/occam)'s grammar utilities.
+[Occam](https://github.com/djalbat/occam)'s grammar utilities.
 
 ### Contents
 
@@ -139,7 +139,7 @@ With [npm](https://www.npmjs.com/):
 
 You can also clone the repository with [Git](https://git-scm.com/)...
 
-    git clone https://github.com/jecs-imperial/occam-grammar-utilities.git
+    git clone https://github.com/djalbat/occam-grammar-utilities.git
 
 ...and then install the dependencies with npm from within the project's root directory:
 
