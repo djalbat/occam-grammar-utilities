@@ -35,7 +35,7 @@ expression    ::= expression operator expression
 
 operator      ::= "+" | "-" | "/" | "*" ;
 
-term          ::= /\\d+/ ;
+term          ::= /\d+/ ;
 `;
 
   initialContent = "(1+2)/3";
@@ -78,11 +78,11 @@ term          ::= /\\d+/ ;
     return parseTree;
   }
 
-  keyUpHandler() {
+  keyUpHandler(event, element) {
     this.changeHandler();
   }
 
-  changeHandler() {
+  changeHandler(event, element) {
     try {
       const bnf = this.getBNF(),
             tokens = this.bnfLexer.tokensFromBNF(bnf);
