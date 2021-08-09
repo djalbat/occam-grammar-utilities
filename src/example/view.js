@@ -35,7 +35,7 @@ expression    ::= expression operator expression
 
 operator      ::= "+" | "-" | "/" | "*" ;
 
-term          ::= /\d+/ ;
+term          ::= /\\d+/ ;
 `;
 
   initialContent = "(1+2)/3";
@@ -183,8 +183,6 @@ term          ::= /\d+/ ;
     const bnfLexer = BNFLexer.fromNothing(),
           bnfParser = BNFParser.fromNothing(),
           exampleView = Element.fromClass(Class, properties, bnfLexer, bnfParser);
-
-    exampleView.initialise();
 
     return exampleView
   }
