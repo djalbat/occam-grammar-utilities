@@ -11,11 +11,8 @@ export default class RecursiveDefinition extends Definition {
     super(parts);
 
     this.type = type;
-
     this.ruleName = ruleName;
-
     this.definition = definition;
-
     this.recursiveRuleNames = recursiveRuleNames;
   }
 

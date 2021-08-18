@@ -8,7 +8,7 @@ import RewrittenDefinition from "../../definition/rewritten";
 import LeftRecursiveDefinition from "../../definition/leftRecursive";
 
 import { DIRECTLY_LEFT_RECURSIVE_TYPE } from "../../types";
-import { findRule, reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } from "../../utilities/rule";
+import { reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } from "../../utilities/rule";
 import { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {

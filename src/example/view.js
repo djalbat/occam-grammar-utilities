@@ -56,8 +56,12 @@ term          ::= /\\d+/ ;
           unassigned = UNASSIGNED_ENTRY,
           custom = lexicalPattern,  ///
           entries = [
-            { custom },
-            { unassigned }
+            {
+              custom
+            },
+            {
+              unassigned
+            }
           ],
           basicLexer = BasicLexer.fromEntries(entries),
           basicParser = new BasicParser(startRule, ruleMap),  ///

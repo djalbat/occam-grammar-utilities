@@ -29,6 +29,7 @@ export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
             recursiveRuleNames.push(recursiveRuleName);
           }
         }
+
         break;
 
       case OptionalPartPartType : {
@@ -38,6 +39,7 @@ export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
 
           recursiveRuleNamesFromPart(part, recursiveRuleNames);
         }
+
         break;
 
       case OneOrMorePartsPartType : {
@@ -47,6 +49,7 @@ export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
 
           recursiveRuleNamesFromPart(part, recursiveRuleNames);
         }
+
         break;
 
       case ZeroOrMorePartsPartType : {
@@ -56,6 +59,7 @@ export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
 
           recursiveRuleNamesFromPart(part, recursiveRuleNames);
         }
+
         break;
 
       case SequenceOfPartsPartType : {
@@ -64,6 +68,7 @@ export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
 
           parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
         }
+
         break;
 
       case ChoiceOfPartsPartType : {
@@ -72,6 +77,7 @@ export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
 
           parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
         }
+
         break;
     }
   }
@@ -95,6 +101,7 @@ export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
             leftRecursiveRuleNames.push(leftRecursiveRuleName);
           }
         }
+
         break;
 
       case OptionalPartPartType : {
@@ -104,6 +111,7 @@ export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
 
           leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
         }
+
         break;
 
       case OneOrMorePartsPartType : {
@@ -113,6 +121,7 @@ export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
 
           leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
         }
+
         break;
 
       case ZeroOrMorePartsPartType : {
@@ -122,6 +131,7 @@ export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
 
           leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
         }
+
         break;
 
       case SequenceOfPartsPartType : {
@@ -133,6 +143,7 @@ export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
 
           leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
         }
+
         break;
 
       case ChoiceOfPartsPartType : {
@@ -141,6 +152,7 @@ export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
 
           parts.forEach((part) => leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames));
         }
+
         break;
     }
   }

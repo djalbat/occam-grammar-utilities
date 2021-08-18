@@ -2,6 +2,8 @@
 
 import { arrayUtilities } from "necessary";
 
+import { EMPTY_STRING } from "../constants";
+
 const { first, filter } = arrayUtilities;
 
 export function rulesAsString(rules, multiLine) {
@@ -19,7 +21,7 @@ export function rulesAsString(rules, multiLine) {
           rulesString += ruleString;
 
           return rulesString;
-        }, "").replace(/^\n\n/, "");
+        }, EMPTY_STRING).replace(/^\n\n/, EMPTY_STRING);
 
   return rulesString;
 }
