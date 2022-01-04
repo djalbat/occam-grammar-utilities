@@ -1,13 +1,13 @@
 "use strict";
 
+import withStyle from "easy-with-style";  ///
+
 import { Element } from "easy";
-import { RowsDiv, ColumnsDiv } from "easy-layout";
+import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 import { BNFLexer, BasicLexer } from "occam-lexers";
 import { BNFParser, BasicParser } from "occam-parsers";
 import { eliminateLeftRecursion, removeOrRenameIntermediateNodes } from "../index"; ///
 
-import Heading from "./heading";
-import ColumnDiv from "./div/column";
 import Paragraph from "./paragraph";
 import SubHeading from "./subHeading";
 import SizeableDiv from "./div/sizeable";
@@ -16,14 +16,12 @@ import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
 import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
-import VerticalSplitterDiv from "./div/splitter/vertical";
 import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIntermediateNodes"
 
-import { findRuleByName } from "../utilities/rule";
 import { UNASSIGNED_ENTRY } from "../constants";
 import { rulesAsString, startRuleFromRules, ruleMapFromRules, rulesFromStartRuleAndRuleMap } from "../utilities/rules";
 
-export default class View extends Element {
+class View extends Element {
   initialBNF = `
 expression    ::= expression operator expression
 
@@ -123,9 +121,6 @@ term          ::= /\\d+/ ;
 
     return ([
 
-      <Heading>
-        Grammar utilities example
-      </Heading>,
       <ColumnsDiv>
         <SizeableDiv>
           <RowsDiv>
@@ -183,6 +178,10 @@ term          ::= /\\d+/ ;
 
   static tagName = "div";
 
+  static defaultProperties = {
+    className: "view"
+  };
+
   static fromClass(Class, properties) {
     const bnfLexer = BNFLexer.fromNothing(),
           bnfParser = BNFParser.fromNothing(),
@@ -191,3 +190,9 @@ term          ::= /\\d+/ ;
     return exampleView
   }
 }
+
+export default withStyle(View)`
+
+  padding: 1rem;
+  
+`;
