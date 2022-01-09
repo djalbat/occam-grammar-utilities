@@ -27,13 +27,13 @@ export function rulesAsString(rules, multiLine) {
 }
 
 export function ruleMapFromRules(rules) {
-  const ruleMap = rules.reduce((ruleMap, rule) => {
+  const ruleMap = {};
+
+  rules.forEach((rule) => {
     const ruleName = rule.getName();
 
     ruleMap[ruleName] = rule;
-
-    return ruleMap;
-  }, {});
+  });
 
   return ruleMap;
 }
