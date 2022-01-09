@@ -3,9 +3,9 @@
 import withStyle from "easy-with-style";  ///
 
 import { Element } from "easy";
+import { BasicLexer } from "occam-lexers";
+import { BasicParser } from "occam-parsers";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
-import { BNFLexer, BasicLexer } from "occam-lexers";
-import { BNFParser, BasicParser } from "occam-parsers";
 import { eliminateLeftRecursion, removeOrRenameIntermediateNodes } from "../index"; ///
 
 import Paragraph from "./paragraph";
@@ -18,35 +18,11 @@ import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIntermediateNodes"
 
+import { rulesFromBNF } from "../utilities/parser";
 import { UNASSIGNED_ENTRY } from "../constants";
 import { rulesAsString, startRuleFromRules, ruleMapFromRules, rulesFromStartRuleAndRuleMap } from "../utilities/rules";
 
 class View extends Element {
-  initialBNF = `
-expression    ::= expression operator expression
-
-                | "(" expression ")"
-
-                | term
-
-                ;
-
-operator      ::= "+" | "-" | "/" | "*" ;
-
-term          ::= /\\d+/ ;
-`;
-
-  initialContent = "(1+2)/3";
-
-  initialLexicalPattern = "\\d+|.";
-
-  constructor(selectorOrDOMElement, bnfLexer, bnfParser) {
-    super(selectorOrDOMElement);
-
-    this.bnfLexer = bnfLexer;
-    this.bnfParser = bnfParser;
-  }
-
   getParseTree(startRule, ruleMap) {
     let parseTree = null;
 
@@ -86,10 +62,9 @@ term          ::= /\\d+/ ;
 
   changeHandler(event, element) {
     try {
-      const bnf = this.getBNF(),
-            tokens = this.bnfLexer.tokensFromBNF(bnf);
+      const bnf = this.getBNF();
 
-      let rules = this.bnfParser.rulesFromTokens(tokens),
+      let rules = rulesFromBNF(bnf),
           startRule = startRuleFromRules(rules);
 
       const ruleMap = ruleMapFromRules(rules);
@@ -163,9 +138,10 @@ term          ::= /\\d+/ ;
   initialise() {
     this.assignContext();
 
-    const bnf = this.initialBNF, ///
-          content = this.initialContent, ///
-          lexicalPattern = this.initialLexicalPattern; ///
+    const { initialBNF, initialContent, initialLexicalPattern } = this.constructor,
+          bnf = initialBNF, ///
+          content = initialContent, ///
+          lexicalPattern = initialLexicalPattern; ///
 
     this.setBNF(bnf);
 
@@ -176,19 +152,29 @@ term          ::= /\\d+/ ;
     this.keyUpHandler();
   }
 
+  static initialBNF = `
+expression    ::= expression operator expression
+
+                | "(" expression ")"
+
+                | term
+
+                ;
+
+operator      ::= "+" | "-" | "/" | "*" ;
+
+term          ::= /\\d+/ ;
+`;
+
+  static initialContent = "(1+2)/3";
+
+  static initialLexicalPattern = "\\d+|.";
+
   static tagName = "div";
 
   static defaultProperties = {
     className: "view"
   };
-
-  static fromClass(Class, properties) {
-    const bnfLexer = BNFLexer.fromNothing(),
-          bnfParser = BNFParser.fromNothing(),
-          exampleView = Element.fromClass(Class, properties, bnfLexer, bnfParser);
-
-    return exampleView
-  }
 }
 
 export default withStyle(View)`

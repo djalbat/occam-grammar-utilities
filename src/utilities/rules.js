@@ -6,6 +6,7 @@ import { EMPTY_STRING } from "../constants";
 
 const { first, filter } = arrayUtilities;
 
+
 export function rulesAsString(rules, multiLine) {
   const maximumRuleNameLength = rules.reduce((maximumRuleNameLength, rule) => {
           const ruleName = rule.getName(),
