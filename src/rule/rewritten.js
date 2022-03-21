@@ -40,8 +40,9 @@ export default class RewrittenRule extends Rule {
     ];
 
     const name = ruleName,  ///
+          ambiguous = rule.isAmbiguous(),
           NonTerminalNode = rule.getNonTerminalNode(),
-          rewrittenRule = new RewrittenRule(name, definitions, NonTerminalNode);
+          rewrittenRule = new RewrittenRule(name, ambiguous, definitions, NonTerminalNode);
 
     return rewrittenRule;
   }

@@ -11,9 +11,10 @@ export default class RepeatedRule extends Rule {
     const ruleName = rule.getName(),
           repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
           name = repeatedRuleName,  ///
+          ambiguous = false,
           definitions = [],
           NonTerminalNode = RepeatedNode, ///
-          repeatedRule = new RepeatedRule(name, definitions, NonTerminalNode);
+          repeatedRule = new RepeatedRule(name, ambiguous, definitions, NonTerminalNode);
 
     return repeatedRule;
   }

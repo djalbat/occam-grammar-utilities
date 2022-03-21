@@ -41,8 +41,9 @@ export default class ReducedRule extends Rule {
     });
 
     const name = reducedRuleName,
+          ambiguous = false,
           NonTerminalNode = ReducedNode,  ///
-          reducedRule = new ReducedRule(name, definitions, NonTerminalNode);
+          reducedRule = new ReducedRule(name, ambiguous, definitions, NonTerminalNode);
 
     return reducedRule;
   }
