@@ -28,3 +28,8 @@ export function parserFromRules(Class, rules) {
 
   return parser;
 }
+
+export default {
+  rulesFromBNF,
+  parserFromRules
+};
