@@ -64,10 +64,11 @@ class View extends Element {
     try {
       const bnf = this.getBNF();
 
-      let rules = rulesFromBNF(bnf),
-          startRule = startRuleFromRules(rules);
+      let rules = rulesFromBNF(bnf);
 
       const ruleMap = ruleMapFromRules(rules);
+
+      let startRule = startRuleFromRules(rules);
 
       startRule = eliminateLeftRecursion(startRule, ruleMap);
 
