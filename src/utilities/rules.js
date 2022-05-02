@@ -46,6 +46,22 @@ export function startRuleFromRules(rules) {
   return startRule;
 }
 
+export function startRuleFromRulesAndStartRuleName(rules, startRuleName) {
+  let startRule = rules.find((rule) => {
+    const ruleName = rule.getName();
+
+    if (ruleName === startRuleName) {
+      return true;
+    }
+  }) || null; ///
+
+  if (startRule === null) {
+    startRule = startRuleFromRules(rules);
+  }
+
+  return startRule;
+}
+
 export function rulesFromStartRuleAndRuleMap(startRule, ruleMap) {
   const rules = Object.values(ruleMap),
         startRuleName = startRule.getName();

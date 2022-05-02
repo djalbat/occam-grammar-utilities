@@ -3,7 +3,7 @@
 import { BNFLexer } from "occam-lexers";
 import { BNFParser } from "occam-parsers";
 
-import { ruleMapFromRules, startRuleFromRules } from "../utilities/rules";
+import { ruleMapFromRules, startRuleFromRules, startRuleFromRulesAndStartRuleName } from "../utilities/rules";
 
 import eliminateLeftRecursion  from "../eliminateLeftRecursion";
 
@@ -29,7 +29,20 @@ export function parserFromRules(Class, rules) {
   return parser;
 }
 
+export function parserFromRulesAndStartRuleName(Class, rules, startRuleName) {
+  const ruleMap = ruleMapFromRules(rules);
+
+  let startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName);
+
+  startRule = eliminateLeftRecursion(startRule, ruleMap);
+
+  const parser = new Class(startRule, ruleMap);
+
+  return parser;
+}
+
 export default {
   rulesFromBNF,
-  parserFromRules
+  parserFromRules,
+  parserFromRulesAndStartRuleName
 };
