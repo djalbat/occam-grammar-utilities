@@ -2,7 +2,6 @@
 
 import { Definition } from "occam-parsers";
 
-import { findRule } from "../utilities/rule";
 import { RECURSIVE_TYPE } from "../types";
 import { recursiveRuleNamesFromDefinition } from "../utilities/definition";
 

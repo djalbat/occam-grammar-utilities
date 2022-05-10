@@ -24,11 +24,15 @@ export default function eliminateLeftRecursion(startRule, ruleMap) {
 }
 
 function replaceRecursiveDefinition(ruleName, definition, recursiveDefinitions, leftRecursiveDefinitions, ruleMap) {
+  let recursiveDefinition;
+
   const leftRecursiveDefinition = IndirectlyLeftRecursiveDefinition.fromRuleNameDefinitionAndRecursiveDefinitions(ruleName, definition, recursiveDefinitions) ||
                                   DirectlyLeftRecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition) ||
                                   LeftRecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
 
-  if (leftRecursiveDefinition !== null) {
+  if (leftRecursiveDefinition === null) {
+    recursiveDefinition = RecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
+  } else {
     const leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = isInstanceOf(leftRecursiveDefinition, IndirectlyLeftRecursiveDefinition);
 
     if (leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition) {
@@ -39,11 +43,9 @@ function replaceRecursiveDefinition(ruleName, definition, recursiveDefinitions, 
     }
 
     leftRecursiveDefinitions.push(leftRecursiveDefinition);
-  }
 
-  const recursiveDefinition = (leftRecursiveDefinition !== null) ?
-                                leftRecursiveDefinition : ///
-                                  RecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
+    recursiveDefinition = leftRecursiveDefinition;  ///
+  }
 
   if (recursiveDefinition !== null) {
     recursiveDefinition.replace(ruleMap);
@@ -94,5 +96,4 @@ function recursiveRuleNameFromRecursiveDefinition(recursiveDefinition) {
         recursiveRuleName = recursiveDefinitionRuleName;  ///
 
   return recursiveRuleName;
-
 }

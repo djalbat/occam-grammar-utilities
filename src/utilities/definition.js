@@ -45,13 +45,19 @@ export function isDefinitionLookAhead(definition) {
   return lookAhead;
 }
 
+export function isDefinitionLeftRecursive(definition) {
+  const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
+        leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length,
+        definitionLeftRecursive = (leftRecursiveRuleNamesLength > 0);
+
+  return definitionLeftRecursive;
+}
+
 export function recursiveRuleNamesFromDefinition(definition) {
   const recursiveRuleNames = [],
         parts = definition.getParts();
 
-  parts.forEach((part) => {
-    recursiveRuleNamesFromPart(part, recursiveRuleNames);
-  });
+  parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
 
   return recursiveRuleNames;
 }

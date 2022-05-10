@@ -153,27 +153,32 @@ class View extends Element {
     this.keyUpHandler();
   }
 
+  /*
+
+    The left recursive definition B "h" of the A rule is the *implicitly* left recursive one.
+
+    The left recursive definition A of the B rule is the *indirectly* left recursive one.
+
+  */
+
   static initialBNF = `
   
-                 stringTerm  ::=  stringExpression arithmeticExpression  
-
-                               |  typeName
-                       
-                               ;
-
-           stringExpression  ::=  "(" stringExpression ")"
-
-                               |  stringTerm
-                                
-                               ; 
-
-                   typeName  ::=  /\\w+/ ;
+                 A ::= B "h"
+                 
+                     | "f"
+                      
+                     | "g"
+                      
+                     ;
+                      
+                 B ::= A ;
+                      
 
 `;
 
-  static initialContent = "asdf";
+  static initialContent = "";
 
-  static initialLexicalPattern = "\\d+|.";
+  static initialLexicalPattern = ".";
 
   static tagName = "div";
 
@@ -187,3 +192,4 @@ export default withStyle(View)`
   padding: 1rem;
   
 `;
+

@@ -3,7 +3,7 @@
 import RecursiveDefinition from "../definition/recursive";
 
 import { LEFT_RECURSIVE_TYPE } from "../types";
-import { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../utilities/definition";
+import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../utilities/definition";
 
 export default class LeftRecursiveDefinition extends RecursiveDefinition {
   constructor(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames) {
@@ -23,14 +23,13 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
   static fromRuleNameAndDefinition(ruleName, definition) {
     let leftRecursiveDefinition = null;
 
-    const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
-          leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length,
-          definitionLeftRecursive = (leftRecursiveRuleNamesLength > 0);
+    const definitionLeftRecursive = isDefinitionLeftRecursive(definition);
 
     if (definitionLeftRecursive) {
       const type = LEFT_RECURSIVE_TYPE,
             parts = definition.getParts(),
-            recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
+            recursiveRuleNames = recursiveRuleNamesFromDefinition(definition),
+            leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition);
 
       leftRecursiveDefinition = new LeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
     }

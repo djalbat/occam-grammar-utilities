@@ -9,7 +9,7 @@ import LeftRecursiveDefinition from "../../definition/leftRecursive";
 
 import { DIRECTLY_LEFT_RECURSIVE_TYPE } from "../../types";
 import { reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } from "../../utilities/rule";
-import { isDefinitionUnary, isDefinitionComplex, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   rewrite(ruleMap) {
@@ -43,11 +43,11 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
   static fromRuleNameAndDefinition(ruleName, definition) {
     let directlyLeftRecursiveDefinition = null;
 
-    const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
-          leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length,
-          definitionLeftRecursive = (leftRecursiveRuleNamesLength > 0);
+    const definitionLeftRecursive = isDefinitionLeftRecursive(definition);
 
     if (definitionLeftRecursive) {
+      const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition);
+
       leftRecursiveRuleNames.some((leftRecursiveRuleName) => {
         const ruleNameLeftRecursiveRuleName = (ruleName === leftRecursiveRuleName);
 
