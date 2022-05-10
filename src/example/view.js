@@ -154,20 +154,24 @@ class View extends Element {
   }
 
   static initialBNF = `
-expression    ::= expression operator expression
+  
+                 stringTerm  ::=  stringExpression arithmeticExpression  
 
-                | "(" expression ")"
+                               |  typeName
+                       
+                               ;
 
-                | term
+           stringExpression  ::=  "(" stringExpression ")"
 
-                ;
+                               |  stringTerm
+                                
+                               ; 
 
-operator      ::= "+" | "-" | "/" | "*" ;
+                   typeName  ::=  /\\w+/ ;
 
-term          ::= /\\d+/ ;
 `;
 
-  static initialContent = "(1+2)/3";
+  static initialContent = "asdf";
 
   static initialLexicalPattern = "\\d+|.";
 
