@@ -15,7 +15,7 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
   rewrite(ruleMap) {
     const definition = this.getDefinition(),
           ruleName = this.getRuleName(),
-          rule = ruleMap[ruleName] || null;
+          rule = ruleMap[ruleName];
 
     const reducedRule = reducedRuleFromRule(rule, ruleMap, ReducedRule),
           reducedRuleEmpty = reducedRule.isEmpty();
@@ -34,10 +34,11 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
     repeatedRule.addDefinition(repeatedDefinition);
 
     const rewrittenRule = rewrittenRuleFromRule(rule, ruleMap, RewrittenRule),
+          replacedDefinition = this, ///
           rewrittenDefinition = RewrittenDefinition.fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName),
-          replacementDefinition = this; ///
+          replacementDefinition = rewrittenDefinition;  ///
 
-    rewrittenRule.replaceDefinition(replacementDefinition, rewrittenDefinition);
+    rewrittenRule.replaceDefinition(replacedDefinition, replacementDefinition);
   }
 
   static fromRuleNameAndDefinition(ruleName, definition) {

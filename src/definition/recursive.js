@@ -2,8 +2,8 @@
 
 import { Definition } from "occam-parsers";
 
-import { RECURSIVE_TYPE } from "../types";
 import { recursiveRuleNamesFromDefinition } from "../utilities/definition";
+import { RECURSIVE_TYPE, DIRECTLY_LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE,  INDIRECTLY_LEFT_RECURSIVE_TYPE } from "../types";
 
 export default class RecursiveDefinition extends Definition {
   constructor(type, parts, ruleName, definition, recursiveRuleNames) {
@@ -29,6 +29,14 @@ export default class RecursiveDefinition extends Definition {
 
   getRecursiveRuleNames() {
     return this.recursiveRuleNames;
+  }
+
+  isLeftRecursiveDefinition() {
+    const leftRecursiveDefinition = ((this.type === DIRECTLY_LEFT_RECURSIVE_TYPE) ||
+                                     (this.type === INDIRECTLY_LEFT_RECURSIVE_TYPE) ||
+                                     (this.type === IMPLICITLY_LEFT_RECURSIVE_TYPE));
+
+    return leftRecursiveDefinition;
   }
 
   replace(ruleMap) {

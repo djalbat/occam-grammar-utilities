@@ -7,7 +7,6 @@ import RecursiveDefinition from "../definition/recursive";
 
 import { isInstanceOf } from "../utilities/class";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
-import { DIRECTLY_LEFT_RECURSIVE_TYPE, INDIRECTLY_LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } from "../types";
 
 export default class ReducedRule extends Rule {
   isEmpty() {
@@ -24,20 +23,19 @@ export default class ReducedRule extends Rule {
           reducedRuleName = reducedRuleNameFromRuleName(ruleName);
 
     definitions = definitions.filter((definition) => {
-      let keep = true;
+      let recursiveDefinitionLeftRecursiveDefinition = false;
 
       const definitionRecursiveDefinition = isInstanceOf(definition, RecursiveDefinition);
 
       if (definitionRecursiveDefinition) {
-        const recursiveDefinition = definition, ///
-              type = recursiveDefinition.getType();
+        const recursiveDefinition = definition; ///
 
-        keep = (type !== DIRECTLY_LEFT_RECURSIVE_TYPE) &&
-               (type !== INDIRECTLY_LEFT_RECURSIVE_TYPE) &&
-               (type !== IMPLICITLY_LEFT_RECURSIVE_TYPE);
+        recursiveDefinitionLeftRecursiveDefinition = recursiveDefinition.isLeftRecursiveDefinition();
       }
 
-      return keep
+      if (!recursiveDefinitionLeftRecursiveDefinition) {
+        return true;
+      }
     });
 
     const name = reducedRuleName,

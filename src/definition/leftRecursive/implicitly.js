@@ -20,7 +20,7 @@ export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefi
   }
 
   replace(ruleMap) {
-    const rule = ruleMap[this.ruleName] || null,
+    const rule = ruleMap[this.ruleName],
           replacedDefinition = this.leftRecursiveDefinition,  ///
           replacementDefinition = this; ///
 
