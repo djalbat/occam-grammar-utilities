@@ -153,14 +153,6 @@ class View extends Element {
     this.keyUpHandler();
   }
 
-  /*
-
-    The left recursive definition B "h" of the A rule is the *implicitly* left recursive one.
-
-    The left recursive definition A of the B rule is the *indirectly* left recursive one.
-
-  */
-
   static initialBNF = `
   
                  A ::= B "h"
@@ -176,7 +168,7 @@ class View extends Element {
 
 `;
 
-  static initialContent = "";
+  static initialContent = "ghh";
 
   static initialLexicalPattern = ".";
 
