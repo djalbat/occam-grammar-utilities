@@ -1,10 +1,10 @@
 "use strict";
 
 import { arrayUtilities } from "necessary";
-import { rulesUtilitlies } from "occam-parsers";
+import { rulesUtilities } from "occam-parsers";
 
 const { filter } = arrayUtilities,
-      { startRuleFromRules } = rulesUtilitlies;
+      { startRuleFromRules } = rulesUtilities;
 
 export function rulesFromStartRuleAndRuleMap(startRule, ruleMap) {
   const rules = Object.values(ruleMap),
