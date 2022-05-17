@@ -4,7 +4,7 @@ import withStyle from "easy-with-style";  ///
 
 import { Element } from "easy";
 import { BasicLexer } from "occam-lexers";
-import { BasicParser } from "occam-parsers";
+import { BasicParser, rulesUtilitlies } from "occam-parsers";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 import { eliminateLeftRecursion, removeOrRenameIntermediateNodes } from "../index"; ///
 
@@ -20,7 +20,9 @@ import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIn
 
 import { rulesFromBNF } from "../utilities/parser";
 import { UNASSIGNED_ENTRY } from "../constants";
-import { rulesAsString, startRuleFromRules, ruleMapFromRules, rulesFromStartRuleAndRuleMap } from "../utilities/rules";
+import { rulesFromStartRuleAndRuleMap } from "../utilities/rules";
+
+const { rulesAsString, ruleMapFromRules, startRuleFromRules } = rulesUtilitlies;
 
 class View extends Element {
   getParseTree(startRule, ruleMap) {

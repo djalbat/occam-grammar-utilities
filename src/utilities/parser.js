@@ -1,11 +1,13 @@
 "use strict";
 
 import { BNFLexer } from "occam-lexers";
-import { BNFParser } from "occam-parsers";
+import { BNFParser, rulesUtilities } from "occam-parsers";
 
-import { ruleMapFromRules, startRuleFromRules, startRuleFromRulesAndStartRuleName } from "../utilities/rules";
+import { startRuleFromRulesAndStartRuleName } from "../utilities/rules";
 
 import eliminateLeftRecursion  from "../eliminateLeftRecursion";
+
+const { ruleMapFromRules, startRuleFromRules } = rulesUtilities;
 
 const bnfLexer = BNFLexer.fromNothing(),
       bnfParser = BNFParser.fromNothing();
