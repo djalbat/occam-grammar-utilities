@@ -16,21 +16,13 @@ export default class AdjustedBNFTextarea extends Textarea {
     this.setValue(value);
   }
 
-  clearAdjustedBNF() {
-    const value = "";
-
-    this.setValue(value);
-  }
-
   parentContext() {
     const getAdjustedBNF = this.getAdjustedBNF.bind(this),
-          setAdjustedBNF = this.setAdjustedBNF.bind(this),
-          clearAdjustedBNF = this.clearAdjustedBNF.bind(this);
+          setAdjustedBNF = this.setAdjustedBNF.bind(this);
 
     return ({
       getAdjustedBNF,
-      setAdjustedBNF,
-      clearAdjustedBNF
+      setAdjustedBNF
     });
   }
 

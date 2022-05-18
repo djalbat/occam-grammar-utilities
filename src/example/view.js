@@ -4,7 +4,7 @@ import withStyle from "easy-with-style";  ///
 
 import { Element } from "easy";
 import { BasicLexer } from "occam-lexers";
-import { BasicParser, rulesUtilitlies } from "occam-parsers";
+import { BasicParser, rulesUtilities } from "occam-parsers";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 import { eliminateLeftRecursion, removeOrRenameIntermediateNodes } from "../index"; ///
 
@@ -22,7 +22,7 @@ import { rulesFromBNF } from "../utilities/parser";
 import { UNASSIGNED_ENTRY } from "../constants";
 import { rulesFromStartRuleAndRuleMap } from "../utilities/rules";
 
-const { rulesAsString, ruleMapFromRules, startRuleFromRules } = rulesUtilitlies;
+const { rulesAsString, ruleMapFromRules, startRuleFromRules } = rulesUtilities;
 
 class View extends Element {
   getParseTree(startRule, ruleMap) {
@@ -77,19 +77,16 @@ class View extends Element {
       rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap);
 
       const multiLine = true,
-            parseTree = this.getParseTree(startRule, ruleMap),
             rulesString = rulesAsString(rules, multiLine),
             adjustedBNF = rulesString;  ///
 
-      this.setParseTree(parseTree);
-
       this.setAdjustedBNF(adjustedBNF);
+
+      const parseTree = this.getParseTree(startRule, ruleMap);
+
+      this.setParseTree(parseTree);
     } catch (error) {
       console.log(error);
-
-      this.clearParseTree();
-
-      this.clearAdjustedBNF();
     }
   }
 
@@ -157,20 +154,19 @@ class View extends Element {
 
   static initialBNF = `
   
-                 A ::= B "h"
-                 
-                     | "f"
-                      
-                     | "g"
-                      
-                     ;
-                      
-                 B ::= A ;
-                      
+A ::= B
+
+    | C "f"
+
+    ;
+
+B ::= "h" C ;
+
+C ::= A ;
 
 `;
 
-  static initialContent = "ghh";
+  static initialContent = "f";
 
   static initialLexicalPattern = ".";
 
@@ -187,3 +183,51 @@ export default withStyle(View)`
   
 `;
 
+`
+
+How come this works...
+
+A ::= C "f"
+
+    | B
+
+    ;
+
+B ::= "h" C ;
+
+C ::= A ;
+ 
+...but this doesn't:
+
+A ::= C "f"
+
+    | B
+
+    ;
+
+B ::= "h" C ;
+
+C ::= A ;
+ 
+
+----------------------------------------
+
+This one needs further investigation. Try removing the "e" definition and then remove each kind of left recurstion in turn.
+
+    A ::= A "f"
+    
+        | B
+    
+        | "e"
+    
+        ;
+    
+    B ::= C
+    
+        | A "g"
+    
+        ;
+    
+    C ::= "h" ;
+
+`
