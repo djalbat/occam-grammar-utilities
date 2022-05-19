@@ -20,6 +20,16 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     ///
   }
 
+  replace(ruleMap) {
+    const ruleName = this.getRuleName(),
+          definition = this.getDefinition(),
+          rule = ruleMap[ruleName] || null,
+          replacedDefinition = definition, ///
+          replacementDefinition = this; ///
+
+    rule.replaceDefinition(replacedDefinition, replacementDefinition);
+  }
+
   static fromRuleNameAndDefinition(ruleName, definition) {
     let leftRecursiveDefinition = null;
 

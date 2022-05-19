@@ -154,19 +154,17 @@ class View extends Element {
 
   static initialBNF = `
   
-A ::= B
+A ::= A "f"
 
-    | C "f"
+    | B
 
     ;
 
-B ::= "h" C ;
-
-C ::= A ;
+B ::= "h" ;
 
 `;
 
-  static initialContent = "f";
+  static initialContent = "hffff";
 
   static initialLexicalPattern = ".";
 
@@ -229,5 +227,19 @@ This one needs further investigation. Try removing the "e" definition and then r
         ;
     
     C ::= "h" ;
+    
+--------------------------------------------------
+
+This one is also causing problems although the algorithm is in transition:
+
+A ::= B
+
+    | C "f"
+
+    ;
+
+B ::= "h" C ;
+
+C ::= A ;   
 
 `

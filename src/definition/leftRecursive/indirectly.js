@@ -15,7 +15,6 @@ import { reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } from
 import { isDefinitionUnary,
          isDefinitionComplex,
          isDefinitionLeftRecursive,
-         unaryDefinitionfromDefinition,
          recursiveRuleNamesFromDefinition,
          leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 import UnaryDefinition from "../unary";

@@ -2,7 +2,7 @@
 
 import { Parts } from "occam-parsers";
 
-const { RuleNamePart, ZeroOrMorePartsPart } = Parts;
+const { RuleNamePart, OneOrMorePartsPart } = Parts;
 
 export function ruleNamePartFromRuleName(ruleName, lookAhead = false) {
   const ruleNamePart = new RuleNamePart(ruleName, lookAhead);
@@ -10,9 +10,9 @@ export function ruleNamePartFromRuleName(ruleName, lookAhead = false) {
   return ruleNamePart;
 }
 
-export function zeroOrMoreRuleNamePartPartFromRuleName(ruleName) {
+export function oneOrMoreRuleNamePartPartFromRuleName(ruleName) {
   const ruleNamePart = ruleNamePartFromRuleName(ruleName),
-        zeroOrMoreRuleNamePartPart = new ZeroOrMorePartsPart(ruleNamePart);
+        oneOrMoreRuleNamePartPart = new OneOrMorePartsPart(ruleNamePart);
 
-  return zeroOrMoreRuleNamePartPart;
+  return oneOrMoreRuleNamePartPart;
 }
