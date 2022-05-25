@@ -6,7 +6,7 @@ import { recursiveRuleNamesFromDefinition } from "../utilities/definition";
 import { RECURSIVE_TYPE, DIRECTLY_LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE,  INDIRECTLY_LEFT_RECURSIVE_TYPE } from "../types";
 
 export default class RecursiveDefinition extends Definition {
-  constructor(type, parts, ruleName, definition, recursiveRuleNames) {
+  constructor(parts, type, ruleName, definition, recursiveRuleNames) {
     super(parts);
 
     this.type = type;
@@ -39,17 +39,36 @@ export default class RecursiveDefinition extends Definition {
     return leftRecursiveDefinition;
   }
 
+  match(definition) {
+    const matches = (this.definition === definition);
+
+    return matches;
+  }
+
+  rewrite(ruleMap) {
+    ///
+  }
+
+  replace(ruleMap) {
+    const rule = ruleMap[this.ruleName],
+          replacedDefinition = this.definition, ///
+          replacementDefinition = this; ///
+
+    rule.replaceDefinition(replacedDefinition, replacementDefinition);
+  }
+
   static fromRuleNameAndDefinition(ruleName, definition) {
     let recursiveDefinition = null;
 
-    const type = RECURSIVE_TYPE,
-          parts = definition.getParts(),
-          recursiveRuleNames = recursiveRuleNamesFromDefinition(definition),
+    const recursiveRuleNames = recursiveRuleNamesFromDefinition(definition),
           recursiveRuleNamesLength = recursiveRuleNames.length,
           definitionRecursiveDefinition = (recursiveRuleNamesLength > 0);
 
     if (definitionRecursiveDefinition) {
-      recursiveDefinition = new RecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames);
+      const parts = [],
+            type = RECURSIVE_TYPE;
+
+      recursiveDefinition = new RecursiveDefinition(parts, type, ruleName, definition, recursiveRuleNames);
     }
 
     return recursiveDefinition;

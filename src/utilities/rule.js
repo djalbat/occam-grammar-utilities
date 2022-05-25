@@ -1,7 +1,7 @@
 "use strict";
 
 import { isInstanceOf } from "../utilities/class";
-import { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } from "../utilities/ruleName";
+import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
 export function reducedRuleFromRule(rule, ruleMap, ReducedRule) {
 	const ruleName = rule.getName(),
@@ -18,21 +18,6 @@ export function reducedRuleFromRule(rule, ruleMap, ReducedRule) {
 	return reducedRule;
 }
 
-export function repeatedRuleFromRule(rule, ruleMap, RepeatedRule) {
-  const ruleName = rule.getName(),
-        repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
-
-  let repeatedRule = ruleMap[repeatedRuleName] || null;
-
-  if (repeatedRule === null) {
-    repeatedRule = RepeatedRule.fromRule(rule);
-
-    ruleMap[repeatedRuleName] = repeatedRule;
-  }
-
-  return repeatedRule;
-}
-
 export function rewrittenRuleFromRule(rule, ruleMap, RewrittenRule) {
   let rewrittenRule;
 
@@ -43,20 +28,14 @@ export function rewrittenRuleFromRule(rule, ruleMap, RewrittenRule) {
   } else {
     rewrittenRule = RewrittenRule.fromRule(rule);
 
-    const replacedRule = rule,  ///
-          replacementRule = rewrittenRule;  ///
+    const ruleName = rule.getName();
 
-    replaceRule(replacedRule, replacementRule, ruleMap);
+    delete ruleMap[ruleName];
+
+    const rewrittenRuleName = ruleName; ///
+
+    ruleMap[rewrittenRuleName] = rewrittenRule;
   }
 
   return rewrittenRule;
-}
-
-function replaceRule(replacedRule, replacementRule, ruleMap) {
-  const replacedRuleName = replacedRule.getName(),
-        replacementRuleName = replacementRule.getName();
-
-  delete ruleMap[replacedRuleName];
-
-  ruleMap[replacementRuleName] = replacementRule;
 }

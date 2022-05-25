@@ -1,8 +1,35 @@
 "use strict";
 
-import { Parts } from "occam-parsers";
+import { Parts, partTypes } from "occam-parsers";
 
-const { RuleNamePart, OneOrMorePartsPart } = Parts;
+const { RuleNamePartType, ChoiceOfPartsPartType, SequenceOfPartsPartType } = partTypes,
+      { OptionalPartPart, RuleNamePart, OneOrMorePartsPart, SequenceOfPartsPart } = Parts;
+
+export function isPartComplex(part) {
+  const partType = part.getType(),
+        partTypeChoiceOfPartsType = (partType === ChoiceOfPartsPartType),
+        partTypeSequenceOfPartsType = (partType === SequenceOfPartsPartType),
+        partTypeComplexPartType = partTypeChoiceOfPartsType || partTypeSequenceOfPartsType,
+        partComplex = partTypeComplexPartType;  ///
+
+  return partComplex;
+}
+
+export function isPartLookAhead(part) {
+  let partLookAhead = false;
+
+  const partType = part.getType(),
+        partTypeRuleNamePartType = (partType === RuleNamePartType),
+        partRuleNamePart = partTypeRuleNamePartType;  ///
+
+  if (partRuleNamePart) {
+    const ruleNamePart = part; ///
+
+    partLookAhead = ruleNamePart.isLookAhead();
+  }
+
+  return partLookAhead;
+}
 
 export function ruleNamePartFromRuleName(ruleName, lookAhead = false) {
   const ruleNamePart = new RuleNamePart(ruleName, lookAhead);
@@ -10,9 +37,15 @@ export function ruleNamePartFromRuleName(ruleName, lookAhead = false) {
   return ruleNamePart;
 }
 
-export function oneOrMoreRuleNamePartPartFromRuleName(ruleName) {
-  const ruleNamePart = ruleNamePartFromRuleName(ruleName),
-        oneOrMoreRuleNamePartPart = new OneOrMorePartsPart(ruleNamePart);
+export function sequenceOfPartsPartFromParts(parts) {
+  const sequenceOfPartsPart = new SequenceOfPartsPart(parts);
 
-  return oneOrMoreRuleNamePartPart;
+  return sequenceOfPartsPart;
+}
+
+export function optionalOneOrMorePartsPartFromPart(part) {
+  const oneOrMorePartsPart = new OneOrMorePartsPart(part),
+        optionalOneOrMorePartsPart = new OptionalPartPart(oneOrMorePartsPart);
+
+  return optionalOneOrMorePartsPart;
 }

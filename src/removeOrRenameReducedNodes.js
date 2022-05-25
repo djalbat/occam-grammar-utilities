@@ -1,54 +1,11 @@
 "use strict";
 
 import ReducedNode from "./node/reduced";
-import RepeatedNode from "./node/repeated";
 
 import { isInstanceOf } from "./utilities/class";
 import { ruleNameFromReducedRuleName, checkReducedRuleNameMatchesRuleName } from "./utilities/ruleName";
 
-export default function removeOrRenameIntermediateNodes(node) {
-  removeOrRenameReducedNodes(node);
-
-  removeRepeatedNodes(node);
-}
-
-function removeRepeatedNodes(node) {
-  const nodeNonTerminalNode = node.isNonTerminalNode();
-
-  if (nodeNonTerminalNode) {
-    const nonTerminalNode = node; ///
-
-    let childNodes = nonTerminalNode.getChildNodes();
-
-    childNodes = removeRepeatedChildNodes(childNodes);
-
-    nonTerminalNode.setChildNodes(childNodes)
-  }
-}
-
-function removeRepeatedChildNodes(childNodes) {
-  childNodes = childNodes.reduce((childNodes, childNode) => {
-    const childNodeRepeatedNode = isInstanceOf(childNode, RepeatedNode);
-
-    if (childNodeRepeatedNode) {
-      let childNodeChildNodes = childNode.getChildNodes();
-
-      childNodeChildNodes = removeRepeatedChildNodes(childNodeChildNodes);
-
-      childNodes = childNodes.concat(childNodeChildNodes);
-    } else {
-      removeRepeatedNodes(childNode);
-
-      childNodes.push(childNode);
-    }
-
-    return childNodes;
-  }, []);
-
-  return childNodes;
-}
-
-function removeOrRenameReducedNodes(node) {
+export default function removeOrRenameReducedNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (nodeNonTerminalNode) {

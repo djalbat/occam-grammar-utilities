@@ -1,12 +1,11 @@
 "use strict";
 
-import { partTypes } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
+import { isPartComplex, isPartLookAhead } from "../utilities/part";
 import { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "../utilities/recursivePart";
 
-const { first } = arrayUtilities,
-      { RuleNamePartType } = partTypes;
+const { first } = arrayUtilities;
 
 export function isDefinitionUnary(definition) {
   const parts = definition.getParts(),
@@ -19,30 +18,19 @@ export function isDefinitionUnary(definition) {
 export function isDefinitionComplex(definition) {
   const parts = definition.getParts(),
         firstPart = first(parts),
-        firstPartType = firstPart.getType(),
-        firstPartTypeRuleNamePartType = (firstPartType === RuleNamePartType),
-        firstPartRuleNamePart = firstPartTypeRuleNamePartType,
-        definitionComplex = !firstPartRuleNamePart;
+        firstPartComplex = isPartComplex(firstPart),
+        definitionComplex = firstPartComplex; ///
 
   return definitionComplex;
 }
 
 export function isDefinitionLookAhead(definition) {
-  let lookAhead = false;
-
   const parts = definition.getParts(),
         firstPart = first(parts),
-        firstPartType = firstPart.getType(),
-        firstPartTypeRuleNamePartType = (firstPartType === RuleNamePartType),
-        firstPartRuleNamePart = firstPartTypeRuleNamePartType;  ///
+        firstPartLookAhead = isPartLookAhead(firstPart),
+        definitionLookAhead = firstPartLookAhead; ///
 
-  if (firstPartRuleNamePart) {
-    const ruleNamePart = firstPart; ///
-
-    lookAhead = ruleNamePart.isLookAhead();
-  }
-
-  return lookAhead;
+  return definitionLookAhead;
 }
 
 export function isDefinitionLeftRecursive(definition) {

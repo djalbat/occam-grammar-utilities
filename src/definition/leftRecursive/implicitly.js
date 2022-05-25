@@ -9,38 +9,20 @@ import { LEFT_RECURSIVE_TYPE, IMPLICITLY_LEFT_RECURSIVE_TYPE } from "../../types
 const { first } = arrayUtilities;
 
 export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
-  constructor(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinition) {
-    super(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
-
-    this.leftRecursiveDefinition = leftRecursiveDefinition;
-  }
-
-  getLeftRecursiveDefinition() {
-    this.leftRecursiveDefinition = leftRecursiveDefinition;
-  }
-
-  replace(ruleMap) {
-    const rule = ruleMap[this.ruleName],
-          replacedDefinition = this.leftRecursiveDefinition,  ///
-          replacementDefinition = this; ///
-
-    rule.replaceDefinition(replacedDefinition, replacementDefinition);
-  }
-
   static fromRuleNameLeftRecursiveRuleNameAndRecursiveDefinitions(ruleName, leftRecursiveRuleName, recursiveDefinitions) {
     let implicitlyLeftRecursiveDefinition = null;
 
     const leftRecursiveDefinition = findLeftRecursiveDefinition(ruleName, leftRecursiveRuleName, recursiveDefinitions);
 
     if (leftRecursiveDefinition !== null) {
-      const type = IMPLICITLY_LEFT_RECURSIVE_TYPE,
-            parts = leftRecursiveDefinition.getParts(),
+      const parts = [],
+            type = IMPLICITLY_LEFT_RECURSIVE_TYPE,
             ruleName = leftRecursiveDefinition.getRuleName(),
             definition = null, ///
             recursiveRuleNames = leftRecursiveDefinition.getRecursiveRuleNames(),
             leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames();
 
-      implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinition);
+      implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
     }
 
     return implicitlyLeftRecursiveDefinition;

@@ -6,12 +6,6 @@ export function reducedRuleNameFromRuleName(ruleName) {
   return reducedRuleName;
 }
 
-export function repeatedRuleNameFromRuleName(ruleName) {
-  const repeatedRuleName = `${ruleName}~`;
-
-  return repeatedRuleName;
-}
-
 export function ruleNameFromReducedRuleName(reducedRuleName) {
   const ruleName = reducedRuleName.replace(/_$/, "");
 

@@ -1,44 +1,27 @@
 "use strict";
 
 import ReducedRule from "../../rule/reduced";
-import RepeatedRule from "../../rule/repeated";
 import RewrittenRule from "../../rule/rewritten";
-import RepeatedDefinition from "../../definition/repeated";
 import RewrittenDefinition from "../../definition/rewritten";
 import LeftRecursiveDefinition from "../../definition/leftRecursive";
 
 import { DIRECTLY_LEFT_RECURSIVE_TYPE } from "../../types";
-import { reducedRuleFromRule, repeatedRuleFromRule, rewrittenRuleFromRule } from "../../utilities/rule";
+import { reducedRuleFromRule, rewrittenRuleFromRule } from "../../utilities/rule";
 import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   rewrite(ruleMap) {
-    const definition = this.getDefinition(),
-          ruleName = this.getRuleName(),
-          rule = ruleMap[ruleName];
+    const ruleName = this.getRuleName(),
+          rule = ruleMap[ruleName],
+          definition = this.getDefinition(),
+          reducedRule = reducedRuleFromRule(rule, ruleMap, ReducedRule),
+          rewrittenRule = rewrittenRuleFromRule(rule, ruleMap, RewrittenRule),
+          leftRecursiveRuleName = ruleName, ///
+          rewrittenDefinition = RewrittenDefinition.fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName);
 
-    const reducedRule = reducedRuleFromRule(rule, ruleMap, ReducedRule),
-          reducedRuleEmpty = reducedRule.isEmpty();
+    reducedRule.removeDefinition(definition);
 
-    if (reducedRuleEmpty) {
-      const definitionString = definition.asString();
-
-      throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule has no sibling non-left recursive definitions and therefore cannot be rewritten.`);
-    }
-
-    const leftRecursiveRuleName = ruleName; ///
-
-    const repeatedRule = repeatedRuleFromRule(rule, ruleMap, RepeatedRule),
-          repeatedDefinition = RepeatedDefinition.fromDefinition(definition);
-
-    repeatedRule.addDefinition(repeatedDefinition);
-
-    const rewrittenRule = rewrittenRuleFromRule(rule, ruleMap, RewrittenRule),
-          replacedDefinition = this, ///
-          rewrittenDefinition = RewrittenDefinition.fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName),
-          replacementDefinition = rewrittenDefinition;  ///
-
-    rewrittenRule.replaceDefinition(replacedDefinition, replacementDefinition);
+    rewrittenRule.replaceDefinition(definition, rewrittenDefinition);
   }
 
   static fromRuleNameAndDefinition(ruleName, definition) {
@@ -69,11 +52,11 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
             throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
           }
 
-          const type = DIRECTLY_LEFT_RECURSIVE_TYPE,
-                parts = [],
+          const parts = [],
+                type = DIRECTLY_LEFT_RECURSIVE_TYPE,
                 recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
 
           return true;
         }

@@ -1,44 +1,55 @@
 "use strict";
 
 import { Rule } from "occam-parsers";
+import { arrayUtilities } from "necessary";
 
-import RuleNameDefinition from "../definition/ruleName";
-import RecursiveDefinition from "../definition/recursive";
-
-import { isInstanceOf } from "../utilities/class";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
+const { backwardsForEach } = arrayUtilities;
+
 export default class RewrittenRule extends Rule {
-  static fromRule(rule) {
-    let definitions = rule.getDefinitions();
-
-    const ruleName = rule.getName(),
+  prune(ruleMap, RewrittenDefinition) {
+    const name = this.getName(),
+          ruleName = name,  ///
+          definitions = this.getDefinitions(),
           reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          reducedRuleNameDefinition = RuleNameDefinition.fromRuleName(reducedRuleName);
+          reducedRule = ruleMap[reducedRuleName],
+          reducedRuleDefinitions = [];
 
-    definitions = definitions.filter((definition) => {
-      let recursiveDefinitionLeftRecursiveDefinition = false;
+    backwardsForEach(definitions, (definition, index) => {
+      const definitionRewrittenDefinition = (definition instanceof RewrittenDefinition);
 
-      const definitionRecursiveDefinition = isInstanceOf(definition, RecursiveDefinition);
+      if (!definitionRewrittenDefinition) {
+        const start = index,
+              deleteCount = 1;
 
-      if (definitionRecursiveDefinition) {
-        const recursiveDefinition = definition; ///
+        definitions.splice(start, deleteCount);
 
-        recursiveDefinitionLeftRecursiveDefinition = recursiveDefinition.isLeftRecursiveDefinition();
-      }
+        const reducedRuleDefinition = definition; ///
 
-      if (recursiveDefinitionLeftRecursiveDefinition) {
-        return true;
+        reducedRuleDefinitions.unshift(reducedRuleDefinition);
       }
     });
 
-    definitions = [
-      ...definitions,
-      reducedRuleNameDefinition
-    ];
+    reducedRuleDefinitions.forEach((reducedRuleDefinition) => {
+      const definition = reducedRuleDefinition; ///
 
-    const name = ruleName,  ///
+      reducedRule.addDefinition(definition);
+    });
+  }
+
+  replaceDefinition(definition, rewrittenDefinition) {
+    const replacedDefinition = definition, ///
+          replacementDefinition = rewrittenDefinition;  ///
+
+    super.replaceDefinition(replacedDefinition, replacementDefinition);
+  }
+
+  static fromRule(rule) {
+    const ruleName = rule.getName(),
+          name = ruleName, ///
           ambiguous = rule.isAmbiguous(),
+          definitions = rule.getDefinitions(),
           NonTerminalNode = rule.getNonTerminalNode(),
           rewrittenRule = new RewrittenRule(name, ambiguous, definitions, NonTerminalNode);
 

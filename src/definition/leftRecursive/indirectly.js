@@ -3,11 +3,12 @@
 import { arrayUtilities } from "necessary";
 
 import ReducedRule from "../../rule/reduced";
-import RepeatedRule from "../../rule/repeated";
-import RewrittenRule from "../../rule/rewritten";
-import RepeatedDefinition from "../../definition/repeated";
-import RewrittenDefinition from "../../definition/rewritten";
-import LeftRecursiveDefinition from "../../definition/leftRecursive";
+// import RepeatedRule from "../../rule/repeated";
+// import RewrittenRule from "../../rule/rewritten";
+// import UnaryDefinition from "../../definition/unary";
+// import RepeatedDefinition from "../../definition/repeated";
+// import RewrittenDefinition from "../../definition/rewritten";
+// import LeftRecursiveDefinition from "../../definition/leftRecursive";
 import ImplicitlyLeftRecursiveDefinition from "../../definition/leftRecursive/implicitly";
 
 import { INDIRECTLY_LEFT_RECURSIVE_TYPE } from "../../types";
@@ -17,13 +18,12 @@ import { isDefinitionUnary,
          isDefinitionLeftRecursive,
          recursiveRuleNamesFromDefinition,
          leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
-import UnaryDefinition from "../unary";
 
 const { first } = arrayUtilities;
 
 export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
-  constructor(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition) {
-    super(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+  constructor(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition) {
+    super(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
 
     this.implicitlyLeftRecursiveDefinition = implicitlyLeftRecursiveDefinition;
   }
@@ -53,12 +53,12 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
       throw new Error(`The '${implicitlyLeftRecursiveDefinitionString}' implicitly left recursive definition of the '${leftRecursiveRuleName}' rule has no sibling non-left recursive definitions and therefore the '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule cannot be rewritten.`);
     }
 
-    const repeatedRule = repeatedRuleFromRule(leftRecursiveRule, ruleMap, RepeatedRule),
-          repeatedDefinition = definitionUnary ?
-                                 RepeatedDefinition.fromImplicitlyLeftRecursiveDefinition(this.implicitlyLeftRecursiveDefinition) :
-                                   RepeatedDefinition.fromDefinition(definition);
-
-    repeatedRule.addDefinition(repeatedDefinition);
+    // const repeatedRule = repeatedRuleFromRule(leftRecursiveRule, ruleMap, RepeatedRule),
+    //       repeatedDefinition = definitionUnary ?
+    //                              RepeatedDefinition.fromImplicitlyLeftRecursiveDefinition(this.implicitlyLeftRecursiveDefinition) :
+    //                                RepeatedDefinition.fromDefinition(definition);
+    //
+    // repeatedRule.addDefinition(repeatedDefinition);
 
     const rewrittenRule = rewrittenRuleFromRule(leftRecursiveRule, ruleMap, RewrittenRule),
           replacedDefinition = this, ///
@@ -117,7 +117,7 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
                   parts = [],
                   recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-            indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(type, parts, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition);
+            indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition);
 
             return true;
           }
