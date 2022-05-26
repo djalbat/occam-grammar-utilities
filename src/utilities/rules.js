@@ -1,10 +1,21 @@
 "use strict";
 
+import { BNFLexer } from "occam-lexers";
 import { arrayUtilities } from "necessary";
-import { rulesUtilities } from "occam-parsers";
+import { BNFParser, rulesUtilities } from "occam-parsers";
 
 const { filter } = arrayUtilities,
-      { startRuleFromRules } = rulesUtilities;
+      { rulesAsString, ruleMapFromRules, startRuleFromRules } = rulesUtilities;
+
+const bnfLexer = BNFLexer.fromNothing(),
+      bnfParser = BNFParser.fromNothing();
+
+export function rulesFromBNF(bnf) {
+  const tokens = bnfLexer.tokensFromBNF(bnf),
+        rules = bnfParser.rulesFromTokens(tokens);
+
+  return rules;
+}
 
 export function rulesFromStartRuleAndRuleMap(startRule, ruleMap) {
   const rules = Object.values(ruleMap),
@@ -38,3 +49,12 @@ export function startRuleFromRulesAndStartRuleName(rules, startRuleName) {
 
   return startRule;
 }
+
+export default {
+  rulesFromBNF,
+  rulesAsString,
+  ruleMapFromRules,
+  startRuleFromRules,
+  rulesFromStartRuleAndRuleMap,
+  startRuleFromRulesAndStartRuleName
+};

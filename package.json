@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@swc/core": "^1.2.50",
+    "chai": "^4.1.0",
     "easy": "^13.0.41",
     "easy-layout": "^5.1.6",
     "easy-with-style": "^3.0.134",
@@ -23,6 +24,7 @@
     "express": "^4.17.1",
     "juxtapose": "^4.0.42",
     "lively-cli": "^2.0.34",
+    "mocha": "^6.0.2",
     "watchful-cli": "^1.7.22"
   },
   "scripts": {
@@ -36,7 +38,8 @@
     "build": "npm run clean && npm run batch",
     "build-debug": "npm run clean && npm run batch-debug",
     "watch": "npm run clean && npm run batch && npm run incremental",
-    "watch-debug": "npm run clean && npm run batch-debug && npm run incremental-debug"
+    "watch-debug": "npm run clean && npm run batch-debug && npm run incremental-debug",
+    "test": "mocha --recursive -R spec ./test"
   },
   "main": "./lib/index.js"
 }
