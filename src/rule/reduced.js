@@ -1,17 +1,44 @@
 "use strict";
 
 import { Rule } from "occam-parsers";
+import { arrayUtilities } from "necessary";
 
 import ReducedNode from "../node/reduced";
 
-import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
+import { isDefinitionLeftRecursive } from "../utilities/definition";
+import { reducedRuleNameFromRuleName, ruleNameFromReducedRuleName } from "../utilities/ruleName";
+
+const { backwardsForEach } = arrayUtilities;
 
 export default class ReducedRule extends Rule {
-  isEmpty() {
-    const definitionsLength = this.definitions.length,
-          empty = (definitionsLength === 0);
+  rewrite(ruleMap) {
+    const name = this.getName(),
+          reducedRuleName = name, ///
+          ruleName = ruleNameFromReducedRuleName(reducedRuleName),
+          rule = ruleMap[ruleName],
+          definitions = rule.getDefinitions(),
+          nonLeftRecursiveDefinitions = [];
 
-    return empty;
+    backwardsForEach(definitions, (definition, index) => {
+      const definitionLeftRecursive = isDefinitionLeftRecursive(definition)
+
+      if (!definitionLeftRecursive) {
+        const start = index,
+              deleteCount = 1;
+
+        definitions.splice(start, deleteCount);
+
+        const nonLeftRecursiveDefinition = definition; ///
+
+        nonLeftRecursiveDefinitions.unshift(nonLeftRecursiveDefinition);
+      }
+    });
+
+    nonLeftRecursiveDefinitions.forEach((nonLeftRecursiveDefinition) => {
+      const definition = nonLeftRecursiveDefinition; ///
+
+      this.addDefinition(definition);
+    });
   }
 
   static fromRule(rule) {

@@ -18,7 +18,7 @@ import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RemoveOrRenameReducedNodesCheckbox from "./checkbox/removeOrRenameReducedNodes"
 
-import { rulesFromBNF } from "../utilities/parser";
+import { rulesFromBNF } from "../utilities/rules";
 import { UNASSIGNED_ENTRY } from "../constants";
 import { rulesFromStartRuleAndRuleMap } from "../utilities/rules";
 
@@ -154,11 +154,15 @@ class View extends Element {
 
   static initialBNF = `
   
-A ::= A "g"
+A ::= B 
 
     | "f"
 
     ;
+
+B ::= C ;
+
+C ::= A "g" ;
 
 `;
 

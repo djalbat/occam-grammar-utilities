@@ -12,8 +12,8 @@ import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recu
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   rewrite(ruleMap) {
     const ruleName = this.getRuleName(),
-          rule = ruleMap[ruleName],
           definition = this.getDefinition(),
+          rule = ruleMap[ruleName],
           reducedRule = reducedRuleFromRule(rule, ruleMap, ReducedRule),
           rewrittenRule = rewrittenRuleFromRule(rule, ruleMap, RewrittenRule),
           leftRecursiveRuleName = ruleName, ///
@@ -36,21 +36,21 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
         const ruleNameLeftRecursiveRuleName = (ruleName === leftRecursiveRuleName);
 
         if (ruleNameLeftRecursiveRuleName) {
-          const definitionUnary = isDefinitionUnary(definition);
-
-          if (definitionUnary) {
-            const definitionString = definition.asString();
-
-            throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
-          }
-
-          const definitionComplex = isDefinitionComplex(definition);
-
-          if (definitionComplex) {
-            const definitionString = definition.asString();
-
-            throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
-          }
+          // const definitionUnary = isDefinitionUnary(definition);
+          //
+          // if (definitionUnary) {
+          //   const definitionString = definition.asString();
+          //
+          //   throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
+          // }
+          //
+          // const definitionComplex = isDefinitionComplex(definition);
+          //
+          // if (definitionComplex) {
+          //   const definitionString = definition.asString();
+          //
+          //   throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+          // }
 
           const parts = [],
                 type = DIRECTLY_LEFT_RECURSIVE_TYPE,

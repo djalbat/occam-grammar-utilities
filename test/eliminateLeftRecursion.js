@@ -20,7 +20,7 @@ A ::= A "g"
 
 `;
 
-    it("rewritten to reference a reduced rule, which is also created", () => {
+    it("is rewritten to reference a reduced rule", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -33,7 +33,7 @@ A_ ::= "f" ;
 
     });
 
-    it("", () => {
+    it("and results in a parse tree with the requisite repetition", () => {
       const content = "fg",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -51,6 +51,61 @@ f[custom](0)
 
     });
   });
+
+  describe("a single indirectly left recursive definition", () => {
+    const bnf = `
+  
+A ::= B 
+
+    | "f"
+
+    ;
+
+B ::= C ;
+
+C ::= A "g" ;
+
+`;
+
+    it("is rewritten to reference a reduced rule", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+    
+A  ::= B ;
+
+B  ::= C ;
+
+A_ ::= "f" ;
+
+C  ::= A_ "g"+? ;
+
+`));
+
+    });
+
+    it("and results in a parse tree with the requisite repetition", () => {
+      const content = "fg",
+          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+          A(0-1)         
+             |           
+          B(0-1)         
+             |           
+          C(0-1)         
+             |           
+      --------------     
+      |            |     
+    A(0)     g[custom](1)
+      |                  
+f[custom](0)             
+             
+`));
+
+    });
+  });
 });
 
 function compare(stringA, stringB) {
@@ -60,10 +115,10 @@ function compare(stringA, stringB) {
   return (stringA === stringB);
 }
 
-function stripWhitespace(bnf) {
-  bnf = bnf.replace(/[\s\t\n\r]/g, "");
+function stripWhitespace(string) {
+  string = string.replace(/[\s\t\n\r]/g, "");
 
-  return bnf;
+  return string;
 }
 
 function adjustedBNFFromBNF(bnf) {

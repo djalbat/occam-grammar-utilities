@@ -1,10 +1,9 @@
 "use strict";
 
-import RewrittenRule from "./rule/rewritten";
+import ReducedRule from "./rule/reduced";
 import RecursiveDefinition from "./definition/recursive";
-import RewrittenDefinition from "./definition/rewritten";
 import DirectlyLeftRecursiveDefinition from "./definition/leftRecursive/directly";
-// import IndirectlyLeftRecursiveDefinition from "./definition/leftRecursive/indirectly";
+import IndirectlyLeftRecursiveDefinition from "./definition/leftRecursive/indirectly";
 
 import { isInstanceOf } from "./utilities/class";
 
@@ -17,9 +16,9 @@ export default function eliminateLeftRecursion(startRule, ruleMap) {
 
   rewriteLeftRecursiveDefinitions(leftRecursiveDefinitions, ruleMap);
 
-  const rewrittenRules = retrieveRewrittenRules(ruleMap);
+  const reducedRules = retrieveReducedRules(ruleMap);
 
-  pruneRewrittenRules(rewrittenRules, ruleMap);
+  rewriteReducedRules(reducedRules, ruleMap);
 
   const startRuleName = startRule.getName();
 
@@ -28,27 +27,27 @@ export default function eliminateLeftRecursion(startRule, ruleMap) {
   return startRule;
 }
 
-function pruneRewrittenRules(rewrittenRules, ruleMap) {
-  rewrittenRules.forEach((rewrittenRule) => {
-    rewrittenRule.prune(ruleMap, RewrittenDefinition);
+function rewriteReducedRules(reducedRules, ruleMap) {
+  reducedRules.forEach((reducedRule) => {
+    reducedRule.rewrite(ruleMap);
   });
 }
 
-function retrieveRewrittenRules(ruleMap) {
+function retrieveReducedRules(ruleMap) {
   const rules = Object.values(ruleMap),
-        rewrittenRules = rules.reduce((rewrittenRules, rule) => {
-          const ruleRewrittenRule = isInstanceOf(rule, RewrittenRule);
+        reducedRules = rules.reduce((reducedRules, rule) => {
+          const ruleReducedRule = isInstanceOf(rule, ReducedRule);
 
-          if (ruleRewrittenRule) {
-            const rewrittenRule = rule; ///
+          if (ruleReducedRule) {
+            const reducedRule = rule; ///
 
-            rewrittenRules.push(rewrittenRule);
+            reducedRules.push(reducedRule);
           }
 
-          return rewrittenRules;
+          return reducedRules;
         }, []);
 
-  return rewrittenRules;
+  return reducedRules;
 }
 
 function rewriteLeftRecursiveDefinitions(leftRecursiveDefinitions, ruleMap) {
@@ -70,8 +69,8 @@ function retrieveLeftRecursiveDefinition(ruleName, definition, recursiveDefiniti
     return;
   }
 
-  const leftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition); /// ||
-                                  /// IndirectlyLeftRecursiveDefinition.fromRuleNameDefinitionAndRecursiveDefinitions(ruleName, definition, recursiveDefinitions); */
+  const leftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition) ||
+                                  IndirectlyLeftRecursiveDefinition.fromRuleNameDefinitionAndRecursiveDefinitions(ruleName, definition, recursiveDefinitions);
 
   if (leftRecursiveDefinition !== null) {
     leftRecursiveDefinitions.push(leftRecursiveDefinition);
