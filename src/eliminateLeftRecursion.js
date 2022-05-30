@@ -10,6 +10,7 @@ import { isInstanceOf } from "./utilities/class";
 
 export default function eliminateLeftRecursion(startRule, ruleMap) {
   const rule = startRule, ///
+        reducedRules = [],
         recursiveDefinitions = [],
         leftRecursiveDefinitions = [];
 
@@ -17,7 +18,7 @@ export default function eliminateLeftRecursion(startRule, ruleMap) {
 
   rewriteLeftRecursiveDefinitions(leftRecursiveDefinitions, ruleMap);
 
-  const reducedRules = retrieveReducedRules(ruleMap);
+  retrieveReducedRules(reducedRules, ruleMap);
 
   rewriteReducedRules(reducedRules, ruleMap);
 
@@ -34,21 +35,18 @@ function rewriteReducedRules(reducedRules, ruleMap) {
   });
 }
 
-function retrieveReducedRules(ruleMap) {
-  const rules = Object.values(ruleMap),
-        reducedRules = rules.reduce((reducedRules, rule) => {
-          const ruleReducedRule = isInstanceOf(rule, ReducedRule);
+function retrieveReducedRules(reducedRules, ruleMap) {
+  const rules = Object.values(ruleMap);
 
-          if (ruleReducedRule) {
-            const reducedRule = rule; ///
+  rules.forEach((rule) => {
+    const ruleReducedRule = isInstanceOf(rule, ReducedRule);
 
-            reducedRules.push(reducedRule);
-          }
+    if (ruleReducedRule) {
+      const reducedRule = rule; ///
 
-          return reducedRules;
-        }, []);
-
-  return reducedRules;
+      reducedRules.push(reducedRule);
+    }
+  });
 }
 
 function rewriteLeftRecursiveDefinitions(leftRecursiveDefinitions, ruleMap) {

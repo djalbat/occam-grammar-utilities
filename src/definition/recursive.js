@@ -43,18 +43,6 @@ export default class RecursiveDefinition extends Definition {
     return matches;
   }
 
-  rewrite(ruleMap) {
-    ///
-  }
-
-  replace(ruleMap) {
-    const rule = ruleMap[this.ruleName],
-          replacedDefinition = this.definition, ///
-          replacementDefinition = this; ///
-
-    rule.replaceDefinition(replacedDefinition, replacementDefinition);
-  }
-
   static fromRuleNameAndDefinition(ruleName, definition) {
     let recursiveDefinition = null;
 

@@ -7,7 +7,7 @@ import { Textarea } from "easy";
 export default withStyle(Textarea)`
 
   border: 1px solid darkgrey;
-  height: 24rem;
+  height: 32rem;
   resize: vertical;
   padding: 0.25rem;
   font-size: 1.2rem;

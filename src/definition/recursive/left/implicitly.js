@@ -18,7 +18,7 @@ export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefi
       const parts = [],
             type = IMPLICITLY_LEFT_RECURSIVE_TYPE,
             ruleName = leftRecursiveDefinition.getRuleName(),
-            definition = null, ///
+            definition = leftRecursiveDefinition.getDefinition(),
             recursiveRuleNames = leftRecursiveDefinition.getRecursiveRuleNames(),
             leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames();
 

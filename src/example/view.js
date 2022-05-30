@@ -4,9 +4,9 @@ import withStyle from "easy-with-style";  ///
 
 import { Element } from "easy";
 import { BasicLexer } from "occam-lexers";
-import { BasicParser, rulesUtilities } from "occam-parsers";
+import { BasicParser } from "occam-parsers";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
-import { eliminateLeftRecursion, removeOrRenameReducedNodes } from "../index"; ///
+import { rulesUtilities, eliminateLeftRecursion, removeOrRenameReducedNodes } from "../index"; ///
 
 import Paragraph from "./paragraph";
 import SubHeading from "./subHeading";
@@ -14,6 +14,7 @@ import SizeableDiv from "./div/sizeable";
 import BNFTextarea from "./textarea/bnf";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
+import StartRuleNameInput from "./input/startRuleName";
 import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RemoveOrRenameReducedNodesCheckbox from "./checkbox/removeOrRenameReducedNodes"
@@ -22,7 +23,7 @@ import { rulesFromBNF } from "../utilities/rules";
 import { UNASSIGNED_ENTRY } from "../constants";
 import { rulesFromStartRuleAndRuleMap } from "../utilities/rules";
 
-const { rulesAsString, ruleMapFromRules, startRuleFromRules } = rulesUtilities;
+const { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 class View extends Element {
   getParseTree(startRule, ruleMap) {
@@ -64,13 +65,14 @@ class View extends Element {
 
   changeHandler(event, element) {
     // try {
-      const bnf = this.getBNF();
+      const bnf = this.getBNF(),
+            startRuleName = this.getStartRuleName();
 
       let rules = rulesFromBNF(bnf);
 
       const ruleMap = ruleMapFromRules(rules);
 
-      let startRule = startRuleFromRules(rules);
+      let startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName);
 
       startRule = eliminateLeftRecursion(startRule, ruleMap);
 
@@ -82,9 +84,9 @@ class View extends Element {
 
       this.setAdjustedBNF(adjustedBNF);
 
-      // const parseTree = this.getParseTree(startRule, ruleMap);
-      //
-      // this.setParseTree(parseTree);
+      const parseTree = this.getParseTree(startRule, ruleMap);
+
+      this.setParseTree(parseTree);
     // } catch (error) {
     //   console.log(error);
     // }
@@ -117,6 +119,10 @@ class View extends Element {
         <ColumnDiv>
           <RowsDiv>
             <SubHeading>
+              Start rule name
+            </SubHeading>
+            <StartRuleNameInput onKeyUp={keyUpHandler} />
+            <SubHeading>
               Content
             </SubHeading>
             <ContentTextarea onKeyUp={keyUpHandler} />
@@ -138,14 +144,17 @@ class View extends Element {
   initialise() {
     this.assignContext();
 
-    const { initialBNF, initialContent, initialLexicalPattern } = this.constructor,
+    const { initialBNF, initialContent, initialStartRuleName, initialLexicalPattern } = this.constructor,
           bnf = initialBNF, ///
           content = initialContent, ///
+          startRuleName = initialStartRuleName, ///
           lexicalPattern = initialLexicalPattern; ///
 
     this.setBNF(bnf);
 
     this.setContent(content);
+
+    this.setStartRuleName(startRuleName);
 
     this.setLexicalPattern(lexicalPattern);
 
@@ -153,20 +162,24 @@ class View extends Element {
   }
 
   static initialBNF = `
+ 
+S ::= A
+
+    | "e"
+    
+    ;  
   
-A ::= B 
+A ::= S "f" 
 
-    | "f"
-
-    ;
-
-B ::= C ;
-
-C ::= A "g" ;
-
+    | "g"
+    
+    ;  
+  
 `;
 
-  static initialContent = "fg";
+  static initialContent = "fgh";
+
+  static initialStartRuleName = "S";
 
   static initialLexicalPattern = ".";
 

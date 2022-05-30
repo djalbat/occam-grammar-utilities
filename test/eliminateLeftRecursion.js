@@ -9,7 +9,23 @@ const { rulesUtilities, eliminateLeftRecursion, removeOrRenameReducedNodes } = r
 const { rulesFromBNF, rulesAsString, ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
-  describe("a single directly left recursive definition", () => {
+  describe("a single directly left recursive definition is unary", () => {
+    const bnf = `
+  
+A ::= A
+
+    | "f"
+
+    ;
+
+`;
+
+    it("throws an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  describe("a single directly left recursive definition is non-unary", () => {
     const bnf = `
   
 A ::= A "g"
@@ -35,7 +51,7 @@ A_ ::= "f" ;
 
     it("and results in a parse tree with the requisite repetition", () => {
       const content = "fg",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
@@ -52,7 +68,27 @@ f[custom](0)
     });
   });
 
-  describe("a single indirectly left recursive definition", () => {
+  describe("a single indirectly left recursive definition and the corresponding implicitly left recursive definition are unary", () => {
+    const bnf = `
+  
+A ::= B 
+
+    | "f"
+
+    ;
+
+B ::= C ;
+
+C ::= A ;
+
+`;
+
+    it("throws an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  describe("a single indirectly left recursive definition and the corresponding implicitly left recursive definition are non-unary", () => {
     const bnf = `
   
 A ::= B 

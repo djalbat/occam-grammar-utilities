@@ -7,13 +7,21 @@ import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
 import { DIRECTLY_LEFT_RECURSIVE_TYPE } from "../../../types";
 import { reducedRuleFromRule, rewrittenRuleFromRule } from "../../../utilities/rule";
-import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
+import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   rewrite(ruleMap) {
-    const ruleName = this.getRuleName(),
-          definition = this.getDefinition(),
-          rule = ruleMap[ruleName],
+    const unary = this.isUnary(),
+          ruleName = this.getRuleName(),
+          definition = this.getDefinition();
+
+    if (unary) {
+      const definitionString = definition.asString();
+
+      throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
+    }
+
+    const rule = ruleMap[ruleName],
           reducedRule = reducedRuleFromRule(rule, ruleMap, ReducedRule),
           rewrittenRule = rewrittenRuleFromRule(rule, ruleMap, RewrittenRule),
           leftRecursiveRuleName = ruleName, ///
@@ -36,14 +44,6 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
         const ruleNameLeftRecursiveRuleName = (ruleName === leftRecursiveRuleName);
 
         if (ruleNameLeftRecursiveRuleName) {
-          // const definitionUnary = isDefinitionUnary(definition);
-          //
-          // if (definitionUnary) {
-          //   const definitionString = definition.asString();
-          //
-          //   throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
-          // }
-          //
           // const definitionComplex = isDefinitionComplex(definition);
           //
           // if (definitionComplex) {
