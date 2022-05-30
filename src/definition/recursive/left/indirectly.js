@@ -1,14 +1,14 @@
 "use strict";
 
-import ReducedRule from "../../rule/reduced";
-import RewrittenRule from "../../rule/rewritten";
-import RewrittenDefinition from "../../definition/rewritten";
-import LeftRecursiveDefinition from "../../definition/leftRecursive";
-import ImplicitlyLeftRecursiveDefinition from "../../definition/leftRecursive/implicitly";
+import ReducedRule from "../../../rule/reduced";
+import RewrittenRule from "../../../rule/rewritten";
+import RewrittenDefinition from "../../../definition/rewritten";
+import LeftRecursiveDefinition from "../../../definition/recursive/left";
+import ImplicitlyLeftRecursiveDefinition from "../../../definition/recursive/left/implicitly";
 
-import { INDIRECTLY_LEFT_RECURSIVE_TYPE } from "../../types";
-import { reducedRuleFromRule, rewrittenRuleFromRule } from "../../utilities/rule";
-import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+import { INDIRECTLY_LEFT_RECURSIVE_TYPE } from "../../../types";
+import { reducedRuleFromRule, rewrittenRuleFromRule } from "../../../utilities/rule";
+import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
 export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   constructor(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition) {

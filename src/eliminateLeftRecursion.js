@@ -2,8 +2,9 @@
 
 import ReducedRule from "./rule/reduced";
 import RecursiveDefinition from "./definition/recursive";
-import DirectlyLeftRecursiveDefinition from "./definition/leftRecursive/directly";
-import IndirectlyLeftRecursiveDefinition from "./definition/leftRecursive/indirectly";
+import LeftRecursiveDefinition from "./definition/recursive/left";
+import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
+import IndirectlyLeftRecursiveDefinition from "./definition/recursive/left/indirectly";
 
 import { isInstanceOf } from "./utilities/class";
 
@@ -84,7 +85,8 @@ function retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, leftRecurs
   definitions.forEach((definition) => {
     retrieveLeftRecursiveDefinition(ruleName, definition, recursiveDefinitions, leftRecursiveDefinitions);
 
-    const recursiveDefinition = RecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
+    const recursiveDefinition = LeftRecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition) ||
+                                RecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
 
     if (recursiveDefinition !== null) {
       const previousRecursiveDefinitions = [ ...recursiveDefinitions, recursiveDefinition ],

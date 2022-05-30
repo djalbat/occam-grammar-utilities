@@ -2,9 +2,9 @@
 
 import { arrayUtilities } from "necessary";
 
-import LeftRecursiveDefinition from "../../definition/leftRecursive";
+import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
-import { IMPLICITLY_LEFT_RECURSIVE_TYPE } from "../../types";
+import { IMPLICITLY_LEFT_RECURSIVE_TYPE } from "../../../types";
 
 const { backwardsFind, backwardsEvery } = arrayUtilities;
 
@@ -46,9 +46,11 @@ function leftRecursiveDefinitionsFromRecursiveDefinitions(recursiveDefinitions) 
   const leftRecursiveDefinitions = [];
 
   backwardsEvery(recursiveDefinitions, (recursiveDefinition) => {
-    const leftRecursiveDefinition = LeftRecursiveDefinition.fromRecursiveDefinition(recursiveDefinition);
+    const recursiveDefinitionLeftRecursiveDefinition = recursiveDefinition.isLeftRecursiveDefinition();
 
-    if (leftRecursiveDefinition !== null) {
+    if (recursiveDefinitionLeftRecursiveDefinition) {
+      const leftRecursiveDefinition = recursiveDefinition;  ///
+
       leftRecursiveDefinitions.unshift(leftRecursiveDefinition);
 
       return true;

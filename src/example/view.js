@@ -82,9 +82,9 @@ class View extends Element {
 
       this.setAdjustedBNF(adjustedBNF);
 
-      const parseTree = this.getParseTree(startRule, ruleMap);
-
-      this.setParseTree(parseTree);
+      // const parseTree = this.getParseTree(startRule, ruleMap);
+      //
+      // this.setParseTree(parseTree);
     // } catch (error) {
     //   console.log(error);
     // }

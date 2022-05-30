@@ -1,13 +1,13 @@
 "use strict";
 
-import ReducedRule from "../../rule/reduced";
-import RewrittenRule from "../../rule/rewritten";
-import RewrittenDefinition from "../../definition/rewritten";
-import LeftRecursiveDefinition from "../../definition/leftRecursive";
+import ReducedRule from "../../../rule/reduced";
+import RewrittenRule from "../../../rule/rewritten";
+import RewrittenDefinition from "../../../definition/rewritten";
+import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
-import { DIRECTLY_LEFT_RECURSIVE_TYPE } from "../../types";
-import { reducedRuleFromRule, rewrittenRuleFromRule } from "../../utilities/rule";
-import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+import { DIRECTLY_LEFT_RECURSIVE_TYPE } from "../../../types";
+import { reducedRuleFromRule, rewrittenRuleFromRule } from "../../../utilities/rule";
+import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   rewrite(ruleMap) {
