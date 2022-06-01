@@ -68,13 +68,6 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
     //   throw new Error(`The '${implicitlyLeftRecursiveDefinitionString}' implicitly left recursive definition of the '${leftRecursiveRuleName}' rule has no sibling non-left recursive definitions and therefore the '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule cannot be rewritten.`);
     // }
     //
-    // const repeatedRule = repeatedRuleFromRule(leftRecursiveRule, ruleMap, RepeatedRule),
-    //       repeatedDefinition = definitionUnary ?
-    //                              RepeatedDefinition.fromImplicitlyLeftRecursiveDefinition(this.implicitlyLeftRecursiveDefinition) :
-    //                                RepeatedDefinition.fromDefinition(definition);
-    //
-    // repeatedRule.addDefinition(repeatedDefinition);
-    //
     // const rewrittenRule = rewrittenRuleFromRule(leftRecursiveRule, ruleMap, RewrittenRule),
     //       replacedDefinition = this, ///
     //       rewrittenDefinition = definitionUnary ?

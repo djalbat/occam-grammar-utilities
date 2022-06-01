@@ -163,21 +163,25 @@ class View extends Element {
 
   static initialBNF = `
  
-S ::= A
+S  ::= A "g"
 
-    | "e"
+     | S_
     
-    ;  
-  
-A ::= S "f" 
+     ;  
+     
+S_ ::= "e" ;     
 
-    | "g"
+A  ::= A_ ( "g" "f" )+? ;  
+
+A_ ::= S_ "f" 
+
+     | "g"
     
-    ;  
+     ;  
   
 `;
 
-  static initialContent = "fgh";
+  static initialContent = "gf";
 
   static initialStartRuleName = "S";
 
@@ -197,6 +201,236 @@ export default withStyle(View)`
 `;
 
 `
+
+The following rules...
+
+Isn't it the case that we always loose information from the parse tree when we eliminate indirect left recursion in this way?
+
+Or does the fact that we now have reduced rules, the corresponding notes of which will get renamed, will preserve the meaning?    
+
+Although there are two left recursive definitions and either could be rewritten, the fact is that we only need to rewrite one in order to eliminate the left recursion overall.
+    
+S ::= A "g"
+
+    | "e"
+    
+    ; 
+    
+A ::= S "f" 
+
+    | "g"
+    
+    ;  
+    
+=======================
+    
+S  ::= A "g"
+
+     | S_
+    
+     ;  
+     
+S_ ::= "e" ;     
+  
+A  ::= S "f" 
+
+     | "g"
+    
+     ;
+     
+Note that we do not rewrite A immediately. First we incorporate S's definitions...      
+
+A  ::= A "g" "f" 
+
+     | S_ "f" 
+
+     | "g"
+    
+     ;  
+
+...and now we reduce:
+
+A  ::= A "g" "f" 
+
+     | A_
+    
+     ;  
+
+A_ ::= S_ "f" 
+
+     | "g"
+    
+     ;  
+
+
+A  ::= A_ ( "g" "f" )+? ;  
+
+To conclude:
+
+S  ::= A "g"
+
+     | S_
+    
+     ;  
+     
+S_ ::= "e" ;     
+
+A  ::= A_ ( "g" "f" )+? ;  
+
+A_ ::= S_ "f" 
+
+     | "g"
+    
+     ;  
+
+
+
+
+
+
+
+
+
+
+
+
+
+So if we match ef, for example:
+
+          S(0-1)         
+             |           
+          A(0-1)         
+             |           
+      --------------     
+      |            |     
+    S_(0)    f[custom](1)
+      |                  
+e[custom](0)             
+
+Yes!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
+...which does not change anything aside from adding nodes to the parse tree which can be subsequently removed.
+
+We now substitute S into A...
+  
+A  ::= A "f" 
+
+     | S_ "f" 
+
+     | A_
+    
+     ;  
+     
+...create a new reduced rule:
+
+A  ::= A "f" 
+
+     | A__
+    
+     ;  
+     
+...where
+
+A__ ::= S_ "f"
+
+      | A_
+      
+      ;
+      
+Thus...
+
+A ::= A__ "f"+? ;      
+
+...and: 
+
+A__ ::= S_ "f"
+
+      | "g"
+     
+      ;
+
+To conclude:
+
+S   ::= A
+
+      | S_
+    
+      ;  
+  
+S_  ::= "e" ;  
+
+A   ::= A__ "f"+? ;      
+
+A__ ::= S_ "f"
+
+      | "g"
+     
+      ;
+
+
+
+A   ::= ( S_ "f" | A_ ) "f"+? ;      
+
+A_ ::=  "g" ;
+
+
+This is slightly different to the previous effort:
+
+S  ::= A
+
+     | S_
+    
+     ;  
+  
+S_ ::= "e" ;  
+  
+A  ::= A_ "f"+? 
+
+     | S_ "f"+? 
+
+     | A_
+    
+     ;  
+
+A_ ::= "g" ;  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------
 
 How come this works...
 
