@@ -19,6 +19,8 @@ export default class ReducedRule extends Rule {
           definitions = rule.getDefinitions(),
           nonLeftRecursiveDefinitions = [];
 
+    let reducedDefinition = null;
+
     backwardsForEach(definitions, (definition, index) => {
       const definitionLeftRecursive = isDefinitionLeftRecursive(definition)
 
@@ -31,8 +33,16 @@ export default class ReducedRule extends Rule {
         const nonLeftRecursiveDefinition = definition; ///
 
         nonLeftRecursiveDefinitions.unshift(nonLeftRecursiveDefinition);
+      } else {
+        debugger
       }
     });
+
+    if (reducedDefinition !== null) {
+      const definition = reducedDefinition; ///
+
+      this.addDefinition(definition);
+    }
 
     nonLeftRecursiveDefinitions.forEach((nonLeftRecursiveDefinition) => {
       const definition = nonLeftRecursiveDefinition; ///

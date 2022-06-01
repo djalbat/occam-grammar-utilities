@@ -84,9 +84,9 @@ class View extends Element {
 
       this.setAdjustedBNF(adjustedBNF);
 
-      const parseTree = this.getParseTree(startRule, ruleMap);
-
-      this.setParseTree(parseTree);
+      // const parseTree = this.getParseTree(startRule, ruleMap);
+      //
+      // this.setParseTree(parseTree);
     // } catch (error) {
     //   console.log(error);
     // }
@@ -163,22 +163,18 @@ class View extends Element {
 
   static initialBNF = `
  
-S  ::= A "g"
+S ::= A "g"
 
-     | S_
+    | "e"
     
-     ;  
-     
-S_ ::= "e" ;     
-
-A  ::= A_ ( "g" "f" )+? ;  
-
-A_ ::= S_ "f" 
-
-     | "g"
+    ; 
     
-     ;  
-  
+A ::= S "f" 
+
+    | "g"
+    
+    ;  
+      
 `;
 
   static initialContent = "gf";
@@ -202,80 +198,15 @@ export default withStyle(View)`
 
 `
 
-The following rules...
-
-Isn't it the case that we always loose information from the parse tree when we eliminate indirect left recursion in this way?
-
-Or does the fact that we now have reduced rules, the corresponding notes of which will get renamed, will preserve the meaning?    
-
-Although there are two left recursive definitions and either could be rewritten, the fact is that we only need to rewrite one in order to eliminate the left recursion overall.
-    
-S ::= A "g"
-
-    | "e"
-    
-    ; 
-    
-A ::= S "f" 
-
-    | "g"
-    
-    ;  
-    
-=======================
-    
 S  ::= A "g"
 
      | S_
     
      ;  
      
-S_ ::= "e" ;     
-  
-A  ::= S "f" 
-
-     | "g"
-    
-     ;
-     
-Note that we do not rewrite A immediately. First we incorporate S's definitions...      
-
-A  ::= A "g" "f" 
-
-     | S_ "f" 
-
-     | "g"
-    
-     ;  
-
-...and now we reduce:
-
-A  ::= A "g" "f" 
-
-     | A_
-    
-     ;  
-
-A_ ::= S_ "f" 
-
-     | "g"
-    
-     ;  
-
-
 A  ::= A_ ( "g" "f" )+? ;  
 
-To conclude:
-
-S  ::= A "g"
-
-     | S_
-    
-     ;  
-     
 S_ ::= "e" ;     
-
-A  ::= A_ ( "g" "f" )+? ;  
 
 A_ ::= S_ "f" 
 

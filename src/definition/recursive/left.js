@@ -12,6 +12,8 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     this.leftRecursiveRuleNames = leftRecursiveRuleNames;
   }
 
+  getParts() { return this.definition.getParts(); }
+
   getLeftRecursiveRuleNames() {
     return this.leftRecursiveRuleNames;
   }

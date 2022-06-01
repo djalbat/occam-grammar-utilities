@@ -5,19 +5,21 @@ import { arrayUtilities } from "necessary";
 
 import { cloneParts } from "../utilities/parts";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
-import { isPartLookAhead, ruleNamePartFromRuleName, sequenceOfPartsPartFromParts, optionalOneOrMorePartsPartFromPart } from "../utilities/part";
+import { isPartLookAhead,
+         sequenceOfPartsPartFromParts,
+         optionalOneOrMorePartsPartFromPart,
+         ruleNamePartFromRuleNameAndLookAhead } from "../utilities/part";
 
 const { first } = arrayUtilities;
 
 export default class RewrittenDefinition extends Definition {
-  static fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName) {
-    let parts;
-
-    parts = definition.getParts();
+  static fromDefinitionAndRuleName(definition, ruleName) {
+    let parts = definition.getParts();
 
     parts = cloneParts(parts);  ///
 
     const part = parts.shift(),
+          leftRecursiveRuleName = ruleName,  ///
           reducedLeftRecursiveRuleNamePart = reducedLeftRecursiveRuleNamePartFromPartAndLeftRecursiveRuleName(part, leftRecursiveRuleName),
           optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMorePartOrSequenceOfPartsFromParts(parts);
 
@@ -29,15 +31,36 @@ export default class RewrittenDefinition extends Definition {
     const rewrittenDefinition = new RewrittenDefinition(parts);
 
     return rewrittenDefinition;
+
   }
 
-  // static fromDefinitionLeftRecursiveRuleNameAndImplicitlyLeftRecursiveDefinition(definition, leftRecursiveRuleName, implicitlyLeftRecursiveDefinition) {
-  //   const definitionLookAhead = isDefinitionLookAhead(definition),
-  //         lookAhead = definitionLookAhead,  ///
-  //         rewrittenDefinition = rewrittenDefinitionFromDefinitionAndLeftRecursiveRuleName(lookAhead, leftRecursiveRuleName);
-  //
-  //   return rewrittenDefinition;
-  // }
+  static fromDefinitionAndImplicitlyLeftRecursiveDefinition(definition, implicitlyLeftRecursiveDefinition) {
+    const implicitlyLeftRecursiveDefinitionParts = implicitlyLeftRecursiveDefinition.getParts();
+
+    let parts = definition.getParts(),
+        implicitParts = implicitlyLeftRecursiveDefinitionParts; ///
+
+    parts = cloneParts(parts);  ///
+
+    implicitParts = cloneParts(implicitParts);  ///
+
+    implicitParts.shift();
+
+    const part = parts.shift(),
+          implicitlyLeftRecursiveDefinitionRuleName = implicitlyLeftRecursiveDefinition.getRuleName(),
+          leftRecursiveRuleName = implicitlyLeftRecursiveDefinitionRuleName,  ///
+          reducedLeftRecursiveRuleNamePart = reducedLeftRecursiveRuleNamePartFromPartAndLeftRecursiveRuleName(part, leftRecursiveRuleName),
+          optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMorePartOrSequenceOfPartsFromPartsAndImplicitParts(parts, implicitParts);
+
+    parts = [
+      reducedLeftRecursiveRuleNamePart,
+      optionalOneOrMorePartOrSequenceOfParts
+    ];
+
+    const rewrittenDefinition = new RewrittenDefinition(parts);
+
+    return rewrittenDefinition;
+  }
 }
 
 function optionalOneOrMorePartOrSequenceOfPartsFromParts(parts) {
@@ -61,11 +84,22 @@ function optionalOneOrMorePartOrSequenceOfPartsFromParts(parts) {
   return optionalOneOrMorePartOrSequenceOfParts;
 }
 
+function optionalOneOrMorePartOrSequenceOfPartsFromPartsAndImplicitParts(parts, implicitParts) {
+  parts = [ ///
+      ...parts,
+      ...implicitParts
+  ];
+
+  const optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMorePartOrSequenceOfPartsFromParts(parts);
+
+  return optionalOneOrMorePartOrSequenceOfParts;
+}
+
 function reducedLeftRecursiveRuleNamePartFromPartAndLeftRecursiveRuleName(part, leftRecursiveRuleName) {
   const partLookAhead = isPartLookAhead(part),
         lookAhead = partLookAhead,  ///
         reducedLeftRecursiveRuleName = reducedRuleNameFromRuleName(leftRecursiveRuleName),
-        reducedLeftRecursiveRuleNamePart = ruleNamePartFromRuleName(reducedLeftRecursiveRuleName, lookAhead);
+        reducedLeftRecursiveRuleNamePart = ruleNamePartFromRuleNameAndLookAhead(reducedLeftRecursiveRuleName, lookAhead);
 
   return reducedLeftRecursiveRuleNamePart;
 }

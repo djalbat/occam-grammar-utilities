@@ -31,12 +31,6 @@ export function isPartLookAhead(part) {
   return partLookAhead;
 }
 
-export function ruleNamePartFromRuleName(ruleName, lookAhead = false) {
-  const ruleNamePart = new RuleNamePart(ruleName, lookAhead);
-
-  return ruleNamePart;
-}
-
 export function sequenceOfPartsPartFromParts(parts) {
   const sequenceOfPartsPart = new SequenceOfPartsPart(parts);
 
@@ -48,4 +42,10 @@ export function optionalOneOrMorePartsPartFromPart(part) {
         optionalOneOrMorePartsPart = new OptionalPartPart(oneOrMorePartsPart);
 
   return optionalOneOrMorePartsPart;
+}
+
+export function ruleNamePartFromRuleNameAndLookAhead(ruleName, lookAhead) {
+  const ruleNamePart = new RuleNamePart(ruleName, lookAhead);
+
+  return ruleNamePart;
 }
