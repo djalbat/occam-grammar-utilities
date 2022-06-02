@@ -32,7 +32,7 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
 
     const rule = ruleMap[ruleName],
           rewrittenRule = rewrittenRuleFromRule(rule, ruleMap, RewrittenRule),
-          rewrittenDefinition = RewrittenDefinition.fromDefinition(definition);
+          rewrittenDefinition = RewrittenDefinition.fromDefinitionAndRuleName(definition, ruleName);
 
     rewrittenRule.replaceDefinition(definition, rewrittenDefinition);
 

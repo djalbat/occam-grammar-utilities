@@ -47,7 +47,7 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
           definitionLeftRecursive = isDefinitionLeftRecursive(definition);
 
     if (definitionLeftRecursive) {
-      const parts = [],
+      const parts = null, ///
             type = LEFT_RECURSIVE_TYPE,
             ruleName = recursiveDefinition.getRuleName(),
             recursiveRuleNames = recursiveDefinition.getRecursiveRuleNames(),

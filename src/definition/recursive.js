@@ -51,7 +51,7 @@ export default class RecursiveDefinition extends Definition {
           definitionRecursiveDefinition = (recursiveRuleNamesLength > 0);
 
     if (definitionRecursiveDefinition) {
-      const parts = [],
+      const parts = null, ///
             type = RECURSIVE_TYPE;
 
       recursiveDefinition = new RecursiveDefinition(parts, type, ruleName, definition, recursiveRuleNames);

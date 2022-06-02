@@ -84,9 +84,9 @@ class View extends Element {
 
       this.setAdjustedBNF(adjustedBNF);
 
-      // const parseTree = this.getParseTree(startRule, ruleMap);
-      //
-      // this.setParseTree(parseTree);
+      const parseTree = this.getParseTree(startRule, ruleMap);
+
+      this.setParseTree(parseTree);
     // } catch (error) {
     //   console.log(error);
     // }
@@ -163,13 +163,13 @@ class View extends Element {
 
   static initialBNF = `
  
-S ::= A "g"
+S ::= A "f"
 
     | "e"
     
     ; 
     
-A ::= S "f" 
+A ::= S "h" 
 
     | "g"
     
@@ -177,7 +177,7 @@ A ::= S "f"
       
 `;
 
-  static initialContent = "gf";
+  static initialContent = "gfhf";
 
   static initialStartRuleName = "S";
 
@@ -197,25 +197,37 @@ export default withStyle(View)`
 `;
 
 `
+S ::= A "f"
 
-S  ::= A "g"
+    | "e"
+    
+    ; 
+    
+A ::= S "h" 
+
+    | "g"
+    
+    ;  
+      
+...should rewrite to:
+
+S  ::= A "f"
 
      | S_
-    
-     ;  
-     
-A  ::= A_ ( "g" "f" )+? ;  
 
-S_ ::= "e" ;     
+     ;
 
-A_ ::= S_ "f" 
+A  ::= A_ ( "h" "f" )+?
+
+     ;
+
+A_ ::= S_ "h"
 
      | "g"
-    
-     ;  
 
+     ;
 
-
+S_ ::= "e" ;
 
 
 

@@ -2,6 +2,7 @@
 
 import ReducedRule from "../../../rule/reduced";
 import RewrittenRule from "../../../rule/rewritten";
+import ReducedDefinition from "../../../definition/reduced";
 import RewrittenDefinition from "../../../definition/rewritten";
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 import ImplicitlyLeftRecursiveDefinition from "../../../definition/recursive/left/implicitly";
@@ -48,17 +49,22 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
 
     const rule = ruleMap[ruleName],
           rewrittenRule = rewrittenRuleFromRule(rule, ruleMap, RewrittenRule),
-          rewrittenDefinition = RewrittenDefinition.fromDefinitionAndImplicitlyLeftRecursiveDefinition(definition, implicitlyLeftRecursiveDefinition);
+          rewrittenDefinition = RewrittenDefinition.fromDefinitionRuleNameAndImplicitlyLeftRecursiveDefinition(definition, ruleName, implicitlyLeftRecursiveDefinition);
 
     rewrittenRule.replaceDefinition(definition, rewrittenDefinition);
 
-    const implicitRule = ruleMap[implicitRuleName];
+    const implicitRule = ruleMap[implicitRuleName],
+          implicitRewrittenRule = rewrittenRuleFromRule(implicitRule, ruleMap, RewrittenRule),  ///
+          implicitReducedDefinition = ReducedDefinition.fromRuleName(implicitRuleName); ///
 
-    reducedRuleFromRule(rule, ruleMap, ReducedRule);
+    implicitRewrittenRule.addDefinition(implicitReducedDefinition);
+
+    const reducedRule = reducedRuleFromRule(rule, ruleMap, ReducedRule),
+          indirectReducedDefinition = ReducedDefinition.fromDefinition(definition);  ///
+
+    reducedRule.addDefinition(indirectReducedDefinition);
 
     reducedRuleFromRule(implicitRule, ruleMap, ReducedRule);
-
-    rewrittenRuleFromRule(implicitRule, ruleMap, RewrittenRule);
   }
 
   static fromRuleNameDefinitionAndRecursiveDefinitions(ruleName, definition, recursiveDefinitions) {
@@ -89,40 +95,3 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
     return indirectlyLeftRecursiveDefinition;
   }
 }
-
-// const ruleName = this.getRuleName(),
-//       rule = ruleMap[ruleName],
-//       definition = this.getDefinition(),
-//       definitionUnary = isDefinitionUnary(definition),
-//       leftRecursiveRuleNames = this.getLeftRecursiveRuleNames(),
-//       firstLeftRecursiveRuleName = first(leftRecursiveRuleNames),
-//       leftRecursiveRuleName = firstLeftRecursiveRuleName, ///
-//       leftRecursiveRule = ruleMap[leftRecursiveRuleName];
-//
-// const reducedRule = reducedRuleFromRule(leftRecursiveRule, ruleMap, ReducedRule),
-//       reducedRuleEmpty = reducedRule.isEmpty();
-//
-// if (reducedRuleEmpty) {
-//   const definitionString = definition.asString(),
-//         implicitlyLeftRecursiveDefinition = this.getImplicitlyLeftRecursiveDefinition(),
-//         implicitlyLeftRecursiveDefinitionString = implicitlyLeftRecursiveDefinition.asString();
-//
-//   throw new Error(`The '${implicitlyLeftRecursiveDefinitionString}' implicitly left recursive definition of the '${leftRecursiveRuleName}' rule has no sibling non-left recursive definitions and therefore the '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule cannot be rewritten.`);
-// }
-//
-// const rewrittenRule = rewrittenRuleFromRule(leftRecursiveRule, ruleMap, RewrittenRule),
-//       replacedDefinition = this, ///
-//       rewrittenDefinition = definitionUnary ?
-//                               RewrittenDefinition.fromDefinitionLeftRecursiveRuleNameAndImplicitlyLeftRecursiveDefinition(definition, leftRecursiveRuleName, this.implicitlyLeftRecursiveDefinition) :
-//                                 RewrittenDefinition.fromDefinitionAndLeftRecursiveRuleName(definition, leftRecursiveRuleName),
-//       replacementDefinition = rewrittenDefinition;  ///
-//
-// rule.replaceDefinition(replacedDefinition, replacementDefinition);
-//
-// if (definitionUnary) {
-//   const unaryImplicitlyLeftRecursiveDefinition = UnaryDefinition.fromDefinition(this.implicitlyLeftRecursiveDefinition),
-//         replacedDefinition = this.implicitlyLeftRecursiveDefinition,  ///
-//         replacementDefinition = unaryImplicitlyLeftRecursiveDefinition; ///
-//
-//   rewrittenRule.replaceDefinition(replacedDefinition, replacementDefinition);
-// }

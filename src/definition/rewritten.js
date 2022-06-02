@@ -5,24 +5,25 @@ import { Definition } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
 import { cloneParts } from "../utilities/parts";
-import { reducedPartFromPart, optionalOneOrMorePartsPartFromPart } from "../utilities/part";
+import { reducedPartFromPart } from "../utilities/part";
 
 const { first } = arrayUtilities,
-      { OptionalPartPart, OneOrMorePartsPart, SequenceOfPartsPart } = Parts;
+      { RuleNamePart, OptionalPartPart, OneOrMorePartsPart, SequenceOfPartsPart } = Parts;
 
 export default class RewrittenDefinition extends Definition {
-  static fromDefinition(definition) {
+  static fromDefinitionAndRuleName(definition, ruleName) {
     let parts = definition.getParts();
 
     parts = cloneParts(parts);  ///
 
-    const part = parts.shift(),
-          reducedPart = reducedPartFromPart(part),
-          optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMorePartOrSequenceOfPartsFromParts(parts);
+    parts.shift();
+
+    const reducedPart = reducedPartFromRuleName(ruleName),
+          repeatedPart = repeatedPartFromParts(parts);
 
     parts = [
       reducedPart,
-      optionalOneOrMorePartOrSequenceOfParts
+      repeatedPart
     ];
 
     const rewrittenDefinition = new RewrittenDefinition(parts);
@@ -31,7 +32,7 @@ export default class RewrittenDefinition extends Definition {
 
   }
 
-  static fromDefinitionAndImplicitlyLeftRecursiveDefinition(definition, implicitlyLeftRecursiveDefinition) {
+  static fromDefinitionRuleNameAndImplicitlyLeftRecursiveDefinition(definition, ruleName, implicitlyLeftRecursiveDefinition) {
     const implicitlyLeftRecursiveDefinitionParts = implicitlyLeftRecursiveDefinition.getParts();
 
     let parts = definition.getParts(),
@@ -41,15 +42,21 @@ export default class RewrittenDefinition extends Definition {
 
     implicitParts = cloneParts(implicitParts);  ///
 
+    parts.shift();
+
     implicitParts.shift();
 
-    const part = parts.shift(),
-          reducedPart = reducedPartFromPart(part),
-          optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMorePartOrSequenceOfPartsFromPartsAndImplicitParts(parts, implicitParts);
+    parts = [ ///
+      ...parts,
+      ...implicitParts
+    ];
+
+    const reducedPart = reducedPartFromRuleName(ruleName),
+          repeatedPart = repeatedPartFromParts(parts);
 
     parts = [
       reducedPart,
-      optionalOneOrMorePartOrSequenceOfParts
+      repeatedPart
     ];
 
     const rewrittenDefinition = new RewrittenDefinition(parts);
@@ -58,8 +65,8 @@ export default class RewrittenDefinition extends Definition {
   }
 }
 
-function optionalOneOrMorePartOrSequenceOfPartsFromParts(parts) {
-  let optionalOneOrMorePartOrSequenceOfParts;
+function repeatedPartFromParts(parts) {
+  let repeatedPart;
 
   const partsLength = parts.length;
 
@@ -69,24 +76,22 @@ function optionalOneOrMorePartOrSequenceOfPartsFromParts(parts) {
           oneOrMorePartsPart = new OneOrMorePartsPart(part),
           optionalOneOrMorePartsPart = new OptionalPartPart(oneOrMorePartsPart);
 
-    optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMorePartsPart;  ///
+    repeatedPart = optionalOneOrMorePartsPart;  ///
   } else {
     const sequenceOfPartsPart = new SequenceOfPartsPart(parts),
-          optionalOneOrMoreSequenceOfPartsPart = new OptionalPartPart(sequenceOfPartsPart);
+          neOrMoreSequenceOfPartsPart = new OneOrMorePartsPart(sequenceOfPartsPart),
+          optionalOneOrMoreSequenceOfPartsPart = new OptionalPartPart(neOrMoreSequenceOfPartsPart);
 
-    optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMoreSequenceOfPartsPart;  ///
+    repeatedPart = optionalOneOrMoreSequenceOfPartsPart;  ///
   }
 
-  return optionalOneOrMorePartOrSequenceOfParts;
+  return repeatedPart;
 }
 
-function optionalOneOrMorePartOrSequenceOfPartsFromPartsAndImplicitParts(parts, implicitParts) {
-  parts = [ ///
-    ...parts,
-    ...implicitParts
-  ];
+function reducedPartFromRuleName(ruleName) {
+  const ruleNamePart = new RuleNamePart(ruleName),
+        part = ruleNamePart,  ///
+        reducedPart = reducedPartFromPart(part);
 
-  const optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMorePartOrSequenceOfPartsFromParts(parts);
-
-  return optionalOneOrMorePartOrSequenceOfParts;
+  return reducedPart;
 }

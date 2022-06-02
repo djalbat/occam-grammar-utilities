@@ -33,8 +33,6 @@ export default class ReducedRule extends Rule {
         const nonLeftRecursiveDefinition = definition; ///
 
         nonLeftRecursiveDefinitions.unshift(nonLeftRecursiveDefinition);
-      } else {
-        debugger
       }
     });
 
