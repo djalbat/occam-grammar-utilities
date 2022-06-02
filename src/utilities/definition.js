@@ -2,8 +2,8 @@
 
 import { arrayUtilities } from "necessary";
 
-import { isPartComplex, isPartLookAhead } from "../utilities/part";
-import { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "../utilities/recursivePart";
+import { isPartComplex } from "../utilities/part";
+import { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "../utilities/part";
 
 const { first } = arrayUtilities;
 
@@ -22,15 +22,6 @@ export function isDefinitionComplex(definition) {
         definitionComplex = firstPartComplex; ///
 
   return definitionComplex;
-}
-
-export function isDefinitionLookAhead(definition) {
-  const parts = definition.getParts(),
-        firstPart = first(parts),
-        firstPartLookAhead = isPartLookAhead(firstPart),
-        definitionLookAhead = firstPartLookAhead; ///
-
-  return definitionLookAhead;
 }
 
 export function isDefinitionLeftRecursive(definition) {

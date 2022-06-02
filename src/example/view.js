@@ -470,6 +470,6 @@ A  ::= A_... ( "h" | "g" )+? ;
     
 A_  ::= "f" ;    
 
-The only problem with this seems to be dealing with look-ahead. Otherwise we can simply combine the two repeated sub-definitions.
-   
+The only problem with this seems to be dealing with look-ahead. Otherwise we can simply combine the two repeated sub-definitions. 
+  
 `

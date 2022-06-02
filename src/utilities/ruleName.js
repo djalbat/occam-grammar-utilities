@@ -12,7 +12,7 @@ export function ruleNameFromReducedRuleName(reducedRuleName) {
   return ruleName;
 }
 
-export function checkReducedRuleNameMatchesRuleName(reducedRuleName, ruleName) {
+export function doesReducedRuleNameMatchRuleName(reducedRuleName, ruleName) {
   const ruleNameA = ruleName; ///
 
   ruleName = ruleNameFromReducedRuleName(reducedRuleName);

@@ -4,8 +4,7 @@ import { Definition } from "occam-parsers";
 
 import { cloneParts } from "../utilities/parts";
 
-import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
-import { ruleNamePartFromRuleNameAndLookAhead } from "../utilities/part";
+import { reducedPartFromPart } from "../utilities/part";
 
 export default class ReducedDefinition extends Definition {
   static fromDefinition(definition) {
@@ -14,19 +13,15 @@ export default class ReducedDefinition extends Definition {
     parts = cloneParts(parts);  ///
 
     const part = parts.shift(),
-          ruleNamePart = part,  ///
-          lookAhead = ruleNamePart.isLookAhead(),
-          ruleName = ruleNamePart.getRuleName(),
-          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          reducedRuleNamePart = ruleNamePartFromRuleNameAndLookAhead(reducedRuleName, lookAhead);
+          reducedPart = reducedPartFromPart(part);
 
     parts = [ ///
-        reducedRuleNamePart,
+        reducedPart,
         ...parts
     ];
 
-    const unaryDefinition = new ReducedDefinition(parts);
+    const reducedDefinition = new ReducedDefinition(parts);
 
-    return unaryDefinition;
+    return reducedDefinition;
   }
 }

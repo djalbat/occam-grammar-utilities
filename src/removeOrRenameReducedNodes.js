@@ -3,7 +3,7 @@
 import ReducedNode from "./node/reduced";
 
 import { isInstanceOf } from "./utilities/class";
-import { ruleNameFromReducedRuleName, checkReducedRuleNameMatchesRuleName } from "./utilities/ruleName";
+import { ruleNameFromReducedRuleName, doesReducedRuleNameMatchRuleName } from "./utilities/ruleName";
 
 export default function removeOrRenameReducedNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
@@ -30,7 +30,7 @@ function removeOrRenameReducedChildNodes(childNodes, ruleName) {
       const reducedNode = childNode, ///
             reducedNodeRuleName = reducedNode.getRuleName(),
             reducedRuleName = reducedNodeRuleName,  ///
-            reducedRuleNameMatchesRuleName = checkReducedRuleNameMatchesRuleName(reducedRuleName, ruleName);
+            reducedRuleNameMatchesRuleName = doesReducedRuleNameMatchRuleName(reducedRuleName, ruleName);
 
       if (reducedRuleNameMatchesRuleName) {
         if (childNodesLength > 1) {

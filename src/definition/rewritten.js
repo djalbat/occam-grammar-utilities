@@ -1,30 +1,27 @@
 "use strict";
 
+import { Parts } from "occam-parsers";
 import { Definition } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
 import { cloneParts } from "../utilities/parts";
-import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
-import { isPartLookAhead,
-         sequenceOfPartsPartFromParts,
-         optionalOneOrMorePartsPartFromPart,
-         ruleNamePartFromRuleNameAndLookAhead } from "../utilities/part";
+import { reducedPartFromPart, optionalOneOrMorePartsPartFromPart } from "../utilities/part";
 
-const { first } = arrayUtilities;
+const { first } = arrayUtilities,
+      { OptionalPartPart, OneOrMorePartsPart, SequenceOfPartsPart } = Parts;
 
 export default class RewrittenDefinition extends Definition {
-  static fromDefinitionAndRuleName(definition, ruleName) {
+  static fromDefinition(definition) {
     let parts = definition.getParts();
 
     parts = cloneParts(parts);  ///
 
     const part = parts.shift(),
-          leftRecursiveRuleName = ruleName,  ///
-          reducedLeftRecursiveRuleNamePart = reducedLeftRecursiveRuleNamePartFromPartAndLeftRecursiveRuleName(part, leftRecursiveRuleName),
+          reducedPart = reducedPartFromPart(part),
           optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMorePartOrSequenceOfPartsFromParts(parts);
 
     parts = [
-      reducedLeftRecursiveRuleNamePart,
+      reducedPart,
       optionalOneOrMorePartOrSequenceOfParts
     ];
 
@@ -47,13 +44,11 @@ export default class RewrittenDefinition extends Definition {
     implicitParts.shift();
 
     const part = parts.shift(),
-          implicitlyLeftRecursiveDefinitionRuleName = implicitlyLeftRecursiveDefinition.getRuleName(),
-          leftRecursiveRuleName = implicitlyLeftRecursiveDefinitionRuleName,  ///
-          reducedLeftRecursiveRuleNamePart = reducedLeftRecursiveRuleNamePartFromPartAndLeftRecursiveRuleName(part, leftRecursiveRuleName),
+          reducedPart = reducedPartFromPart(part),
           optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMorePartOrSequenceOfPartsFromPartsAndImplicitParts(parts, implicitParts);
 
     parts = [
-      reducedLeftRecursiveRuleNamePart,
+      reducedPart,
       optionalOneOrMorePartOrSequenceOfParts
     ];
 
@@ -71,12 +66,13 @@ function optionalOneOrMorePartOrSequenceOfPartsFromParts(parts) {
   if (partsLength === 1) {
     const firstPart = first(parts),
           part = firstPart, ///
-          optionalOneOrMorePartsPart = optionalOneOrMorePartsPartFromPart(part);
+          oneOrMorePartsPart = new OneOrMorePartsPart(part),
+          optionalOneOrMorePartsPart = new OptionalPartPart(oneOrMorePartsPart);
 
     optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMorePartsPart;  ///
   } else {
-    const sequenceOfPartsPart = sequenceOfPartsPartFromParts(parts),
-          optionalOneOrMoreSequenceOfPartsPart = optionalOneOrMorePartsPartFromPart(sequenceOfPartsPart);
+    const sequenceOfPartsPart = new SequenceOfPartsPart(parts),
+          optionalOneOrMoreSequenceOfPartsPart = new OptionalPartPart(sequenceOfPartsPart);
 
     optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMoreSequenceOfPartsPart;  ///
   }
@@ -86,20 +82,11 @@ function optionalOneOrMorePartOrSequenceOfPartsFromParts(parts) {
 
 function optionalOneOrMorePartOrSequenceOfPartsFromPartsAndImplicitParts(parts, implicitParts) {
   parts = [ ///
-      ...parts,
-      ...implicitParts
+    ...parts,
+    ...implicitParts
   ];
 
   const optionalOneOrMorePartOrSequenceOfParts = optionalOneOrMorePartOrSequenceOfPartsFromParts(parts);
 
   return optionalOneOrMorePartOrSequenceOfParts;
-}
-
-function reducedLeftRecursiveRuleNamePartFromPartAndLeftRecursiveRuleName(part, leftRecursiveRuleName) {
-  const partLookAhead = isPartLookAhead(part),
-        lookAhead = partLookAhead,  ///
-        reducedLeftRecursiveRuleName = reducedRuleNameFromRuleName(leftRecursiveRuleName),
-        reducedLeftRecursiveRuleNamePart = ruleNamePartFromRuleNameAndLookAhead(reducedLeftRecursiveRuleName, lookAhead);
-
-  return reducedLeftRecursiveRuleNamePart;
 }
