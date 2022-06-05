@@ -110,16 +110,22 @@ A ::= S "f"
 
       assert.isTrue(compare(adjustedBNF, `
     
-S  ::= A ;
+S  ::= A
 
-S_ ::= "e" ;
+     | S_
 
-A  ::= S_ "f"+?
+     ;
+
+A  ::= A_ "f"+? ;
+
+A_ ::= S_ "f"
 
      | "g"
 
      ;
-     
+
+S_ ::= "e" ;
+
 `));
 
     });
@@ -165,13 +171,19 @@ C ::= A "g" ;
 
       assert.isTrue(compare(adjustedBNF, `
     
-A  ::= B ;
+A  ::= B
+
+     | A_
+
+     ;
 
 B  ::= C ;
 
-A_ ::= "f" ;
+C  ::= C_ "g"+? ;
 
-C  ::= A_ "g"+? ;
+C_ ::= A_ "g" ;
+
+A_ ::= "f" ;
 
 `));
 

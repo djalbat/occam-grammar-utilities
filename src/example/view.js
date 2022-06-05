@@ -163,18 +163,18 @@ class View extends Element {
 
   static initialBNF = `
  
-S ::= A "f"
+    A ::= B
 
-    | "e"
+        | A "f"
     
-    ; 
+        | "e"
     
-A ::= S "h" 
-
-    | "g"
+        ;
     
-    ;  
-      
+    B ::= A "g"
+    
+        ;
+    
 `;
 
   static initialContent = "gfhf";
@@ -197,6 +197,7 @@ export default withStyle(View)`
 `;
 
 `
+--------------------------------------------
 
 The following rules...
  
@@ -255,29 +256,10 @@ A f -> A_ (fh)+ f
 A_ (fh)+ f -> e h (fh)+ f or g (fh)+ f
 
 Now e h(fh)+ f is just e(fh)+ and combined with e gives e (fh)* whilst g(fh)+ f is actually gf(hf)* and we are done.
-
  
-...
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 --------------------------------------------
 
-How come this works...
+We need to get this one working:
 
 A ::= C "f"
 
@@ -289,22 +271,26 @@ B ::= "h" C ;
 
 C ::= A ;
  
-...but this doesn't:
+--------------------------------------------
 
-A ::= C "f"
+This one has both direct and indirect left recursion.
 
-    | B
+    A ::= B
 
-    ;
+        | A "f"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "g"
+    
+        ;
+    
+--------------------------------------------
 
-B ::= "h" C ;
 
-C ::= A ;
- 
-
-----------------------------------------
-
-This one needs further investigation. Try removing the "e" definition and then remove each kind of left recurstion in turn.
+This one needs further investigation. Try removing the "e" definition and then remove each kind of left recursion in turn.
 
     A ::= A "f"
     
