@@ -197,6 +197,9 @@ export default withStyle(View)`
 `;
 
 `
+
+The following rules...
+ 
 S ::= A "f"
 
     | "e"
@@ -209,7 +212,7 @@ A ::= S "h"
     
     ;  
       
-...should rewrite to:
+...are rewritten to:
 
 S  ::= A "f"
 
@@ -217,9 +220,7 @@ S  ::= A "f"
 
      ;
 
-A  ::= A_ ( "h" "f" )+?
-
-     ;
+A  ::= A_ ( "f" "h" )+? ;
 
 A_ ::= S_ "h"
 
@@ -229,133 +230,34 @@ A_ ::= S_ "h"
 
 S_ ::= "e" ;
 
+Looking at the *original* rules, the following content will match:
 
+S -> A f or e
 
+A f -> S hf or gf
 
+S hf -> A fhf or ehf
 
+A fhf -> S hfhf or gfhf
 
+etc
 
+So we get e(hf)* or gf(hf)*
 
+It is worth pointing out that these rewrite rules, although they allow us to deal with left recursion by hand, so to speak, would still result in an algorithm that would not terminate.
 
+Checking the rewritten rules in the same manner, immediately writing S_ as e wherever we encounter it: 
 
-So if we match ef, for example:
+S -> A f or e
 
-          S(0-1)         
-             |           
-          A(0-1)         
-             |           
-      --------------     
-      |            |     
-    S_(0)    f[custom](1)
-      |                  
-e[custom](0)             
+A f -> A_ (fh)+ f
 
-Yes!
+A_ (fh)+ f -> e h (fh)+ f or g (fh)+ f
 
+Now e h(fh)+ f is just e(fh)+ and combined with e gives e (fh)* whilst g(fh)+ f is actually gf(hf)* and we are done.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-     
-...which does not change anything aside from adding nodes to the parse tree which can be subsequently removed.
-
-We now substitute S into A...
-  
-A  ::= A "f" 
-
-     | S_ "f" 
-
-     | A_
-    
-     ;  
-     
-...create a new reduced rule:
-
-A  ::= A "f" 
-
-     | A__
-    
-     ;  
-     
-...where
-
-A__ ::= S_ "f"
-
-      | A_
-      
-      ;
-      
-Thus...
-
-A ::= A__ "f"+? ;      
-
-...and: 
-
-A__ ::= S_ "f"
-
-      | "g"
-     
-      ;
-
-To conclude:
-
-S   ::= A
-
-      | S_
-    
-      ;  
-  
-S_  ::= "e" ;  
-
-A   ::= A__ "f"+? ;      
-
-A__ ::= S_ "f"
-
-      | "g"
-     
-      ;
-
-
-
-A   ::= ( S_ "f" | A_ ) "f"+? ;      
-
-A_ ::=  "g" ;
-
-
-This is slightly different to the previous effort:
-
-S  ::= A
-
-     | S_
-    
-     ;  
-  
-S_ ::= "e" ;  
-  
-A  ::= A_ "f"+? 
-
-     | S_ "f"+? 
-
-     | A_
-    
-     ;  
-
-A_ ::= "g" ;  
-  
-
-
+ 
+...
 
 
 

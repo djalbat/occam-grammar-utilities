@@ -38,17 +38,17 @@ export default class RewrittenDefinition extends Definition {
     let parts = definition.getParts(),
         implicitParts = implicitlyLeftRecursiveDefinitionParts; ///
 
-    parts = cloneParts(parts);  ///
-
     implicitParts = cloneParts(implicitParts);  ///
-
-    parts.shift();
 
     implicitParts.shift();
 
+    parts = cloneParts(parts);  ///
+
+    parts.shift();
+
     parts = [ ///
-      ...parts,
-      ...implicitParts
+      ...implicitParts,
+      ...parts
     ];
 
     const reducedPart = reducedPartFromRuleName(ruleName),
