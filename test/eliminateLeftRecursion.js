@@ -41,7 +41,7 @@ A ::= A "g"
 
       assert.isTrue(compare(adjustedBNF, `
     
-A  ::= A_ "g"+? ;
+A  ::= A_ "g"* ;
 
 A_ ::= "f" ;
 
@@ -51,7 +51,7 @@ A_ ::= "f" ;
 
     it("and results in a parse tree with the requisite repetition", () => {
       const content = "fg",
-          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
@@ -116,7 +116,7 @@ S  ::= A
 
      ;
 
-A  ::= A_ "f"+? ;
+A  ::= A_ "f"* ;
 
 A_ ::= S_ "f"
 
@@ -179,7 +179,7 @@ A  ::= B "e"
 
 B  ::= C ;
 
-C  ::= C_ ( "e" "g" )+? ;
+C  ::= C_ ( "e" "g" )* ;
 
 C_ ::= A_ "g" ;
 

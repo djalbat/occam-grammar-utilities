@@ -8,7 +8,7 @@ import { cloneParts } from "../utilities/parts";
 import { reducedPartFromPart } from "../utilities/part";
 
 const { first } = arrayUtilities,
-      { RuleNamePart, OptionalPartPart, OneOrMorePartsPart, SequenceOfPartsPart } = Parts;
+      { RuleNamePart, ZeroOrMorePartsPart, SequenceOfPartsPart } = Parts;
 
 export default class RewrittenDefinition extends Definition {
   static fromDefinitionAndRuleName(definition, ruleName) {
@@ -73,16 +73,14 @@ function repeatedPartFromParts(parts) {
   if (partsLength === 1) {
     const firstPart = first(parts),
           part = firstPart, ///
-          oneOrMorePartsPart = new OneOrMorePartsPart(part),
-          optionalOneOrMorePartsPart = new OptionalPartPart(oneOrMorePartsPart);
+          zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
 
-    repeatedPart = optionalOneOrMorePartsPart;  ///
+    repeatedPart = zeroOrMorePartsPart;  ///
   } else {
     const sequenceOfPartsPart = new SequenceOfPartsPart(parts),
-          neOrMoreSequenceOfPartsPart = new OneOrMorePartsPart(sequenceOfPartsPart),
-          optionalOneOrMoreSequenceOfPartsPart = new OptionalPartPart(neOrMoreSequenceOfPartsPart);
+          zeroOrMoreSequenceOfPartsPart = new ZeroOrMorePartsPart(sequenceOfPartsPart);
 
-    repeatedPart = optionalOneOrMoreSequenceOfPartsPart;  ///
+    repeatedPart = zeroOrMoreSequenceOfPartsPart;  ///
   }
 
   return repeatedPart;

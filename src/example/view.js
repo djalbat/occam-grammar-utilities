@@ -199,7 +199,9 @@ export default withStyle(View)`
 `
 --------------------------------------------
 
-THe following rules mix direct and indirect left-recursion...
+THe following rules mix direct and indirect left-recursion.
+
+Note that the directly left recursive definition is a sibling of the *implicitly* left recursive definition.
 
     A ::= B
 
@@ -213,11 +215,11 @@ THe following rules mix direct and indirect left-recursion...
     
         ;
 
-A little thought should convince that these will match the following:
+A little thought should convince that these rules will match the following:
 
 e(f|g)*
 
-In fact, substituting one way, but not the usual way perhaps, it becomes obvious.
+Now note that the directly left recursive definition forced us to do the substitution in the following direction:
 
     A ::= A "g"
 
@@ -227,34 +229,111 @@ In fact, substituting one way, but not the usual way perhaps, it becomes obvious
     
         ;
         
-What helps here is that the substitution follows the directly left recursive definition.
+In fact we *cannot* substitute the other way because we must leave the B indirectly left recursive definition in place.
 
-Let's try eliminating the direct left recursion first, being careful to leave the *implicitly* left recursive definition in place:
+Rearranging:
+
+    A ::= A ( "g" | "f" )
+
+        | "e"
+    
+        ;
+        
+And now we rewrite:
+
+    A ::= A_ ( "g" | "f" )* ;
+        
+   A_ ::= "e" ;
+
+Now consider tHe following rules that also mix direct and indirect left-recursion.
+
+However, note that in this case the directly left recursive definition is a sibling of the *indirectly* left recursive definition.
+    
+    A ::= B
+
+        | "e"
+    
+        ;
+    
+    B ::= B "f"
+    
+        | A "g"
+    
+        ;
+
+This time we have to substitute A's definitions into the indirectly left recursive definition:
 
     A ::= B
 
-        | A "f"
-    
-        | A_
+        | "e"
     
         ;
     
-    B ::= A "g"
+    B ::= B "f"
+    
+        | B "g"
+    
+        | "e" "g"
+
+        ;
+
+Rearranging:    
+
+    A ::= B
+
+        | "e"
+    
+        ;
+    
+    B ::= B ( "f" | "g" )
+    
+        | "e" "g"
+
+        ;
+
+Now rewriting:
+
+    A ::= B
+
+        | "e"
+    
+        ;
+    
+    B ::= B_ ( "f" | "g" )* ;
+
+   B_ ::= "e" "g" ;
+
+So the moral is that eliminating indirect left recursion amounts to a rearrangement to direct left recursion...
+
+...and then from there, combining any directly left recursive definitions into on, before the usual rewriting.
+
+By this token the following rules cannot be rewritten, at least not easily...
+
+    A ::= B
+
+        | A "e"
+
+        | "e"
+    
+        ;
+    
+    B ::= B "f"
+    
+        | A "g"
     
         ;
 
-   A_ ::= "e"
-    
-        ;
+...because we cannot get all the directly left recursive rules in one rule or the other.
 
-Because the B implicitly left recursive definition remains in place, we cannot eliminate the direct left recursion at all.    
-    
+Or, at least, we can be forgiven for not trying.
 
+So the algorithm needs to:
 
+1. Find all the directly and indirectly left recursive definitions, *making sure that it does not find any duplicates*.
 
+Note the in finding the indirectly left recursive definitions, it will have found the corresponding implicitly left recursive definitions.
 
-
-
+2. Create reduced rules for all of the rules containing any of these left recursive definitions.  
 
 
 
