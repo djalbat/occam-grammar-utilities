@@ -154,7 +154,7 @@ e[custom](0)
   describe("a single non-unary indirectly left recursive definition and the corresponding non-unary implicitly left recursive definition", () => {
     const bnf = `
   
-A ::= B 
+A ::= B "e"
 
     | "f"
 
@@ -171,7 +171,7 @@ C ::= A "g" ;
 
       assert.isTrue(compare(adjustedBNF, `
     
-A  ::= B
+A  ::= B "e"
 
      | A_
 
@@ -179,7 +179,7 @@ A  ::= B
 
 B  ::= C ;
 
-C  ::= C_ "g"+? ;
+C  ::= C_ ( "e" "g" )+? ;
 
 C_ ::= A_ "g" ;
 
@@ -190,22 +190,24 @@ A_ ::= "f" ;
     });
 
     it("and results in a parse tree with the requisite repetition", () => {
-      const content = "fg",
+      const content = "fge",
           parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-          A(0-1)         
-             |           
-          B(0-1)         
-             |           
-          C(0-1)         
-             |           
-      --------------     
-      |            |     
-    A(0)     g[custom](1)
-      |                  
-f[custom](0)             
+                    A(0-2)            
+                       |              
+             --------------------     
+             |                  |     
+          B(0-1)          e[custom](2)
+             |                        
+          C(0-1)                      
+             |                        
+      --------------                  
+      |            |                  
+    A(0)     g[custom](1)             
+      |                               
+f[custom](0)                          
              
 `));
 

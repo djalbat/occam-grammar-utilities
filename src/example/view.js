@@ -199,6 +199,67 @@ export default withStyle(View)`
 `
 --------------------------------------------
 
+THe following rules mix direct and indirect left-recursion...
+
+    A ::= B
+
+        | A "f"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "g"
+    
+        ;
+
+A little thought should convince that these will match the following:
+
+e(f|g)*
+
+In fact, substituting one way, but not the usual way perhaps, it becomes obvious.
+
+    A ::= A "g"
+
+        | A "f"
+    
+        | "e"
+    
+        ;
+        
+What helps here is that the substitution follows the directly left recursive definition.
+
+Let's try eliminating the direct left recursion first, being careful to leave the *implicitly* left recursive definition in place:
+
+    A ::= B
+
+        | A "f"
+    
+        | A_
+    
+        ;
+    
+    B ::= A "g"
+    
+        ;
+
+   A_ ::= "e"
+    
+        ;
+
+Because the B implicitly left recursive definition remains in place, we cannot eliminate the direct left recursion at all.    
+    
+
+
+
+
+
+
+
+
+
+--------------------------------------------
+
 The following rules...
  
 S ::= A "f"
@@ -231,7 +292,7 @@ A_ ::= S_ "h"
 
 S_ ::= "e" ;
 
-Looking at the *original* rules, the following content will match:
+Looking at the original rules, the following content will match:
 
 S -> A f or e
 
