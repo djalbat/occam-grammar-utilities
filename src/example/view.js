@@ -163,21 +163,15 @@ class View extends Element {
 
   static initialBNF = `
  
-    A ::= B
-
-        | A "f"
+    A ::= A "f"
     
         | "e"
     
         ;
     
-    B ::= A "g"
-    
-        ;
-    
 `;
 
-  static initialContent = "gfhf";
+  static initialContent = "ef";
 
   static initialStartRuleName = "S";
 
@@ -197,6 +191,22 @@ export default withStyle(View)`
 `;
 
 `
+--------------------------------------------
+
+This case needs looking at:
+
+    A ::= B
+
+        | A "f"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "g"
+    
+        ;
+    
 --------------------------------------------
 
 THe following rules mix direct and indirect left-recursion.
@@ -326,16 +336,6 @@ By this token the following rules cannot be rewritten, at least not easily...
 ...because we cannot get all the directly left recursive rules in one rule or the other.
 
 Or, at least, we can be forgiven for not trying.
-
-So the algorithm needs to:
-
-1. Find all the directly and indirectly left recursive definitions, *making sure that it does not find any duplicates*.
-
-Note the in finding the indirectly left recursive definitions, it will have found the corresponding implicitly left recursive definitions.
-
-2. Create reduced rules for all of the rules containing any of these left recursive definitions.  
-
-
 
 --------------------------------------------
 

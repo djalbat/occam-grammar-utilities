@@ -6,20 +6,16 @@ import { arrayUtilities } from "necessary";
 import ReducedNode from "../node/reduced";
 
 import { isDefinitionLeftRecursive } from "../utilities/definition";
-import { reducedRuleNameFromRuleName, ruleNameFromReducedRuleName } from "../utilities/ruleName";
+import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
 const { backwardsForEach } = arrayUtilities;
 
 export default class ReducedRule extends Rule {
-  rewrite(ruleMap) {
-    const name = this.getName(),
-          reducedRuleName = name, ///
-          ruleName = ruleNameFromReducedRuleName(reducedRuleName),
-          rule = ruleMap[ruleName],
-          definitions = rule.getDefinitions(),
-          nonLeftRecursiveDefinitions = [];
+  static fromRule(rule) {
+    let reducedRule = null;
 
-    let reducedDefinition = null;
+    const definitions = rule.getDefinitions(),
+          nonLeftRecursiveDefinitions = [];
 
     backwardsForEach(definitions, (definition, index) => {
       const definitionLeftRecursive = isDefinitionLeftRecursive(definition)
@@ -36,27 +32,18 @@ export default class ReducedRule extends Rule {
       }
     });
 
-    if (reducedDefinition !== null) {
-      const definition = reducedDefinition; ///
+    const nonLeftRecursiveDefinitionsLength = nonLeftRecursiveDefinitions.length;
 
-      this.addDefinition(definition);
+    if (nonLeftRecursiveDefinitionsLength > 0) {
+      const ruleName = rule.getName(),
+            reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+            name = reducedRuleName, ///
+            ambiguous = false,
+            definitions = nonLeftRecursiveDefinitions,  ///
+            NonTerminalNode = ReducedNode;  ///
+
+      reducedRule = new ReducedRule(name, ambiguous, definitions, NonTerminalNode);
     }
-
-    nonLeftRecursiveDefinitions.forEach((nonLeftRecursiveDefinition) => {
-      const definition = nonLeftRecursiveDefinition; ///
-
-      this.addDefinition(definition);
-    });
-  }
-
-  static fromRule(rule) {
-    const ruleName = rule.getName(),
-          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          name = reducedRuleName, ///
-          ambiguous = false,
-          definitions = [],
-          NonTerminalNode = ReducedNode,  ///
-          reducedRule = new ReducedRule(name, ambiguous, definitions, NonTerminalNode);
 
     return reducedRule;
   }
