@@ -6,7 +6,7 @@ import { Parts, partTypes } from "occam-parsers";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
 const { first } = arrayUtilities,
-      { RuleNamePart, OptionalPartPart, OneOrMorePartsPart, ZeroOrMorePartsPart } = Parts,
+      { RuleNamePart, OptionalPartPart, ZeroOrMorePartsPart } = Parts,
       { RuleNamePartType,
         OptionalPartPartType,
         ChoiceOfPartsPartType,
@@ -67,64 +67,10 @@ export function isPartComplex(part) {
   return partComplex;
 }
 
-export function reducedPartFromPart(part) {
-  let reducedPart;
-
-  const nonTerminalPart = part, ///
-        type = nonTerminalPart.getType();
-
-  switch (type) {
-    case RuleNamePartType: {
-      const ruleNamePart = nonTerminalPart,  ///
-            ruleName = ruleNamePart.getRuleName(),
-            lookAhead = ruleNamePart.isLookAhead(),
-            reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-            reducedRuleNamePart = new RuleNamePart(reducedRuleName, lookAhead);
-
-      reducedPart = reducedRuleNamePart;  ///
-
-      break;
-    }
-
-    case OptionalPartPartType: {
-      const optionalPartPart = nonTerminalPart, ///
-            part = optionalPartPart.getPart();
-
-      reducedPart = reducedPartFromPart(part);
-
-      const reducedOptionalPartPart = new OptionalPartPart(reducedPart);
-
-      reducedPart = reducedOptionalPartPart;  ///
-
-      break;
-    }
-
-    case OneOrMorePartsPartType: {
-      const oneOrMorePartsPart = nonTerminalPart, ///
-            part = oneOrMorePartsPart.getPart();
-
-      reducedPart = reducedPartFromPart(part);
-
-      const reducedOneOrMorePartsPart = new OneOrMorePartsPart(reducedPart);
-
-      reducedPart = reducedOneOrMorePartsPart;  ///
-
-      break;
-    }
-
-    case ZeroOrMorePartsPartType: {
-      const zeroOrMorePartsPart = nonTerminalPart, ///
-            part = zeroOrMorePartsPart.getPart();
-
-      reducedPart = reducedPartFromPart(part);
-
-      const reducedZeroOrMorePartsPart = new ZeroOrMorePartsPart(reducedPart);
-
-      reducedPart = reducedZeroOrMorePartsPart;  ///
-
-      break;
-    }
-  }
+export function reducedPartFromRuleName(ruleName) {
+  const ruleNamePart = new RuleNamePart(ruleName),
+        part = ruleNamePart,  ///
+        reducedPart = reducedPartFromPart(part);
 
   return reducedPart;
 }
@@ -269,4 +215,66 @@ export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
       }
     }
   }
+}
+
+function reducedPartFromPart(part) {
+  let reducedPart;
+
+  const nonTerminalPart = part, ///
+        type = nonTerminalPart.getType();
+
+  switch (type) {
+    case RuleNamePartType: {
+      const ruleNamePart = nonTerminalPart,  ///
+            ruleName = ruleNamePart.getRuleName(),
+            lookAhead = ruleNamePart.isLookAhead(),
+            reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+            reducedRuleNamePart = new RuleNamePart(reducedRuleName, lookAhead);
+
+      reducedPart = reducedRuleNamePart;  ///
+
+      break;
+    }
+
+    case OptionalPartPartType: {
+      const optionalPartPart = nonTerminalPart, ///
+            part = optionalPartPart.getPart();
+
+      reducedPart = reducedPartFromPart(part);
+
+      const reducedOptionalPartPart = new OptionalPartPart(reducedPart);
+
+      reducedPart = reducedOptionalPartPart;  ///
+
+      break;
+    }
+
+    case OneOrMorePartsPartType: {
+      const oneOrMorePartsPart = nonTerminalPart, ///
+            part = oneOrMorePartsPart.getPart();
+
+      reducedPart = reducedPartFromPart(part);
+
+      const reducedOneOrMorePartsPart = new OneOrMorePartsPart(reducedPart);
+
+      reducedPart = reducedOneOrMorePartsPart;  ///
+
+      break;
+    }
+
+    case ZeroOrMorePartsPartType: {
+      const zeroOrMorePartsPart = nonTerminalPart, ///
+            part = zeroOrMorePartsPart.getPart();
+
+      reducedPart = reducedPartFromPart(part);
+
+      const reducedZeroOrMorePartsPart = new ZeroOrMorePartsPart(reducedPart);
+
+      reducedPart = reducedZeroOrMorePartsPart;  ///
+
+      break;
+    }
+  }
+
+  return reducedPart;
 }

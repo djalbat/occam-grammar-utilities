@@ -174,4 +174,3 @@ function retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, leftRecurs
     }
   });
 }
-

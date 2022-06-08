@@ -165,6 +165,8 @@ class View extends Element {
  
     A ::= A "f"
     
+        | A "g"
+    
         | "e"
     
         ;

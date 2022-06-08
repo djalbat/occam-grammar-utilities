@@ -1,28 +1,13 @@
 "use strict";
 
-import { Parts } from "occam-parsers";
-import { arrayUtilities } from "necessary";
-
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
-import { reducedPartFromPart } from "../../../utilities/part";
-import { reducedRuleNameFromRuleName } from "../../../utilities/ruleName";
+import { repeatedPartFromParts } from "../../../utilities/parts";
+import { reducedPartFromRuleName } from "../../../utilities/part";
 import { DIRECTLY_LEFT_RECURSIVE_TYPE } from "../../../types";
 import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
-const { first } = arrayUtilities,
-      { RuleNamePart, ZeroOrMorePartsPart, SequenceOfPartsPart } = Parts;
-
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
-  isIsolated(ruleMap) {
-    const ruleName = this.getRuleName(),
-          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          reducedRule = ruleMap[reducedRuleName] || null,
-          isolated = (reducedRule === null);
-
-    return isolated;
-  }
-
   rewrite(ruleMap) {
     const unary = this.isUnary(),
           complex = this.isComplex(),
@@ -88,33 +73,4 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
 
     return directlyLeftRecursiveDefinition;
   }
-}
-
-function repeatedPartFromParts(parts) {
-  let repeatedPart;
-
-  const partsLength = parts.length;
-
-  if (partsLength === 1) {
-    const firstPart = first(parts),
-          part = firstPart, ///
-          zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
-
-    repeatedPart = zeroOrMorePartsPart;  ///
-  } else {
-    const sequenceOfPartsPart = new SequenceOfPartsPart(parts),
-          zeroOrMoreSequenceOfPartsPart = new ZeroOrMorePartsPart(sequenceOfPartsPart);
-
-    repeatedPart = zeroOrMoreSequenceOfPartsPart;  ///
-  }
-
-  return repeatedPart;
-}
-
-function reducedPartFromRuleName(ruleName) {
-  const ruleNamePart = new RuleNamePart(ruleName),
-        part = ruleNamePart,  ///
-        reducedPart = reducedPartFromPart(part);
-
-  return reducedPart;
 }
