@@ -4,25 +4,31 @@ import { Parts } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
 const { first } = arrayUtilities,
-      { ZeroOrMorePartsPart } = Parts;
+      { ZeroOrMorePartsPart, SequenceOfPartsPart } = Parts;
 
-export function repeatedPartFromParts(parts) {
-  let repeatedPart;
+export function singlePartFromParts(parts) {
+  let singlePart;
 
   const partsLength = parts.length;
 
   if (partsLength === 1) {
-    const firstPart = first(parts),
-          part = firstPart, ///
-          zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
+    const firstPart = first(parts);
 
-    repeatedPart = zeroOrMorePartsPart;  ///
+    singlePart = firstPart; ///
   } else {
-    const sequenceOfPartsPart = new SequenceOfPartsPart(parts),
-          zeroOrMoreSequenceOfPartsPart = new ZeroOrMorePartsPart(sequenceOfPartsPart);
+    const sequenceOfPartsPart = new SequenceOfPartsPart(parts);
 
-    repeatedPart = zeroOrMoreSequenceOfPartsPart;  ///
+    singlePart = sequenceOfPartsPart; ///
   }
+
+  return singlePart;
+}
+
+export function repeatedPartFromParts(parts) {
+  const singlePart = singlePartFromParts(parts),
+        part = singlePart,
+        zeroOrMorePartsPart = new ZeroOrMorePartsPart(part),
+        repeatedPart = zeroOrMorePartsPart;  ///
 
   return repeatedPart;
 }

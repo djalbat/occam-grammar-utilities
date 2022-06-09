@@ -37,19 +37,31 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
       throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is isolated and therefore cannot be rewritten.`);
     }
 
-    let parts = this.getParts();
+    this.removeFirstPart();
 
-    parts.shift();
-
-    parts = parts.splice(0);  ///
-
-    const ruleName = this.getRuleName(),
+    const parts = this.removeParts(),
+          ruleName = this.getRuleName(),
           reducedPart = reducedPartFromRuleName(ruleName),
           repeatedPart = repeatedPartFromParts(parts);
 
     this.addPart(reducedPart);
 
     this.addPart(repeatedPart);
+  }
+
+  removeParts() {
+    let parts = this.getParts();
+
+    parts = parts.splice(0);  ///
+
+    return parts;
+  }
+
+  removeFirstPart() {
+    const parts = this.getParts(),
+          firstParts = parts.shift();
+
+    return firstParts;
   }
 
   static fromRuleNameAndDefinition(ruleName, definition) {

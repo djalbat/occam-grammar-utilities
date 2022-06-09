@@ -4,17 +4,12 @@ import { arrayUtilities } from "necessary";
 import { Rule, Parts, Definition } from "occam-parsers";
 
 import DirectlyLeftRecursiveDefinition from "../definition/recursive/left/directly";
+import {singlePartFromParts} from "../utilities/parts";
 
 const { first } = arrayUtilities,
-      { ChoiceOfPartsPart, SequenceOfPartsPart } = Parts;
+      { ChoiceOfPartsPart } = Parts;
 
 export default class RewrittenRule extends Rule {
-  removeDefinitions() {
-    const definitions = this.getDefinitions();
-
-    definitions.splice(0);
-  }
-
   rewrite(ruleMap) {
     const definitions = this.getDefinitions(),
           directlyLeftRecursiveDefinitions = definitions, ///
@@ -25,6 +20,12 @@ export default class RewrittenRule extends Rule {
     this.removeDefinitions();
 
     this.addDefinition(directlyLeftRecursiveDefinition);
+  }
+
+  removeDefinitions() {
+    const definitions = this.getDefinitions();
+
+    definitions.splice(0);
   }
 
   static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
@@ -63,42 +64,23 @@ function mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions)
   } else {
     let parts;
 
-    const firstDirectlyLeftRecursiveDefinitionParts = firstDirectlyLeftRecursiveDefinition.getParts();
+    parts = firstDirectlyLeftRecursiveDefinition.getParts();  ///
 
-    parts = firstDirectlyLeftRecursiveDefinitionParts;  ///
+    const firstPart = first(parts),
+          remainingParts = directlyLeftRecursiveDefinitions.map((directlyLeftRecursiveDefinition) => {
+            directlyLeftRecursiveDefinition.removeFirstPart();
 
-    const firstPart = first(parts);
+            const parts = directlyLeftRecursiveDefinition.getParts(),
+                  singlePart = singlePartFromParts(parts),
+                  part = singlePart;  ///
 
-    parts = directlyLeftRecursiveDefinitions.map((directlyLeftRecursiveDefinition) => {
-      let part,
-          parts;
-
-      const directlyLeftRecursiveDefinitionParts = directlyLeftRecursiveDefinition.getParts();
-
-      parts = directlyLeftRecursiveDefinitionParts; ///
-
-      parts.shift();
-
-      const partsLength = parts.length;
-
-      if (partsLength === 1) {
-        const firstPart = first(parts);
-
-        part = firstPart; ///
-      } else {
-        const sequenceOfPartsPart = new SequenceOfPartsPart(parts);
-
-        part = sequenceOfPartsPart; ///
-      }
-
-      return part;
-    });
-
-    const choiceOfPartsPart = new ChoiceOfPartsPart(parts);
+            return part;
+          }),
+          choiceOfRemainingPartsPart = new ChoiceOfPartsPart(remainingParts);
 
     parts = [
       firstPart,
-      choiceOfPartsPart
+      choiceOfRemainingPartsPart
     ];
 
     const ruleName = firstDirectlyLeftRecursiveDefinition.getRuleName(),
