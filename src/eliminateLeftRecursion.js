@@ -1,7 +1,5 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
-
 import ReducedRule from "./rule/reduced";
 import RewrittenRule from "./rule/rewritten";
 import RecursiveDefinition from "./definition/recursive";
@@ -10,8 +8,6 @@ import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directl
 import IndirectlyLeftRecursiveDefinition from "./definition/recursive/left/indirectly";
 
 import { isInstanceOf } from "./utilities/class";
-
-const { find } = arrayUtilities;
 
 export default function eliminateLeftRecursion(startRule, ruleMap) {
   const rule = startRule, ///
@@ -28,6 +24,8 @@ export default function eliminateLeftRecursion(startRule, ruleMap) {
   reduceLeftRecursiveRules(leftRecursiveRules, reducedRules, ruleMap);
 
   rewriteLeftRecursiveRules(leftRecursiveRules, rewrittenRules, leftRecursiveDefinitions, ruleMap);
+
+  ///
 
   eliminateDirectLeftRecursion(rewrittenRules, ruleMap);
 
@@ -100,20 +98,7 @@ function retrieveLeftRecursiveRules(leftRecursiveRules, leftRecursiveDefinitions
 }
 
 function eliminateDirectLeftRecursion(rewrittenRules, ruleMap) {
-  rewrittenRules.forEach((rewrittenRule) => {
-    const rewrittenRuleDefinitions = rewrittenRule.getDefinitions(),
-          directlyLeftRecursiveDefinitions = find(rewrittenRuleDefinitions, (rewrittenRuleDefinition) => {
-            const rewrittenRuleDefinitionDirectlyLeftRecursiveDefinition = isInstanceOf(rewrittenRuleDefinition, DirectlyLeftRecursiveDefinition);
-
-            if (rewrittenRuleDefinitionDirectlyLeftRecursiveDefinition) {
-              return true;
-            }
-          });
-
-    directlyLeftRecursiveDefinitions.forEach((directlyLeftRecursiveDefinition) => {
-      directlyLeftRecursiveDefinition.rewrite(ruleMap);
-    });
-  });
+  rewrittenRules.forEach((rewrittenRule) => rewrittenRule.rewrite(ruleMap));
 }
 
 function retrieveLeftRecursiveDefinition(ruleName, definition, recursiveDefinitions, leftRecursiveDefinitions) {

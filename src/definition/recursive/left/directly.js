@@ -1,11 +1,15 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
+
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
 import { repeatedPartFromParts } from "../../../utilities/parts";
 import { reducedPartFromRuleName } from "../../../utilities/part";
 import { DIRECTLY_LEFT_RECURSIVE_TYPE } from "../../../types";
 import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
+
+const { first } = arrayUtilities;
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   rewrite(ruleMap) {
@@ -54,21 +58,17 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
     const definitionLeftRecursive = isDefinitionLeftRecursive(definition);
 
     if (definitionLeftRecursive) {
-      const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition);
+      const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
+            firstLeftRecursiveRuleName = first(leftRecursiveRuleNames),
+            ruleNameFirstLeftRecursiveRuleName = (ruleName === firstLeftRecursiveRuleName);
 
-      leftRecursiveRuleNames.some((leftRecursiveRuleName) => {
-        const ruleNameLeftRecursiveRuleName = (ruleName === leftRecursiveRuleName);
+      if (ruleNameFirstLeftRecursiveRuleName) {
+        const type = DIRECTLY_LEFT_RECURSIVE_TYPE,
+              parts = definition.getParts(),
+              recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-        if (ruleNameLeftRecursiveRuleName) {
-          const type = DIRECTLY_LEFT_RECURSIVE_TYPE,
-                parts = definition.getParts(),
-                recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
-
-          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
-
-          return true;
-        }
-      });
+        directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+      }
     }
 
     return directlyLeftRecursiveDefinition;

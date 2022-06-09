@@ -97,6 +97,52 @@ f[custom](0)
     });
   });
 
+  describe("two single non-unary directly left recursive definitions", () => {
+    const bnf = `
+   
+    A ::= A "f" "g"
+    
+        | A "h"
+    
+        | "e"
+    
+        ;
+    
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+    
+A  ::= A_ ( ( "f" "g" ) | "h" )* ;
+
+A_ ::= "e" ;
+
+`));
+
+    });
+
+    it("result in the requisite parse tree" +
+        "", () => {
+      const content = "efgh",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                       A(0-3)                      
+                          |                        
+      ----------------------------------------     
+      |            |            |            |     
+    A(0)     f[custom](1) g[custom](2) h[custom](3)
+      |                                            
+e[custom](0)                                       
+             
+`));
+
+    });
+  });
+
   xdescribe("a single unary indirectly left recursive definition and the corresponding unary implicitly left recursive definition", () => {
     const bnf = `
   
