@@ -2,6 +2,7 @@
 
 import { Parts } from "occam-parsers";
 import { arrayUtilities } from "necessary";
+import { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "./part";
 
 const { first } = arrayUtilities,
       { ZeroOrMorePartsPart, SequenceOfPartsPart } = Parts;
@@ -31,4 +32,22 @@ export function repeatedPartFromParts(parts) {
         repeatedPart = zeroOrMorePartsPart;  ///
 
   return repeatedPart;
+}
+
+export function recursiveRuleNamesFromParts(parts) {
+  const recursiveRuleNames = [];
+
+  parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
+
+  return recursiveRuleNames;
+}
+
+export function leftRecursiveRuleNamesFromParts(parts) {
+  const leftRecursiveRuleNames = [],
+        firstPart = first(parts),
+        part = firstPart; ///
+
+  leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
+
+  return leftRecursiveRuleNames;
 }

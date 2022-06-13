@@ -7,8 +7,8 @@ import { LEFT_RECURSIVE_TYPE, RECURSIVE_TYPE } from "../../types";
 import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 export default class LeftRecursiveDefinition extends RecursiveDefinition {
-  constructor(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames) {
-    super(parts, type, ruleName, definition, recursiveRuleNames);
+  constructor(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames) {
+    super(parts, type, ruleName, recursiveRuleNames);
 
     this.leftRecursiveRuleNames = leftRecursiveRuleNames;
   }
@@ -24,7 +24,7 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
   }
 
   isUnary() {
-    const definition = this.getDefinition(),
+    const definition = this,  ///
           definitionUnary = isDefinitionUnary(definition),
           unary = definitionUnary;  ///
 
@@ -32,9 +32,9 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
   }
 
   isComplex() {
-    const definition = this.getDefinition(),
-        definitionComplex = isDefinitionComplex(definition),
-        complex = definitionComplex;  ///
+    const definition = this,  ///
+          definitionComplex = isDefinitionComplex(definition),
+          complex = definitionComplex;  ///
 
     return complex;
   }
@@ -51,17 +51,16 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
   static fromRecursiveDefinition(recursiveDefinition) {
     let leftRecursiveDefinition = null;
 
-    const definition = recursiveDefinition.getDefinition(),
-          definitionLeftRecursive = isDefinitionLeftRecursive(definition);
+    const recursiveDefinitionLeftRecursive = isDefinitionLeftRecursive(recursiveDefinition);
 
-    if (definitionLeftRecursive) {
+    if (recursiveDefinitionLeftRecursive) {
       const type = LEFT_RECURSIVE_TYPE,
             parts = recursiveDefinition.getParts(),
             ruleName = recursiveDefinition.getRuleName(),
             recursiveRuleNames = recursiveDefinition.getRecursiveRuleNames(),
-            leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition);
+            leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(recursiveDefinition);
 
-      leftRecursiveDefinition = new LeftRecursiveDefinition(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+      leftRecursiveDefinition = new LeftRecursiveDefinition(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
     }
 
     return leftRecursiveDefinition;
@@ -75,11 +74,11 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
           definitionLeftRecursiveDefinition = (leftRecursiveRuleNamesLength > 0);
 
     if (definitionLeftRecursiveDefinition) {
-      const parts = [],
-            type = RECURSIVE_TYPE,
+      const type = RECURSIVE_TYPE,
+            parts = [],
             recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-      leftRecursiveDefinition = new LeftRecursiveDefinition(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+      leftRecursiveDefinition = new LeftRecursiveDefinition(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
     }
 
     return leftRecursiveDefinition;

@@ -22,7 +22,7 @@ export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefi
             recursiveRuleNames = leftRecursiveDefinition.getRecursiveRuleNames(),
             leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames();
 
-      implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+      implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
     }
 
     return implicitlyLeftRecursiveDefinition;

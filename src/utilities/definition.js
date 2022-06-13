@@ -3,7 +3,7 @@
 import { arrayUtilities } from "necessary";
 
 import { isPartComplex } from "../utilities/part";
-import { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "../utilities/part";
+import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../utilities/parts";
 
 const { first } = arrayUtilities;
 
@@ -24,6 +24,14 @@ export function isDefinitionComplex(definition) {
   return definitionComplex;
 }
 
+export function isDefinitionRecursive(definition) {
+  const recursiveRuleNames = recursiveRuleNamesFromDefinition(definition),
+        recursiveRuleNamesLength = recursiveRuleNames.length,
+        definitionRecursive = (recursiveRuleNamesLength > 0);
+
+  return definitionRecursive;
+}
+
 export function isDefinitionLeftRecursive(definition) {
   const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
         leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length,
@@ -33,21 +41,15 @@ export function isDefinitionLeftRecursive(definition) {
 }
 
 export function recursiveRuleNamesFromDefinition(definition) {
-  const recursiveRuleNames = [],
-        parts = definition.getParts();
-
-  parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
+  const parts = definition.getParts(),
+        recursiveRuleNames = recursiveRuleNamesFromParts(parts);
 
   return recursiveRuleNames;
 }
 
 export function leftRecursiveRuleNamesFromDefinition(definition) {
-  const leftRecursiveRuleNames = [],
-        parts = definition.getParts(),
-        firstPart = first(parts),
-        part = firstPart; ///
-
-  leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
+  const parts = definition.getParts(),
+        leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts);
 
   return leftRecursiveRuleNames;
 }

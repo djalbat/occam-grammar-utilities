@@ -107,7 +107,7 @@ f[custom](0)
         | "e"
     
         ;
-    
+
 `;
 
     it("are rewritten", () => {

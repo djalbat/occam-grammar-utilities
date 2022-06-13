@@ -1,12 +1,14 @@
 "use strict";
 
+import { Rule, Parts } from "occam-parsers";
 import { arrayUtilities } from "necessary";
-import { Rule, Parts, Definition } from "occam-parsers";
 
 import DirectlyLeftRecursiveDefinition from "../definition/recursive/left/directly";
-import {singlePartFromParts} from "../utilities/parts";
 
-const { first } = arrayUtilities,
+import { isInstanceOf } from "../utilities/class";
+import { singlePartFromParts } from "../utilities/parts";
+
+const { find, first } = arrayUtilities,
       { ChoiceOfPartsPart } = Parts;
 
 export default class RewrittenRule extends Rule {
@@ -28,23 +30,21 @@ export default class RewrittenRule extends Rule {
     definitions.splice(0);
   }
 
-  static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
+  static fromRule(rule) {
     const name = rule.getName(),
           ambiguous = rule.isAmbiguous();
 
     let definitions = rule.getDefinitions();
 
-    definitions = definitions.map((definition) => {
-      definition = leftRecursiveDefinitions.find((leftRecursiveDefinition) => {
-        const leftRecursiveDefinitionMatchesDefinition = leftRecursiveDefinition.match(definition);
+    const directlyLeftRecursiveDefinitions = find(definitions, (definition) => {
+            const definitionDirectlyLeftRecursiveDefinition = isInstanceOf(definition, DirectlyLeftRecursiveDefinition);
 
-        if (leftRecursiveDefinitionMatchesDefinition) {
-          return true;
-        }
-      });
+            if (definitionDirectlyLeftRecursiveDefinition) {
+              return true;
+            }
+          });
 
-      return definition;
-    });
+    definitions = directlyLeftRecursiveDefinitions; ///
 
     const NonTerminalNode = rule.getNonTerminalNode(),
           rewrittenRule = new RewrittenRule(name, ambiguous, definitions, NonTerminalNode);
@@ -67,26 +67,29 @@ function mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions)
     parts = firstDirectlyLeftRecursiveDefinition.getParts();  ///
 
     const firstPart = first(parts),
-          remainingParts = directlyLeftRecursiveDefinitions.map((directlyLeftRecursiveDefinition) => {
-            directlyLeftRecursiveDefinition.removeFirstPart();
+          part = firstPart; ///
 
-            const parts = directlyLeftRecursiveDefinition.getParts(),
-                  singlePart = singlePartFromParts(parts),
-                  part = singlePart;  ///
+    const singleParts = directlyLeftRecursiveDefinitions.map((directlyLeftRecursiveDefinition) => {
+      directlyLeftRecursiveDefinition.removeFirstPart();
 
-            return part;
-          }),
-          choiceOfRemainingPartsPart = new ChoiceOfPartsPart(remainingParts);
+      const parts = directlyLeftRecursiveDefinition.getParts(),
+            singlePart = singlePartFromParts(parts);
 
-    parts = [
-      firstPart,
-      choiceOfRemainingPartsPart
-    ];
+      return singlePart;
+    });
 
-    const ruleName = firstDirectlyLeftRecursiveDefinition.getRuleName(),
-          definition = new Definition(parts);
+    parts = singleParts;  ///
 
-    directlyLeftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
+    const choiceOfPartsPart = new ChoiceOfPartsPart(parts);
+
+    parts = [ ///
+      part,
+      choiceOfPartsPart
+    ]
+
+    const ruleName = firstDirectlyLeftRecursiveDefinition.getRuleName();
+
+    directlyLeftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromRuleNameAndParts(ruleName, parts);
   }
 
   return directlyLeftRecursiveDefinition;

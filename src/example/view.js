@@ -195,19 +195,43 @@ export default withStyle(View)`
 `
 --------------------------------------------
 
-This case needs looking at:
+We go from here...
 
-    A ::= B
-
-        | A "f"
+    A ::= B "c"
+    
+        | A "h"
     
         | "e"
     
         ;
     
-    B ::= A "g"
+    B ::= A "f" "g"
+    
+        | "c"
+
+        ;
+                
+...to here:
+
+    A ::= A_ ( "h" | ( "f" "g" ) )* ;
+    
+    B ::= A "f" "g"
+    
+        | B_
+
+        ;
+    
+   A_ ::= B_ "c"
+    
+        | "e"
     
         ;
+
+   B_ ::= "c"
+
+        | "d"
+
+        ;        
     
 --------------------------------------------
 

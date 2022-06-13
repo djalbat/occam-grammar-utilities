@@ -4,8 +4,9 @@ import { Rule } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
 import ReducedNode from "../node/reduced";
+import LeftRecursiveDefinition from "../definition/recursive/left";
 
-import { isDefinitionLeftRecursive } from "../utilities/definition";
+import { isInstanceOf } from "../utilities/class";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
 const { backwardsForEach } = arrayUtilities;
@@ -18,17 +19,14 @@ export default class ReducedRule extends Rule {
           nonLeftRecursiveDefinitions = [];
 
     backwardsForEach(definitions, (definition, index) => {
-      const definitionLeftRecursive = isDefinitionLeftRecursive(definition)
+      const definitionLeftRecursiveDefinition = isInstanceOf(definition, LeftRecursiveDefinition);
 
-      if (!definitionLeftRecursive) {
-        const start = index,
-              deleteCount = 1;
-
-        definitions.splice(start, deleteCount);
-
+      if (!definitionLeftRecursiveDefinition) {
         const nonLeftRecursiveDefinition = definition; ///
 
         nonLeftRecursiveDefinitions.unshift(nonLeftRecursiveDefinition);
+
+        rule.removeDefinition(definition);
       }
     });
 

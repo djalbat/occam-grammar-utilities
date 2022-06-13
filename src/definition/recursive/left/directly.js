@@ -4,9 +4,9 @@ import { arrayUtilities } from "necessary";
 
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
-import { repeatedPartFromParts } from "../../../utilities/parts";
 import { reducedPartFromRuleName } from "../../../utilities/part";
 import { DIRECTLY_LEFT_RECURSIVE_TYPE } from "../../../types";
+import { repeatedPartFromParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
 import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
 const { first } = arrayUtilities;
@@ -59,9 +59,18 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
 
   removeFirstPart() {
     const parts = this.getParts(),
-          firstParts = parts.shift();
+          firstPart = parts.shift();
 
-    return firstParts;
+    return firstPart;
+  }
+
+  static fromRuleNameAndParts(ruleName, parts) {
+    const type = DIRECTLY_LEFT_RECURSIVE_TYPE,
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+
+    return directlyLeftRecursiveDefinition;
   }
 
   static fromRuleNameAndDefinition(ruleName, definition) {
@@ -79,7 +88,7 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
               parts = definition.getParts(),
               recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-        directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, type, ruleName, definition, recursiveRuleNames, leftRecursiveRuleNames);
+        directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
       }
     }
 
