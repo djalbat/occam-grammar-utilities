@@ -17,12 +17,6 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return this.leftRecursiveRuleNames;
   }
 
-  isLeftRecursiveDefinition() {
-    const leftRecursiveDefinition = true;
-
-    return leftRecursiveDefinition;
-  }
-
   isUnary() {
     const definition = this,  ///
           definitionUnary = isDefinitionUnary(definition),

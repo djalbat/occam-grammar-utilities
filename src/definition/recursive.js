@@ -26,12 +26,6 @@ export default class RecursiveDefinition extends Definition {
     return this.recursiveRuleNames;
   }
 
-  isLeftRecursiveDefinition() {
-    const leftRecursiveDefinition = false;
-
-    return leftRecursiveDefinition;
-  }
-
   static fromRuleNameAndDefinition(ruleName, definition) {
     let recursiveDefinition = null;
 

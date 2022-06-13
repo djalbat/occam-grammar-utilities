@@ -4,6 +4,7 @@ import { arrayUtilities } from "necessary";
 
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
+import { isInstanceOf } from "../../../utilities/class";
 import { IMPLICITLY_LEFT_RECURSIVE_TYPE } from "../../../types";
 
 const { backwardsFind, backwardsEvery } = arrayUtilities;
@@ -18,7 +19,6 @@ export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefi
       const type = IMPLICITLY_LEFT_RECURSIVE_TYPE,
             parts = leftRecursiveDefinition.getParts(),
             ruleName = leftRecursiveDefinition.getRuleName(),
-            definition = leftRecursiveDefinition.getDefinition(),
             recursiveRuleNames = leftRecursiveDefinition.getRecursiveRuleNames(),
             leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames();
 
@@ -46,7 +46,7 @@ function findLeftRecursiveDefinitions(recursiveDefinitions) {
   const leftRecursiveDefinitions = [];
 
   backwardsEvery(recursiveDefinitions, (recursiveDefinition) => {
-    const recursiveDefinitionLeftRecursiveDefinition = recursiveDefinition.isLeftRecursiveDefinition();
+    const recursiveDefinitionLeftRecursiveDefinition = isInstanceOf(recursiveDefinition, LeftRecursiveDefinition);
 
     if (recursiveDefinitionLeftRecursiveDefinition) {
       const leftRecursiveDefinition = recursiveDefinition;  ///

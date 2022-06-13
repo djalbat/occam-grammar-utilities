@@ -9,7 +9,7 @@ const { rulesUtilities, eliminateLeftRecursion, removeOrRenameReducedNodes } = r
 const { rulesFromBNF, rulesAsString, ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
-  describe("a single unary directly left recursive definition", () => {
+  xdescribe("a single unary directly left recursive definition", () => {
     const bnf = `
   
 A ::= A
@@ -25,7 +25,7 @@ A ::= A
     });
   });
 
-  describe("a single complex directly left recursive definition", () => {
+  xdescribe("a single complex directly left recursive definition", () => {
     const bnf = `
   
 A ::= ( A B )
@@ -41,7 +41,7 @@ A ::= ( A B )
     });
   });
 
-  describe("a single isolated directly left recursive definition", () => {
+  xdescribe("a single isolated directly left recursive definition", () => {
     const bnf = `
   
 A ::= A "f" ;
@@ -53,7 +53,7 @@ A ::= A "f" ;
     });
   });
 
-  describe("a single non-unary directly left recursive definition", () => {
+  xdescribe("a single non-unary directly left recursive definition", () => {
     const bnf = `
   
 A ::= A "g"
@@ -97,7 +97,7 @@ f[custom](0)
     });
   });
 
-  describe("two single non-unary directly left recursive definitions", () => {
+  xdescribe("two single non-unary directly left recursive definitions", () => {
     const bnf = `
    
     A ::= A "f" "g"
@@ -143,7 +143,7 @@ e[custom](0)
     });
   });
 
-  xdescribe("a single unary indirectly left recursive definition and the corresponding unary implicitly left recursive definition", () => {
+  describe("a single unary indirectly left recursive definition and the corresponding unary implicitly left recursive definition", () => {
     const bnf = `
   
 A ::= B 

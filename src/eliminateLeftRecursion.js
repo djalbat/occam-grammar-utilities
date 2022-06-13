@@ -159,7 +159,7 @@ function retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, leftRecurs
           if (rule !== null) {
             const recursiveDefinitions = previousRecursiveDefinitions;  ///
 
-            retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, ruleMap);
+            retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, leftRecursiveDefinitions, ruleMap);
           }
         }
       });
