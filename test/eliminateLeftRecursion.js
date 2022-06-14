@@ -143,7 +143,32 @@ e[custom](0)
     });
   });
 
-  describe("a single unary indirectly left recursive definition and the corresponding unary implicitly left recursive definition", () => {
+  xdescribe("an indirectly left recursive rule and corresponding implicitly left recursive rule are both additionally directly left recursive", () => {
+    const bnf = `
+  
+    A ::= B "g"
+    
+        | A "f"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "h"
+    
+        | B "d"
+    
+        | "c"
+
+        ;
+`;
+
+    it("throws an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  xdescribe("a single unary indirectly left recursive definition and the corresponding unary implicitly left recursive definition", () => {
     const bnf = `
   
 A ::= B 
@@ -285,6 +310,68 @@ A_ ::= "f" ;
     A(0)     g[custom](1)             
       |                               
 f[custom](0)                          
+             
+`));
+
+    });
+  });
+
+  describe("THE MOST COMPLEX EXAMPLE", () => {
+    const bnf = `
+   
+    A ::= B "g"
+    
+        | A "f"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "h"
+    
+        | "c"
+
+        ;
+    
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+    
+    A ::= A_ ( ( "h" "g" ) | "f" )* ;
+    
+    B ::= A "h"
+    
+        | "c"
+
+        ;
+
+   A_ ::= "c" "g"
+    
+        | "e"
+    
+        ;
+
+`));
+
+    });
+
+    it("result in the requisite parse tree" +
+        "", () => {
+      const content = "efgh",
+          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                       A(0-3)                      
+                          |                        
+      ----------------------------------------     
+      |            |            |            |     
+    A(0)     f[custom](1) g[custom](2) h[custom](3)
+      |                                            
+e[custom](0)                                       
              
 `));
 

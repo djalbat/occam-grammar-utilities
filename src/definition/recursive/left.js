@@ -3,12 +3,11 @@
 import RecursiveDefinition from "../../definition/recursive";
 
 import { reducedRuleNameFromRuleName } from "../../utilities/ruleName";
-import { LEFT_RECURSIVE_TYPE, RECURSIVE_TYPE } from "../../types";
 import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 export default class LeftRecursiveDefinition extends RecursiveDefinition {
-  constructor(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames) {
-    super(parts, type, ruleName, recursiveRuleNames);
+  constructor(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames) {
+    super(parts, ruleName, recursiveRuleNames);
 
     this.leftRecursiveRuleNames = leftRecursiveRuleNames;
   }
@@ -48,13 +47,12 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     const recursiveDefinitionLeftRecursive = isDefinitionLeftRecursive(recursiveDefinition);
 
     if (recursiveDefinitionLeftRecursive) {
-      const type = LEFT_RECURSIVE_TYPE,
-            parts = recursiveDefinition.getParts(),
+      const parts = recursiveDefinition.getParts(),
             ruleName = recursiveDefinition.getRuleName(),
             recursiveRuleNames = recursiveDefinition.getRecursiveRuleNames(),
             leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(recursiveDefinition);
 
-      leftRecursiveDefinition = new LeftRecursiveDefinition(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+      leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
     }
 
     return leftRecursiveDefinition;
@@ -68,11 +66,10 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
           definitionLeftRecursiveDefinition = (leftRecursiveRuleNamesLength > 0);
 
     if (definitionLeftRecursiveDefinition) {
-      const type = RECURSIVE_TYPE,
-            parts = [],
+      const parts = definition.getParts(),
             recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-      leftRecursiveDefinition = new LeftRecursiveDefinition(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+      leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
     }
 
     return leftRecursiveDefinition;

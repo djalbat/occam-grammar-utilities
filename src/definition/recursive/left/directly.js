@@ -5,7 +5,6 @@ import { arrayUtilities } from "necessary";
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
 import { reducedPartFromRuleName } from "../../../utilities/part";
-import { DIRECTLY_LEFT_RECURSIVE_TYPE } from "../../../types";
 import { repeatedPartFromParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
 import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
@@ -15,7 +14,8 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
   rewrite(ruleMap) {
     const unary = this.isUnary(),
           complex = this.isComplex(),
-          isolated = this.isIsolated(ruleMap);
+          isolated = this.isIsolated(ruleMap),
+          ruleName = this.getRuleName();
 
     if (unary) {
       const definitionString = this.asString();
@@ -24,15 +24,13 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
     }
 
     if (complex) {
-      const ruleName = this.getRuleName(),
-            definitionString = this.asString();
+      const definitionString = this.asString();
 
       throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
     }
 
     if (isolated) {
-      const ruleName = this.getRuleName(),
-            definitionString = this.asString();
+      const definitionString = this.asString();
 
       throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is isolated and therefore cannot be rewritten.`);
     }
@@ -40,7 +38,6 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
     this.removeFirstPart();
 
     const parts = this.removeParts(),
-          ruleName = this.getRuleName(),
           reducedPart = reducedPartFromRuleName(ruleName),
           repeatedPart = repeatedPartFromParts(parts);
 
@@ -65,10 +62,9 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
   }
 
   static fromRuleNameAndParts(ruleName, parts) {
-    const type = DIRECTLY_LEFT_RECURSIVE_TYPE,
-          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+    const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
-          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
 
     return directlyLeftRecursiveDefinition;
   }
@@ -84,11 +80,10 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
             ruleNameFirstLeftRecursiveRuleName = (ruleName === firstLeftRecursiveRuleName);
 
       if (ruleNameFirstLeftRecursiveRuleName) {
-        const type = DIRECTLY_LEFT_RECURSIVE_TYPE,
-              parts = definition.getParts(),
+        const parts = definition.getParts(),
               recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-        directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+        directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
       }
     }
 

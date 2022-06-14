@@ -2,20 +2,14 @@
 
 import { Definition } from "occam-parsers";
 
-import { RECURSIVE_TYPE } from "../types";
 import { isDefinitionRecursive, recursiveRuleNamesFromDefinition } from "../utilities/definition";
 
 export default class RecursiveDefinition extends Definition {
-  constructor(parts, type, ruleName, recursiveRuleNames) {
+  constructor(parts, ruleName, recursiveRuleNames) {
     super(parts);
 
-    this.type = type;
     this.ruleName = ruleName;
     this.recursiveRuleNames = recursiveRuleNames;
-  }
-
-  getType() {
-    return this.type;
   }
 
   getRuleName() {
@@ -32,11 +26,10 @@ export default class RecursiveDefinition extends Definition {
     const definitionRecursive = isDefinitionRecursive(definition);
 
     if (definitionRecursive) {
-      const type = RECURSIVE_TYPE,
-            parts = definition.getParts(),
+      const parts = definition.getParts(),
             recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-      recursiveDefinition = new RecursiveDefinition(parts, type, ruleName, recursiveRuleNames);
+      recursiveDefinition = new RecursiveDefinition(parts, ruleName, recursiveRuleNames);
     }
 
     return recursiveDefinition;

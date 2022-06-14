@@ -195,6 +195,26 @@ export default withStyle(View)`
 `
 --------------------------------------------
 
+This is an interesting case. We need to merge the implicitly left recursive definitions:
+
+    A ::= B "i"
+    
+        | B "i"
+    
+        | A "k"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "d"
+    
+        | "c"
+
+        ;
+
+--------------------------------------------
+
 We go from here...
 
     A ::= B "c"

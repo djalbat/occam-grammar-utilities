@@ -5,14 +5,13 @@ import { arrayUtilities } from "necessary";
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 import ImplicitlyLeftRecursiveDefinition from "../../../definition/recursive/left/implicitly";
 
-import { INDIRECTLY_LEFT_RECURSIVE_TYPE } from "../../../types";
 import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
 const { first } = arrayUtilities;
 
 export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
-  constructor(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition) {
-    super(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+  constructor(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition) {
+    super(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
 
     this.implicitlyLeftRecursiveDefinition = implicitlyLeftRecursiveDefinition;
   }
@@ -36,11 +35,10 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
         const implicitlyLeftRecursiveDefinition = ImplicitlyLeftRecursiveDefinition.fromRuleNameLeftRecursiveRuleNameAndRecursiveDefinitions(ruleName, leftRecursiveRuleName, recursiveDefinitions);
 
         if (implicitlyLeftRecursiveDefinition !== null) {
-          const type = INDIRECTLY_LEFT_RECURSIVE_TYPE,
-                parts = definition.getParts(),
+          const parts = definition.getParts(),
                 recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 
-          indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition);
+          indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition);
         }
       }
     }

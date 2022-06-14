@@ -5,24 +5,32 @@ import { arrayUtilities } from "necessary";
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
 import { isInstanceOf } from "../../../utilities/class";
-import { IMPLICITLY_LEFT_RECURSIVE_TYPE } from "../../../types";
 
 const { backwardsFind, backwardsEvery } = arrayUtilities;
 
 export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
+  constructor(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinition) {
+    super(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+
+    this.leftRecursiveDefinition = leftRecursiveDefinition;
+  }
+
+  getLeftRecursiveDefinition() {
+    return this.leftRecursiveDefinition;
+  }
+
   static fromRuleNameLeftRecursiveRuleNameAndRecursiveDefinitions(ruleName, leftRecursiveRuleName, recursiveDefinitions) {
     let implicitlyLeftRecursiveDefinition = null;
 
     const leftRecursiveDefinition = findLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions);
 
     if (leftRecursiveDefinition !== null) {
-      const type = IMPLICITLY_LEFT_RECURSIVE_TYPE,
-            parts = leftRecursiveDefinition.getParts(),
+      const parts = leftRecursiveDefinition.getParts(),
             ruleName = leftRecursiveDefinition.getRuleName(),
             recursiveRuleNames = leftRecursiveDefinition.getRecursiveRuleNames(),
             leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames();
 
-      implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(parts, type, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+      implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinition);
     }
 
     return implicitlyLeftRecursiveDefinition;
