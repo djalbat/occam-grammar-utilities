@@ -7,6 +7,12 @@ import { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "./pa
 const { first } = arrayUtilities,
       { ZeroOrMorePartsPart, SequenceOfPartsPart } = Parts;
 
+export function cloneParts(parts) {
+  parts = parts.map((part) => part.clone());  ///
+
+  return parts;
+}
+
 export function singlePartFromParts(parts) {
   let singlePart;
 

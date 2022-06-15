@@ -248,6 +248,31 @@ Next we substitute the rewritten B rule's definitions for any occurence of the B
         ;
         
    B_ ::= "c" ;
+   
+Now we reduce the A rule...
+
+    A ::= A "h" "g"
+    
+        | A "f"
+    
+        | A_
+    
+        ;
+    
+    B ::= A "h"
+    
+        | B_
+
+        ;
+        
+   B_ ::= "c" ;
+    
+   A_ ::= B_ "g"
+    
+        | "e"
+    
+        ;
+
         
         
         
