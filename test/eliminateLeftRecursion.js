@@ -332,7 +332,7 @@ f[custom](0)
         | "c"
 
         ;
-    
+
 `;
 
     it("are rewritten", () => {

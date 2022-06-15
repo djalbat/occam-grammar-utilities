@@ -8,6 +8,7 @@ import LeftRecursiveDefinition from "../definition/recursive/left";
 
 import { isInstanceOf } from "../utilities/class";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
+import { reducedDefinitionFromRuleName } from "../utilities/definition";
 
 const { backwardsForEach } = arrayUtilities;
 
@@ -16,28 +17,24 @@ export default class ReducedRule extends Rule {
     let reducedRule = null;
 
     const definitions = rule.getDefinitions(),
-          nonLeftRecursiveDefinitions = [];
-
-    backwardsForEach(definitions, (definition, index) => {
-      const definitionLeftRecursiveDefinition = isInstanceOf(definition, LeftRecursiveDefinition);
-
-      if (!definitionLeftRecursiveDefinition) {
-        const nonLeftRecursiveDefinition = definition; ///
-
-        nonLeftRecursiveDefinitions.unshift(nonLeftRecursiveDefinition);
-
-        rule.removeDefinition(definition);
-      }
-    });
-
-    const nonLeftRecursiveDefinitionsLength = nonLeftRecursiveDefinitions.length;
+          nonLeftRecursiveDefinitions = nonLeftRecursiveDefinitionsFromDefinitions(definitions),
+          nonLeftRecursiveDefinitionsLength = nonLeftRecursiveDefinitions.length;
 
     if (nonLeftRecursiveDefinitionsLength > 0) {
       const ruleName = rule.getName(),
+            reducedDefinition = reducedDefinitionFromRuleName(ruleName),
             reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-            name = reducedRuleName, ///
-            ambiguous = false,
             definitions = nonLeftRecursiveDefinitions,  ///
+            definition = reducedDefinition; ///
+
+      definitions.forEach((definition) => {
+        rule.removeDefinition(definition);
+      });
+
+      rule.addDefinition(definition);
+
+      const name = reducedRuleName, ///
+            ambiguous = false,
             NonTerminalNode = ReducedNode;  ///
 
       reducedRule = new ReducedRule(name, ambiguous, definitions, NonTerminalNode);
@@ -45,4 +42,20 @@ export default class ReducedRule extends Rule {
 
     return reducedRule;
   }
+}
+
+function nonLeftRecursiveDefinitionsFromDefinitions(definitions) {
+  const nonLeftRecursiveDefinitions = [];
+
+  backwardsForEach(definitions, (definition) => {
+    const definitionLeftRecursiveDefinition = isInstanceOf(definition, LeftRecursiveDefinition);
+
+    if (!definitionLeftRecursiveDefinition) {
+      const nonLeftRecursiveDefinition = definition;  ///
+
+      nonLeftRecursiveDefinitions.push(nonLeftRecursiveDefinition);
+    }
+  });
+
+  return nonLeftRecursiveDefinitions;
 }

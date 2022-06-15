@@ -197,21 +197,78 @@ export default withStyle(View)`
 
 This is an interesting case. We need to merge the implicitly left recursive definitions:
 
-    A ::= B "i"
+    A ::= B "g"
     
-        | B "i"
-    
-        | A "k"
+        | A "f"
     
         | "e"
     
         ;
     
-    B ::= A "d"
+    B ::= A "h"
     
         | "c"
 
         ;
+        
+Because the A rule is directly left recursive, we need to substitute into that. First, we rewrite the B rule:
+
+    A ::= B "g"
+    
+        | A "f"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "h"
+    
+        | B_
+
+        ;
+        
+   B_ ::= "c" ;
+        
+Next we substitute the rewritten B rule's definitions for any occurence of the B rule name part in the A rule's implicitly left recursive definitions:
+
+    A ::= A "h" "g"
+    
+        | B_ "g"
+    
+        | A "f"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "h"
+    
+        | B_
+
+        ;
+        
+   B_ ::= "c" ;
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
 --------------------------------------------
 
