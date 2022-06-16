@@ -340,13 +340,7 @@ f[custom](0)
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A ::= A "h" "g"
-    
-        | A "f"
-    
-        | A_
-    
-        ;
+    A ::= A_ ( ( "h" "g" ) | "f" )* ;
     
     B ::= A "h"
     
@@ -361,14 +355,13 @@ f[custom](0)
         | "e"
     
         ;
-
+    
 
 `));
 
     });
 
-    xit("result in the requisite parse tree" +
-        "", () => {
+    xit("result in the requisite parse tree" , () => {
       const content = "efgh",
           parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
