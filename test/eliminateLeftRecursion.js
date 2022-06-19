@@ -316,7 +316,7 @@ f[custom](0)
     });
   });
 
-  describe("THE MOST COMPLEX EXAMPLE", () => {
+  describe("a single non-unary indirectly left recursive definition and the corresponding non-unary implicitly left recursive definition with a sibling directly left recursive definition", () => {
     const bnf = `
    
     A ::= B "g"
@@ -340,7 +340,7 @@ f[custom](0)
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A ::= A_ ( ( "h" "g" ) | "f" )* ;
+    A ::= A_ ( ( B~ "g" ) | "f" )* ;
     
     B ::= A "h"
     
@@ -349,6 +349,8 @@ f[custom](0)
         ;
         
    B_ ::= "c" ;
+    
+   B~ ::= "h" ;
     
    A_ ::= B_ "g"
     
@@ -361,19 +363,23 @@ f[custom](0)
 
     });
 
-    xit("result in the requisite parse tree" , () => {
-      const content = "efgh",
+    it("result in the requisite parse tree" , () => {
+      const content = "cgfhg",
           parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-                       A(0-3)                      
-                          |                        
-      ----------------------------------------     
-      |            |            |            |     
-    A(0)     f[custom](1) g[custom](2) h[custom](3)
-      |                                            
-e[custom](0)                                       
+                                 A(0-4)                         
+                                    |                           
+             ----------------------------------------------     
+             |                  |            |            |     
+          A(0-1)          f[custom](2) h[custom](3) g[custom](4)
+             |                                                  
+      --------------                                            
+      |            |                                            
+    B(0)     g[custom](1)                                       
+      |                                                         
+c[custom](0)                                                    
              
 `));
 

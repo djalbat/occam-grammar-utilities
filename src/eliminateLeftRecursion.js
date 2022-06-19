@@ -4,6 +4,7 @@ import { Parts } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
 import ReducedRule from "./rule/reduced";
+import RepeatedRule from "./rule/repeated";
 import RecursiveDefinition from "./definition/recursive";
 import LeftRecursiveDefinition from "./definition/recursive/left";
 import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
@@ -19,11 +20,15 @@ const { ChoiceOfPartsPart } = Parts,
 
 export default function eliminateLeftRecursion(startRule, ruleMap) {
   const rule = startRule, ///
-        leftRecursiveDefinitions = retrieveLeftRecursiveDefinitions(rule, ruleMap);
+        recursiveDefinitions = [],
+        leftRecursiveDefinitions = [],
+        directlyLeftRecursiveRules = [];
+
+  retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, leftRecursiveDefinitions, ruleMap);
 
   eliminateIndirectLeftRecursion(leftRecursiveDefinitions, ruleMap);
 
-  const directlyLeftRecursiveRules = retrieveDirectlyLeftRecursiveRules(leftRecursiveDefinitions, ruleMap);
+  retrieveDirectlyLeftRecursiveRules(directlyLeftRecursiveRules, leftRecursiveDefinitions, ruleMap);
 
   eliminateDirectLeftRecursion(directlyLeftRecursiveRules, ruleMap);
 
@@ -49,7 +54,7 @@ function eliminateDirectLeftRecursion(directlyLeftRecursiveRules, ruleMap) {
 
     directlyLeftRecursiveDefinition.rewrite(ruleMap);
 
-    definitions.splice(0); // rule.removeDefinitions();
+    rule.removeAllDefinitions();
 
     rule.addDefinition(directlyLeftRecursiveDefinition);
   });
@@ -102,7 +107,7 @@ function reduceDirectlyLeftRecursiveRule(directlyLeftRecursiveRule, ruleMap) {
   ruleMap[reducedRuleName] = reducedRule;
 }
 
-function retrieveLeftRecursiveDefinition(rule, definition, ruleMap, recursiveDefinitions, leftRecursiveDefinitions) {
+function retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions, leftRecursiveDefinitions, ruleMap) {
   let recursiveDefinition;
 
   const ruleName = rule.getName(),
@@ -149,11 +154,11 @@ function retrieveLeftRecursiveDefinition(rule, definition, ruleMap, recursiveDef
   return recursiveDefinition;
 }
 
-function retrieveLeftRecursiveDefinitions(rule, ruleMap, recursiveDefinitions = [], leftRecursiveDefinitions = []) {
+function retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, leftRecursiveDefinitions, ruleMap) {
   const definitions = rule.getDefinitions();
 
   definitions.forEach((definition) => {
-    const recursiveDefinition = retrieveLeftRecursiveDefinition(rule, definition, ruleMap, recursiveDefinitions, leftRecursiveDefinitions);
+    const recursiveDefinition = retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions, leftRecursiveDefinitions, ruleMap);
 
     if (recursiveDefinition !== null) {
       const previousRecursiveDefinitions = [ ...recursiveDefinitions, recursiveDefinition ],
@@ -175,25 +180,27 @@ function retrieveLeftRecursiveDefinitions(rule, ruleMap, recursiveDefinitions = 
           if (rule !== null) {
             const recursiveDefinitions = previousRecursiveDefinitions;  ///
 
-            retrieveLeftRecursiveDefinitions(rule, ruleMap, recursiveDefinitions, leftRecursiveDefinitions);
+            retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, leftRecursiveDefinitions, ruleMap);
           }
         }
       });
     }
   });
-
-  return leftRecursiveDefinitions;
 }
 
 function reduceNonDirectlyLeftRecursiveRule(nonDirectlyLeftRecursiveRule, ruleMap) {
   const reducedRule = ReducedRule.fromNonDirectlyLeftRecursiveRule(nonDirectlyLeftRecursiveRule),
-        reducedRuleName = reducedRule.getName();
+        repeatedRule = RepeatedRule.fromNonDirectlyLeftRecursiveRule(nonDirectlyLeftRecursiveRule),
+        reducedRuleName = reducedRule.getName(),
+        repeatedRuleName = repeatedRule.getName();
 
   ruleMap[reducedRuleName] = reducedRule;
+
+  ruleMap[repeatedRuleName] = repeatedRuleName;
 }
 
-function retrieveDirectlyLeftRecursiveRules(leftRecursiveDefinitions, ruleMap) {
-  const directlyLeftRecursiveRules = leftRecursiveDefinitions.reduce((directlyLeftRecursiveRules, leftRecursiveDefinition) => {
+function retrieveDirectlyLeftRecursiveRules(directlyLeftRecursiveRules, leftRecursiveDefinitions, ruleMap) {
+  leftRecursiveDefinitions.forEach((leftRecursiveDefinition) => {
     const leftRecursiveDefinitionDirectlyLeftRecursiveDefinition = isInstanceOf(leftRecursiveDefinition, DirectlyLeftRecursiveDefinition),
           leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = isInstanceOf(leftRecursiveDefinition, IndirectlyLeftRecursiveDefinition),
           leftRecursiveDefinitionImplicitlyLeftRecursiveDefinition = isInstanceOf(leftRecursiveDefinition, ImplicitlyLeftRecursiveDefinition);
@@ -220,11 +227,7 @@ function retrieveDirectlyLeftRecursiveRules(leftRecursiveDefinitions, ruleMap) {
         }
       }
     }
-
-    return directlyLeftRecursiveRules;
-  }, []);
-
-  return directlyLeftRecursiveRules;
+  });
 }
 
 function mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions) {

@@ -3,7 +3,7 @@
 import { arrayUtilities } from "necessary";
 import { Parts, partTypes } from "occam-parsers";
 
-import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
+import { reducedRuleNameFromRuleName, repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 
 const { first } = arrayUtilities,
       { RuleNamePart, OptionalPartPart, ZeroOrMorePartsPart } = Parts,
@@ -73,6 +73,17 @@ export function reducedPartFromRuleName(ruleName) {
         reducedPart = reducedPartFromPart(part);
 
   return reducedPart;
+}
+
+export function repeatedPartFromRuleName(ruleName) {
+  const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
+
+  ruleName = repeatedRuleName;  ///
+
+  const ruleNamePart = new RuleNamePart(ruleName),
+        repeatedPart = ruleNamePart;  ///
+
+  return repeatedPart;
 }
 
 export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {

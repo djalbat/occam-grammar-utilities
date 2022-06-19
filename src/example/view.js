@@ -6,7 +6,7 @@ import { Element } from "easy";
 import { BasicLexer } from "occam-lexers";
 import { BasicParser } from "occam-parsers";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
-import { rulesUtilities, eliminateLeftRecursion, removeOrRenameReducedNodes } from "../index"; ///
+import { rulesUtilities, eliminateLeftRecursion, removeOrRenameIntermediateNodes } from "../index"; ///
 
 import Paragraph from "./paragraph";
 import SubHeading from "./subHeading";
@@ -17,7 +17,7 @@ import ParseTreeTextarea from "./textarea/parseTree";
 import StartRuleNameInput from "./input/startRuleName";
 import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
-import RemoveOrRenameReducedNodesCheckbox from "./checkbox/removeOrRenameReducedNodes"
+import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIntermediateNodes"
 
 import { rulesFromBNF } from "../utilities/rules";
 import { UNASSIGNED_ENTRY } from "../constants";
@@ -47,10 +47,10 @@ class View extends Element {
           node = basicParser.parse(tokens);
 
     if (node !== null) {
-      const removeOrRenameReducedNodesCheckboxChecked = this.isRemoveOrRenameReducedNodesCheckboxChecked();
+      const removeOrRenameIntermediateNodesCheckboxChecked = this.isRemoveOrRenameIntermediateNodesCheckboxChecked();
 
-      if (removeOrRenameReducedNodesCheckboxChecked) {
-        removeOrRenameReducedNodes(node);
+      if (removeOrRenameIntermediateNodesCheckboxChecked) {
+        removeOrRenameIntermediateNodes(node);
       }
 
       parseTree = node.asParseTree(tokens);
@@ -131,8 +131,8 @@ class View extends Element {
             </SubHeading>
             <ParseTreeTextarea />
             <Paragraph>
-              <RemoveOrRenameReducedNodesCheckbox onChange={changeHandler} checked />
-              Remove or rename reduced nodes
+              <RemoveOrRenameIntermediateNodesCheckbox onChange={changeHandler} checked />
+              Remove or rename intermediate nodes
             </Paragraph>
           </RowsDiv>
         </ColumnDiv>
@@ -163,17 +163,25 @@ class View extends Element {
 
   static initialBNF = `
  
-    A ::= A "f" "g"
+    A ::= B "g"
     
-        | A "h"
+        | A "f"
     
         | "e"
     
         ;
     
+    B ::= A "h"
+    
+        | B_
+
+        ;
+
+   B_ ::= "c" ;
+
 `;
 
-  static initialContent = "efgh";
+  static initialContent = "cgfhg";
 
   static initialStartRuleName = "S";
 
@@ -193,6 +201,140 @@ export default withStyle(View)`
 `;
 
 `
+
+-------------------------------
+
+THE REDUCEDPARTFROMPART() USAGE IN THE PART UTILITIES LOOKS WRONG. IT IS ALWAYS AND ONLY CALLED WITH A RULENAME PART, SO WHY THE NEED FOR RECURSION?
+
+--------------------------------
+
+We introduce a repeated as well as a reduced rule:
+
+     A ::= B "g"
+    
+         | A "f"
+    
+         | "e"
+    
+         ;
+    
+    B ::= A B~
+    
+        | B_
+
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+ 
+Now when we do the substitution...
+ 
+     A ::= A B~ "g"
+    
+         | B_ "g"
+
+         | A "f"
+
+         | "e"
+    
+         ;
+    
+    B ::= A "h"
+    
+        | B_
+
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+
+...we keep the A to B to A relation when we match "h".
+
+Continuing, we reduce the A rule...
+
+     A ::= A B~ "g"
+    
+         | A "f"
+
+         | A_
+    
+         ;
+    
+    B ::= A "h"
+    
+        | B_
+
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+
+   A_ ::= B_ "g"
+
+        | "e"
+    
+        ;
+    
+...merge the directly left recursive definitions...
+
+     A ::= A ( ( B~ "g" ) | "f" )
+
+         | A_
+    
+         ;
+    
+    B ::= A "h"
+    
+        | B_
+
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+
+   A_ ::= B_ "g"
+
+        | "e"
+    
+        ;
+    
+...and rewrite:
+
+    A ::= A_ ( ( B~ "g" ) | "f" )* ;
+    
+    B ::= A "h"
+    
+        | B_
+
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+
+   A_ ::= B_ "g"
+
+        | "e"
+    
+        ;
+    
+In fact note that we may have to merge the indirectly left recursive definitions firstly, too!
+
+
+
+
+
+
+
+
+
+
+
+
 --------------------------------------------
 
 This is an interesting case. We need to merge the implicitly left recursive definitions:
