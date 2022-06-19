@@ -18,6 +18,12 @@ export function repeatedRuleNameFromRuleName(ruleName) {
   return repeatedRuleName;
 }
 
+export function ruleNameFromRepeatedRuleName(repeatedRuleName) {
+  const ruleName = repeatedRuleName.replace(/~$/, "");
+
+  return ruleName;
+}
+
 export function doesReducedRuleNameMatchRuleName(reducedRuleName, ruleName) {
   const ruleNameA = ruleName; ///
 

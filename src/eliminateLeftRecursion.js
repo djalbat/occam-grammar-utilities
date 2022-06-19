@@ -196,7 +196,7 @@ function reduceNonDirectlyLeftRecursiveRule(nonDirectlyLeftRecursiveRule, ruleMa
 
   ruleMap[reducedRuleName] = reducedRule;
 
-  ruleMap[repeatedRuleName] = repeatedRuleName;
+  ruleMap[repeatedRuleName] = repeatedRule;
 }
 
 function retrieveDirectlyLeftRecursiveRules(directlyLeftRecursiveRules, leftRecursiveDefinitions, ruleMap) {

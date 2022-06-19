@@ -4,48 +4,36 @@ import ReducedNode from "./node/reduced";
 import RepeatedNode from "./node/repeated";
 
 import { isInstanceOf } from "./utilities/class";
-import { ruleNameFromReducedRuleName, doesReducedRuleNameMatchRuleName } from "./utilities/ruleName";
+import { ruleNameFromReducedRuleName, ruleNameFromRepeatedRuleName, doesReducedRuleNameMatchRuleName } from "./utilities/ruleName";
 
 export default function removeOrRenameIntermediateNodes(node) {
   removeOrRenameReducedNodes(node);
 
-  removeRepeatedNodes(node);
+  renameRepeatedNodes(node);
 }
 
-function removeRepeatedNodes(node) {
+function renameRepeatedNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (nodeNonTerminalNode) {
-    const nonTerminalNode = node; ///
+    const nonTerminalNode = node,
+          childNodes = nonTerminalNode.getChildNodes();
 
-    let childNodes = nonTerminalNode.getChildNodes();
+    childNodes.forEach((childNode) => {
+      const childNodeRepeatedNode = isInstanceOf(childNode, RepeatedNode);
 
-    childNodes = removeRepeatedChildNodes(childNodes);
+      if (childNodeRepeatedNode) {
+        const repeatedNode = childNode, ///
+              repeatedNodeRuleName = repeatedNode.getRuleName(),
+              repeatedRuleName = repeatedNodeRuleName,  ///
+              ruleName = ruleNameFromRepeatedRuleName(repeatedRuleName);
 
-    nonTerminalNode.setChildNodes(childNodes)
+        childNode.setRuleName(ruleName);
+      }
+
+      renameRepeatedNodes(childNode);
+    })
   }
-}
-
-function removeRepeatedChildNodes(childNodes) {
-  childNodes = childNodes.reduce((childNodes, childNode) => {
-    const childNodeRepeatedNode = isInstanceOf(childNode, RepeatedNode);
-
-    if (childNodeRepeatedNode) {
-      let childNodeChildNodes = childNode.getChildNodes();
-
-      childNodeChildNodes = removeRepeatedChildNodes(childNodeChildNodes);
-
-      childNodes = childNodes.concat(childNodeChildNodes);
-    } else {
-      removeRepeatedNodes(childNode);
-
-      childNodes.push(childNode);
-    }
-
-    return childNodes;
-  }, []);
-
-  return childNodes;
 }
 
 function removeOrRenameReducedNodes(node) {

@@ -4,7 +4,7 @@ const { assert } = require("chai"),
       { BasicLexer } = require("occam-lexers"),
       { BasicParser } = require("occam-parsers");
 
-const { rulesUtilities, eliminateLeftRecursion, removeOrRenameReducedNodes } = require("../lib/index.js");
+const { rulesUtilities, eliminateLeftRecursion, removeOrRenameIntermediateNodes } = require("../lib/index.js");
 
 const { rulesFromBNF, rulesAsString, ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
@@ -342,7 +342,7 @@ f[custom](0)
 
     A ::= A_ ( ( B~ "g" ) | "f" )* ;
     
-    B ::= A "h"
+    B ::= A B~
     
         | B_
 
@@ -373,9 +373,9 @@ f[custom](0)
                                     |                           
              ----------------------------------------------     
              |                  |            |            |     
-          A(0-1)          f[custom](2) h[custom](3) g[custom](4)
-             |                                                  
-      --------------                                            
+          A(0-1)          f[custom](2)     B(3)     g[custom](4)
+             |                               |                  
+      --------------                   h[custom](3)             
       |            |                                            
     B(0)     g[custom](1)                                       
       |                                                         
@@ -450,7 +450,7 @@ function parseTreeStringFromBNFAndContent(bnf, content) {
   const tokens = basicLexer.tokenise(content),
         node = basicParser.parse(tokens);
 
-  removeOrRenameReducedNodes(node);
+  removeOrRenameIntermediateNodes(node);
 
   const parseTree = node.asParseTree(tokens);
 

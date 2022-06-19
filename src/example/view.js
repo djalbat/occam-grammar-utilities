@@ -173,11 +173,9 @@ class View extends Element {
     
     B ::= A "h"
     
-        | B_
+        | "c"
 
         ;
-
-   B_ ::= "c" ;
 
 `;
 
