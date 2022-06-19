@@ -45,7 +45,15 @@ export default class ReducedRule extends Rule {
       }
     });
 
-    const reducedRule = reducedRuleFromRuleAndDefinitions(rule, definitions);
+    const ruleName = rule.getName(),  ///
+          reducedRuleName = reducedRuleNameFromRuleName(ruleName);
+
+    rule.removeDefinitions(definitions);
+
+    const name = reducedRuleName, ///
+          ambiguous = false,
+          NonTerminalNode = ReducedNode,  ///
+          reducedRule = new ReducedRule(name, ambiguous, definitions, NonTerminalNode);
 
     return reducedRule;
   }

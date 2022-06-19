@@ -200,6 +200,21 @@ export default withStyle(View)`
 
 `
 
+-----------------------------
+
+We need further (bur relatively easy) checks to ensure that reduced and repeated rules are not empty. The latter means that we can do away with checks for unary definitions.
+
+-----------------------------
+
+
+There is currently a bug in the fromIndirectlyLeftRecursiveRule() static factory method of the repeated rule whereby only one indirectly left recursive definition is treated.
+
+This could work out, in some sense at least, because we will end up merging these indirectly left recursive definitions.
+
+It is possible that even after merging there is still more than one indirectly left recursive definition, however.  
+
+-----------------------------
+
 It should be possible to rewrite rules where it is the indirectly left recursive rule that is also directly left recursive.
 
     A ::= B "g"

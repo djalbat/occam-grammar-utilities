@@ -316,18 +316,20 @@ f[custom](0)
     });
   });
 
-  describe("a single non-unary indirectly left recursive definition with a sibling directly left recursive definitionand the corresponding non-unary implicitly left recursive definition", () => {
+  describe("a single non-unary indirectly left recursive definition with a sibling directly left recursive definitions and the corresponding non-unary implicitly left recursive definition", () => {
     const bnf = `
    
-    A ::= B "g"
+    A ::= B "h"
     
-        | "e"
+        | "d"
     
         ;
     
-    B ::= A "h"
+    B ::= A "g"
     
         | B "f"
+
+        | B "e"
     
         | "c"
 
@@ -340,23 +342,21 @@ f[custom](0)
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A ::= B "g"
+    A ::= B "h"
     
-        | "e"
+        | "d"
     
         ;
     
     B ::= A B~
     
-        | B "f"
-    
-        | B_
+        | B_ ( "f" | "e" )*
 
         ;
 
    B_ ::= "c" ;
 
-   B~ ::= "h" ;
+   B~ ::= "g" ;
 
 
 `));

@@ -4,8 +4,7 @@ import { arrayUtilities } from "necessary";
 
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
-import { reducedPartFromRuleName } from "../../../utilities/part";
-import { repeatedPartFromParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
+import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
 import { isDefinitionUnary,
          isDefinitionComplex,
          isDefinitionLeftRecursive,
@@ -15,34 +14,6 @@ import { isDefinitionUnary,
 const { first } = arrayUtilities;
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
-  rewrite() {
-    this.removeFirstPart();
-
-    const parts = this.removeParts(),
-          ruleName = this.getRuleName(),
-          reducedPart = reducedPartFromRuleName(ruleName),
-          repeatedPart = repeatedPartFromParts(parts);
-
-    this.addPart(reducedPart);
-
-    this.addPart(repeatedPart);
-  }
-
-  removeParts() {
-    let parts = this.getParts();
-
-    parts = parts.splice(0);  ///
-
-    return parts;
-  }
-
-  removeFirstPart() {
-    const parts = this.getParts(),
-          firstPart = parts.shift();
-
-    return firstPart;
-  }
-
   static fromRuleNameAndParts(ruleName, parts) {
     const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
