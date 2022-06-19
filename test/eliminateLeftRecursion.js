@@ -316,7 +316,77 @@ f[custom](0)
     });
   });
 
-  describe("a single non-unary indirectly left recursive definition and the corresponding non-unary implicitly left recursive definition with a sibling directly left recursive definition", () => {
+  describe("a single non-unary indirectly left recursive definition with a sibling directly left recursive definitionand the corresponding non-unary implicitly left recursive definition", () => {
+    const bnf = `
+   
+    A ::= B "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "h"
+    
+        | B "f"
+    
+        | "c"
+
+        ;
+
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+
+    A ::= B "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A B~
+    
+        | B "f"
+    
+        | B_
+
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+
+
+`));
+
+    });
+
+    xit("result in the requisite parse tree" , () => {
+      const content = "cgfhg",
+          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                                 A(0-4)                         
+                                    |                           
+             ----------------------------------------------     
+             |                  |            |            |     
+          A(0-1)          f[custom](2)     B(3)     g[custom](4)
+             |                               |                  
+      --------------                   h[custom](3)             
+      |            |                                            
+    B(0)     g[custom](1)                                       
+      |                                                         
+c[custom](0)                                                    
+             
+`));
+
+    });
+  });
+
+  xdescribe("a single non-unary indirectly left recursive definition and the corresponding non-unary implicitly left recursive definition with a sibling directly left recursive definition", () => {
     const bnf = `
    
     A ::= B "g"
@@ -365,7 +435,7 @@ f[custom](0)
 
     it("result in the requisite parse tree" , () => {
       const content = "cgfhg",
-          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           

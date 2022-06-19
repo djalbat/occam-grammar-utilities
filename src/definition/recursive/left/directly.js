@@ -6,38 +6,20 @@ import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
 import { reducedPartFromRuleName } from "../../../utilities/part";
 import { repeatedPartFromParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
-import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
+import { isDefinitionUnary,
+         isDefinitionComplex,
+         isDefinitionLeftRecursive,
+         recursiveRuleNamesFromDefinition,
+         leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
 const { first } = arrayUtilities;
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
-  rewrite(ruleMap) {
-    const unary = this.isUnary(),
-          complex = this.isComplex(),
-          isolated = this.isIsolated(ruleMap),
-          ruleName = this.getRuleName();
-
-    if (unary) {
-      const definitionString = this.asString();
-
-      throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
-    }
-
-    if (complex) {
-      const definitionString = this.asString();
-
-      throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
-    }
-
-    if (isolated) {
-      const definitionString = this.asString();
-
-      throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is isolated and therefore cannot be rewritten.`);
-    }
-
+  rewrite() {
     this.removeFirstPart();
 
     const parts = this.removeParts(),
+          ruleName = this.getRuleName(),
           reducedPart = reducedPartFromRuleName(ruleName),
           repeatedPart = repeatedPartFromParts(parts);
 
@@ -80,6 +62,22 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
             ruleNameFirstLeftRecursiveRuleName = (ruleName === firstLeftRecursiveRuleName);
 
       if (ruleNameFirstLeftRecursiveRuleName) {
+        const definitionUnary = isDefinitionUnary(definition);
+
+        if (definitionUnary) {
+          const definitionString = this.asString();
+
+          throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
+        }
+
+        const definitionComplex = isDefinitionComplex(definition);
+
+        if (definitionComplex) {
+          const definitionString = this.asString();
+
+          throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+        }
+
         const parts = definition.getParts(),
               recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 

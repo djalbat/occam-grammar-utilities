@@ -10,8 +10,8 @@ import { repeatedPartFromRuleName } from "../utilities/part";
 import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 
 export default class RepeatedRule extends Rule {
-  static fromNonDirectlyLeftRecursiveRule(nonDirectlyLeftRecursiveRule) {
-    const rule = nonDirectlyLeftRecursiveRule;  ///
+  static fromIndirectlyLeftRecursiveRule(indirectlyLeftRecursiveRule) {
+    const rule = indirectlyLeftRecursiveRule;  ///
 
     let definitions = rule.getDefinitions();
 

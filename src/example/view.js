@@ -200,9 +200,161 @@ export default withStyle(View)`
 
 `
 
+It should be possible to rewrite rules where it is the indirectly left recursive rule that is also directly left recursive.
+
+    A ::= B "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "h"
+    
+        | B "f"
+    
+        | "c"
+
+        ;
+
+First we rewrite the indirectly left recursive rule as before...
+
+    A ::= B "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A B~
+    
+        | B "f"
+    
+        | B_
+
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+
+...the trick being to leave the indirectly left recursive definition effectively in place, although note that it is still subsequently rewritten with a repeated rule being produced:
+
+Now we eliminate B's direct left recursion in the usual way:
+
+    A ::= B "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A B~
+    
+        | B_ "f"*
+    
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+
+And now we do the usual substitution to eliminate indirect left recursion:
+
+    A ::= A B~ "g"
+    
+        | B_ "f"* "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A B~
+    
+        | B_ "f"*
+    
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+
+Finally, there is a second pass to eliminate direct left recursion. First the reduction...
+
+    A ::= A B~ "g"
+    
+        | A_
+    
+        ;
+    
+    B ::= A B~
+    
+        | B_ "f"*
+    
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+
+   A_ ::= B_ "f"* "g"
+    
+        | "e"
+    
+        ;
+    
+...and then the rewrite:
+
+    A ::= A_ ( B~ "g" )* ;
+    
+    B ::= A B~
+    
+        | B_ "f"*
+    
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+
+   A_ ::= B_ "f"* "g"
+    
+        | "e"
+    
+        ;
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -------------------------------
 
-THE REDUCEDPARTFROMPART() USAGE IN THE PART UTILITIES LOOKS WRONG. IT IS ALWAYS AND ONLY CALLED WITH A RULENAME PART, SO WHY THE NEED FOR RECURSION?
+We need to make sure when rules are rewritten that they are only done so once. There may be more than one indirectly recursive definition, for example.
+
+In this case, can they be merged beforehand?
+
+-------------------------------
+
+The reducedPartFromPart() usage in the part utilities looks suspect. It is only called with the Rulename part. So why the need for recursion?
 
 --------------------------------
 

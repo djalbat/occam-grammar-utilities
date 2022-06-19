@@ -14,8 +14,8 @@ import { reducedDefinitionFromRuleName } from "../utilities/definition";
 const { find } = arrayUtilities;
 
 export default class ReducedRule extends Rule {
-  static fromDirectlyLeftRecursiveRule(directlyLeftRecursiveRule) {
-    const rule = directlyLeftRecursiveRule;  ///
+  static fromImplicitlyLeftRecursiveRule(implicitlyLeftRecursiveRule) {
+    const rule = implicitlyLeftRecursiveRule;  ///
 
     let definitions = rule.getDefinitions();
 
@@ -32,8 +32,8 @@ export default class ReducedRule extends Rule {
     return reducedRule;
   }
 
-  static fromNonDirectlyLeftRecursiveRule(nonDirectlyLeftRecursiveRule) {
-    const rule = nonDirectlyLeftRecursiveRule;  ///
+  static fromIndirectlyLeftRecursiveRule(indirectlyLeftRecursiveRule) {
+    const rule = indirectlyLeftRecursiveRule;  ///
 
     let definitions = rule.getDefinitions();
 
@@ -62,11 +62,9 @@ function reducedRuleFromRuleAndDefinitions(rule, definitions) {
           reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           definition = reducedDefinition; ///
 
-    definitions.forEach((definition) => {
-      rule.removeDefinition(definition);
-    });
-
     rule.addDefinition(definition);
+
+    rule.removeDefinitions(definitions);
 
     const name = reducedRuleName, ///
           ambiguous = false,

@@ -9,6 +9,7 @@ export default class RecursiveDefinition extends Definition {
     super(parts);
 
     this.ruleName = ruleName;
+
     this.recursiveRuleNames = recursiveRuleNames;
   }
 

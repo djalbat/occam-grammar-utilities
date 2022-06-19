@@ -2,8 +2,7 @@
 
 import RecursiveDefinition from "../../definition/recursive";
 
-import { reducedRuleNameFromRuleName } from "../../utilities/ruleName";
-import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 export default class LeftRecursiveDefinition extends RecursiveDefinition {
   constructor(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames) {
@@ -14,31 +13,6 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
 
   getLeftRecursiveRuleNames() {
     return this.leftRecursiveRuleNames;
-  }
-
-  isUnary() {
-    const definition = this,  ///
-          definitionUnary = isDefinitionUnary(definition),
-          unary = definitionUnary;  ///
-
-    return unary;
-  }
-
-  isComplex() {
-    const definition = this,  ///
-          definitionComplex = isDefinitionComplex(definition),
-          complex = definitionComplex;  ///
-
-    return complex;
-  }
-
-  isIsolated(ruleMap) {
-    const ruleName = this.getRuleName(),
-          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          reducedRule = ruleMap[reducedRuleName] || null,
-          isolated = (reducedRule === null);
-
-    return isolated;
   }
 
   static fromRecursiveDefinition(recursiveDefinition) {
