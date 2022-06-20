@@ -9,11 +9,28 @@ import DirectlyLeftRecursiveDefinition from "../definition/recursive/left/direct
 
 import { isInstanceOf } from "../utilities/class";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
-import { reducedDefinitionFromRuleName } from "../utilities/definition";
 
 const { find } = arrayUtilities;
 
 export default class ReducedRule extends Rule {
+  static fromDirectlyLeftRecursiveRule(directlyLeftRecursiveRule) {
+    const rule = directlyLeftRecursiveRule;  ///
+
+    let definitions = rule.getDefinitions();
+
+    definitions = find(definitions, (definition) => { ///
+      const definitionDirectlyLeftRecursiveDefinition = isInstanceOf(definition, DirectlyLeftRecursiveDefinition);
+
+      if (!definitionDirectlyLeftRecursiveDefinition) {
+        return true;
+      }
+    });
+
+    const reducedRule = reducedRuleFromRuleAndDefinitions(rule, definitions);
+
+    return reducedRule;
+  }
+
   static fromImplicitlyLeftRecursiveRule(implicitlyLeftRecursiveRule) {
     const rule = implicitlyLeftRecursiveRule;  ///
 
@@ -45,15 +62,7 @@ export default class ReducedRule extends Rule {
       }
     });
 
-    const ruleName = rule.getName(),  ///
-          reducedRuleName = reducedRuleNameFromRuleName(ruleName);
-
-    rule.removeDefinitions(definitions);
-
-    const name = reducedRuleName, ///
-          ambiguous = false,
-          NonTerminalNode = ReducedNode,  ///
-          reducedRule = new ReducedRule(name, ambiguous, definitions, NonTerminalNode);
+    const reducedRule = reducedRuleFromRuleAndDefinitions(rule, definitions);
 
     return reducedRule;
   }
@@ -66,11 +75,7 @@ function reducedRuleFromRuleAndDefinitions(rule, definitions) {
 
   if (definitionsLength > 0) {
     const ruleName = rule.getName(),  ///
-          reducedDefinition = reducedDefinitionFromRuleName(ruleName),
-          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          definition = reducedDefinition; ///
-
-    rule.addDefinition(definition);
+          reducedRuleName = reducedRuleNameFromRuleName(ruleName);
 
     rule.removeDefinitions(definitions);
 

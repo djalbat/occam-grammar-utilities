@@ -316,7 +316,7 @@ f[custom](0)
     });
   });
 
-  describe("a single non-unary indirectly left recursive definition with a sibling directly left recursive definitions and the corresponding non-unary implicitly left recursive definition", () => {
+  xdescribe("a single non-unary indirectly left recursive definition with a sibling directly left recursive definitions and the corresponding non-unary implicitly left recursive definition", () => {
     const bnf = `
    
     A ::= B "h"
@@ -342,22 +342,19 @@ f[custom](0)
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A ::= B "h"
+    A ::= A_ ( B~ "h" )* ;
     
-        | "d"
-    
-        ;
-    
-    B ::= A B~
-    
-        | B_ ( "f" | "e" )*
-
-        ;
+    B ::= B_ ( "f" | "e" )* ;
 
    B_ ::= "c" ;
 
    B~ ::= "g" ;
 
+   A_ ::= B_ ( "f" | "e" )* "h"
+    
+        | "d"
+    
+        ;
 
 `));
 
@@ -365,7 +362,7 @@ f[custom](0)
 
     xit("result in the requisite parse tree" , () => {
       const content = "cgfhg",
-          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           

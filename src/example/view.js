@@ -202,6 +202,10 @@ export default withStyle(View)`
 
 -----------------------------
 
+We need to derive reduced parts from parts not rule names, see below.
+
+-----------------------------
+
 We need further (bur relatively easy) checks to ensure that reduced and repeated rules are not empty. The latter means that we can do away with checks for unary definitions.
 
 -----------------------------
