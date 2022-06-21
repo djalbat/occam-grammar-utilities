@@ -316,7 +316,7 @@ f[custom](0)
     });
   });
 
-  xdescribe("a single non-unary indirectly left recursive definition with a sibling directly left recursive definitions and the corresponding non-unary implicitly left recursive definition", () => {
+  describe("a single non-unary indirectly left recursive definition with a sibling directly left recursive definitions and the corresponding non-unary implicitly left recursive definition", () => {
     const bnf = `
    
     A ::= B "h"

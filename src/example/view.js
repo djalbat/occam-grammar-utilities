@@ -163,23 +163,26 @@ class View extends Element {
 
   static initialBNF = `
  
-    A ::= B "g"
+    A ::= B "h"
     
-        | A "f"
-    
-        | "e"
+        | "d"
     
         ;
     
-    B ::= A "h"
+    B ::= A "g"
+    
+        | B "f"
+
+        | B "e"
     
         | "c"
 
         ;
 
+
 `;
 
-  static initialContent = "cgfhg";
+  static initialContent = "dgeh";
 
   static initialStartRuleName = "S";
 
@@ -199,6 +202,138 @@ export default withStyle(View)`
 `;
 
 `
+
+There is a subtlety with eliminating direct left recursion from indirectly left recursive rules. Consider the following:
+
+    A ::= B "h"
+    
+        | "d"
+    
+        ;
+    
+    B ::= A "g"
+    
+        | B "f"
+
+        | B "e"
+    
+        | "c"
+
+        ;
+
+Here we can match dgeh:
+
+A : dgeh 
+
+B : dge
+
+B : dg
+
+A : d  
+
+We proceed as usual, first merging the indirect left recursion. This has nothing to do with the problem, by the way, it was just inherited from the example.
+
+    A ::= B "h"
+    
+        | "d"
+    
+        ;
+    
+    B ::= A "g"
+    
+        | B ( "f" | "e" )
+    
+        | "c"
+
+        ;
+        
+Now we reduce B, leaving the indirectly left recursive definition in place:
+
+    A ::= B "h"
+    
+        | "d"
+    
+        ;
+    
+    B ::= A "g"
+    
+        | B ( "f" | "e" )
+    
+        | B_
+
+        ;
+
+   B_ ::= "c" ;
+
+This step is questionable, precisely because we have left the indirectly left recursive rule in place. It does no harm on its own, but the following is wrong:
+
+    A ::= B "h"
+    
+        | "d"
+    
+        ;
+    
+    B ::= A "g"
+    
+        | B_ ( "f" | "e" )*
+    
+        ;
+
+   B_ ::= "c" ;
+   
+Now we cannot match dgeh:
+
+A : dgeh
+
+B: dge
+
+B_ : dg   
+
+This won't match and we have erred.
+
+So we cannot eliminate direct left recursion in the presence of indrect left recursion.
+
+
+
+
+
+
+
+
+    A ::= B "h"
+    
+        | "d"
+    
+        ;
+    
+    B ::= A "g"
+    
+        | B ( "f" | "e" )
+    
+        | B_
+
+        ;
+
+   B_ ::= "c" ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -----------------------------
 
