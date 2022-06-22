@@ -197,6 +197,11 @@ export default withStyle(View)`
 `;
 
 `
+We want to be clear what we mean by rewriting definitions. Ideally we want to avoid rewriting them in place. 
+This is currently done for both direct and indirectly left recursive definitions, albeit it different ways.
+
+-----------------------------------
+
 Recall that the reduced part in the rewritten directly left recursive rule should inherit the modifiers.
 
 Also there needs to be a check that the modifiers on the first parts of the merged directly left recursive definitions are identical.

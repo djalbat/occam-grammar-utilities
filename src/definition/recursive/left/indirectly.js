@@ -20,14 +20,6 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
     return this.implicitlyLeftRecursiveDefinition;
   }
 
-  rewrite(repeatedPart) {
-    const start = 1,
-          replacementPart = repeatedPart, ///
-          parts = this.replaceParts(start, replacementPart);
-
-    return parts;
-  }
-
   static fromRuleNameDefinitionAndRecursiveDefinitions(ruleName, definition, recursiveDefinitions) {
     let indirectlyLeftRecursiveDefinition = null;
 

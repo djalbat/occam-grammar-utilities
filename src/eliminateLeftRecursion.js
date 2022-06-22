@@ -11,7 +11,7 @@ export default function eliminateLeftRecursion(startRule, ruleMap) {
 
   retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, leftRecursiveDefinitions, ruleMap);
 
-  // eliminateIndirectLeftRecursion(leftRecursiveDefinitions, ruleMap);
+  eliminateIndirectLeftRecursion(leftRecursiveDefinitions, ruleMap);
 
   eliminateDirectLeftRecursion(leftRecursiveDefinitions, ruleMap);
 

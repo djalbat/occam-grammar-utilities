@@ -12,14 +12,8 @@ export function ruleNameFromReducedRuleName(reducedRuleName) {
   return ruleName;
 }
 
-export function repeatedRuleNameFromRuleName(ruleName) {
-  const repeatedRuleName = `${ruleName}~`;
-
-  return repeatedRuleName;
-}
-
 export function ruleNameFromRepeatedRuleName(repeatedRuleName) {
-  const ruleName = repeatedRuleName.replace(/~$/, "");
+  const ruleName = repeatedRuleName.replace(/(?:\.\d+)?~$/, "");
 
   return ruleName;
 }
@@ -34,4 +28,12 @@ export function doesReducedRuleNameMatchRuleName(reducedRuleName, ruleName) {
   const reducedRuleNameMatchesRuleName = (ruleNameA === ruleNameB);  ///
 
   return reducedRuleNameMatchesRuleName;
+}
+
+export function repeatedRuleNameFromRuleNameAndIndex(ruleName,index) {
+  const repeatedRuleName = (index === 0) ?
+                            `${ruleName}~` :
+                              `${ruleName}.${index}~`;
+
+  return repeatedRuleName;
 }

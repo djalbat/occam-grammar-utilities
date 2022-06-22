@@ -53,7 +53,7 @@ A ::= A "f" ;
     });
   });
 
-  describe("a single directly left recursive definition", () => {
+  xdescribe("a single directly left recursive definition", () => {
     const bnf = `
  
 A ::= A "h"
@@ -151,7 +151,7 @@ e[custom](0)
     });
   });
 
-  describe("an indirectly left recursive definition with a sibling directly left recursive definition", () => {
+  xdescribe("an indirectly left recursive definition with a sibling directly left recursive definition", () => {
     const bnf = `
    
     A ::= B "h"
@@ -175,12 +175,10 @@ e[custom](0)
     });
   });
 
-  xdescribe("an implicitly left recursive definition with a sibling directly left recursive defintion", () => {
+  describe("a single indirectly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g"
-    
-        | A "f"
     
         | "e"
     
@@ -199,23 +197,19 @@ e[custom](0)
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A ::= A_ ( B~ "g" | "f" )* ;
+    A ::= B "g"
     
-    B ::= A B~
+        | "e"
+    
+        ;
+    
+    B ::= A "h"
     
         | B_
 
         ;
 
    B_ ::= "c" ;
-
-   B~ ::= "h" ;
-
-   A_ ::= B_ "g"
-    
-        | "e"
-    
-        ;
 
 `));
 
