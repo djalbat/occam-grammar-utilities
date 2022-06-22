@@ -163,26 +163,21 @@ class View extends Element {
 
   static initialBNF = `
  
-    A ::= B "h"
-    
-        | "d"
-    
-        ;
-    
-    B ::= A "g"
-    
-        | B "f"
 
-        | B "e"
-    
-        | "c"
+ 
+A ::= A "h"
 
-        ;
+    | "g"
+
+    | "f"
+
+    ;
+
 
 
 `;
 
-  static initialContent = "dgeh";
+  static initialContent = "ghh";
 
   static initialStartRuleName = "S";
 
@@ -202,6 +197,11 @@ export default withStyle(View)`
 `;
 
 `
+Recall that the reduced part in the rewritten directly left recursive rule should inherit the modifiers.
+
+Also there needs to be a check that the modifiers on the first parts of the merged directly left recursive definitions are identical.
+
+-----------------------------------
 
 There is a subtlety with eliminating direct left recursion from indirectly left recursive rules. Consider the following:
 
@@ -291,49 +291,9 @@ B_ : dg
 
 This won't match and we have erred.
 
-So we cannot eliminate direct left recursion in the presence of indrect left recursion.
+So we cannot eliminate direct left recursion in the presence of indirect left recursion.
 
-
-
-
-
-
-
-
-    A ::= B "h"
-    
-        | "d"
-    
-        ;
-    
-    B ::= A "g"
-    
-        | B ( "f" | "e" )
-    
-        | B_
-
-        ;
-
-   B_ ::= "c" ;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+And so, at last, we should throw an exception if indirecct and direct left recursion are siblings.
 
 -----------------------------
 

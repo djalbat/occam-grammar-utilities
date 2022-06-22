@@ -53,10 +53,12 @@ A ::= A "f" ;
     });
   });
 
-  xdescribe("a single non-unary directly left recursive definition", () => {
+  describe("a single directly left recursive definition", () => {
     const bnf = `
-  
-A ::= A "g"
+ 
+A ::= A "h"
+
+    | "g"
 
     | "f"
 
@@ -69,28 +71,34 @@ A ::= A "g"
 
       assert.isTrue(compare(adjustedBNF, `
     
-A  ::= A_ "g"* ;
+A  ::= A_ "h"* ;
 
-A_ ::= "f" ;
+A_ ::= "g"
 
+     | "f"
+
+     ;
+     
+     
 `));
 
     });
 
     it("results in the requisite parse tree" +
         "", () => {
-      const content = "fg",
+      const content = "ghh",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-          A(0-1)         
-             |           
-      --------------     
-      |            |     
-    A(0)     g[custom](1)
-      |                  
-f[custom](0)
+                A(0-2)                
+                   |                  
+      ---------------------------     
+      |            |            |     
+    A(0)     h[custom](1) h[custom](2)
+      |                               
+g[custom](0)                          
+
              
 `));
 
@@ -143,7 +151,31 @@ e[custom](0)
     });
   });
 
-  xdescribe("an indirectly left recursive rule and corresponding implicitly left recursive rule are both additionally directly left recursive", () => {
+  describe("an indirectly left recursive definition with a sibling directly left recursive definition", () => {
+    const bnf = `
+   
+    A ::= B "h"
+    
+        | "d"
+    
+        ;
+    
+    B ::= A "g"
+    
+        | B "f"
+
+        | "c"
+
+        ;
+
+`;
+
+    it("throws an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  xdescribe("an implicitly left recursive definition with a sibling directly left recursive defintion", () => {
     const bnf = `
   
     A ::= B "g"
@@ -156,15 +188,48 @@ e[custom](0)
     
     B ::= A "h"
     
-        | B "d"
-    
         | "c"
 
         ;
+
 `;
 
-    it("throws an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+
+    A ::= A_ ( B~ "g" | "f" )* ;
+    
+    B ::= A B~
+    
+        | B_
+
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+
+   A_ ::= B_ "g"
+    
+        | "e"
+    
+        ;
+
+`));
+
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = "",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+             
+`));
+
     });
   });
 
@@ -310,73 +375,6 @@ A_ ::= "f" ;
     A(0)     g[custom](1)             
       |                               
 f[custom](0)                          
-             
-`));
-
-    });
-  });
-
-  describe("a single non-unary indirectly left recursive definition with a sibling directly left recursive definitions and the corresponding non-unary implicitly left recursive definition", () => {
-    const bnf = `
-   
-    A ::= B "h"
-    
-        | "d"
-    
-        ;
-    
-    B ::= A "g"
-    
-        | B "f"
-
-        | B "e"
-    
-        | "c"
-
-        ;
-
-`;
-
-    it("are rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF, `
-
-    A ::= A_ ( B~ "h" )* ;
-    
-    B ::= B_ ( "f" | "e" )* ;
-
-   B_ ::= "c" ;
-
-   B~ ::= "g" ;
-
-   A_ ::= B_ ( "f" | "e" )* "h"
-    
-        | "d"
-    
-        ;
-
-`));
-
-    });
-
-    xit("result in the requisite parse tree" , () => {
-      const content = "cgfhg",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
-
-      assert.isTrue(compare(parseTreeString, `
-          
-                                 A(0-4)                         
-                                    |                           
-             ----------------------------------------------     
-             |                  |            |            |     
-          A(0-1)          f[custom](2)     B(3)     g[custom](4)
-             |                               |                  
-      --------------                   h[custom](3)             
-      |            |                                            
-    B(0)     g[custom](1)                                       
-      |                                                         
-c[custom](0)                                                    
              
 `));
 
