@@ -1,13 +1,15 @@
 "use strict";
 
-import { Rule } from "occam-parsers";
 import { arrayUtilities } from "necessary";
+import { Rule, Definition } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
+import LeftRecursiveDefinition from "../definition/recursive/left";
 import DirectlyLeftRecursiveDefinition from "../definition/recursive/left/directly";
 import IndirectlyLeftRecursiveDefinition from "../definition/recursive/left/indirectly";
 
 import { isInstanceOf } from "../utilities/class";
+import { ruleNamePartFromRuleName } from "../utilities/part";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
 const { find } = arrayUtilities;
@@ -58,9 +60,13 @@ export default class ReducedRule extends Rule {
       debugger
     }
 
-    rule.removeDefinitions(definitions);
+    const reducedRule = reducedRuleFromRuleAndDefinitions(rule, definitions),
+          leftRecursiveDefinition = LeftRecursiveDefinition.fromReducedRule(reducedRule),
+          definition = leftRecursiveDefinition; ///
 
-    const reducedRule = reducedRuleFromRuleAndDefinitions(rule, definitions);
+    rule.addDefinition(definition);
+
+    rule.removeDefinitions(definitions);
 
     return reducedRule;
   }

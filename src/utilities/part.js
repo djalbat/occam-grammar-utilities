@@ -75,6 +75,12 @@ export function reducedPartFromRuleName(ruleName) {
   return reducedPart;
 }
 
+export function ruleNamePartFromRuleName(ruleName) {
+  const ruleNamePart = new RuleNamePart(ruleName);
+
+  return ruleNamePart;
+}
+
 export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
   const partNonTerminalPart = part.isNonTerminalPart();
 

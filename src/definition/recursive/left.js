@@ -2,6 +2,9 @@
 
 import RecursiveDefinition from "../../definition/recursive";
 
+import { ruleNamePartFromRuleName } from "../../utilities/part";
+import { ruleNameFromReducedRuleName } from "../../utilities/ruleName";
+import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
 import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 export default class LeftRecursiveDefinition extends RecursiveDefinition {
@@ -13,6 +16,20 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
 
   getLeftRecursiveRuleNames() {
     return this.leftRecursiveRuleNames;
+  }
+
+  static fromReducedRule(reducedRule) {
+    const reducedRuleName = reducedRule.getName(),
+          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
+          parts = [
+            reducedRuleNamePart
+          ],
+          ruleName = ruleNameFromReducedRuleName(reducedRuleName),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+
+    return leftRecursiveDefinition;
   }
 
   static fromRecursiveDefinition(recursiveDefinition) {
