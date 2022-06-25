@@ -25,9 +25,7 @@ export default function eliminateDirectLeftRecursion(leftRecursiveDefinitions, r
 
     const directlyLeftRecursiveDefinitions = retrieveDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveRule),
           directlyLeftRecursiveDefinition = mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions),
-          rewrittenDefinition = rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition);
-
-    const replacementDefinition = rewrittenDefinition,  ///
+          replacementDefinition = rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition),
           replacedDefinition = first(directlyLeftRecursiveDefinitions), ///
           definitions = tail(directlyLeftRecursiveDefinitions); ///
 
@@ -66,9 +64,9 @@ function rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition)
   ]
 
   const definition = new Definition(parts),
-        rewrittenDefinition = definition; ///
+        replacementDefinition = definition; ///
 
-  return rewrittenDefinition;
+  return replacementDefinition;
 }
 
 function retrieveDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveRule) {

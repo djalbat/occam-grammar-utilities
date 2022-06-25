@@ -44,23 +44,6 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return leftRecursiveDefinition;
   }
 
-  static fromRecursiveDefinition(recursiveDefinition) {
-    let leftRecursiveDefinition = null;
-
-    const recursiveDefinitionLeftRecursive = isDefinitionLeftRecursive(recursiveDefinition);
-
-    if (recursiveDefinitionLeftRecursive) {
-      const parts = recursiveDefinition.getParts(),
-            ruleName = recursiveDefinition.getRuleName(),
-            recursiveRuleNames = recursiveDefinition.getRecursiveRuleNames(),
-            leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(recursiveDefinition);
-
-      leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
-    }
-
-    return leftRecursiveDefinition;
-  }
-
   static fromRuleNameAndDefinition(ruleName, definition) {
     let leftRecursiveDefinition = null;
 
