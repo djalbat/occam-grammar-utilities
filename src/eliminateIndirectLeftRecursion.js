@@ -13,7 +13,7 @@ import { retrieveLeftRecursiveRules } from "./utilities/rules";
 import { mergeLeftRecursiveDefinitions } from "./utilities/definitions";
 import { definitionPartsFromDefinition } from "./utilities/definition";
 
-const { first, second, last } = arrayUtilities;
+const { last, first, second } = arrayUtilities;
 
 export default function eliminateIndirectLeftRecursion(leftRecursiveDefinitions, ruleMap) {
   const indirectlyLeftRecursiveRules = retrieveIndirectlyLeftRecursiveRules(leftRecursiveDefinitions, ruleMap);
