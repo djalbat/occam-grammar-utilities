@@ -2,6 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
+import { cloneParts } from "../utilities/parts";
 import { isPartComplex } from "../utilities/part";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../utilities/parts";
 
@@ -38,6 +39,14 @@ export function isDefinitionLeftRecursive(definition) {
         definitionLeftRecursive = (leftRecursiveRuleNamesLength > 0);
 
   return definitionLeftRecursive;
+}
+
+export function definitionPartsFromDefinition(definition) {
+  let definitionParts = definition.getParts();
+
+  definitionParts = cloneParts(definitionParts);  //
+
+  return definitionParts;
 }
 
 export function recursiveRuleNamesFromDefinition(definition) {

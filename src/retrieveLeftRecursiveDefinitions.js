@@ -5,8 +5,6 @@ import LeftRecursiveDefinition from "./definition/recursive/left";
 import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
 import IndirectlyLeftRecursiveDefinition from "./definition/recursive/left/indirectly";
 
-import { isInstanceOf } from "./utilities/class";
-
 export default function retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, leftRecursiveDefinitions, ruleMap) {
   const definitions = rule.getDefinitions();
 
@@ -45,7 +43,7 @@ function retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions,
   let recursiveDefinition;
 
   const ruleName = rule.getName(),
-        definitionRecursiveDefinition = isInstanceOf(definition, RecursiveDefinition);
+        definitionRecursiveDefinition = (definition instanceof RecursiveDefinition);
 
   if (definitionRecursiveDefinition) {
     recursiveDefinition = definition; ///
@@ -68,7 +66,7 @@ function retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions,
 
       rule.replaceDefinition(replacedDefinition, replacementDefinition);
 
-      const recursiveDefinitionIndirectlyLeftRecursiveDefinition = isInstanceOf(recursiveDefinition, IndirectlyLeftRecursiveDefinition);
+      const recursiveDefinitionIndirectlyLeftRecursiveDefinition = (recursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
 
       if (recursiveDefinitionIndirectlyLeftRecursiveDefinition) {
         const indirectlyLeftRecursiveDefinition = recursiveDefinition, ///

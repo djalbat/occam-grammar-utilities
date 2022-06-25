@@ -67,10 +67,64 @@ export function isPartComplex(part) {
   return partComplex;
 }
 
-export function reducedPartFromRuleName(ruleName) {
-  const ruleNamePart = new RuleNamePart(ruleName),
-        part = ruleNamePart,  ///
-        reducedPart = reducedPartFromPart(part);
+export function reducedPartFromPart(part) {
+  let reducedPart;
+
+  const nonTerminalPart = part, ///
+        type = nonTerminalPart.getType();
+
+  switch (type) {
+    case RuleNamePartType: {
+      const ruleNamePart = nonTerminalPart,  ///
+            ruleName = ruleNamePart.getRuleName(),
+            lookAhead = ruleNamePart.isLookAhead(),
+            reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+            reducedRuleNamePart = new RuleNamePart(reducedRuleName, lookAhead);
+
+      reducedPart = reducedRuleNamePart;  ///
+
+      break;
+    }
+
+    case OptionalPartPartType: {
+      const optionalPartPart = nonTerminalPart, ///
+            part = optionalPartPart.getPart();
+
+      reducedPart = reducedPartFromPart(part);
+
+      const reducedOptionalPartPart = new OptionalPartPart(reducedPart);
+
+      reducedPart = reducedOptionalPartPart;  ///
+
+      break;
+    }
+
+    case OneOrMorePartsPartType: {
+      const oneOrMorePartsPart = nonTerminalPart, ///
+            part = oneOrMorePartsPart.getPart();
+
+      reducedPart = reducedPartFromPart(part);
+
+      const reducedOneOrMorePartsPart = new OneOrMorePartsPart(reducedPart);
+
+      reducedPart = reducedOneOrMorePartsPart;  ///
+
+      break;
+    }
+
+    case ZeroOrMorePartsPartType: {
+      const zeroOrMorePartsPart = nonTerminalPart, ///
+            part = zeroOrMorePartsPart.getPart();
+
+      reducedPart = reducedPartFromPart(part);
+
+      const reducedZeroOrMorePartsPart = new ZeroOrMorePartsPart(reducedPart);
+
+      reducedPart = reducedZeroOrMorePartsPart;  ///
+
+      break;
+    }
+  }
 
   return reducedPart;
 }
@@ -234,64 +288,3 @@ export function repeatedPartFromRuleNameAndIndex(ruleName, index) {
   return repeatedPart;
 }
 
-function reducedPartFromPart(part) {
-  let reducedPart;
-
-  const nonTerminalPart = part, ///
-        type = nonTerminalPart.getType();
-
-  switch (type) {
-    case RuleNamePartType: {
-      const ruleNamePart = nonTerminalPart,  ///
-            ruleName = ruleNamePart.getRuleName(),
-            lookAhead = ruleNamePart.isLookAhead(),
-            reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-            reducedRuleNamePart = new RuleNamePart(reducedRuleName, lookAhead);
-
-      reducedPart = reducedRuleNamePart;  ///
-
-      break;
-    }
-
-    case OptionalPartPartType: {
-      const optionalPartPart = nonTerminalPart, ///
-            part = optionalPartPart.getPart();
-
-      reducedPart = reducedPartFromPart(part);
-
-      const reducedOptionalPartPart = new OptionalPartPart(reducedPart);
-
-      reducedPart = reducedOptionalPartPart;  ///
-
-      break;
-    }
-
-    case OneOrMorePartsPartType: {
-      const oneOrMorePartsPart = nonTerminalPart, ///
-            part = oneOrMorePartsPart.getPart();
-
-      reducedPart = reducedPartFromPart(part);
-
-      const reducedOneOrMorePartsPart = new OneOrMorePartsPart(reducedPart);
-
-      reducedPart = reducedOneOrMorePartsPart;  ///
-
-      break;
-    }
-
-    case ZeroOrMorePartsPartType: {
-      const zeroOrMorePartsPart = nonTerminalPart, ///
-            part = zeroOrMorePartsPart.getPart();
-
-      reducedPart = reducedPartFromPart(part);
-
-      const reducedZeroOrMorePartsPart = new ZeroOrMorePartsPart(reducedPart);
-
-      reducedPart = reducedZeroOrMorePartsPart;  ///
-
-      break;
-    }
-  }
-
-  return reducedPart;
-}

@@ -1,11 +1,15 @@
 "use strict";
 
+const { arrayUtilities } = require("necessary");
+
 import RecursiveDefinition from "../../definition/recursive";
 
 import { ruleNamePartFromRuleName } from "../../utilities/part";
 import { ruleNameFromReducedRuleName } from "../../utilities/ruleName";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
-import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+import { isDefinitionLeftRecursive, definitionPartsFromDefinition, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+
+const { tail } = arrayUtilities;
 
 export default class LeftRecursiveDefinition extends RecursiveDefinition {
   constructor(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames) {
@@ -26,6 +30,14 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
           ],
           ruleName = ruleNameFromReducedRuleName(reducedRuleName),
           recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+
+    return leftRecursiveDefinition;
+  }
+
+  static fromRuleNameAndParts(ruleName, parts){
+    const recursiveRuleNames = recursiveRuleNmaesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
           leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
 
@@ -62,6 +74,27 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
 
       leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
     }
+
+    return leftRecursiveDefinition;
+  }
+
+  static fromImplicitlyLeftRecursiveDefinitionAndDefinition(implicitlyLeftRecursiveDefinition, definition) {
+    let parts;
+
+    const ruleName = implicitlyLeftRecursiveDefinition.getRuleName(),
+          definitionParts  = definitionPartsFromDefinition(definition),
+          implicitlyLeftRecursiveDefinitionParts = definitionPartsFromDefinition(implicitlyLeftRecursiveDefinition);
+
+    parts = tail(implicitlyLeftRecursiveDefinitionParts);  ///
+
+    parts = [
+      ...definitionParts,
+      ...parts
+    ];
+
+    const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
 
     return leftRecursiveDefinition;
   }

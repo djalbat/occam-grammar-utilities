@@ -3,7 +3,8 @@
 import { Parts } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
-import { singlePartFromParts } from "../utilities/parts";
+import { definitionPartsFromDefinition } from "../utilities/definition";
+import { firstPartFromParts, singlePartFromParts } from "../utilities/parts";
 
 const { first } = arrayUtilities,
       { ChoiceOfPartsPart } = Parts;
@@ -15,35 +16,30 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, LeftRecu
         leftRecursiveDefinitionsLength = leftRecursiveDefinitions.length;
 
   if (leftRecursiveDefinitionsLength === 1) {
-    leftRecursiveDefinition = firstLeftRecursiveDefinition;
+    leftRecursiveDefinition = firstLeftRecursiveDefinition; ///
   } else {
-    let parts;
+    let firstPart;
 
-    parts = firstLeftRecursiveDefinition.getParts();  ///
+    const singleParts = leftRecursiveDefinitions.map((leftRecursiveDefinition, index) => {
+      const definitionParts = definitionPartsFromDefinition(leftRecursiveDefinition),
+            parts = definitionParts;  ///
 
-    const firstPart = first(parts),
-          part = firstPart; ///
-
-    const singleParts = leftRecursiveDefinitions.map((leftRecursiveDefinition) => {
-      const parts = leftRecursiveDefinition.getParts();
-
-      parts.shift();  ///
+      firstPart = firstPartFromParts(parts)
 
       const singlePart = singlePartFromParts(parts);
 
       return singlePart;
     });
 
-    parts = singleParts;  ///
+    let parts = singleParts;  ///
 
-    const choiceOfPartsPart = new ChoiceOfPartsPart(parts);
+    const ruleName = firstLeftRecursiveDefinition.getRuleName(),
+          choiceOfPartsPart = new ChoiceOfPartsPart(parts);
 
-    parts = [ ///
-      part,
+    parts = [
+      firstPart,
       choiceOfPartsPart
-    ]
-
-    const ruleName = firstLeftRecursiveDefinition.getRuleName();
+    ];
 
     leftRecursiveDefinition = LeftRecursiveDefinition.fromRuleNameAndParts(ruleName, parts);
   }

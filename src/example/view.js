@@ -197,6 +197,12 @@ export default withStyle(View)`
 `;
 
 `
+
+Remember we have yet to rule out the cases when rules are both indirectly and directly recursive.
+
+-----------------------------------
+
+
 We want to be clear what we mean by rewriting definitions. Ideally we want to avoid rewriting them in place. 
 This is currently done for both direct and indirectly left recursive definitions, albeit it different ways.
 

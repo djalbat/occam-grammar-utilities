@@ -1,15 +1,13 @@
 "use strict";
 
+import { Rule } from "occam-parsers";
 import { arrayUtilities } from "necessary";
-import { Rule, Definition } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
 import LeftRecursiveDefinition from "../definition/recursive/left";
 import DirectlyLeftRecursiveDefinition from "../definition/recursive/left/directly";
 import IndirectlyLeftRecursiveDefinition from "../definition/recursive/left/indirectly";
 
-import { isInstanceOf } from "../utilities/class";
-import { ruleNamePartFromRuleName } from "../utilities/part";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
 const { find } = arrayUtilities;
@@ -21,7 +19,7 @@ export default class ReducedRule extends Rule {
     let definitions = rule.getDefinitions();
 
     definitions = find(definitions, (definition) => { ///
-      const definitionDirectlyLeftRecursiveDefinition = isInstanceOf(definition, DirectlyLeftRecursiveDefinition);
+      const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition);
 
       if (!definitionDirectlyLeftRecursiveDefinition) {
         return true;
@@ -47,7 +45,7 @@ export default class ReducedRule extends Rule {
     let definitions = rule.getDefinitions();
 
     definitions = find(definitions, (definition) => { ///
-      const definitionIndirectlyLeftRecursiveDefinition = isInstanceOf(definition, IndirectlyLeftRecursiveDefinition);
+      const definitionIndirectlyLeftRecursiveDefinition = (definition instanceof IndirectlyLeftRecursiveDefinition);
 
       if (!definitionIndirectlyLeftRecursiveDefinition) {
         return true;
@@ -64,9 +62,9 @@ export default class ReducedRule extends Rule {
           leftRecursiveDefinition = LeftRecursiveDefinition.fromReducedRule(reducedRule),
           definition = leftRecursiveDefinition; ///
 
-    rule.addDefinition(definition);
-
     rule.removeDefinitions(definitions);
+
+    rule.addDefinition(definition);
 
     return reducedRule;
   }

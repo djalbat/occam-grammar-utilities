@@ -3,7 +3,6 @@
 import ReducedNode from "./node/reduced";
 import RepeatedNode from "./node/repeated";
 
-import { isInstanceOf } from "./utilities/class";
 import { ruleNameFromReducedRuleName, ruleNameFromRepeatedRuleName, doesReducedRuleNameMatchRuleName } from "./utilities/ruleName";
 
 export default function removeOrRenameIntermediateNodes(node) {
@@ -20,7 +19,7 @@ function renameRepeatedNodes(node) {
           childNodes = nonTerminalNode.getChildNodes();
 
     childNodes.forEach((childNode) => {
-      const childNodeRepeatedNode = isInstanceOf(childNode, RepeatedNode);
+      const childNodeRepeatedNode = (childNode instanceof RepeatedNode);
 
       if (childNodeRepeatedNode) {
         const repeatedNode = childNode, ///
@@ -55,7 +54,7 @@ function removeOrRenameReducedChildNodes(childNodes, ruleName) {
   const childNodesLength = childNodes.length;
 
   childNodes = childNodes.reduce((childNodes, childNode) => {
-    const childNodeReducedNode = isInstanceOf(childNode, ReducedNode);
+    const childNodeReducedNode = (childNode instanceof ReducedNode);
 
     if (childNodeReducedNode) {
       const reducedNode = childNode, ///
