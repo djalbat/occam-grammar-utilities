@@ -8,14 +8,6 @@ import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "..
 
 const { first } = arrayUtilities;
 
-export function isDefinitionUnary(definition) {
-  const parts = definition.getParts(),
-        partsLength = parts.length,
-        definitionUnary = (partsLength === 1);
-
-  return definitionUnary;
-}
-
 export function isDefinitionComplex(definition) {
   const parts = definition.getParts(),
         firstPart = first(parts),

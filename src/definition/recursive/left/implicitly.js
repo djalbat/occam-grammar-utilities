@@ -4,6 +4,8 @@ import { arrayUtilities } from "necessary";
 
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
+import { isDefinitionComplex } from "../../../utilities/definition";
+
 const { backwardsFind, backwardsEvery } = arrayUtilities;
 
 export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
@@ -23,6 +25,15 @@ export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefi
     const leftRecursiveDefinition = findLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions);
 
     if (leftRecursiveDefinition !== null) {
+      const definition = leftRecursiveDefinition, ///
+            definitionComplex = isDefinitionComplex(definition);
+
+      if (definitionComplex) {
+        const definitionString = definition.asString();
+
+        throw new Error(`The '${definitionString}' implicitly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+      }
+
       const parts = leftRecursiveDefinition.getParts(),
             ruleName = leftRecursiveDefinition.getRuleName(),
             recursiveRuleNames = leftRecursiveDefinition.getRecursiveRuleNames(),

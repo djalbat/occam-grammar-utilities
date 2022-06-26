@@ -9,7 +9,7 @@ import { firstPartFromParts, singlePartFromParts } from "../utilities/parts";
 const { first } = arrayUtilities,
       { ChoiceOfPartsPart } = Parts;
 
-export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, LeftRecursiveDefinition) {
+export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, LeftRecursiveDefinition, callback = () => {}) {
   let leftRecursiveDefinition;
 
   const firstLeftRecursiveDefinition = first(leftRecursiveDefinitions),
@@ -17,12 +17,17 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, LeftRecu
 
   if (leftRecursiveDefinitionsLength === 1) {
     leftRecursiveDefinition = firstLeftRecursiveDefinition; ///
+
+    callback(leftRecursiveDefinition);
   } else {
     let firstPart;
 
-    const singleParts = leftRecursiveDefinitions.map((leftRecursiveDefinition, index) => {
-      const definitionParts = definitionPartsFromDefinition(leftRecursiveDefinition),
-            parts = definitionParts;  ///
+    const singleParts = leftRecursiveDefinitions.map((leftRecursiveDefinition) => {
+      callback(leftRecursiveDefinition);
+
+      const definition = leftRecursiveDefinition, ///
+            definitionParts = definitionPartsFromDefinition(definition),
+            parts = definitionParts;
 
       firstPart = firstPartFromParts(parts)
 

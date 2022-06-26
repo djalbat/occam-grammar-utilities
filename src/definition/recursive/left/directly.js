@@ -6,8 +6,7 @@ import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
 import { ruleNamePartFromRuleName } from "../../../utilities/part";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
-import { isDefinitionUnary,
-         isDefinitionComplex,
+import { isDefinitionComplex,
          isDefinitionLeftRecursive,
          definitionPartsFromDefinition,
          recursiveRuleNamesFromDefinition,
@@ -35,18 +34,10 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
             ruleNameFirstLeftRecursiveRuleName = (ruleName === firstLeftRecursiveRuleName);
 
       if (ruleNameFirstLeftRecursiveRuleName) {
-        const definitionUnary = isDefinitionUnary(definition);
-
-        if (definitionUnary) {
-          const definitionString = this.asString();
-
-          throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
-        }
-
         const definitionComplex = isDefinitionComplex(definition);
 
         if (definitionComplex) {
-          const definitionString = this.asString();
+          const definitionString = definition.asString();
 
           throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
         }
@@ -83,15 +74,21 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
   }
 
   static fromIndirectlyLeftRecursiveDefinitionAndRepeatedRuleName(indirectlyLeftRecursiveDefinition, repeatedRuleName) {
-    let  parts = definitionPartsFromDefinition(indirectlyLeftRecursiveDefinition);
+    const definitionParts = definitionPartsFromDefinition(indirectlyLeftRecursiveDefinition);
 
-    const firstPart = first(parts),
-          repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName)
+    let parts = definitionParts;  ///
+
+    const firstPart = first(parts);
 
     parts = [
-      firstPart,
-      repeatedRuleNamePart
+      firstPart
     ];
+
+    if (repeatedRuleName !== null) {
+      const repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName);
+
+      parts.push(repeatedRuleNamePart);
+    }
 
     const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
           recursiveRuleNames = recursiveRuleNamesFromParts(parts),

@@ -29,7 +29,11 @@ export default class ReducedRule extends Rule {
     const definitionsLength = definitions.length;
 
     if (definitionsLength === 0) {
-      debugger
+      const ruleName = directlyLeftRecursiveRule.getRuleName(),
+            definition = directlyLeftRecursiveRule, ///
+            definitionString = definition.asString();
+
+      throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is isolated and therefore cannot be rewritten.`);
     }
 
     rule.removeDefinitions(definitions);
@@ -40,6 +44,8 @@ export default class ReducedRule extends Rule {
   }
 
   static fromIndirectlyLeftRecursiveRule(indirectlyLeftRecursiveRule) {
+    let reducedRule = null;
+
     const rule = indirectlyLeftRecursiveRule;  ///
 
     let definitions = rule.getDefinitions();
@@ -54,17 +60,16 @@ export default class ReducedRule extends Rule {
 
     const definitionsLength = definitions.length;
 
-    if (definitionsLength === 0) {
-      debugger
+    if (definitionsLength !== 0) {
+      reducedRule = reducedRuleFromRuleAndDefinitions(rule, definitions);
+
+      const leftRecursiveDefinition = LeftRecursiveDefinition.fromReducedRule(reducedRule),
+            definition = leftRecursiveDefinition; ///
+
+      rule.removeDefinitions(definitions);
+
+      rule.addDefinition(definition);
     }
-
-    const reducedRule = reducedRuleFromRuleAndDefinitions(rule, definitions),
-          leftRecursiveDefinition = LeftRecursiveDefinition.fromReducedRule(reducedRule),
-          definition = leftRecursiveDefinition; ///
-
-    rule.removeDefinitions(definitions);
-
-    rule.addDefinition(definition);
 
     return reducedRule;
   }

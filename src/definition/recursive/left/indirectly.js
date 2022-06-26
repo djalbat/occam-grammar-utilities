@@ -5,7 +5,7 @@ import { arrayUtilities } from "necessary";
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 import ImplicitlyLeftRecursiveDefinition from "../../../definition/recursive/left/implicitly";
 
-import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
+import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
 const { first } = arrayUtilities;
 
@@ -35,6 +35,14 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
         const implicitlyLeftRecursiveDefinition = ImplicitlyLeftRecursiveDefinition.fromRuleNameLeftRecursiveRuleNameAndRecursiveDefinitions(ruleName, leftRecursiveRuleName, recursiveDefinitions);
 
         if (implicitlyLeftRecursiveDefinition !== null) {
+          const definitionComplex = isDefinitionComplex(definition);
+
+          if (definitionComplex) {
+            const definitionString = definition.asString();
+
+            throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+          }
+
           const parts = definition.getParts(),
                 recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
 

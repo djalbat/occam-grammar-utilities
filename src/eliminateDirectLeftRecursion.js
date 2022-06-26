@@ -7,6 +7,7 @@ import RecursiveDefinition from "./definition/recursive";
 import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
 
 import { retrieveLeftRecursiveRules } from "./utilities/rules";
+import { definitionPartsFromDefinition } from "./utilities/definition";
 import { mergeLeftRecursiveDefinitions, retrieveLeftRecursiveDefinitions } from "./utilities/definitions";
 
 const { first, tail } = arrayUtilities;
@@ -39,7 +40,21 @@ function retrieveDirectlyLeftRecursiveRules(leftRecursiveDefinitions, ruleMap) {
 }
 
 function mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions) {
-  const directlyLeftRecursiveDefinition = mergeLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, DirectlyLeftRecursiveDefinition);
+  const directlyLeftRecursiveDefinition = mergeLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, DirectlyLeftRecursiveDefinition, callback);
+
+  function callback(directlyLeftRecursiveDefinition) {
+    const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
+          definition = directlyLeftRecursiveDefinition, ///
+          definitionParts = definitionPartsFromDefinition(definition),
+          parts = definitionParts,  ///
+          partsLength = parts.length;
+
+    if (partsLength === 1) {
+      const definitionString = definition.asString();
+
+      throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
+    }
+  }
 
   return directlyLeftRecursiveDefinition;
 }

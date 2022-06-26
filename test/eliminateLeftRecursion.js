@@ -9,7 +9,67 @@ const { rulesUtilities, eliminateLeftRecursion, removeOrRenameIntermediateNodes 
 const { rulesFromBNF, rulesAsString, ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
-  xdescribe("a single unary directly left recursive definition", () => {
+  xdescribe("a complex directly left recursive definition", () => {
+    const bnf = `
+  
+A ::= ( A | B )
+
+    | "f"
+
+    ;
+
+`;
+
+    it("does throw an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  xdescribe("a complex indirectly left recursive definition", () => {
+    const bnf = `
+  
+    A ::= B "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= ( A | C ) "h"
+    
+        | "c"
+
+        ;
+
+`;
+
+    it("does throw an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  xdescribe("a complex implicitly left recursive definition", () => {
+    const bnf = `
+  
+    A ::= ( B | C ) "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "h"
+    
+        | "c"
+
+        ;
+
+`;
+
+    it("does throw an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  xdescribe("a unary directly left recursive definition", () => {
     const bnf = `
   
 A ::= A
@@ -20,40 +80,132 @@ A ::= A
 
 `;
 
-    it("throws an exception", () => {
+    it("does throw an exception", () => {
       assert.throws(() => adjustedBNFFromBNF(bnf));
     });
   });
 
-  xdescribe("a single complex directly left recursive definition", () => {
+  xdescribe("a unary indirectly left recursive definition", () => {
     const bnf = `
   
-A ::= ( A B )
+    A ::= B "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A
+    
+        | "c"
 
-    | "f"
-
-    ;
+        ;
 
 `;
 
-    it("throws an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
+    it("does not throw an exception", () => {
+      assert.doesNotThrow(() => adjustedBNFFromBNF(bnf));
     });
   });
 
-  xdescribe("a single isolated directly left recursive definition", () => {
+  xdescribe("a unary implicitly left recursive definition", () => {
     const bnf = `
   
-A ::= A "f" ;
+    A ::= B 
+    
+        | "e"
+    
+        ;
+    
+    B ::= A
+    
+        | "c"
+
+        ;
 
 `;
 
-    it("throws an exception", () => {
+    it("does throw an exception", () => {
       assert.throws(() => adjustedBNFFromBNF(bnf));
     });
   });
 
-  xdescribe("a single directly left recursive definition", () => {
+  xdescribe("an isolated directly left recursive definition", () => {
+    const bnf = `
+  
+    A ::= A B ;
+
+`;
+
+    it("does throw an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  xdescribe("an isolated indirectly left recursive definition and a non-isolated implicitly left recursive definition", () => {
+    const bnf = `
+  
+    A ::= B "g" 
+     
+        | "c"
+        
+        ;
+
+    B ::= A "h" ;
+
+`;
+
+    it("do not throw an exception", () => {
+      assert.doesNotThrow(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  xdescribe("a non-isolated indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
+    const bnf = `
+  
+    A ::= B "g" ;
+
+    B ::= A "h" 
+     
+        | "c"
+        
+        ;
+
+`;
+
+    it("do not throw an exception", () => {
+      assert.doesNotThrow(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  xdescribe("an isolated indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
+    const bnf = `
+  
+    A ::= B "g" ;
+
+    B ::= A "h" ;
+
+`;
+
+    it("do throw an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  xdescribe("a directly left recursive definition", () => {
     const bnf = `
  
 A ::= A "h"
@@ -87,7 +239,7 @@ A_ ::= "g"
     it("results in the requisite parse tree" +
         "", () => {
       const content = "ghh",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
@@ -105,7 +257,87 @@ g[custom](0)
     });
   });
 
-  xdescribe("two single non-unary directly left recursive definitions", () => {
+  xdescribe("an indirectly left recursive definition and corresponding implicitly left recursive definition", () => {
+    const bnf = `
+  
+    A ::= B "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "h"
+    
+        | "c"
+
+        ;
+
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+
+    A ::= A_ ( B~ "g" )* ;
+    
+    B ::= A "h"
+    
+        | B_
+
+        ;
+
+   B_ ::= "c" ;
+
+   B~ ::= "h" ;
+
+   A_ ::= B_ "g"
+    
+        | "e"
+    
+        ;
+    
+`));
+
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = "cghg",
+          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                                    A(0-3)                   
+                             |                     
+             ---------------------------------     
+             |                  |            |     
+          A(0-1)              B(2)     g[custom](3)
+             |                  |                  
+      --------------      h[custom](2)             
+      |            |                               
+    B(0)     g[custom](1)                          
+      |                                            
+c[custom](0)                                       
+
+             
+`));
+
+    });
+  });
+
+  xdescribe("a isolated directly left recursive definition", () => {
+    const bnf = `
+  
+A ::= A "f" ;
+
+`;
+
+    it("does throw an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  xdescribe("two non-unary directly left recursive definitions", () => {
     const bnf = `
    
     A ::= A "f" "g"
@@ -170,68 +402,12 @@ e[custom](0)
 
 `;
 
-    it("throws an exception", () => {
+    it("does throw an exception", () => {
       assert.throws(() => adjustedBNFFromBNF(bnf));
     });
   });
 
-  describe("a single indirectly left recursive definition", () => {
-    const bnf = `
-  
-    A ::= B "g"
-    
-        | "e"
-    
-        ;
-    
-    B ::= A "h"
-    
-        | "c"
-
-        ;
-
-`;
-
-    it("are rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF, `
-
-    A ::= A_ ( B~ "g" )* ;
-    
-    B ::= A "h"
-    
-        | B_
-
-        ;
-
-   B_ ::= "c" ;
-
-   B~ ::= "h" ;
-
-   A_ ::= B_ "g"
-    
-        | "e"
-    
-        ;
-    
-`));
-
-    });
-
-    xit("result in the requisite parse tree" , () => {
-      const content = "",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
-
-      assert.isTrue(compare(parseTreeString, `
-          
-             
-`));
-
-    });
-  });
-
-  xdescribe("a single unary indirectly left recursive definition and the corresponding unary implicitly left recursive definition", () => {
+  xdescribe("a unary indirectly left recursive definition and the corresponding unary implicitly left recursive definition", () => {
     const bnf = `
   
 A ::= B 
@@ -246,12 +422,12 @@ C ::= A ;
 
 `;
 
-    it("throws an exception", () => {
+    it("does throw an exception", () => {
       assert.throws(() => adjustedBNFFromBNF(bnf));
     });
   });
 
-  xdescribe("a single non-unary indirectly left recursive definition and the corresponding unary implicitly left recursive definition", () => {
+  xdescribe("a non-unary indirectly left recursive definition and the corresponding unary implicitly left recursive definition", () => {
     const bnf = `
   
 S ::= A
@@ -315,7 +491,7 @@ e[custom](0)
     });
   });
 
-  xdescribe("a single non-unary indirectly left recursive definition and the corresponding non-unary implicitly left recursive definition", () => {
+  xdescribe("a non-unary indirectly left recursive definition and the corresponding non-unary implicitly left recursive definition", () => {
     const bnf = `
   
 A ::= B "e"
@@ -379,7 +555,7 @@ f[custom](0)
     });
   });
 
-  xdescribe("a single non-unary indirectly left recursive definition and the corresponding non-unary implicitly left recursive definition with a sibling directly left recursive definition", () => {
+  xdescribe("a non-unary indirectly left recursive definition and the corresponding non-unary implicitly left recursive definition with a sibling directly left recursive definition", () => {
     const bnf = `
    
     A ::= B "g"

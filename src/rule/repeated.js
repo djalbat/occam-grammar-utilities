@@ -12,19 +12,25 @@ const { tail } = arrayUtilities;
 
 export default class RepeatedRule extends Rule {
   static fromIndirectlyLeftRecursiveDefinitionAndIndex(indirectlyLeftRecursiveDefinition, index) {
-    let definitionParts = definitionPartsFromDefinition(indirectlyLeftRecursiveDefinition);
+    let repeatedRule = null;
 
-    const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
-          repeatedRuleName = repeatedRuleNameFromRuleNameAndIndex(ruleName, index),
+    const definitionParts = definitionPartsFromDefinition(indirectlyLeftRecursiveDefinition),
           parts = tail(definitionParts),  ///
-          definition = new Definition(parts),
-          name = repeatedRuleName,  ///
-          ambiguous = false,
-          definitions = [
-            definition
-          ],
-          NonTerminalNode = RepeatedNode,  ///
-          repeatedRule = new RepeatedRule(name, ambiguous, definitions, NonTerminalNode);
+          partsLength = parts.length;
+
+    if (partsLength > 0) {
+      const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
+            definition = new Definition(parts),
+            repeatedRuleName = repeatedRuleNameFromRuleNameAndIndex(ruleName, index),
+            name = repeatedRuleName,  ///
+            ambiguous = false,
+            definitions = [
+              definition
+            ],
+            NonTerminalNode = RepeatedNode;  ///
+
+      repeatedRule = new RepeatedRule(name, ambiguous, definitions, NonTerminalNode);
+    }
 
     return repeatedRule;
   }
