@@ -71,7 +71,19 @@ function retrieveIndirectlyLeftRecursiveRules(leftRecursiveDefinitions, ruleMap)
 }
 
 function mergeIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions) {
-  const indirectlyLeftRecursiveDefinition = mergeLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions, IndirectlyLeftRecursiveDefinition);
+  const indirectlyLeftRecursiveDefinition = mergeLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions, (parts, ruleName) => {
+    let indirectlyLeftRecursiveDefinition;
+
+    const firstIndirectlyLeftRecursiveDefinition = first(indirectlyLeftRecursiveDefinitions);
+
+    indirectlyLeftRecursiveDefinition = firstIndirectlyLeftRecursiveDefinition; ///
+
+    const implicitlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getImplicitlyLeftRecursiveDefinition();
+
+    indirectlyLeftRecursiveDefinition = IndirectlyLeftRecursiveDefinition.fromPartsRuleNameAndImplicitlyLeftRecursiveDefinition(parts, ruleName, implicitlyLeftRecursiveDefinition);
+
+    return indirectlyLeftRecursiveDefinition;
+  });
 
   return indirectlyLeftRecursiveDefinition;
 }

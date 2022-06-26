@@ -53,7 +53,9 @@ class View extends Element {
         removeOrRenameIntermediateNodes(node);
       }
 
-      parseTree = node.asParseTree(tokens);
+      const abridged = true;
+
+      parseTree = node.asParseTree(tokens, abridged);
     }
 
     return parseTree;
@@ -163,20 +165,19 @@ class View extends Element {
 
   static initialBNF = `
  
-
     A ::= B "g"
     
         | "e"
     
         ;
     
-    B ::= A
+    B ::= A "h"
+    
+        | A "f"
     
         | "c"
 
         ;
-
-
 
 `;
 
@@ -200,16 +201,6 @@ export default withStyle(View)`
 `;
 
 `
-
-Remember we have yet to rule out the cases when rules are both indirectly and directly recursive.
-
------------------------------------
-
-
-We want to be clear what we mean by rewriting definitions. Ideally we want to avoid rewriting them in place. 
-This is currently done for both direct and indirectly left recursive definitions, albeit it different ways.
-
------------------------------------
 
 Recall that the reduced part in the rewritten directly left recursive rule should inherit the modifiers.
 

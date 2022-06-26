@@ -5,6 +5,7 @@ import { arrayUtilities } from "necessary";
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 import ImplicitlyLeftRecursiveDefinition from "../../../definition/recursive/left/implicitly";
 
+import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
 import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
 const { first } = arrayUtilities;
@@ -50,6 +51,14 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
         }
       }
     }
+
+    return indirectlyLeftRecursiveDefinition;
+  }
+
+  static fromPartsRuleNameAndImplicitlyLeftRecursiveDefinition(parts, ruleName, implicitlyLeftRecursiveDefinition) {
+    const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, implicitlyLeftRecursiveDefinition);
 
     return indirectlyLeftRecursiveDefinition;
   }

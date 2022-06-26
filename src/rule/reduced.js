@@ -38,7 +38,8 @@ export default class ReducedRule extends Rule {
 
     rule.removeDefinitions(definitions);
 
-    const reducedRule = reducedRuleFromRuleAndDefinitions(rule, definitions);
+    const ruleName = rule.getName(),
+          reducedRule = reducedRuleFromRuleNameAndDefinitions(ruleName, definitions);
 
     return reducedRule;
   }
@@ -58,10 +59,21 @@ export default class ReducedRule extends Rule {
       }
     });
 
-    const definitionsLength = definitions.length;
+    const ruleName = rule.getName(),
+          definitionsLength = definitions.length;
 
     if (definitionsLength !== 0) {
-      reducedRule = reducedRuleFromRuleAndDefinitions(rule, definitions);
+      definitions.forEach((definition) => {
+        const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition);
+
+        if (definitionDirectlyLeftRecursiveDefinition) {
+          const definitionString = definition.asString();
+
+          throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule has a sibling indirectly left recursive definition and therefore cannot be rewritten.`);
+        }
+      });
+
+      reducedRule = reducedRuleFromRuleNameAndDefinitions(ruleName, definitions);
 
       const leftRecursiveDefinition = LeftRecursiveDefinition.fromReducedRule(reducedRule),
             definition = leftRecursiveDefinition; ///
@@ -75,11 +87,9 @@ export default class ReducedRule extends Rule {
   }
 }
 
-function reducedRuleFromRuleAndDefinitions(rule, definitions) {
-  const ruleName = rule.getName(),
-        reducedRuleName = reducedRuleNameFromRuleName(ruleName);
-
-  const name = reducedRuleName, ///
+function reducedRuleFromRuleNameAndDefinitions(ruleName, definitions) {
+  const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+        name = reducedRuleName, ///
         ambiguous = false,
         NonTerminalNode = ReducedNode,  ///
         reducedRule = new ReducedRule(name, ambiguous, definitions, NonTerminalNode);

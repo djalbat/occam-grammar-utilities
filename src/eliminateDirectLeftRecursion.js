@@ -40,7 +40,11 @@ function retrieveDirectlyLeftRecursiveRules(leftRecursiveDefinitions, ruleMap) {
 }
 
 function mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions) {
-  const directlyLeftRecursiveDefinition = mergeLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, DirectlyLeftRecursiveDefinition, callback);
+  const directlyLeftRecursiveDefinition = mergeLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, (parts, ruleName) => {
+    const directlyLeftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromPartsAndRuleName(parts, ruleName);
+
+    return directlyLeftRecursiveDefinition;
+  }, callback);
 
   function callback(directlyLeftRecursiveDefinition) {
     const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
