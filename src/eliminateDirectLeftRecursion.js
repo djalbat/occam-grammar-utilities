@@ -1,16 +1,13 @@
 "use strict";
 
-import { Definition } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
 import ReducedRule from "./rule/reduced";
+import RecursiveDefinition from "./definition/recursive";
 import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
 
-import { reducedPartFromPart } from "./utilities/part";
-import { repeatedPartFromParts } from "./utilities/parts";
 import { retrieveLeftRecursiveRules } from "./utilities/rules";
-import { definitionPartsFromDefinition } from "./utilities/definition";
-import { mergeLeftRecursiveDefinitions } from "./utilities/definitions";
+import { mergeLeftRecursiveDefinitions, retrieveLeftRecursiveDefinitions } from "./utilities/definitions";
 
 const { first, tail } = arrayUtilities;
 
@@ -48,36 +45,14 @@ function mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions)
 }
 
 function rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {
-  let directlyLeftRecursiveDefinitionParts = definitionPartsFromDefinition(directlyLeftRecursiveDefinition);
-
-  const firstDirectlyLeftDefinitionPart = first(directlyLeftRecursiveDefinitionParts),
-        part = firstDirectlyLeftDefinitionPart, ///
-        reducedPart = reducedPartFromPart(part);
-
-  let parts = directlyLeftRecursiveDefinitionParts; ///
-
-  const repeatedPart = repeatedPartFromParts(parts);
-
-  parts = [
-    reducedPart,
-    repeatedPart
-  ]
-
-  const definition = new Definition(parts),
-        replacementDefinition = definition; ///
+  const recursiveDefinition = RecursiveDefinition.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition),
+        replacementDefinition = recursiveDefinition;  ///
 
   return replacementDefinition;
 }
 
 function retrieveDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveRule) {
-  const definitions = directlyLeftRecursiveRule.getDefinitions(),
-        directlyLeftRecursiveDefinitions = definitions.filter((definition) => {
-          const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition);
-
-          if (definitionDirectlyLeftRecursiveDefinition) {
-            return true;
-          }
-        });
+  const directlyLeftRecursiveDefinitions = retrieveLeftRecursiveDefinitions(directlyLeftRecursiveRule, DirectlyLeftRecursiveDefinition);
 
   return directlyLeftRecursiveDefinitions;
 }

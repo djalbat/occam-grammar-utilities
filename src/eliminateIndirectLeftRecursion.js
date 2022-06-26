@@ -8,10 +8,9 @@ import LeftRecursiveDefinition from "./definition/recursive/left";
 import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
 import IndirectlyLeftRecursiveDefinition from "./definition/recursive/left/indirectly";
 
-import { ruleNamePartFromRuleName } from "./utilities/part";
 import { retrieveLeftRecursiveRules } from "./utilities/rules";
-import { mergeLeftRecursiveDefinitions } from "./utilities/definitions";
-import { definitionPartsFromDefinition } from "./utilities/definition";
+import { retrieveLeftRecursiveRuleNames } from "./utilities/ruleNames";
+import { mergeLeftRecursiveDefinitions, retrieveLeftRecursiveDefinitions } from "./utilities/definitions";
 
 const { last, first } = arrayUtilities;
 
@@ -65,42 +64,20 @@ function mergeIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefiniti
 }
 
 function retrieveImplicitlyLeftRecursiveRuleNames(indirectlyLeftRecursiveRule) {
-  const implicitlyLeftRecursiveRuleNames = [],
-        definitions = indirectlyLeftRecursiveRule.getDefinitions();
+  const implicitlyLeftRecursiveRuleNames = retrieveLeftRecursiveRuleNames(indirectlyLeftRecursiveRule, IndirectlyLeftRecursiveDefinition, callback);
 
-  definitions.forEach((definition) => {
-    const definitionIndirectlyLeftRecursiveDefinition = (definition instanceof IndirectlyLeftRecursiveDefinition);
+  function callback(indirectlyLeftRecursiveDefinition) {
+    const implicitlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getImplicitlyLeftRecursiveDefinition(),
+          ruleName = implicitlyLeftRecursiveDefinition.getRuleName();
 
-    if (definitionIndirectlyLeftRecursiveDefinition) {
-      const indirectlyLeftRecursiveDefinition = definition, ///
-            implicitlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getImplicitlyLeftRecursiveDefinition(),
-            ruleName = implicitlyLeftRecursiveDefinition.getRuleName(),
-            implicitlyLeftRecursiveRuleNamesIncludesRuleName = implicitlyLeftRecursiveRuleNames.includes(ruleName);
-
-      if (!implicitlyLeftRecursiveRuleNamesIncludesRuleName) {
-        const implicitlyLeftRecursiveRuleName = ruleName;  ///
-
-        implicitlyLeftRecursiveRuleNames.push(implicitlyLeftRecursiveRuleName);
-      }
-    }
-  });
+    return ruleName;
+  }
 
   return implicitlyLeftRecursiveRuleNames;
 }
 
 function rewriteIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, repeatedRuleName) {
-  let  parts = definitionPartsFromDefinition(indirectlyLeftRecursiveDefinition);
-
-  const firstPart = first(parts),
-        repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName)
-
-  parts = [
-    firstPart,
-    repeatedRuleNamePart
-  ];
-
-  const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
-        directlyLeftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromRuleNameAndParts(ruleName, parts),
+  const directlyLeftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromIndirectlyLeftRecursiveDefinitionAndRepeatedRuleName(indirectlyLeftRecursiveDefinition, repeatedRuleName),
         rewrittenIndirectlyLeftRecursiveDefinition = directlyLeftRecursiveDefinition; ///
 
   return rewrittenIndirectlyLeftRecursiveDefinition;
@@ -126,20 +103,16 @@ function rewriteImplicitlyLeftRecursiveDefinition(implicitlyLeftRecursiveDefinit
 }
 
 function retrieveIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveRule, implicitlyLeftRecursiveRuleName) {
-  const definitions = indirectlyLeftRecursiveRule.getDefinitions(),
-        indirectlyLeftRecursiveDefinitions = definitions.filter((definition) => {
-          const definitionIndirectlyLeftRecursiveDefinition = (definition instanceof IndirectlyLeftRecursiveDefinition);
+  const indirectlyLeftRecursiveDefinitions = retrieveLeftRecursiveDefinitions(indirectlyLeftRecursiveRule, IndirectlyLeftRecursiveDefinition, callback);
 
-          if (definitionIndirectlyLeftRecursiveDefinition) {
-            const indirectlyLeftRecursiveDefinition = definition, ///
-                  implicitlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getImplicitlyLeftRecursiveDefinition(),
-                  ruleName = implicitlyLeftRecursiveDefinition.getRuleName();
+  function callback(indirectlyLeftRecursiveDefinition) {
+    const implicitlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getImplicitlyLeftRecursiveDefinition(),
+          ruleName = implicitlyLeftRecursiveDefinition.getRuleName();
 
-            if (ruleName === implicitlyLeftRecursiveRuleName) {
-              return true;
-            }
-          }
-        });
+    if (ruleName === implicitlyLeftRecursiveRuleName) {
+      return true;
+    }
+  }
 
   return indirectlyLeftRecursiveDefinitions;
 }

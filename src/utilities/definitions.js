@@ -41,8 +41,26 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, LeftRecu
       choiceOfPartsPart
     ];
 
-    leftRecursiveDefinition = LeftRecursiveDefinition.fromRuleNameAndParts(ruleName, parts);
+    leftRecursiveDefinition = LeftRecursiveDefinition.fromPartsAndRuleName(parts, ruleName);
   }
 
   return leftRecursiveDefinition;
+}
+
+export function retrieveLeftRecursiveDefinitions(leftRecursiveRule, LeftRecursiveDefinition, callback = () => true) {
+  const definitions = leftRecursiveRule.getDefinitions(),
+        leftRecursiveDefinitions = definitions.filter((definition) => {
+          const definitionLeftRecursiveDefinition = (definition instanceof LeftRecursiveDefinition);
+
+          if (definitionLeftRecursiveDefinition) {
+            const leftRecursiveDefinition = definition, ///
+                  passed = callback(leftRecursiveDefinition);
+
+            if (passed) {
+              return true;
+            }
+          }
+        });
+
+  return leftRecursiveDefinitions;
 }

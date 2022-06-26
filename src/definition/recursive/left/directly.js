@@ -4,6 +4,7 @@ import { arrayUtilities } from "necessary";
 
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
+import { ruleNamePartFromRuleName } from "../../../utilities/part";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
 import { isDefinitionUnary,
          isDefinitionComplex,
@@ -15,7 +16,7 @@ import { isDefinitionUnary,
 const { first, tail } = arrayUtilities;
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
-  static fromRuleNameAndParts(ruleName, parts) {
+  static fromPartsAndRuleName(parts, ruleName) {
     const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
           directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
@@ -75,6 +76,25 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
     ];
 
     const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+
+    return directlyLeftRecursiveDefinition;
+  }
+
+  static fromIndirectlyLeftRecursiveDefinitionAndRepeatedRuleName(indirectlyLeftRecursiveDefinition, repeatedRuleName) {
+    let  parts = definitionPartsFromDefinition(indirectlyLeftRecursiveDefinition);
+
+    const firstPart = first(parts),
+          repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName)
+
+    parts = [
+      firstPart,
+      repeatedRuleNamePart
+    ];
+
+    const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
           directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
 

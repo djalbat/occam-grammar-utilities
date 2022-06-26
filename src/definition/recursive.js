@@ -1,8 +1,13 @@
 "use strict";
 
 import { Definition } from "occam-parsers";
+import { arrayUtilities } from "necessary";
 
-import { isDefinitionRecursive, recursiveRuleNamesFromDefinition } from "../utilities/definition";
+import { reducedPartFromPart } from "../utilities/part";
+import { repeatedPartFromParts, recursiveRuleNamesFromParts } from "../utilities/parts";
+import { isDefinitionRecursive, definitionPartsFromDefinition, recursiveRuleNamesFromDefinition } from "../utilities/definition";
+
+const { first } = arrayUtilities;
 
 export default class RecursiveDefinition extends Definition {
   constructor(parts, ruleName, recursiveRuleNames) {
@@ -32,6 +37,29 @@ export default class RecursiveDefinition extends Definition {
 
       recursiveDefinition = new RecursiveDefinition(parts, ruleName, recursiveRuleNames);
     }
+
+    return recursiveDefinition;
+  }
+
+  static fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {
+    let directlyLeftRecursiveDefinitionParts = definitionPartsFromDefinition(directlyLeftRecursiveDefinition);
+
+    const firstDirectlyLeftRecursiveDefinitionPart = first(directlyLeftRecursiveDefinitionParts),
+          part = firstDirectlyLeftRecursiveDefinitionPart, ///
+          reducedPart = reducedPartFromPart(part);
+
+    let parts = directlyLeftRecursiveDefinitionParts; ///
+
+    const repeatedPart = repeatedPartFromParts(parts);
+
+    parts = [
+      reducedPart,
+      repeatedPart
+    ]
+
+    const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          recursiveDefinition = new RecursiveDefinition(parts, ruleName, recursiveRuleNames);
 
     return recursiveDefinition;
   }
