@@ -25,21 +25,27 @@ export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefi
     const leftRecursiveDefinition = findLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions);
 
     if (leftRecursiveDefinition !== null) {
-      const definition = leftRecursiveDefinition, ///
-            definitionComplex = isDefinitionComplex(definition);
+      const leftRecursiveDefinitionImplicitlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof ImplicitlyLeftRecursiveDefinition);
 
-      if (definitionComplex) {
-        const definitionString = definition.asString();
+      if (leftRecursiveDefinitionImplicitlyLeftRecursiveDefinition) {
+        implicitlyLeftRecursiveDefinition = leftRecursiveDefinition;  ///
+      } else {
+        const definition = leftRecursiveDefinition, ///
+              definitionComplex = isDefinitionComplex(definition);
 
-        throw new Error(`The '${definitionString}' implicitly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+        if (definitionComplex) {
+          const definitionString = definition.asString();
+
+          throw new Error(`The '${definitionString}' implicitly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+        }
+
+        const parts = leftRecursiveDefinition.getParts(),
+              ruleName = leftRecursiveDefinition.getRuleName(),
+              recursiveRuleNames = leftRecursiveDefinition.getRecursiveRuleNames(),
+              leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames();
+
+        implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinition);
       }
-
-      const parts = leftRecursiveDefinition.getParts(),
-            ruleName = leftRecursiveDefinition.getRuleName(),
-            recursiveRuleNames = leftRecursiveDefinition.getRecursiveRuleNames(),
-            leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames();
-
-      implicitlyLeftRecursiveDefinition = new ImplicitlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinition);
     }
 
     return implicitlyLeftRecursiveDefinition;

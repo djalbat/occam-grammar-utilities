@@ -72,16 +72,32 @@ function retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions,
         const indirectlyLeftRecursiveDefinition = recursiveDefinition, ///
               implicitlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getImplicitlyLeftRecursiveDefinition(),
               leftRecursiveDefinition = implicitlyLeftRecursiveDefinition.getLeftRecursiveDefinition(),
-              ruleName = implicitlyLeftRecursiveDefinition.getRuleName(),
-              replacedDefinition = leftRecursiveDefinition, ///
-              replacementDefinition = implicitlyLeftRecursiveDefinition;  ///
+              ruleName = implicitlyLeftRecursiveDefinition.getRuleName();
 
         rule = ruleMap[ruleName];
 
-        rule.replaceDefinition(replacedDefinition, replacementDefinition);
+        const definitions = rule.getDefinitions(),
+              definitionsIncludesLeftRecursiveDefinition = definitions.includes(leftRecursiveDefinition);
+
+        if (definitionsIncludesLeftRecursiveDefinition) {
+          const replacedDefinition = leftRecursiveDefinition, ///
+                replacementDefinition = implicitlyLeftRecursiveDefinition;  ///
+
+          rule.replaceDefinition(replacedDefinition, replacementDefinition);
+
+          replaceRecursiveDefinition(replacedDefinition, replacementDefinition, recursiveDefinitions);
+        }
       }
     }
   }
 
   return recursiveDefinition;
+}
+
+function replaceRecursiveDefinition(replacedDefinition, replacementDefinition, recursiveDefinitions) {
+  const index = recursiveDefinitions.indexOf(replacedDefinition),
+        start = index,  ///
+        deleteCount = 1;
+
+  recursiveDefinitions.splice(start, deleteCount, replacementDefinition);
 }

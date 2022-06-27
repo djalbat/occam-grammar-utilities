@@ -9,7 +9,7 @@ const { rulesUtilities, eliminateLeftRecursion, removeOrRenameIntermediateNodes 
 const { rulesFromBNF, rulesAsString, ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
-  xdescribe("a complex directly left recursive definition", () => {
+  describe("a complex directly left recursive definition", () => {
     const bnf = `
   
 A ::= ( A | B )
@@ -25,7 +25,7 @@ A ::= ( A | B )
     });
   });
 
-  xdescribe("a complex indirectly left recursive definition", () => {
+  describe("a complex indirectly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g"
@@ -47,7 +47,7 @@ A ::= ( A | B )
     });
   });
 
-  xdescribe("a complex implicitly left recursive definition", () => {
+  describe("a complex implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= ( B | C ) "g"
@@ -69,7 +69,7 @@ A ::= ( A | B )
     });
   });
 
-  xdescribe("a unary directly left recursive definition", () => {
+  describe("a unary directly left recursive definition", () => {
     const bnf = `
   
 A ::= A
@@ -85,7 +85,7 @@ A ::= A
     });
   });
 
-  xdescribe("a unary indirectly left recursive definition", () => {
+  describe("a unary indirectly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g"
@@ -107,7 +107,7 @@ A ::= A
     });
   });
 
-  xdescribe("a unary implicitly left recursive definition", () => {
+  describe("a unary implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B 
@@ -129,7 +129,7 @@ A ::= A
     });
   });
 
-  xdescribe("an isolated directly left recursive definition", () => {
+  describe("an isolated directly left recursive definition", () => {
     const bnf = `
   
     A ::= A B ;
@@ -141,7 +141,7 @@ A ::= A
     });
   });
 
-  xdescribe("an isolated indirectly left recursive definition and a non-isolated implicitly left recursive definition", () => {
+  describe("an isolated indirectly left recursive definition and a non-isolated implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" 
@@ -159,7 +159,7 @@ A ::= A
     });
   });
 
-  xdescribe("a non-isolated indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
+  describe("a non-isolated indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" ;
@@ -177,7 +177,7 @@ A ::= A
     });
   });
 
-  xdescribe("an isolated indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
+  describe("an isolated indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" ;
@@ -191,7 +191,7 @@ A ::= A
     });
   });
 
-  xdescribe("an indirectly left recursive definition with a sibling directly left recursive definition", () => {
+  describe("an indirectly left recursive definition with a sibling directly left recursive definition", () => {
     const bnf = `
    
     A ::= B "h"
@@ -215,7 +215,7 @@ A ::= A
     });
   });
 
-  xdescribe("a directly left recursive definition", () => {
+  describe("a directly left recursive definition", () => {
     const bnf = `
  
   A ::= A "g"
@@ -258,7 +258,7 @@ A_ ::= "f"
     });
   });
 
-  xdescribe("two sibling directly left recursive definitions", () => {
+  describe("two sibling directly left recursive definitions", () => {
     const bnf = `
    
     A ::= A "f" "g"
@@ -302,7 +302,7 @@ A_ ::= "f"
     });
   });
 
-  xdescribe("an indirectly left recursive definition and an implicitly left recursive definition", () => {
+  describe("an indirectly left recursive definition and an implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g"
@@ -435,9 +435,6 @@ A_ ::= "f"
       `));
     });
   });
-
-
-
 });
 
 function compare(stringA, stringB) {
