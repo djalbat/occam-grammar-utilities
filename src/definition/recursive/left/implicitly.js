@@ -6,7 +6,7 @@ import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
 import { isDefinitionComplex } from "../../../utilities/definition";
 
-const { backwardsFind, backwardsEvery } = arrayUtilities;
+const { last, first, backwardsFind, backwardsEvery } = arrayUtilities;
 
 export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   constructor(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinition) {
@@ -19,10 +19,10 @@ export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefi
     return this.leftRecursiveDefinition;
   }
 
-  static fromRuleNameLeftRecursiveRuleNameAndRecursiveDefinitions(ruleName, leftRecursiveRuleName, recursiveDefinitions) {
+  static fromRecursiveDefinitions(recursiveDefinitions) {
     let implicitlyLeftRecursiveDefinition = null;
 
-    const leftRecursiveDefinition = findLeftRecursiveDefinition(ruleName, leftRecursiveRuleName, recursiveDefinitions);
+    const leftRecursiveDefinition = findLeftRecursiveDefinition(recursiveDefinitions);
 
     if (leftRecursiveDefinition !== null) {
       const leftRecursiveDefinitionImplicitlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof ImplicitlyLeftRecursiveDefinition);
@@ -52,15 +52,45 @@ export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefi
   }
 }
 
-function findLeftRecursiveDefinition(ruleName, leftRecursiveRuleName, recursiveDefinitions) {
-  const leftRecursiveDefinitions = findLeftRecursiveDefinitions(recursiveDefinitions),
-        leftRecursiveDefinition = backwardsFind(leftRecursiveDefinitions, (leftRecursiveDefinition) => {
-          const ruleName = leftRecursiveDefinition.getRuleName();
+function findLeftRecursiveDefinition(recursiveDefinitions) {
+  let leftRecursiveDefinition = null,
+      leftRecursiveDefinitions = findLeftRecursiveDefinitions(recursiveDefinitions);
 
-          if (ruleName === leftRecursiveRuleName) {
-            return true;
-          }
-        }) || null;
+  const leftRecursiveDefinitionsLength = leftRecursiveDefinitions.length;
+
+  if (leftRecursiveDefinitionsLength > 1) {
+    const lastLeftRecursiveDefinition = last(leftRecursiveDefinitions),
+          leftRecursiveRuleNames = lastLeftRecursiveDefinition.getLeftRecursiveRuleNames(),
+          firstLeftRecursiveRuleName = first(leftRecursiveRuleNames),
+          lLeftRecursiveRuleName = firstLeftRecursiveRuleName; ///
+
+    leftRecursiveDefinition = backwardsFind(leftRecursiveDefinitions, (leftRecursiveDefinition) => {
+      const ruleName = leftRecursiveDefinition.getRuleName();
+
+      if (ruleName === lLeftRecursiveRuleName) {
+        return true;
+      }
+    }) || null;
+
+    if (leftRecursiveDefinition !== null) {
+      truncateLeftRecursiveDefinitions(leftRecursiveDefinitions);
+
+      const ruleNames = ruleNamesFromLeftRecursiveDefinitions(leftRecursiveDefinitions),
+            leftRecursiveRuleNamesIncludesRuleNames = leftRecursiveDefinitions.every((leftRecursiveDefinition, index) => {
+              const ruleName = ruleNames[index],
+                    leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames(),
+                    leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
+
+              if (leftRecursiveRuleNamesIncludesRuleName) {
+                return true;
+              }
+            });
+
+      if (!leftRecursiveRuleNamesIncludesRuleNames) {
+        leftRecursiveDefinition = null;
+      }
+    }
+  }
 
   return leftRecursiveDefinition;
 }
@@ -81,4 +111,25 @@ function findLeftRecursiveDefinitions(recursiveDefinitions) {
   });
 
   return leftRecursiveDefinitions;
+}
+
+function truncateLeftRecursiveDefinitions(leftRecursiveDefinitions, leftRecursiveDefinition) {
+  const index = leftRecursiveDefinitions.indexOf(leftRecursiveDefinition),
+        start = 0,
+        deleteCount = index;  ///
+
+  leftRecursiveDefinitions.splice(start, deleteCount);
+}
+
+function ruleNamesFromLeftRecursiveDefinitions(leftRecursiveDefinitions) {
+  const ruleNames = leftRecursiveDefinitions.map((leftRecursiveDefinition) => {
+          const ruleName = leftRecursiveDefinition.getRuleName();
+
+          return ruleName;
+        }),
+        ruleName = ruleNames.shift();
+
+  ruleNames.push(ruleName);
+
+  return ruleNames;
 }

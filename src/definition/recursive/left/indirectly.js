@@ -33,7 +33,11 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
             ruleNameLeftRecursiveRuleName = (ruleName === leftRecursiveRuleName);
 
       if (!ruleNameLeftRecursiveRuleName) {
-        const implicitlyLeftRecursiveDefinition = ImplicitlyLeftRecursiveDefinition.fromRuleNameLeftRecursiveRuleNameAndRecursiveDefinitions(ruleName, leftRecursiveRuleName, recursiveDefinitions);
+        const leftRecursiveDefinition = LeftRecursiveDefinition.fromRuleNameAndDefinition(ruleName, definition);
+
+        recursiveDefinitions = [ ...recursiveDefinitions, leftRecursiveDefinition ];  ///
+
+        const implicitlyLeftRecursiveDefinition = ImplicitlyLeftRecursiveDefinition.fromRecursiveDefinitions(recursiveDefinitions);
 
         if (implicitlyLeftRecursiveDefinition !== null) {
           const definitionComplex = isDefinitionComplex(definition);
