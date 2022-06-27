@@ -5,7 +5,7 @@ import RecursiveDefinition from "../../definition/recursive";
 import { ruleNamePartFromRuleName } from "../../utilities/part";
 import { ruleNameFromReducedRuleName } from "../../utilities/ruleName";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
-import { mergeDefinitionParts, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+import { mergeDefinitionParts, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 export default class LeftRecursiveDefinition extends RecursiveDefinition {
   constructor(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames) {
@@ -35,13 +35,12 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
   static fromRuleNameAndDefinition(ruleName, definition) {
     let leftRecursiveDefinition = null;
 
-    const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
-          leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length,
-          definitionLeftRecursiveDefinition = (leftRecursiveRuleNamesLength > 0);
+    const definitionLeftRecursive = isDefinitionLeftRecursive(definition);
 
-    if (definitionLeftRecursiveDefinition) {
+    if (definitionLeftRecursive) {
       const parts = definition.getParts(),
-            recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);
+            recursiveRuleNames = recursiveRuleNamesFromDefinition(definition),
+            leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition);
 
       leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
     }

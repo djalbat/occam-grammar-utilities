@@ -22,7 +22,7 @@ export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefi
   static fromRuleNameLeftRecursiveRuleNameAndRecursiveDefinitions(ruleName, leftRecursiveRuleName, recursiveDefinitions) {
     let implicitlyLeftRecursiveDefinition = null;
 
-    const leftRecursiveDefinition = findLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions);
+    const leftRecursiveDefinition = findLeftRecursiveDefinition(ruleName, leftRecursiveRuleName, recursiveDefinitions);
 
     if (leftRecursiveDefinition !== null) {
       const leftRecursiveDefinitionImplicitlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof ImplicitlyLeftRecursiveDefinition);
@@ -52,7 +52,7 @@ export default class ImplicitlyLeftRecursiveDefinition extends LeftRecursiveDefi
   }
 }
 
-function findLeftRecursiveDefinition(leftRecursiveRuleName, recursiveDefinitions) {
+function findLeftRecursiveDefinition(ruleName, leftRecursiveRuleName, recursiveDefinitions) {
   const leftRecursiveDefinitions = findLeftRecursiveDefinitions(recursiveDefinitions),
         leftRecursiveDefinition = backwardsFind(leftRecursiveDefinitions, (leftRecursiveDefinition) => {
           const ruleName = leftRecursiveDefinition.getRuleName();
