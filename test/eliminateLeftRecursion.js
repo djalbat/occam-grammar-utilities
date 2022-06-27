@@ -676,35 +676,6 @@ A_ ::= "h"
       `));
     });
   });
-
-  xdescribe("javascript bnf", () => {
-    const bnf = `  
-
-    A  ::=  A "g"
-    
-         |  B 
-                         
-         ;
-
-    B  ::=  D C ;
-
-    C  ::=  A 
-    
-         | "f" 
-          
-         ;
-
-`;
-
-    it("is rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF, `
-
-    
-      `));
-    });
-  });
 });
 
 function compare(stringA, stringB) {
