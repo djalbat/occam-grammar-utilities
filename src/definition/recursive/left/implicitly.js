@@ -73,7 +73,7 @@ function findLeftRecursiveDefinition(recursiveDefinitions) {
     }) || null;
 
     if (leftRecursiveDefinition !== null) {
-      truncateLeftRecursiveDefinitions(leftRecursiveDefinitions);
+      truncateLeftRecursiveDefinitions(leftRecursiveDefinitions, leftRecursiveDefinition);
 
       const ruleNames = ruleNamesFromLeftRecursiveDefinitions(leftRecursiveDefinitions),
             leftRecursiveRuleNamesIncludesRuleNames = leftRecursiveDefinitions.every((leftRecursiveDefinition, index) => {
