@@ -5,7 +5,7 @@ import { Rule, Definition } from "occam-parsers";
 
 import RepeatedNode from "../node/repeated";
 
-import { definitionPartsFromDefinition } from "../utilities/definition";
+import { cloneDefinitionParts } from "../utilities/definition";
 import { repeatedRuleNameFromRuleNameAndIndex } from "../utilities/ruleName";
 
 const { tail } = arrayUtilities;
@@ -14,12 +14,14 @@ export default class RepeatedRule extends Rule {
   static fromIndirectlyLeftRecursiveDefinitionAndIndex(indirectlyLeftRecursiveDefinition, index) {
     let repeatedRule = null;
 
-    const definitionParts = definitionPartsFromDefinition(indirectlyLeftRecursiveDefinition),
-          parts = tail(definitionParts),  ///
+    const parts = indirectlyLeftRecursiveDefinition.getParts(),
           partsLength = parts.length;
 
-    if (partsLength > 0) {
+    if (partsLength > 1) {
       const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
+            clonedParts = cloneDefinitionParts(indirectlyLeftRecursiveDefinition),
+            clonedPartsTail = tail(clonedParts),
+            parts = clonedPartsTail,  ///
             definition = new Definition(parts),
             repeatedRuleName = repeatedRuleNameFromRuleNameAndIndex(ruleName, index),
             name = repeatedRuleName,  ///

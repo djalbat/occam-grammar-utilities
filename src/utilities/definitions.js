@@ -3,7 +3,7 @@
 import { Parts } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
-import { definitionPartsFromDefinition } from "../utilities/definition";
+import { cloneDefinitionParts } from "../utilities/definition";
 import { firstPartFromParts, singlePartFromParts } from "../utilities/parts";
 
 const { first } = arrayUtilities,
@@ -26,8 +26,8 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, fromPart
       callback(leftRecursiveDefinition);
 
       const definition = leftRecursiveDefinition, ///
-            definitionParts = definitionPartsFromDefinition(definition),
-            parts = definitionParts;
+            clonedParts = cloneDefinitionParts(definition),
+            parts = clonedParts;  ///
 
       firstPart = firstPartFromParts(parts)
 

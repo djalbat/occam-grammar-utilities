@@ -7,7 +7,6 @@ import RecursiveDefinition from "./definition/recursive";
 import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
 
 import { retrieveLeftRecursiveRules } from "./utilities/rules";
-import { definitionPartsFromDefinition } from "./utilities/definition";
 import { mergeLeftRecursiveDefinitions, retrieveLeftRecursiveDefinitions } from "./utilities/definitions";
 
 const { first, tail } = arrayUtilities;
@@ -24,8 +23,10 @@ export default function eliminateDirectLeftRecursion(leftRecursiveDefinitions, r
     const directlyLeftRecursiveDefinitions = retrieveDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveRule),
           directlyLeftRecursiveDefinition = mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions),
           replacementDefinition = rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition),
-          replacedDefinition = first(directlyLeftRecursiveDefinitions), ///
-          definitions = tail(directlyLeftRecursiveDefinitions); ///
+          firstDirectlyLeftRecursiveDefinitions = first(directlyLeftRecursiveDefinitions),
+          directlyLeftRecursiveDefinitionsTail = tail(directlyLeftRecursiveDefinitions),
+          replacedDefinition = firstDirectlyLeftRecursiveDefinitions, ///
+          definitions = directlyLeftRecursiveDefinitionsTail; ///
 
     directlyLeftRecursiveRule.removeDefinitions(definitions);
 
@@ -49,8 +50,7 @@ function mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions)
   function callback(directlyLeftRecursiveDefinition) {
     const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
           definition = directlyLeftRecursiveDefinition, ///
-          definitionParts = definitionPartsFromDefinition(definition),
-          parts = definitionParts,  ///
+          parts = definition.getParts(),
           partsLength = parts.length;
 
     if (partsLength === 1) {

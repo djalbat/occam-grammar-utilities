@@ -6,7 +6,27 @@ import { cloneParts } from "../utilities/parts";
 import { isPartComplex } from "../utilities/part";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../utilities/parts";
 
-const { first } = arrayUtilities;
+const { first, tail } = arrayUtilities;
+
+export function cloneDefinitionParts(definition) {
+  let clonedParts = definition.getParts();
+
+  clonedParts = cloneParts(clonedParts);  //
+
+  return clonedParts;
+}
+
+export function mergeDefinitionParts(definitionA, definitionB) {
+  const clonedPartsA = cloneDefinitionParts(definitionA),
+        clonedPartsB = cloneDefinitionParts(definitionB),
+        clonedPartsBTail = tail(clonedPartsB),
+        parts = [
+          ...clonedPartsA,
+          ...clonedPartsBTail
+        ];
+
+  return parts;
+}
 
 export function isDefinitionComplex(definition) {
   const parts = definition.getParts(),
@@ -31,14 +51,6 @@ export function isDefinitionLeftRecursive(definition) {
         definitionLeftRecursive = (leftRecursiveRuleNamesLength > 0);
 
   return definitionLeftRecursive;
-}
-
-export function definitionPartsFromDefinition(definition) {
-  let definitionParts = definition.getParts();
-
-  definitionParts = cloneParts(definitionParts);  //
-
-  return definitionParts;
 }
 
 export function recursiveRuleNamesFromDefinition(definition) {

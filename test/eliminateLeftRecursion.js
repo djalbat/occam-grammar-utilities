@@ -323,7 +323,7 @@ A_ ::= "f"
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-
+      
     A ::= A_ ( B~ "g" )* ;
     
     B ::= A "h"

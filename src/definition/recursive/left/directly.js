@@ -7,12 +7,13 @@ import LeftRecursiveDefinition from "../../../definition/recursive/left";
 import { ruleNamePartFromRuleName } from "../../../utilities/part";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
 import { isDefinitionComplex,
+         cloneDefinitionParts,
+         mergeDefinitionParts,
          isDefinitionLeftRecursive,
-         definitionPartsFromDefinition,
          recursiveRuleNamesFromDefinition,
          leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
-const { first, tail } = arrayUtilities;
+const { first } = arrayUtilities;
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   static fromPartsAndRuleName(parts, ruleName) {
@@ -53,20 +54,9 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
   }
 
   static fromImplicitlyLeftRecursiveDefinitionAndDefinition(implicitlyLeftRecursiveDefinition, definition) {
-    let parts;
-
-    const ruleName = implicitlyLeftRecursiveDefinition.getRuleName(),
-          definitionParts = definitionPartsFromDefinition(definition),
-          implicitlyLeftRecursiveDefinitionParts = definitionPartsFromDefinition(implicitlyLeftRecursiveDefinition);
-
-    parts = tail(implicitlyLeftRecursiveDefinitionParts);  ///
-
-    parts = [
-      ...definitionParts,
-      ...parts
-    ];
-
-    const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+    const parts = mergeDefinitionParts(definition, implicitlyLeftRecursiveDefinition),
+          ruleName = implicitlyLeftRecursiveDefinition.getRuleName(),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
           directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
 
@@ -74,9 +64,9 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
   }
 
   static fromIndirectlyLeftRecursiveDefinitionAndRepeatedRuleName(indirectlyLeftRecursiveDefinition, repeatedRuleName) {
-    const definitionParts = definitionPartsFromDefinition(indirectlyLeftRecursiveDefinition);
+    const clonedParts = cloneDefinitionParts(indirectlyLeftRecursiveDefinition);
 
-    let parts = definitionParts;  ///
+    let parts = clonedParts;  ///
 
     const firstPart = first(parts);
 

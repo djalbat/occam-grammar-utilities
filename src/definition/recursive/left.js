@@ -1,15 +1,11 @@
 "use strict";
 
-const { arrayUtilities } = require("necessary");
-
 import RecursiveDefinition from "../../definition/recursive";
 
 import { ruleNamePartFromRuleName } from "../../utilities/part";
 import { ruleNameFromReducedRuleName } from "../../utilities/ruleName";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
-import { definitionPartsFromDefinition, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
-
-const { tail } = arrayUtilities;
+import { mergeDefinitionParts, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 export default class LeftRecursiveDefinition extends RecursiveDefinition {
   constructor(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames) {
@@ -54,20 +50,9 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
   }
 
   static fromImplicitlyLeftRecursiveDefinitionAndDefinition(implicitlyLeftRecursiveDefinition, definition) {
-    let parts;
-
-    const ruleName = implicitlyLeftRecursiveDefinition.getRuleName(),
-          definitionParts  = definitionPartsFromDefinition(definition),
-          implicitlyLeftRecursiveDefinitionParts = definitionPartsFromDefinition(implicitlyLeftRecursiveDefinition);
-
-    parts = tail(implicitlyLeftRecursiveDefinitionParts);  ///
-
-    parts = [
-      ...definitionParts,
-      ...parts
-    ];
-
-    const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+    const parts = mergeDefinitionParts(definition, implicitlyLeftRecursiveDefinition),
+          ruleName = implicitlyLeftRecursiveDefinition.getRuleName(),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
           leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
 
