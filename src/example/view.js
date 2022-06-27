@@ -66,7 +66,7 @@ class View extends Element {
   }
 
   changeHandler(event, element) {
-    // try {
+    try {
       const bnf = this.getBNF(),
             startRuleName = this.getStartRuleName();
 
@@ -89,9 +89,9 @@ class View extends Element {
       const parseTree = this.getParseTree(startRule, ruleMap);
 
       this.setParseTree(parseTree);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   childElements() {
