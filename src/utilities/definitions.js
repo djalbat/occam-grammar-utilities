@@ -3,6 +3,7 @@
 import { Parts } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
+import { matchParts } from "../utilities/part";
 import { cloneDefinitionParts } from "../utilities/definition";
 import { firstPartFromParts, singlePartFromParts } from "../utilities/parts";
 
@@ -20,7 +21,11 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, fromPart
 
     callback(leftRecursiveDefinition);
   } else {
-    let firstPart;
+
+    const ruleName = firstLeftRecursiveDefinition.getRuleName();
+
+    let firstPart,
+        previousFirstPart = null;
 
     const singleParts = leftRecursiveDefinitions.map((leftRecursiveDefinition) => {
       callback(leftRecursiveDefinition);
@@ -29,7 +34,20 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, fromPart
             clonedParts = cloneDefinitionParts(definition),
             parts = clonedParts;  ///
 
-      firstPart = firstPartFromParts(parts)
+      firstPart = firstPartFromParts(parts);
+
+      if (previousFirstPart !== null) {
+        const matches = matchParts(firstPart, previousFirstPart);
+
+        if (!matches) {
+          const definition = leftRecursiveDefinition, ///
+                definitionString = definition.asString();
+
+          throw new Error(`The '${definitionString}' left recursive definition of the '${ruleName}' rule does not match one of its sibling left recursive definitions and  therefore cannot be rewritten.`);
+        }
+      }
+
+      previousFirstPart = firstPart;  ///
 
       const singlePart = singlePartFromParts(parts);
 
@@ -38,8 +56,7 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, fromPart
 
     let parts = singleParts;  ///
 
-    const ruleName = firstLeftRecursiveDefinition.getRuleName(),
-          choiceOfPartsPart = new ChoiceOfPartsPart(parts);
+    const choiceOfPartsPart = new ChoiceOfPartsPart(parts);
 
     parts = [
       firstPart,

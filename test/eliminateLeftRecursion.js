@@ -177,6 +177,28 @@ A ::= "g"
     });
   });
 
+  describe("two sibling directly left recursive definitions that do not match", () => {
+    const bnf = `
+   
+    A ::= "c"
+
+        | A* "f" "g"
+    
+        | "d"
+
+        | A+ "h"
+    
+        | "e"
+    
+        ;
+
+`;
+
+    it("do throw an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
   describe("an isolated indirectly left recursive definition and a implicitly left recursive definition", () => {
     const bnf = `
   
@@ -297,12 +319,40 @@ A ::= "g"
     });
   });
 
+  describe("two sibling indirectly left recursive definitions that do not match", () => {
+    const bnf = `
+   
+    A ::= "e"
+    
+        | B "h"
+    
+        | "d"
+    
+        ;
+    
+    B ::= A "g"
+    
+        | "d"
+
+        | A+ "f"
+
+        | "c"
+
+        ;
+
+`;
+
+    it("do throw an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
   describe("a directly left recursive definition", () => {
     const bnf = `
  
   A ::= "h"
   
-      | A "g"
+      | A... "g"
   
       | "f"
   
@@ -315,7 +365,7 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
     
-A  ::= A_ "g"* ;
+A  ::= A_... "g"* ;
 
 A_ ::= "h"
 
@@ -349,11 +399,11 @@ A_ ::= "h"
    
     A ::= "c"
 
-        | A "f" "g"
+        | A* "f" "g"
     
         | "d"
 
-        | A "h"
+        | A* "h"
     
         | "e"
     
@@ -366,7 +416,7 @@ A_ ::= "h"
 
       assert.isTrue(compare(adjustedBNF, `
     
-  A  ::= A_ ( ( "f" "g" ) | "h" )* ;
+  A  ::= A_* ( ( "f" "g" ) | "h" )* ;
   
   A_ ::= "c" 
   
@@ -468,6 +518,79 @@ A_ ::= "h"
       B     g[custom]                    
       |                                  
   c[custom]                              
+             
+      `));
+    });
+  });
+
+  describe("a directly left recursive definition and sibling implicitly left recursive definition", () => {
+    const bnf = `
+  
+    A ::= A "h"
+    
+        | "d"
+    
+        | B "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= "b"
+
+        | A "f"
+    
+        | "c"
+
+        ;
+
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+
+    A ::= A_ ( "h" | ( B~ "g" ) )* ;
+    
+    B ::= A "f"
+    
+        | B_
+
+        ;
+
+   B_ ::= "b"
+
+        | "c"
+
+        ;
+
+   B~ ::= "f" ;
+    
+   A_ ::= "d"
+    
+        | B_ "g"
+    
+        | "e"
+    
+        ;
+    
+      `));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = "dhfg",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                     A                   
+                     |                   
+      -------------------------------    
+      |         |         |         |    
+      A     h[custom]     B     g[custom]
+      |                   |              
+  d[custom]           f[custom]          
              
       `));
     });

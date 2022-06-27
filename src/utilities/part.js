@@ -6,13 +6,21 @@ import { Parts, partTypes } from "occam-parsers";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
 const { first } = arrayUtilities,
-      { RuleNamePart, OptionalPartPart, ZeroOrMorePartsPart } = Parts,
+      { RuleNamePart, OptionalPartPart, OneOrMorePartsPart, ZeroOrMorePartsPart } = Parts,
       { RuleNamePartType,
         OptionalPartPartType,
         ChoiceOfPartsPartType,
         OneOrMorePartsPartType,
         SequenceOfPartsPartType,
         ZeroOrMorePartsPartType } = partTypes;
+
+export function matchParts(partA, partB) {
+  const partAString = partA.asString(),
+        partBString = partB.asString(),
+        matches = (partAString === partBString);
+
+  return matches;
+}
 
 export function isPartComplex(part) {
   let partComplex = true;

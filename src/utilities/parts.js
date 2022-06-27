@@ -5,7 +5,7 @@ import { arrayUtilities } from "necessary";
 import { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "./part";
 
 const { tail, first } = arrayUtilities,
-      { ZeroOrMorePartsPart, SequenceOfPartsPart } = Parts;
+      { SequenceOfPartsPart, ZeroOrMorePartsPart } = Parts;
 
 export function cloneParts(parts) {
   parts = parts.map((part) => part.clone());  ///
