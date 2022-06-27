@@ -29,7 +29,7 @@ export default class ReducedRule extends Rule {
     const definitionsLength = definitions.length;
 
     if (definitionsLength === 0) {
-      const ruleName = directlyLeftRecursiveRule.getRuleName(),
+      const ruleName = rule.getName(),
             definition = directlyLeftRecursiveRule, ///
             definitionString = definition.asString();
 

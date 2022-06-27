@@ -4,12 +4,13 @@ const { assert } = require("chai"),
       { BasicLexer } = require("occam-lexers"),
       { BasicParser } = require("occam-parsers");
 
-const { rulesUtilities, eliminateLeftRecursion, removeOrRenameIntermediateNodes } = require("../lib/index.js");
+const { rulesUtilities, parserUtilities, eliminateLeftRecursion, removeOrRenameIntermediateNodes } = require("../lib/index.js");
 
-const { rulesFromBNF, rulesAsString, ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
+const { rulesFromBNF } = parserUtilities,
+      { rulesAsString, ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
-  describe("a complex directly left recursive definition", () => {
+  xdescribe("a complex directly left recursive definition", () => {
     const bnf = `
   
 A ::= "g""
@@ -27,7 +28,7 @@ A ::= "g""
     });
   });
 
-  describe("a complex indirectly left recursive definition", () => {
+  xdescribe("a complex indirectly left recursive definition", () => {
     const bnf = `
   
     A ::= "d"
@@ -53,7 +54,7 @@ A ::= "g""
     });
   });
 
-  describe("a complex implicitly left recursive definition", () => {
+  xdescribe("a complex implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= "d"
@@ -79,7 +80,7 @@ A ::= "g""
     });
   });
 
-  describe("a unary directly left recursive definition", () => {
+  xdescribe("a unary directly left recursive definition", () => {
     const bnf = `
   
 A ::= "g"
@@ -97,7 +98,7 @@ A ::= "g"
     });
   });
 
-  describe("a unary indirectly left recursive definition", () => {
+  xdescribe("a unary indirectly left recursive definition", () => {
     const bnf = `
   
     A ::= "d"
@@ -125,7 +126,7 @@ A ::= "g"
     });
   });
 
-  describe("a unary implicitly left recursive definition", () => {
+  xdescribe("a unary implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= "d" 
@@ -151,7 +152,7 @@ A ::= "g"
     });
   });
 
-  describe("an isolated directly left recursive definition", () => {
+  xdescribe("an isolated directly left recursive definition", () => {
     const bnf = `
   
     A ::= A B ;
@@ -163,7 +164,7 @@ A ::= "g"
     });
   });
 
-  describe("two isolated directly left recursive definitions", () => {
+  xdescribe("two isolated directly left recursive definitions", () => {
     const bnf = `
   
     A ::= A B 
@@ -179,7 +180,7 @@ A ::= "g"
     });
   });
 
-  describe("two sibling directly left recursive definitions that do not match", () => {
+  xdescribe("two sibling directly left recursive definitions that do not match", () => {
     const bnf = `
    
     A ::= "c"
@@ -201,7 +202,7 @@ A ::= "g"
     });
   });
 
-  describe("an isolated indirectly left recursive definition and a implicitly left recursive definition", () => {
+  xdescribe("an isolated indirectly left recursive definition and a implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" 
@@ -219,7 +220,7 @@ A ::= "g"
     });
   });
 
-  describe("two isolated indirectly left recursive definitions and a implicitly left recursive definition", () => {
+  xdescribe("two isolated indirectly left recursive definitions and a implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" 
@@ -241,7 +242,7 @@ A ::= "g"
     });
   });
 
-  describe("a indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
+  xdescribe("a indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" ;
@@ -261,7 +262,7 @@ A ::= "g"
     });
   });
 
-  describe("an isolated indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
+  xdescribe("an isolated indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" ;
@@ -275,7 +276,7 @@ A ::= "g"
     });
   });
 
-  describe("two isolated indirectly left recursive definitions and an isolated implicitly left recursive definition", () => {
+  xdescribe("two isolated indirectly left recursive definitions and an isolated implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" ;
@@ -293,7 +294,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition with a sibling directly left recursive definition", () => {
+  xdescribe("an indirectly left recursive definition with a sibling directly left recursive definition", () => {
     const bnf = `
    
     A ::= "e"
@@ -321,7 +322,7 @@ A ::= "g"
     });
   });
 
-  describe("two sibling indirectly left recursive definitions that do not match", () => {
+  xdescribe("two sibling indirectly left recursive definitions that do not match", () => {
     const bnf = `
    
     A ::= "e"
@@ -349,7 +350,7 @@ A ::= "g"
     });
   });
 
-  describe("a directly left recursive definition", () => {
+  xdescribe("a directly left recursive definition", () => {
     const bnf = `
  
   A ::= "h"
@@ -396,7 +397,7 @@ A_ ::= "h"
     });
   });
 
-  describe("two sibling directly left recursive definitions", () => {
+  xdescribe("two sibling directly left recursive definitions", () => {
     const bnf = `
    
     A ::= "c"
@@ -450,7 +451,7 @@ A_ ::= "h"
     });
   });
 
-  describe("an indirectly left recursive definition and an implicitly left recursive definition", () => {
+  xdescribe("an indirectly left recursive definition and an implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= "e"
@@ -525,7 +526,7 @@ A_ ::= "h"
     });
   });
 
-  describe("a directly left recursive definition and sibling implicitly left recursive definition", () => {
+  xdescribe("a directly left recursive definition and sibling implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= A "h"
@@ -598,7 +599,7 @@ A_ ::= "h"
     });
   });
 
-  describe("two sibling indirectly left recursive definitions and an implicitly left recursive definition", () => {
+  xdescribe("two sibling indirectly left recursive definitions and an implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= "d"
@@ -673,6 +674,292 @@ A_ ::= "h"
       |                                  
   c[custom]                              
              
+      `));
+    });
+  });
+
+  describe("javascript bnf", () => {
+    const bnf = `
+  
+    document                   ::=  ( preamble ( statement | error )* ) | ( statement | error )+ ;
+
+
+
+    preamble                   ::=  ( "\\"use strict\\"" | "'use strict'" ) ";" ;
+
+
+
+    statement                  ::=  class
+
+                                 |  function
+
+                                 |  generator
+
+                                 |  "export"? ( ( "var" var ( "," var )* )
+
+                                              | ( "let" let ( "," let )* )
+
+                                              | ( "const" const ( "," const )* )
+
+                                              ) ";"
+
+                                 |  "export" "default" expression ";"
+
+                                 |  "export" "default"? ( class | function | generator )
+
+                                 |  "export" "default" ( anonymousClass | anonymousFunction | anonymousGenerator )
+
+                                 |  "export" ( ( "export" "{" names "}" ( "from" [string-literal] )? )
+
+                                             | ( "export" "const" "{" fields "}" "=" expression )
+
+                                             | ( "export" "{" "default" "}" "from" [string-literal] )
+
+                                             | ( "export" "*" ( "as" name )? "from" [string-literal] )
+
+                                             ) ";"
+
+                                 |  "import" ( [string-literal]
+
+                                             | ( name "from" [string-literal] )
+
+                                             | ( "{" names "}" "from" [string-literal] )
+
+                                             | ( "*" "as" name "from" [string-literal] )
+
+                                             ) ";"
+
+                                 |  label ":" statement
+
+                                 |  "{" statement* "}"
+
+                                 |  "break" ";"
+
+                                 |  "continue" ";"
+
+                                 |  "if" "(" expression ")" statement ( "else" statement )?
+
+                                 |  "switch" "(" expression ")" "{" case* defaultCase? "}"
+
+                                 |  "return" expression? ";"
+
+                                 |  "throw" expression ";"
+
+                                 |  "delete" expression ";"
+
+                                 |  expression... ";"
+
+                                 |  try ( ( catch* finally ) | catch+ )
+
+                                 |  "do" statement "while" "(" expression ")" ";"
+
+                                 |  "for" "(" initialiser ( ";" expression )? ( ";" expression )? ")" statement
+
+                                 |  "for" "(" variable "in" expression ")" statement
+
+                                 |  "for" "await"? "(" variable "of" expression ")" statement
+
+                                 |  "while" "(" expression ")" statement
+
+                                 |  "debugger" ";"?
+
+                                 ;
+
+
+
+    class                      ::=  "class" name classBody ;
+
+    function                   ::=  "async"? "function" name functionBody ;
+
+    generator                  ::=  "async"? "function" <NO_WHITESPACE>"*" name functionBody ;
+
+    anonymousClass             ::=  "class" classBody ;
+
+    anonymousFunction          ::=  "async"? "function" functionBody ;
+
+    anonymousGenerator         ::=  "async"? "function" <NO_WHITESPACE>"*" functionBody ;
+
+    constructor                ::=  "constructor" functionBody ;
+
+    method                     ::=  "static"? name functionBody ;
+
+    field                      ::=  "static"? name "=" expression ";" ;
+
+
+
+    classBody                  ::=  ( "extends" name )? "{" ( constructor | method | field )* "}" ;
+
+    functionBody               ::=  "(" arguments? ")" "{" statement* "}" ;
+
+
+
+    case                       ::=  "case" expression ":" statement ( "break" ";" )? ;
+
+    defaultCase                ::=  "default" ":" statement ( "break" ";" )? ;
+
+    try                        ::=  "try" "{" statement+ "}" ;
+
+    catch                      ::=  "catch" "(" [identifier] ")" "{" statement+ "}" ;
+
+    finally                    ::=  "finally" "{" statement+ "}" ;
+
+    initialiser                ::=  expression | "var" var ( "," var )* | "let" let ( "," let )* ;
+
+
+
+    var                        ::=  variable ( "=" expression )? | destructure "=" expression ;
+
+    let                        ::=  variable ( "=" expression )? | destructure "=" expression;
+
+    const                      ::=  ( variable | destructure ) "=" expression ;
+
+    destructure                ::=  "[" variable ( "=" expression )? ( "," variable ( "=" expression )? )* "]"
+
+                                 |  "{" variable ( "=" expression )? ( "," variable ( "=" expression )? )* "}"
+
+                                 ;
+
+
+
+    expression                 ::=  jsx
+
+                                 |  json
+
+                                 |  arrowFunction
+
+                                 |  templateLiteral
+
+                                 |  anonymousFunction
+
+                                 |  "(" expression ")"
+
+                                 |  "{" ( property ( "," property )* )? "}"
+
+                                 |  "[" ( expression ( "," expression )* ","? )? "]"
+
+                                 |  "typeof" ( expression | ( "(" expression ")") )
+
+                                 |  "void" ( expression | ( "(" expression ")") )
+
+                                 |  "new" name<NO_WHITESPACE>"(" arguments? ")"
+
+                                 |  [operator]<NO_WHITESPACE>expression
+
+                                 |  expression<NO_WHITESPACE>( ( "."<NO_WHITESPACE>name )
+
+                                                             | ( "[" expressions "]" )
+
+                                                             | ( "(" expressions? ")" )
+
+                                                             | templateLiteral
+
+                                                             | [operator]
+
+                                                             )
+
+                                 |  expression ( ( [operator] expression )
+
+                                               | ( "?" expression ":" expression )
+
+                                               | ( "instanceof" expression )
+
+                                               | ( "in" expression )
+
+                                               )
+
+                                 |  [number]
+
+                                 |  variable
+
+                                 |  primitive
+
+                                 |  importMeta
+
+                                 |  [string-literal]
+
+                                 |  "super" | "this" | "true" | "false" | "null" | "undefined"
+
+                                 ;
+
+
+
+    jsx                        ::=  jsxCompleteTag | jsxStartTag ( jsx | ( "{" expression? "}" ) | string )* jsxEndTag ;
+
+    jsxCompleteTag             ::=  "<"<NO_WHITESPACE>name jsxAttribute* "/>" ;
+
+    jsxStartTag                ::=  "<"<NO_WHITESPACE>name jsxAttribute* ">" ;
+
+    jsxEndTag                  ::=  "</"<NO_WHITESPACE>name ">" ;
+
+    jsxAttribute               ::=  name ( <NO_WHITESPACE>"=" ( ( <NO_WHITESPACE>[string-literal] ) | ( <NO_WHITESPACE>"{" expression "}" ) ) )? ;
+
+
+
+    json                       ::=  jsonArray | jsonObject ;
+
+    jsonArray                  ::=  "[" ( jsonElement ( "," jsonElement )* )? "]" ;
+
+    jsonObject                 ::=  "{" ( [string-literal] ":" jsonElement ( "," [string-literal] ":" jsonElement )* )? "}" ;
+
+    jsonElement                ::=  json | [string-literal] | [number] | "true" | "false" | "null" ;
+
+
+
+    arrowFunction              ::=  simpleArrowFunction | complexArrowFunction ;
+
+    arrowFunctionBody          ::=  expression | ( "{" statement* "}" ) ;
+
+    simpleArrowFunction        ::=  argument "=>" arrowFunctionBody ;
+
+    complexArrowFunction       ::=  "(" arguments? ")" "=>" arrowFunctionBody ;
+
+
+
+    templateLiteral            ::=  "\`" ( ( "\${" expression? "}" ) | string )* "\`" ;
+
+
+
+    string                     ::=  ( [number] | [special] | [operator]| [keyword] | [identifier] | [string-literal]| [broken-string-literal] | [unassigned] )+ ;
+
+    property                   ::=  ( ( ( name | [string-literal] ) ":" expression ) | variable ) ;
+
+    importMeta                 ::=  "import"<NO_WHITESPACE>"."<NO_WHITESPACE>"meta" ;
+
+
+
+    expressions                ::=  expression ( "," expression )* ;
+
+    arguments                  ::=  spreadArgument | ( argument ( "," argument )* ( "," spreadArgument )? ) ;
+
+    fields                     ::=  name ( ":" name )? ( "," name ( ":" name )? )* ;
+
+    names                      ::=  name ( "as" name )? ( "," name ( "as" name )? )* ;
+
+
+
+    spreadArgument             ::=  "..."<NO_WHITESPACE>[identifier] ;
+
+    argument                   ::=  expression | [identifier] ( "=" expression )? ;
+
+    variable                   ::=  [identifier] ;
+
+    label                      ::=  [identifier] ;
+
+    name                       ::=  [identifier] ;
+
+
+
+    error                      ::=  . ;
+
+
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+
+    
       `));
     });
   });
