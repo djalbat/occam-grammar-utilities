@@ -1,21 +1,10 @@
 "use strict";
 
-import { BNFLexer } from "occam-lexers";
 import { arrayUtilities } from "necessary";
-import { BNFParser, rulesUtilities } from "occam-parsers";
+import { rulesUtilities } from "occam-parsers";
 
 const { filter } = arrayUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRules } = rulesUtilities;
-
-const bnfLexer = BNFLexer.fromNothing(),
-      bnfParser = BNFParser.fromNothing();
-
-export function rulesFromBNF(bnf) {
-  const tokens = bnfLexer.tokensFromBNF(bnf),
-        rules = bnfParser.rulesFromTokens(tokens);
-
-  return rules;
-}
 
 export function retrieveLeftRecursiveRules(leftRecursiveDefinitions, LeftRecursiveDefinition, ruleMap) {
   const leftRecursiveRules = [];
@@ -71,7 +60,6 @@ export function startRuleFromRulesAndStartRuleName(rules, startRuleName) {
 }
 
 export default {
-  rulesFromBNF,
   rulesAsString,
   ruleMapFromRules,
   startRuleFromRules,
