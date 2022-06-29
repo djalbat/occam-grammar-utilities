@@ -9,7 +9,7 @@ export default function retrieveLeftRecursiveDefinitions(rule, recursiveDefiniti
   const definitions = rule.getDefinitions();
 
   definitions.forEach((definition) => {
-    const recursiveDefinition = retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions, leftRecursiveDefinitions, ruleMap);
+    const recursiveDefinition = retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions, leftRecursiveDefinitions);
 
     if (recursiveDefinition !== null) {
       const previousRecursiveDefinitions = [ ...recursiveDefinitions, recursiveDefinition ],
@@ -39,7 +39,7 @@ export default function retrieveLeftRecursiveDefinitions(rule, recursiveDefiniti
   });
 }
 
-function retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions, leftRecursiveDefinitions, ruleMap) {
+function retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions, leftRecursiveDefinitions) {
   let recursiveDefinition;
 
   const ruleName = rule.getName(),
