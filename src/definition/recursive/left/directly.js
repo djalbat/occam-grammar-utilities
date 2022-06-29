@@ -53,15 +53,15 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
     return directlyLeftRecursiveDefinition;
   }
 
-  static fromImplicitlyLeftRecursiveDefinitionAndDefinition(implicitlyLeftRecursiveDefinition, definition) {
-    const parts = mergeDefinitionParts(definition, implicitlyLeftRecursiveDefinition),
-          ruleName = implicitlyLeftRecursiveDefinition.getRuleName(),
-          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
-          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
-          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
-
-    return directlyLeftRecursiveDefinition;
-  }
+  // static fromImplicitlyLeftRecursiveDefinitionAndDefinition(implicitlyLeftRecursiveDefinition, definition) {
+  //   const parts = mergeDefinitionParts(definition, implicitlyLeftRecursiveDefinition),
+  //         ruleName = implicitlyLeftRecursiveDefinition.getRuleName(),
+  //         recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+  //         leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+  //         directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+  //
+  //   return directlyLeftRecursiveDefinition;
+  // }
 
   static fromIndirectlyLeftRecursiveDefinitionAndRepeatedRuleName(indirectlyLeftRecursiveDefinition, repeatedRuleName) {
     const clonedParts = cloneDefinitionParts(indirectlyLeftRecursiveDefinition);

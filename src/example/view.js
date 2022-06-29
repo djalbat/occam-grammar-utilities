@@ -19,7 +19,7 @@ import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIntermediateNodes"
 
-import { rulesFromBNF } from "../utilities/rules";
+import { rulesFromBNF } from "../utilities/parser";
 import { UNASSIGNED_ENTRY } from "../constants";
 import { rulesFromStartRuleAndRuleMap } from "../utilities/rules";
 
@@ -66,7 +66,7 @@ class View extends Element {
   }
 
   changeHandler(event, element) {
-    try {
+    // try {
       const bnf = this.getBNF(),
             startRuleName = this.getStartRuleName();
 
@@ -89,9 +89,9 @@ class View extends Element {
       const parseTree = this.getParseTree(startRule, ruleMap);
 
       this.setParseTree(parseTree);
-    } catch (error) {
-      console.log(error);
-    }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   childElements() {
@@ -165,21 +165,23 @@ class View extends Element {
 
   static initialBNF = `
  
-    A ::= "e"
-    
-        | B "g"
-    
-        | "f"
-    
-        ;
-    
-    B ::= "c"
-    
-        | A "h"
-    
-        | "d"
+    A  ::=  B "h" 
+      
+         |  "g" 
+ 
+         ;
 
-        ;
+    B  ::=  C "f" 
+    
+         |  "e"
+         
+         ;
+
+    C  ::=  A "d" 
+    
+         |  "c"
+         
+         ;
 
 `;
 

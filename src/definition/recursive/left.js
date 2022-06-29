@@ -48,13 +48,13 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return leftRecursiveDefinition;
   }
 
-  static fromImplicitlyLeftRecursiveDefinitionAndDefinition(implicitlyLeftRecursiveDefinition, definition) {
-    const parts = mergeDefinitionParts(definition, implicitlyLeftRecursiveDefinition),
-          ruleName = implicitlyLeftRecursiveDefinition.getRuleName(),
-          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
-          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
-          leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
-
-    return leftRecursiveDefinition;
-  }
+  // static fromImplicitlyLeftRecursiveDefinitionAndDefinition(implicitlyLeftRecursiveDefinition, definition) {
+  //   const parts = mergeDefinitionParts(definition, implicitlyLeftRecursiveDefinition),
+  //         ruleName = implicitlyLeftRecursiveDefinition.getRuleName(),
+  //         recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+  //         leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+  //         leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+  //
+  //   return leftRecursiveDefinition;
+  // }
 }

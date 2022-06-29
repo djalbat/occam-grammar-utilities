@@ -65,39 +65,8 @@ function retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions,
             replacementDefinition = recursiveDefinition;  ///
 
       rule.replaceDefinition(replacedDefinition, replacementDefinition);
-
-      const recursiveDefinitionIndirectlyLeftRecursiveDefinition = (recursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
-
-      if (recursiveDefinitionIndirectlyLeftRecursiveDefinition) {
-        const indirectlyLeftRecursiveDefinition = recursiveDefinition, ///
-              implicitlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getImplicitlyLeftRecursiveDefinition(),
-              leftRecursiveDefinition = implicitlyLeftRecursiveDefinition.getLeftRecursiveDefinition(),
-              ruleName = implicitlyLeftRecursiveDefinition.getRuleName();
-
-        rule = ruleMap[ruleName];
-
-        const definitions = rule.getDefinitions(),
-              definitionsIncludesLeftRecursiveDefinition = definitions.includes(leftRecursiveDefinition);
-
-        if (definitionsIncludesLeftRecursiveDefinition) {
-          const replacedDefinition = leftRecursiveDefinition, ///
-                replacementDefinition = implicitlyLeftRecursiveDefinition;  ///
-
-          rule.replaceDefinition(replacedDefinition, replacementDefinition);
-
-          replaceRecursiveDefinition(replacedDefinition, replacementDefinition, recursiveDefinitions);
-        }
-      }
     }
   }
 
   return recursiveDefinition;
-}
-
-function replaceRecursiveDefinition(replacedDefinition, replacementDefinition, recursiveDefinitions) {
-  const index = recursiveDefinitions.indexOf(replacedDefinition),
-        start = index,  ///
-        deleteCount = 1;
-
-  recursiveDefinitions.splice(start, deleteCount, replacementDefinition);
 }
