@@ -179,13 +179,15 @@ class View extends Element {
 
     C  ::=  A "d" 
     
-         |  "c"
+         |  A "c" 
+    
+         |  "b"
          
          ;
 
 `;
 
-  static initialContent = "ehg";
+  static initialContent = "gcfh";
 
   static initialStartRuleName = "S";
 

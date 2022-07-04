@@ -10,7 +10,7 @@ const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
-  xdescribe("a complex directly left recursive definition", () => {
+  describe("a complex directly left recursive definition", () => {
     const bnf = `
   
 A ::= "g""
@@ -28,7 +28,7 @@ A ::= "g""
     });
   });
 
-  xdescribe("a complex indirectly left recursive definition", () => {
+  describe("a complex indirectly left recursive definition", () => {
     const bnf = `
   
     A ::= "d"
@@ -54,7 +54,7 @@ A ::= "g""
     });
   });
 
-  xdescribe("a complex implicitly left recursive definition", () => {
+  describe("a complex implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= "d"
@@ -80,7 +80,7 @@ A ::= "g""
     });
   });
 
-  xdescribe("a unary directly left recursive definition", () => {
+  describe("a unary directly left recursive definition", () => {
     const bnf = `
   
 A ::= "g"
@@ -98,7 +98,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("a unary indirectly left recursive definition", () => {
+  describe("a unary indirectly left recursive definition", () => {
     const bnf = `
   
     A ::= "d"
@@ -126,7 +126,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("a unary implicitly left recursive definition", () => {
+  describe("a unary implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= "d" 
@@ -152,7 +152,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("an isolated directly left recursive definition", () => {
+  describe("an isolated directly left recursive definition", () => {
     const bnf = `
   
     A ::= A B ;
@@ -164,7 +164,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("two isolated directly left recursive definitions", () => {
+  describe("two isolated directly left recursive definitions", () => {
     const bnf = `
   
     A ::= A B 
@@ -180,7 +180,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("two sibling directly left recursive definitions that do not match", () => {
+  describe("two sibling directly left recursive definitions that do not match", () => {
     const bnf = `
    
     A ::= "c"
@@ -202,7 +202,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("an isolated indirectly left recursive definition and a implicitly left recursive definition", () => {
+  describe("an isolated indirectly left recursive definition and a implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" 
@@ -220,7 +220,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("two isolated indirectly left recursive definitions and a implicitly left recursive definition", () => {
+  describe("two isolated indirectly left recursive definitions and a implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" 
@@ -242,7 +242,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("a indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
+  describe("a indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" ;
@@ -262,7 +262,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("an isolated indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
+  describe("an isolated indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" ;
@@ -276,7 +276,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("two isolated indirectly left recursive definitions and an isolated implicitly left recursive definition", () => {
+  describe("two isolated indirectly left recursive definitions and an isolated implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" ;
@@ -294,7 +294,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("an indirectly left recursive definition with a sibling directly left recursive definition", () => {
+  describe("an indirectly left recursive definition with a sibling directly left recursive definition", () => {
     const bnf = `
    
     A ::= "e"
@@ -322,7 +322,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("two sibling indirectly left recursive definitions that do not match", () => {
+  describe("two sibling indirectly left recursive definitions that do not match", () => {
     const bnf = `
    
     A ::= "e"
@@ -350,7 +350,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("a directly left recursive definition", () => {
+  describe("a directly left recursive definition", () => {
     const bnf = `
  
   A ::= "h"
@@ -397,7 +397,7 @@ A_ ::= "h"
     });
   });
 
-  xdescribe("two sibling directly left recursive definitions", () => {
+  describe("two sibling directly left recursive definitions", () => {
     const bnf = `
    
     A ::= "c"
@@ -451,7 +451,7 @@ A_ ::= "h"
     });
   });
 
-  xdescribe("an indirectly left recursive definition and an implicitly left recursive definition", () => {
+  describe("an indirectly left recursive definition and an implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= "e"
@@ -526,7 +526,7 @@ A_ ::= "h"
     });
   });
 
-  xdescribe("a directly left recursive definition and sibling implicitly left recursive definition", () => {
+  describe("a directly left recursive definition and sibling implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= A "h"
@@ -599,7 +599,7 @@ A_ ::= "h"
     });
   });
 
-  xdescribe("two sibling indirectly left recursive definitions and an implicitly left recursive definition", () => {
+  describe("two sibling indirectly left recursive definitions and an implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= "d"
@@ -745,8 +745,8 @@ A_ ::= "h"
       `));
     });
 
-    xit("result in the requisite parse tree" , () => {
-      const content = "gdfh",
+    it("result in the requisite parse tree" , () => {
+      const content = "gcfh",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
@@ -755,13 +755,13 @@ A_ ::= "h"
                    |                   
     -------------------------------    
     |              |              |    
-g[custom]          B          h[custom]
-                   |                   
-              -----------              
+    A              B          h[custom]
+    |              |                   
+g[custom]     -----------              
               |         |              
               C     f[custom]          
               |                        
-          d[custom]                    
+          c[custom]                    
              
       `));
     });

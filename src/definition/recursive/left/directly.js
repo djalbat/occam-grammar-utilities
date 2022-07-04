@@ -4,16 +4,12 @@ import { arrayUtilities } from "necessary";
 
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
+import { mergeParts } from "../../../utilities/parts";
 import { ruleNamePartFromRuleName } from "../../../utilities/part";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
-import { isDefinitionComplex,
-         cloneDefinitionParts,
-         mergeDefinitionParts,
-         isDefinitionLeftRecursive,
-         recursiveRuleNamesFromDefinition,
-         leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
+import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
-const { first } = arrayUtilities;
+const { head, tail, first } = arrayUtilities;
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   static fromPartsAndRuleName(parts, ruleName) {
@@ -53,43 +49,29 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
     return directlyLeftRecursiveDefinition;
   }
 
-  static fromDefinitionAndLeftRecursiveDefinition(definition, leftRecursiveDefinition) {
-    const parts = mergeDefinitionParts(definition, leftRecursiveDefinition),
-          ruleName = implicitlyLeftRecursiveDefinition.getRuleName(),
-          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
-          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
-          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+  static fromIndirectlyLeftRecursiveDefinitionLeftRecursiveDefinitionAndRepeatedRuleName(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition, repeatedRuleName) {
+    const leftRecursiveDefinitionComplex = isDefinitionComplex(leftRecursiveDefinition);
 
-    return directlyLeftRecursiveDefinition;
-  }
+    if (leftRecursiveDefinitionComplex) {
+      const definition = leftRecursiveDefinition, ///
+            ruleName = definition.getRuleName(),
+            definitionString = definition.asString();
 
-  static fromIndirectlyLeftRecursiveDefinitionAndRepeatedRuleName(indirectlyLeftRecursiveDefinition, repeatedRuleName) {
-    const clonedParts = cloneDefinitionParts(indirectlyLeftRecursiveDefinition);
+      throw new Error(`The '${definitionString}' left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+    }
 
-    let parts = clonedParts;  ///
-
-    const firstPart = first(parts);
-
-    parts = [
-      firstPart
-    ];
+    const leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
+          leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
+          indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts(),
+          indirectlyLeftRecursiveDefinitionPartsHead = head(indirectlyLeftRecursiveDefinitionParts);
 
     if (repeatedRuleName !== null) {
       const repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName);
 
-      parts.push(repeatedRuleNamePart);
+      indirectlyLeftRecursiveDefinitionPartsHead.push(repeatedRuleNamePart);
     }
 
-    const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
-          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
-          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
-          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
-
-    return directlyLeftRecursiveDefinition;
-  }
-
-  static fromIndirectlyLeftRecursiveDefinitionAndLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition) {
-    const parts = mergeDefinitionParts(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition),
+    const parts = mergeParts(indirectlyLeftRecursiveDefinitionPartsHead, leftRecursiveDefinitionPartsTail),
           ruleName = leftRecursiveDefinition.getRuleName(),
           recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),

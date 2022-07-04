@@ -2,31 +2,10 @@
 
 import { arrayUtilities } from "necessary";
 
-import { cloneParts } from "../utilities/parts";
 import { isPartComplex } from "../utilities/part";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../utilities/parts";
 
-const { first, tail } = arrayUtilities;
-
-export function cloneDefinitionParts(definition) {
-  let clonedParts = definition.getParts();
-
-  clonedParts = cloneParts(clonedParts);  //
-
-  return clonedParts;
-}
-
-export function mergeDefinitionParts(definitionA, definitionB) {
-  const clonedPartsA = cloneDefinitionParts(definitionA),
-        clonedPartsB = cloneDefinitionParts(definitionB),
-        clonedPartsBTail = tail(clonedPartsB),
-        parts = [
-          ...clonedPartsA,
-          ...clonedPartsBTail
-        ];
-
-  return parts;
-}
+const { first } = arrayUtilities;
 
 export function isDefinitionComplex(definition) {
   const parts = definition.getParts(),

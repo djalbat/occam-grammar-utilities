@@ -13,10 +13,16 @@ export function cloneParts(parts) {
   return parts;
 }
 
-export function firstPartFromParts(parts) {
-  const firstPart = first(parts);
+export function mergeParts(partsA, partsB) {
+  partsA = cloneParts(partsA);  ///
+  partsB = cloneParts(partsB);  ///
 
-  return firstPart;
+  const parts = [
+    ...partsA,
+    ...partsB
+  ];
+
+  return parts;
 }
 
 export function singlePartFromParts(parts) {
