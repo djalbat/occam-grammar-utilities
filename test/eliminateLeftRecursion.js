@@ -708,42 +708,36 @@ A_ ::= "h"
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A  ::=  A_ ( B~ "h" )* ;
-
-    B  ::=  A C~ "f" 
-    
-         |  B_
-
-         ;
-
-    C  ::=  A "d" 
-    
-         |  C_
-         
-         ;
-
-    C_ ::=  "c" ;
-
-    C~ ::=  "d" ;
-    
-    B_ ::=  C_ "f" 
-    
-         |  "e"
-
-         ;
-
-    B~ ::=  C~ "f" ; 
-
-    A_ ::=  B_ "h" 
+    A  ::=  B "h" 
       
          |  "g" 
  
          ;
 
+    B  ::=  A C~ "f" 
+    
+         |  C_ "f" 
+    
+         |  "e"
+         
+         ;         
+
+    C  ::=  A "d" 
+    
+         |  A "c" 
+    
+         |  C_
+         
+         ;
+
+    C_ ::=  "b" ;
+
+    C~ ::=  ( "d" | "c" );
+
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    xit("result in the requisite parse tree" , () => {
       const content = "gdfh",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
