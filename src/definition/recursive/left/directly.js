@@ -87,4 +87,14 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
 
     return directlyLeftRecursiveDefinition;
   }
+
+  static fromIndirectlyLeftRecursiveDefinitionAndLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition) {
+    const parts = mergeDefinitionParts(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition),
+          ruleName = leftRecursiveDefinition.getRuleName(),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+
+    return directlyLeftRecursiveDefinition;
+  }
 }

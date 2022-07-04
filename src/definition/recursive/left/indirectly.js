@@ -22,6 +22,13 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
     return this.leftRecursiveDefinitions;
   }
 
+  isLast() {
+    const leftRecursiveDefinitionsLength = this.leftRecursiveDefinitions.length,
+          last = (leftRecursiveDefinitionsLength === 1);
+
+    return last;
+  }
+
   static fromPartsRuleNameAndLeftRecursiveDefinitions(parts, ruleName, leftRecursiveDefinitions) {
     const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
@@ -109,9 +116,10 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
     const parts = mergeDefinitionParts(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition),
           ruleName = leftRecursiveDefinition.getRuleName(),
           recursiveRuleNames = recursiveRuleNamesFromParts(parts),
-          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts);
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          leftRecursiveDefinitions = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinitions();
 
-    indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames); ///
+    indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinitions); ///
 
     return indirectlyLeftRecursiveDefinition;
   }
