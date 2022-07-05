@@ -50,16 +50,6 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
   }
 
   static fromIndirectlyLeftRecursiveDefinitionLeftRecursiveDefinitionAndRepeatedRuleName(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition, repeatedRuleName) {
-    const leftRecursiveDefinitionComplex = isDefinitionComplex(leftRecursiveDefinition);
-
-    if (leftRecursiveDefinitionComplex) {
-      const definition = leftRecursiveDefinition, ///
-            ruleName = definition.getRuleName(),
-            definitionString = definition.asString();
-
-      throw new Error(`The '${definitionString}' left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
-    }
-
     const leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
           leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
           indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts(),

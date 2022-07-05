@@ -18,6 +18,12 @@ export function ruleNameFromRepeatedRuleName(repeatedRuleName) {
   return ruleName;
 }
 
+export function repeatedRuleNameFromRuleName(ruleName) {
+  const repeatedRuleName = `${ruleName}~`;
+
+  return repeatedRuleName;
+}
+
 export function doesReducedRuleNameMatchRuleName(reducedRuleName, ruleName) {
   const ruleNameA = ruleName; ///
 

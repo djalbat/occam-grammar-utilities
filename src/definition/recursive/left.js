@@ -7,7 +7,7 @@ import RecursiveDefinition from "../../definition/recursive";
 import { ruleNamePartFromRuleName} from "../../utilities/part";
 import { ruleNameFromReducedRuleName } from "../../utilities/ruleName";
 import { mergeParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
-import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 const { tail } = arrayUtilities;
 
@@ -53,16 +53,6 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
   }
 
   static fromReducedLeftRecursiveDefinitionAndLeftRecursiveDefinition(reducedLeftRecursiveDefinition, leftRecursiveDefinition) {
-    const leftRecursiveDefinitionComplex = isDefinitionComplex(leftRecursiveDefinition);
-
-    if (leftRecursiveDefinitionComplex) {
-      const definition = leftRecursiveDefinition, ///
-            ruleName = definition.getRuleName(),
-            definitionString = definition.asString();
-
-      throw new Error(`The '${definitionString}' left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
-    }
-
     const leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
           leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
           reducedLeftRecursiveDefinitionParts = reducedLeftRecursiveDefinition.getParts();

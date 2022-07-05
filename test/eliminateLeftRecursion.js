@@ -242,7 +242,7 @@ A ::= "g"
     });
   });
 
-  describe("a indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
+  describe("an indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g" ;
@@ -762,6 +762,148 @@ g[custom]     -----------
               C     f[custom]          
               |                        
           c[custom]                    
+             
+      `));
+    });
+  });
+
+  describe("two indirectly left recursive definitions and one implicitly left recursive definition", () => {
+    const bnf = `
+  
+    A  ::=  B "h" 
+      
+         |  "g" 
+ 
+         ;
+
+    B  ::=  A "f" 
+    
+         |  C
+         
+         ;
+
+    C  ::=  A "e" 
+    
+         |  "d"
+         
+         ;
+
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+
+    A  ::=  A_ ( B~ "h" )* ;
+
+    B  ::=  A "f"
+         
+         |  A C~
+         
+         |  B_
+
+         ;
+
+    C  ::=  A "e" 
+    
+         |  C_
+         
+         ;
+
+    C_ ::=  "d" ;
+
+    C~ ::=  "e" ;
+    
+    B_ ::=  C_ ;
+
+    B~ ::=  ( "f" | C~ ) ;
+    
+    A_ ::=  B_ "h" 
+      
+         |  "g" 
+ 
+         ;
+
+      `));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = "gfheh",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                        A                        
+                        |                        
+    -----------------------------------------    
+    |         |         |         |         |    
+    A         B     h[custom]     B     h[custom]
+    |         |                   |              
+g[custom] f[custom]               C              
+                                  |              
+                              e[custom]          
+             
+      `));
+    });
+  });
+
+  xdescribe("an indirectly left recursive definition and sibling directly left recursive definition", () => {
+    const bnf = `
+  
+    A  ::=  B "h" 
+      
+         |  "g" 
+ 
+         ;
+
+    B  ::=  A "f" 
+    
+         |  B "e" 
+    
+         |  "c" 
+
+         ;
+
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+
+    A  ::=  B "h" 
+      
+         |  "g" 
+ 
+         ;
+
+    B  ::=  A "f" 
+    
+         |  B "e" 
+    
+         |  "c" 
+
+         ;
+
+      `));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = "gfheh",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                        A                        
+                        |                        
+    -----------------------------------------    
+    |         |         |         |         |    
+    A         B     h[custom]     B     h[custom]
+    |         |                   |              
+g[custom] f[custom]               C              
+                                  |              
+                              e[custom]          
              
       `));
     });

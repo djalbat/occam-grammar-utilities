@@ -7,7 +7,7 @@ import RecursiveDefinition from "./definition/recursive";
 import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
 
 import { retrieveLeftRecursiveRules } from "./utilities/rules";
-import { mergeLeftRecursiveDefinitions, retrieveLeftRecursiveDefinitions } from "./utilities/definitions";
+import { mergeLeftRecursiveDefinitions } from "./utilities/definitions";
 
 const { first, tail } = arrayUtilities;
 
@@ -15,22 +15,26 @@ export default function eliminateDirectLeftRecursion(leftRecursiveDefinitions, r
   const directlyLeftRecursiveRules = retrieveDirectlyLeftRecursiveRules(leftRecursiveDefinitions, ruleMap);
 
   directlyLeftRecursiveRules.forEach((directlyLeftRecursiveRule) => {
-    const reducedRule = ReducedRule.fromDirectlyLeftRecursiveRule(directlyLeftRecursiveRule),
+    const rule = directlyLeftRecursiveRule, ///
+          reducedRule = ReducedRule.fromDirectlyLeftRecursiveRule(directlyLeftRecursiveRule),
           reducedRuleName = reducedRule.getName();
 
     ruleMap[reducedRuleName] = reducedRule;
 
-    const directlyLeftRecursiveDefinitions = retrieveDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveRule),
+    let definitions = rule.getDefinitions();
+
+    const directlyLeftRecursiveDefinitions = retrieveDirectlyLeftRecursiveDefinitions(definitions),
           directlyLeftRecursiveDefinition = mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions),
           replacementDefinition = rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition),
           firstDirectlyLeftRecursiveDefinitions = first(directlyLeftRecursiveDefinitions),
           directlyLeftRecursiveDefinitionsTail = tail(directlyLeftRecursiveDefinitions),
-          replacedDefinition = firstDirectlyLeftRecursiveDefinitions, ///
-          definitions = directlyLeftRecursiveDefinitionsTail; ///
+          replacedDefinition = firstDirectlyLeftRecursiveDefinitions; ///
 
-    directlyLeftRecursiveRule.removeDefinitions(definitions);
+    definitions = directlyLeftRecursiveDefinitionsTail; ///
 
-    directlyLeftRecursiveRule.replaceDefinition(replacedDefinition, replacementDefinition);
+    rule.removeDefinitions(definitions);
+
+    rule.replaceDefinition(replacedDefinition, replacementDefinition);
   });
 }
 
@@ -70,8 +74,12 @@ function rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition)
   return replacementDefinition;
 }
 
-function retrieveDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveRule) {
-  const directlyLeftRecursiveDefinitions = retrieveLeftRecursiveDefinitions(directlyLeftRecursiveRule, DirectlyLeftRecursiveDefinition);
+function retrieveDirectlyLeftRecursiveDefinitions(definitions) {
+  const directlyLeftRecursiveDefinitions = definitions.filter((definition) => {
+          if (definition instanceof DirectlyLeftRecursiveDefinition) {
+            return true;
+          }
+        });
 
   return directlyLeftRecursiveDefinitions;
 }
