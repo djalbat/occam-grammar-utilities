@@ -36,6 +36,13 @@ export function doesReducedRuleNameMatchRuleName(reducedRuleName, ruleName) {
   return reducedRuleNameMatchesRuleName;
 }
 
+export function reducedRuleNameFromRepeatedRuleName(repeatedRuleName) {
+  const ruleName = ruleNameFromRepeatedRuleName(repeatedRuleName),
+        reducedRuleName = reducedRuleNameFromRuleName(ruleName);
+
+  return reducedRuleName;
+}
+
 export function repeatedRuleNameFromRuleNameAndIndex(ruleName,index) {
   const repeatedRuleName = (index === 0) ?
                             `${ruleName}~` :
@@ -43,3 +50,4 @@ export function repeatedRuleNameFromRuleNameAndIndex(ruleName,index) {
 
   return repeatedRuleName;
 }
+

@@ -13,7 +13,7 @@ export default function eliminateLeftRecursion(startRule, ruleMap) {
 
   eliminateIndirectLeftRecursion(leftRecursiveDefinitions, ruleMap);
 
-  // eliminateDirectLeftRecursion(leftRecursiveDefinitions, ruleMap);
+  eliminateDirectLeftRecursion(leftRecursiveDefinitions, ruleMap);
 
   const startRuleName = startRule.getName();
 
