@@ -49,20 +49,7 @@ function mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions)
     const directlyLeftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromPartsAndRuleName(parts, ruleName);
 
     return directlyLeftRecursiveDefinition;
-  }, callback);
-
-  function callback(directlyLeftRecursiveDefinition) {
-    const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
-          definition = directlyLeftRecursiveDefinition, ///
-          parts = definition.getParts(),
-          partsLength = parts.length;
-
-    if (partsLength === 1) {
-      const definitionString = definition.asString();
-
-      throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
-    }
-  }
+  });
 
   return directlyLeftRecursiveDefinition;
 }
@@ -76,7 +63,9 @@ function rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition)
 
 function retrieveDirectlyLeftRecursiveDefinitions(definitions) {
   const directlyLeftRecursiveDefinitions = definitions.filter((definition) => {
-          if (definition instanceof DirectlyLeftRecursiveDefinition) {
+          const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition);
+
+          if (definitionDirectlyLeftRecursiveDefinition) {
             return true;
           }
         });

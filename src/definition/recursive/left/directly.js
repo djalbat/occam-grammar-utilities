@@ -1,15 +1,17 @@
 "use strict";
 
+import { Parts } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
-import { mergeParts } from "../../../utilities/parts";
+import { mergeParts, cloneParts } from "../../../utilities/parts";
 import { ruleNamePartFromRuleName } from "../../../utilities/part";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
 import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
-const { head, tail, first } = arrayUtilities;
+const { ZeroOrMorePartsPart } = Parts,
+      { head, tail, first, front } = arrayUtilities;
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   static fromPartsAndRuleName(parts, ruleName) {
@@ -45,6 +47,37 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
         directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
       }
     }
+
+    return directlyLeftRecursiveDefinition;
+  }
+
+  static fromLeftRecursiveDefinitionsAndRepeatedRuleName(leftRecursiveDefinitionA, leftRecursiveDefinitionB, repeatedRuleName) {
+    let parts;
+
+    parts = leftRecursiveDefinitionA.getParts();
+
+    const partsFront = front(parts);
+
+    parts = leftRecursiveDefinitionB.getParts();
+
+    const partsTail = tail(parts);
+
+    const repeatedRuleNamePartPart = ruleNamePartFromRuleName(repeatedRuleName),
+          part = repeatedRuleNamePartPart,
+          zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
+
+    parts = [
+      ...partsFront,
+      zeroOrMorePartsPart,
+      ...partsTail
+    ];
+
+    parts = cloneParts(parts);
+
+    const ruleName = leftRecursiveDefinitionA.getRuleName(),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
 
     return directlyLeftRecursiveDefinition;
   }

@@ -9,7 +9,7 @@ import { cloneParts, singlePartFromParts } from "../utilities/parts";
 const { first } = arrayUtilities,
       { ChoiceOfPartsPart } = Parts;
 
-export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, fromPartsAndRuleName, callback = () => {}) {
+export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, callback) {
   let leftRecursiveDefinition;
 
   const firstLeftRecursiveDefinition = first(leftRecursiveDefinitions),
@@ -17,8 +17,6 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, fromPart
 
   if (leftRecursiveDefinitionsLength === 1) {
     leftRecursiveDefinition = firstLeftRecursiveDefinition; ///
-
-    callback(leftRecursiveDefinition);
   } else {
     const ruleName = firstLeftRecursiveDefinition.getRuleName();
 
@@ -26,9 +24,16 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, fromPart
         previousFirstPart = null;
 
     const singleParts = leftRecursiveDefinitions.map((leftRecursiveDefinition) => {
-      callback(leftRecursiveDefinition);
-
       let parts = leftRecursiveDefinition.getParts();
+
+      const partsLength = parts.length;
+
+      if (partsLength === 1) {
+        const definition = leftRecursiveDefinition, ///
+              definitionString = definition.asString();
+
+        throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
+      }
 
       parts = cloneParts(parts);  ///
 
@@ -61,7 +66,7 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, fromPart
       choiceOfPartsPart
     ];
 
-    leftRecursiveDefinition = fromPartsAndRuleName(parts, ruleName);
+    leftRecursiveDefinition = callback(parts, ruleName);
   }
 
   return leftRecursiveDefinition;

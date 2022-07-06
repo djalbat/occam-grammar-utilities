@@ -11,6 +11,29 @@ import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 const { tail } = arrayUtilities;
 
 export default class RepeatedRule extends Rule {
+  static fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {
+    let parts = directlyLeftRecursiveDefinition.getParts();
+
+    const partsTail = tail(parts);
+
+    parts = partsTail;  ///
+
+    parts = cloneParts(parts);  ///
+
+    const definition = new Definition(parts),
+          ruleName = directlyLeftRecursiveDefinition.getRuleName(),
+          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+          name = repeatedRuleName,  ///
+          ambiguous = false,
+          definitions = [
+            definition
+          ],
+          NonTerminalNode = RepeatedNode,  ///
+          repeatedRule = new RepeatedRule(name, ambiguous, definitions, NonTerminalNode);
+
+    return repeatedRule;
+  }
+
   static fromIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition) {
     let repeatedRule = null;
 
