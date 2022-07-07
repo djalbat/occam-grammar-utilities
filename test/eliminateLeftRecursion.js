@@ -322,7 +322,7 @@ A ::= "g"
     });
   });
 
-  describe("a directly left recursive definition", () => {
+  xdescribe("a directly left recursive definition", () => {
     const bnf = `
  
     A ::= A "g"
@@ -398,8 +398,7 @@ A ::= "g"
       `));
     });
 
-    it("result in the requisite parse tree" +
-        "", () => {
+    it("result in the requisite parse tree", () => {
       const content = "ehfg",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -417,7 +416,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition and an implicitly left recursive definition", () => {
+  xdescribe("an indirectly left recursive definition and an implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= "e"
@@ -445,26 +444,28 @@ A ::= "g"
       
     A ::= A_ ( B~ "g" )* ;
     
-    B ::= A "h"
+    B ::= "c"
     
-        | B_
-
-        ;
-
-   B_ ::= "c" 
-   
+        | A "h"
+    
         | "d"
-        
+
         ;
+    
+   B_ ::= "c"
+    
+        | "d"
 
+        ;
+    
    B~ ::= "h" ;
-
+    
    A_ ::= "e"
     
         | B_ "g"
     
         | "f"
-
+    
         ;
     
       `));
@@ -733,7 +734,7 @@ g[custom]     -----------
     });
   });
 
-  describe("two indirectly left recursive definitions and one implicitly left recursive definition", () => {
+  xdescribe("two indirectly left recursive definitions and one implicitly left recursive definition", () => {
     const bnf = `
   
     A  ::=  B "h" 
@@ -814,7 +815,7 @@ g[custom] f[custom]               C
     });
   });
 
-  describe.only("an indirectly left recursive definition and sibling directly left recursive definition", () => {
+  describe("an indirectly left recursive definition and sibling directly left recursive definition", () => {
     const bnf = `
   
     A  ::=  B "h" 
@@ -833,7 +834,7 @@ g[custom] f[custom]               C
               
 `;
 
-    it("are rewritten", () => {
+    it.only("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `

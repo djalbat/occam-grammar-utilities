@@ -19,24 +19,33 @@ export default function eliminateDirectLeftRecursion(leftRecursiveDefinitions, r
 
     directlyLeftRecursiveDefinition = mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions);  ///
 
-    const replacementDefinition = rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition),
+    const removedLeftRecursiveDefinitions = directlyLeftRecursiveDefinitions, ///
+          replacementDefinition = rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition),
           ruleName = leftRecursiveRuleName, ///
-          rule = ruleMap[ruleName],
-          reducedRule = ReducedRule.fromRule(rule),
-          reducedRuleName = reducedRule.getName();
+          rule = ruleMap[ruleName];
 
-    ruleMap[reducedRuleName] = reducedRule;
+    reduceRule(rule, ruleMap);
 
     rule.replaceAllDefinitions(replacementDefinition);
-
-    const removedLeftRecursiveDefinitions = [
-      ...directlyLeftRecursiveDefinitions
-    ];
 
     amendLeftRecursiveDefinitions(leftRecursiveDefinitions, removedLeftRecursiveDefinitions);
 
     directlyLeftRecursiveDefinition = retrieveDirectlyLeftRecursiveDefinition(leftRecursiveDefinitions);  ///
   }
+}
+
+function reduceRule(rule, ruleMap) {
+  let reducedRuleName = null;
+
+  const reducedRule = ReducedRule.fromRule(rule);
+
+  if (reducedRule !== null) {
+    reducedRuleName = reducedRule.getName();
+
+    ruleMap[reducedRuleName] = reducedRule;
+  }
+
+  return reducedRuleName;
 }
 
 function amendLeftRecursiveDefinitions(leftRecursiveDefinitions, removedLeftRecursiveDefinitions) {

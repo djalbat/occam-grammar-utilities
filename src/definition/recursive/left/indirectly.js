@@ -50,11 +50,11 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
     return length;
   }
 
-  isLast() {
-    const leftRecursiveDefinitionsLength = this.leftRecursiveDefinitions.length,
-          last = (leftRecursiveDefinitionsLength === 1);
+  isLeast() {
+    const length = this.getLength(),
+          least = (length === 1);
 
-    return last;
+    return least;
   }
 
   static fromPartsRuleNameAndLeftRecursiveDefinitions(parts, ruleName, leftRecursiveDefinitions) {
