@@ -5,9 +5,9 @@ import { arrayUtilities } from "necessary";
 
 import RecursiveDefinition from "../../definition/recursive";
 
-import { ruleNamePartFromRuleName} from "../../utilities/part";
+import { ruleNamePartFromRuleName } from "../../utilities/part";
 import { ruleNameFromReducedRuleName, reducedRuleNameFromRepeatedRuleName } from "../../utilities/ruleName";
-import { cloneParts, mergeParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
+import { cloneParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
 import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 const { tail, last } = arrayUtilities,
@@ -82,7 +82,7 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
       ...partsTail
     ];
 
-    parts = cloneParts(parts);
+    parts = cloneParts(parts);  ///
 
     const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts);
@@ -92,13 +92,19 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return leftRecursiveDefinition;
   }
 
-  static fromReducedLeftRecursiveDefinitionAndLeftRecursiveDefinition(reducedLeftRecursiveDefinition, leftRecursiveDefinition) {
+  static fromLeftRecursiveDefinitionAndReducedRuleName(leftRecursiveDefinition, reducedRuleName) {
     const leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
           leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
-          reducedLeftRecursiveDefinitionParts = reducedLeftRecursiveDefinition.getParts();
+          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
 
-    const parts = mergeParts(reducedLeftRecursiveDefinitionParts, leftRecursiveDefinitionPartsTail),
-          ruleName = leftRecursiveDefinition.getRuleName(),
+    let parts = [
+      reducedRuleNamePart,
+      ...leftRecursiveDefinitionPartsTail
+    ];
+
+    parts = cloneParts(parts);  ///
+
+    const ruleName = leftRecursiveDefinition.getRuleName(),
           recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts);
 

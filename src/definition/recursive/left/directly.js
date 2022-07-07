@@ -14,6 +14,14 @@ const { ZeroOrMorePartsPart } = Parts,
       { head, tail, first, front } = arrayUtilities;
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
+  getLeftRecursiveRuleName() {
+    const leftRecursiveRuleNames = this.getLeftRecursiveRuleNames(),
+          firstLeftRecursiveRuleName = first(leftRecursiveRuleNames),
+          leftRecursiveRuleName = firstLeftRecursiveRuleName; ///
+
+    return leftRecursiveRuleName;
+  }
+
   static fromPartsAndRuleName(parts, ruleName) {
     const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
