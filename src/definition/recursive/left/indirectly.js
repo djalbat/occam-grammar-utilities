@@ -1,14 +1,16 @@
 "use strict";
 
+import { Parts } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
 import { ruleNamePartFromRuleName } from "../../../utilities/part";
-import { mergeParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
+import { mergeParts, cloneParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
 import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
-const { head, tail, last, front, first, backwardsFind, backwardsEvery } = arrayUtilities;
+const { ZeroOrMorePartsPart } = Parts,
+      { head, tail, last, front, first, backwardsFind, backwardsEvery } = arrayUtilities;
 
 export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   constructor(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinitions) {
@@ -21,10 +23,11 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
     return this.leftRecursiveDefinitions;
   }
 
-  getLastLeftRecursiveDefinition() {
-    const lastLeftRecursiveDefinition = last(this.leftRecursiveDefinitions);
+  getLeftRecursiveDefinition() {
+    const lastLeftRecursiveDefinition = last(this.leftRecursiveDefinitions),
+          leftRecursiveDefinition = lastLeftRecursiveDefinition;  ///
 
-    return lastLeftRecursiveDefinition;
+    return leftRecursiveDefinition;
   }
 
   getLeftRecursiveRuleName() {
@@ -115,8 +118,32 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
     return indirectlyLeftRecursiveDefinition;
   }
 
-  static fromLeftRecursiveDefinitionsAndRepeatedRuleName(leftRecursiveDefinitionA, leftRecursiveDefinitionB, repeatedRuleName) {
-    debugger
+  static fromIndirectlyLeftRecursiveDefinitionAndDirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, directlyLeftRecursiveDefinition) {
+    let parts;
+
+    parts = directlyLeftRecursiveDefinition.getParts();
+
+    const lastPart = last(parts),
+          part = lastPart,  ///
+          zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
+
+    parts = indirectlyLeftRecursiveDefinition.getParts();
+
+    parts = [ ///
+      ...parts,
+      zeroOrMorePartsPart
+    ];
+
+    parts = cloneParts(parts);  ///
+
+    const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          leftRecursiveDefinitions = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinitions();
+
+    indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinitions); ///
+
+    return indirectlyLeftRecursiveDefinition;
   }
 
   static fromIndirectlyLeftRecursiveDefinitionLeftRecursiveDefinitionAndRepeatedRuleName(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition, repeatedRuleName) {

@@ -113,7 +113,7 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return leftRecursiveDefinition;
   }
 
-  static fromRuleNameLeftRecursiveDefinitionAndDirectlyLeftRecursiveDefinition(ruleName, leftRecursiveDefinition, directlyLeftRecursiveDefinition) {
+  static fromLeftRecursiveDefinitionAndDirectlyLeftRecursiveDefinition(leftRecursiveDefinition, directlyLeftRecursiveDefinition) {
     let parts;
 
     parts = directlyLeftRecursiveDefinition.getParts();
@@ -131,7 +131,8 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
 
     parts = cloneParts(parts);  ///
 
-    const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+    const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts);
 
     leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames); ///

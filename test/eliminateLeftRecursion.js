@@ -452,13 +452,13 @@ A ::= "g"
 
         ;
     
+   B~ ::= "h" ;
+    
    B_ ::= "c"
     
         | "d"
 
         ;
-    
-   B~ ::= "h" ;
     
    A_ ::= "e"
     
@@ -837,7 +837,7 @@ g[custom] f[custom]               C
     it.only("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
-      assert.isTrue(compare(adjustedBNF, `
+      const tempBNF = `
 
     A  ::=  A_ ( "f" B~* "h" )* ;
 
@@ -857,6 +857,26 @@ g[custom] f[custom]               C
  
          ;
 
+      `;
+
+      assert.isTrue(compare(adjustedBNF, `
+      
+    A  ::=  B "h" 
+      
+         |  "g" 
+ 
+         ;
+
+    B  ::=  A "f" "e"* 
+    
+         |  B_ "e"*
+
+         ;
+              
+    B~ ::=  "e" ; 
+
+    B_ ::=  "c" ;
+              
       `));
     });
 
