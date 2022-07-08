@@ -92,13 +92,17 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return leftRecursiveDefinition;
   }
 
-  static fromLeftRecursiveDefinitionAndReducedRuleName(leftRecursiveDefinition, reducedRuleName) {
+  static fromLeftRecursiveDefinitionRepeatedRuleNameAndReducedRuleName(leftRecursiveDefinition, repeatedRuleName, reducedRuleName) {
     const leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
           leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
-          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
+          repeatedRuleNamePartPart = ruleNamePartFromRuleName(repeatedRuleName),
+          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
+          part = repeatedRuleNamePartPart,  ///
+          zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
 
     let parts = [
       reducedRuleNamePart,
+      zeroOrMorePartsPart,
       ...leftRecursiveDefinitionPartsTail
     ];
 

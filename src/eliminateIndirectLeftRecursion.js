@@ -9,6 +9,7 @@ import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directl
 import IndirectlyLeftRecursiveDefinition from "./definition/recursive/left/indirectly";
 
 import { mergeLeftRecursiveDefinitions } from "./utilities/definitions";
+import { reducedRuleNameFromRuleName, repeatedRuleNameFromRuleName } from "./utilities/ruleName";
 
 const { push, first, filter } = arrayUtilities;
 
@@ -86,23 +87,23 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
         leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
         least = indirectlyLeftRecursiveDefinition.isLeast();
 
-  let repeatedRuleName = null,
-      reducedRuleName = null,
-      ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
+  let ruleName = indirectlyLeftRecursiveDefinition.getRuleName();
+
+  const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+        reducedRuleName = reducedRuleNameFromRuleName(ruleName);
+
+  let repeatedRule = ruleMap[repeatedRuleName] || null,
+      reducedRule = ruleMap[reducedRuleName] || null,
       rule = ruleMap[ruleName];
 
-  const repeatedRule = RepeatedRule.fromIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition);
-
-  if (repeatedRule !== null) {
-    repeatedRuleName = repeatedRule.getName();
+  if (repeatedRule === null) {
+    repeatedRule = RepeatedRule.fromIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition);
 
     ruleMap[repeatedRuleName] = repeatedRule;
   }
 
-  const reducedRule = ReducedRule.fromRule(rule);
-
-  if (reducedRule !== null) {
-    reducedRuleName = reducedRule.getName();
+  if (reducedRule === null) {
+    reducedRule = ReducedRule.fromRule(rule);
 
     ruleMap[reducedRuleName] = reducedRule;
   }
@@ -124,7 +125,7 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
   replacementDefinitions.push(replacementDefinition);
 
   if (reducedRuleName !== null) {
-    const replacementDefinition = LeftRecursiveDefinition.fromLeftRecursiveDefinitionAndReducedRuleName(leftRecursiveDefinition, reducedRuleName);  ///
+    const replacementDefinition = LeftRecursiveDefinition.fromLeftRecursiveDefinitionRepeatedRuleNameAndReducedRuleName(leftRecursiveDefinition, repeatedRuleName, reducedRuleName);  ///
 
     replacementDefinitions.push(replacementDefinition);
   }

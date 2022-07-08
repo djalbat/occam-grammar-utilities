@@ -322,7 +322,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("a directly left recursive definition", () => {
+  describe("a directly left recursive definition", () => {
     const bnf = `
  
     A ::= A "g"
@@ -363,7 +363,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("two sibling directly left recursive definitions", () => {
+  describe("two sibling directly left recursive definitions", () => {
     const bnf = `
    
     A ::= "c"
@@ -834,38 +834,12 @@ g[custom] f[custom]               C
               
 `;
 
-    it.only("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      const tempBNF = `
-
-    A  ::=  A_ ( "f" B~* "h" )* ;
-
-    B  ::=  A "f" "e"* 
-    
-         |  B_ "e"*
-
-         ;
-
-    B_ ::=  "c" ;
-
-    B~ ::=  "e" ;
-
-    A_ ::=  B_ B~* "h" 
-      
-         |  "g" 
- 
-         ;
-
-      `;
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A  ::=  B "h" 
-      
-         |  "g" 
- 
-         ;
+    A  ::=  A_ ( "f" B~* "h" )* ;
 
     B  ::=  A "f" "e"* 
     
@@ -877,6 +851,12 @@ g[custom] f[custom]               C
 
     B_ ::=  "c" ;
               
+    A_ ::=  B_ B~* "h" 
+      
+         |  "g" 
+ 
+         ;
+
       `));
     });
 

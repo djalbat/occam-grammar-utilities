@@ -10,8 +10,8 @@ import { ruleNamePartFromRuleName } from "../../../utilities/part";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
 import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
-const { ZeroOrMorePartsPart } = Parts,
-      { head, tail, first, front } = arrayUtilities;
+const { tail, first, front } = arrayUtilities,
+      { ZeroOrMorePartsPart } = Parts;
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   getLeftRecursiveRuleName() {
@@ -93,15 +93,17 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
     const leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
           leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
           indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts(),
-          indirectlyLeftRecursiveDefinitionPartsHead = head(indirectlyLeftRecursiveDefinitionParts);
+          indirectlyLeftRecursiveDefinitionPartsFront = front(indirectlyLeftRecursiveDefinitionParts);
 
     if (repeatedRuleName !== null) {
-      const repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName);
+      const repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
+            part = repeatedRuleNamePart,  ///
+            zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
 
-      indirectlyLeftRecursiveDefinitionPartsHead.push(repeatedRuleNamePart);
+      indirectlyLeftRecursiveDefinitionPartsFront.push(zeroOrMorePartsPart);
     }
 
-    const parts = mergeParts(indirectlyLeftRecursiveDefinitionPartsHead, leftRecursiveDefinitionPartsTail),
+    const parts = mergeParts(indirectlyLeftRecursiveDefinitionPartsFront, leftRecursiveDefinitionPartsTail),
           ruleName = leftRecursiveDefinition.getRuleName(),
           recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
