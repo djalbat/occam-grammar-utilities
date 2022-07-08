@@ -17,19 +17,18 @@ export default function eliminateIndirectLeftRecursion(leftRecursiveDefinitions,
   let greatestIndirectlyLeftRecursiveDefinition = retrieveGreatestIndirectlyLeftRecursiveDefinition(leftRecursiveDefinitions);
 
   while (greatestIndirectlyLeftRecursiveDefinition !== null) {
-    let indirectlyLeftRecursiveDefinition = greatestIndirectlyLeftRecursiveDefinition; ///
+    const indirectlyLeftRecursiveDefinition = greatestIndirectlyLeftRecursiveDefinition, ///
+          directlyLeftRecursiveDefinition = retrieveDirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, ruleMap);
 
-    const directlyLeftRecursiveDefinition = retrieveDirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, ruleMap);
-
-    (directlyLeftRecursiveDefinition === null) ?
-      rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap) :
-        rewriteDirectLeftRecursion(indirectlyLeftRecursiveDefinition, directlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap);
+    (directlyLeftRecursiveDefinition !== null) ?
+      rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap) :
+        rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap);
 
     greatestIndirectlyLeftRecursiveDefinition = retrieveGreatestIndirectlyLeftRecursiveDefinition(leftRecursiveDefinitions);
   }
 }
 
-function rewriteDirectLeftRecursion(indirectlyLeftRecursiveDefinition, directlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap) {
+function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap) {
   let repeatedRuleName = null,
       reducedRuleName = null,
       ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
