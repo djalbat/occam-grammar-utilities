@@ -6,7 +6,7 @@ import { arrayUtilities } from "necessary";
 import { matchParts } from "../utilities/part";
 import { cloneParts, singlePartFromParts } from "../utilities/parts";
 
-const { first } = arrayUtilities,
+const { first, tail } = arrayUtilities,
       { ChoiceOfPartsPart } = Parts;
 
 export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, callback) {
@@ -35,8 +35,6 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, callback
         throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
       }
 
-      parts = cloneParts(parts);  ///
-
       firstPart = first(parts);
 
       if (previousFirstPart !== null) {
@@ -52,6 +50,10 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, callback
 
       previousFirstPart = firstPart;  ///
 
+      const partsTail = tail(parts);
+
+      parts = partsTail;  ///
+
       const singlePart = singlePartFromParts(parts);
 
       return singlePart;
@@ -65,6 +67,8 @@ export function mergeLeftRecursiveDefinitions(leftRecursiveDefinitions, callback
       firstPart,
       choiceOfPartsPart
     ];
+
+    parts = cloneParts(parts);  ///
 
     leftRecursiveDefinition = callback(parts, ruleName);
   }

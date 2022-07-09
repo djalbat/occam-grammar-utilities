@@ -29,29 +29,30 @@ export default function eliminateIndirectLeftRecursion(leftRecursiveDefinitions,
 }
 
 function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap) {
-  let repeatedRuleName = null,
-      reducedRuleName = null,
-      ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
-      rule = ruleMap[ruleName];
+  const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
+        rule = ruleMap[ruleName];
 
-  const repeatedRule = RepeatedRule.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition);
+  const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+        reducedRuleName = reducedRuleNameFromRuleName(ruleName);
 
-  if (repeatedRule !== null) {
-    repeatedRuleName = repeatedRule.getName();
+  let repeatedRule = ruleMap[repeatedRuleName] || null,
+      reducedRule = ruleMap[reducedRuleName] || null;
+
+  if (repeatedRule === null) {
+    repeatedRule = RepeatedRule.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition);
 
     ruleMap[repeatedRuleName] = repeatedRule;
   }
 
-  const reducedRule = ReducedRule.fromRule(rule);
-
-  if (reducedRule !== null) {
-    reducedRuleName = reducedRule.getName();
+  if (reducedRule === null) {
+    reducedRule = ReducedRule.fromRule(rule);
 
     ruleMap[reducedRuleName] = reducedRule;
   }
 
+
   let definitions = rule.getDefinitions(),
-      leftRecursiveDefinition = LeftRecursiveDefinition.fromReducedRule(reducedRule),
+      leftRecursiveDefinition = LeftRecursiveDefinition.fromReducedRuleName(reducedRuleName),
       indirectlyLeftRecursiveDefinitions = retrieveIndirectlyLeftRecursiveDefinitions(definitions);
 
   const directlyLeftRecursiveDefinitions = retrieveDirectlyLeftRecursiveDefinitions(definitions),

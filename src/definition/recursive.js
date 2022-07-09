@@ -7,7 +7,7 @@ import { reducedPartFromPart } from "../utilities/part";
 import { isDefinitionRecursive, recursiveRuleNamesFromDefinition } from "../utilities/definition";
 import { cloneParts, repeatedPartFromParts, recursiveRuleNamesFromParts } from "../utilities/parts";
 
-const { first } = arrayUtilities;
+const { first, tail } = arrayUtilities;
 
 export default class RecursiveDefinition extends Definition {
   constructor(parts, ruleName, recursiveRuleNames) {
@@ -44,17 +44,21 @@ export default class RecursiveDefinition extends Definition {
   static fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {
     let parts = directlyLeftRecursiveDefinition.getParts();
 
-    parts = cloneParts(parts); ///
-
     const firstPart = first(parts),
-          part = firstPart, ///
-          reducedPart = reducedPartFromPart(part),
+          partsTail = tail(parts),
+          part = firstPart; ///
+
+    parts = partsTail;  ///
+
+    const reducedPart = reducedPartFromPart(part),
           repeatedPart = repeatedPartFromParts(parts);
 
     parts = [
       reducedPart,
       repeatedPart
-    ]
+    ];
+
+    parts = cloneParts(parts);  ///
 
     const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
           recursiveRuleNames = recursiveRuleNamesFromParts(parts),

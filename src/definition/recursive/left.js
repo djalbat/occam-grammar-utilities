@@ -7,7 +7,7 @@ import RecursiveDefinition from "../../definition/recursive";
 
 import { ruleNamePartFromRuleName } from "../../utilities/part";
 import { ruleNameFromReducedRuleName, reducedRuleNameFromRepeatedRuleName } from "../../utilities/ruleName";
-import { cloneParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
+import { cloneParts, singlePartFromParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
 import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 const { tail, last } = arrayUtilities,
@@ -24,9 +24,8 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return this.leftRecursiveRuleNames;
   }
 
-  static fromReducedRule(reducedRule) {
-    const reducedRuleName = reducedRule.getName(),
-          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
+  static fromReducedRuleName(reducedRuleName) {
+    const reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
           parts = [
             reducedRuleNamePart
           ],
@@ -122,8 +121,12 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
 
     parts = directlyLeftRecursiveDefinition.getParts();
 
-    const lastPart = last(parts),
-          part = lastPart,  ///
+    const partsTail = tail(parts);
+
+    parts = partsTail;  ///
+
+    const singlePart = singlePartFromParts(parts),
+          part = singlePart,  ///
           zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
 
     parts = leftRecursiveDefinition.getParts();

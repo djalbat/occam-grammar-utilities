@@ -4,7 +4,7 @@ import { Parts } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 import { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "./part";
 
-const { tail, first } = arrayUtilities,
+const { first } = arrayUtilities,
       { SequenceOfPartsPart, ZeroOrMorePartsPart } = Parts;
 
 export function cloneParts(parts) {
@@ -13,21 +13,7 @@ export function cloneParts(parts) {
   return parts;
 }
 
-export function mergeParts(partsA, partsB) {
-  partsA = cloneParts(partsA);  ///
-  partsB = cloneParts(partsB);  ///
-
-  const parts = [
-    ...partsA,
-    ...partsB
-  ];
-
-  return parts;
-}
-
 export function singlePartFromParts(parts) {
-  parts = tail(parts);  ///
-
   let singlePart;
 
   const partsLength = parts.length;
