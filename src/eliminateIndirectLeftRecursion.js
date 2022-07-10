@@ -85,6 +85,9 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
   let ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
       rule = ruleMap[ruleName];
 
+  const definitions = rule.getDefinitions(),
+        indirectlyLeftRecursiveDefinitions = retrieveIndirectlyLeftRecursiveDefinitions(definitions, leftRecursiveRuleName);
+
   let indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName),
       indirectlyReducedRule = ruleMap[indirectlyReducedRuleName] || null,
       repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
@@ -96,12 +99,9 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
     if (indirectlyReducedRule !== null) {
       ruleMap[indirectlyReducedRuleName] = indirectlyReducedRule;
     } else {
-      indirectlyReducedRule = null;
+      indirectlyReducedRuleName = null;
     }
   }
-
-  const definitions = rule.getDefinitions(),
-        indirectlyLeftRecursiveDefinitions = retrieveIndirectlyLeftRecursiveDefinitions(definitions, leftRecursiveRuleName);
 
   if (repeatedRule === null) {
     repeatedRule = RepeatedRule.fromIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions);
