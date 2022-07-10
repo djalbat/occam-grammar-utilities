@@ -6,7 +6,7 @@ import ReducedRule from "./rule/reduced";
 import RecursiveDefinition from "./definition/recursive";
 import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
 
-import { mergeLeftRecursiveDefinitions } from "./utilities/definitions";
+import { mergeDirectlyLeftRecursiveDefinitions } from "./utilities/definitions";
 
 const { filter } = arrayUtilities;
 
@@ -28,8 +28,16 @@ function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, leftRecursi
 
   const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
         rule = ruleMap[ruleName],
-        reducedRule = ReducedRule.fromRule(rule),
-        reducedRuleName = reducedRule.getName();
+        reducedRule = ReducedRule.fromRule(rule);
+
+  if (reducedRule === null) {
+    const definition = directlyLeftRecursiveDefinition, ///
+          definitionString = definition.asString();
+
+    throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is isolated and therefore cannot be rewritten.`);
+  }
+
+  const reducedRuleName = reducedRule.getName();
 
   ruleMap[reducedRuleName] = reducedRule;
 
@@ -50,16 +58,6 @@ function amendLeftRecursiveDefinitions(leftRecursiveDefinitions, removedLeftRecu
       return true;
     }
   });
-}
-
-function mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions) {
-  const directlyLeftRecursiveDefinition = mergeLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, (parts, ruleName) => {
-    const directlyLeftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromPartsAndRuleName(parts, ruleName);
-
-    return directlyLeftRecursiveDefinition;
-  });
-
-  return directlyLeftRecursiveDefinition;
 }
 
 function retrieveDirectlyLeftRecursiveDefinition(leftRecursiveDefinitions) {

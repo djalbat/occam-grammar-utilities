@@ -10,7 +10,7 @@ import { cloneParts, singlePartFromParts, recursiveRuleNamesFromParts, leftRecur
 import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
 const { ZeroOrMorePartsPart } = Parts,
-      { head, tail, last, front, first, backwardsFind, backwardsEvery } = arrayUtilities;
+      { push, head, tail, last, front, first, backwardsFind, backwardsEvery } = arrayUtilities;
 
 export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   constructor(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinitions) {
@@ -156,16 +156,17 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
           indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts(),
           indirectlyLeftRecursiveDefinitionPartsHead = head(indirectlyLeftRecursiveDefinitionParts);
 
+    let parts = [];
+
+    push(parts, indirectlyLeftRecursiveDefinitionPartsHead);
+
     if (repeatedRuleName !== null) {
       const repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName);
 
-      indirectlyLeftRecursiveDefinitionPartsHead.push(repeatedRuleNamePart);
+      parts.push(repeatedRuleNamePart);
     }
 
-    let parts = [
-      ...indirectlyLeftRecursiveDefinitionPartsHead,
-      ...leftRecursiveDefinitionPartsTail
-    ];
+    push(parts, leftRecursiveDefinitionPartsTail);
 
     parts = cloneParts(parts);  ///
 

@@ -6,11 +6,11 @@ import { arrayUtilities } from "necessary";
 import RecursiveDefinition from "../../definition/recursive";
 
 import { ruleNamePartFromRuleName } from "../../utilities/part";
-import { ruleNameFromReducedRuleName, reducedRuleNameFromRepeatedRuleName } from "../../utilities/ruleName";
+import { ruleNameFromReducedRuleName } from "../../utilities/ruleName";
 import { cloneParts, singlePartFromParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
 import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
-const { tail, last } = arrayUtilities,
+const { tail, push } = arrayUtilities,
       { ZeroOrMorePartsPart } = Parts;
 
 export default class LeftRecursiveDefinition extends RecursiveDefinition {
@@ -61,49 +61,16 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return leftRecursiveDefinition;
   }
 
-  static fromLeftRecursiveDefinitionRepeatedRuleNameAndRuleName(leftRecursiveDefinition, repeatedRuleName, ruleName) {
-    let parts;
-
-    const reducedRuleName = reducedRuleNameFromRepeatedRuleName(repeatedRuleName),
-          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
-
-    parts = leftRecursiveDefinition.getParts();
-
-    const partsTail = tail(parts);
-
-    const repeatedRuleNamePartPart = ruleNamePartFromRuleName(repeatedRuleName),
-          part = repeatedRuleNamePartPart,
-          zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
-
-    parts = [
-      reducedRuleNamePart,
-      zeroOrMorePartsPart,
-      ...partsTail
-    ];
-
-    parts = cloneParts(parts);  ///
-
-    const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
-          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts);
-
-    leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames); ///
-
-    return leftRecursiveDefinition;
-  }
-
-  static fromLeftRecursiveDefinitionRepeatedRuleNameAndReducedRuleName(leftRecursiveDefinition, repeatedRuleName, reducedRuleName) {
+  static fromLeftRecursiveDefinitionAndReducedRuleName(leftRecursiveDefinition, reducedRuleName) {
     const leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
           leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
-          repeatedRuleNamePartPart = ruleNamePartFromRuleName(repeatedRuleName),
-          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
-          part = repeatedRuleNamePartPart,  ///
-          zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
+          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
 
-    let parts = [
-      reducedRuleNamePart,
-      zeroOrMorePartsPart,
-      ...leftRecursiveDefinitionPartsTail
-    ];
+    let parts = [];
+
+    parts.push(reducedRuleNamePart);
+
+    push(parts, leftRecursiveDefinitionPartsTail);
 
     parts = cloneParts(parts);  ///
 
