@@ -3,17 +3,17 @@
 import { Rule } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
-import ReducedNode from "../node/reduced";
-import DirectlyLeftRecursiveDefinition from "../definition/recursive/left/directly";
-import IndirectlyLeftRecursiveDefinition from "../definition/recursive/left/indirectly";
+import ReducedNode from "../../node/reduced";
+import DirectlyLeftRecursiveDefinition from "../../definition/recursive/left/directly";
+import IndirectlyLeftRecursiveDefinition from "../../definition/recursive/left/indirectly";
 
-import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
+import { directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 const { find } = arrayUtilities;
 
-export default class ReducedRule extends Rule {
+export default class DirectlyReducedRule extends Rule {
   static fromRule(rule) {
-    let reducedRule = null;
+    let directlyReducedRule = null;
 
     let definitions = rule.getDefinitions();
 
@@ -30,14 +30,14 @@ export default class ReducedRule extends Rule {
 
     if (definitionsLength > 0) {
       const ruleName = rule.getName(),
-            reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-            name = reducedRuleName, ///
+            directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
+            name = directlyReducedRuleName, ///
             ambiguous = false,
             NonTerminalNode = ReducedNode;  ///
 
-      reducedRule = new ReducedRule(name, ambiguous, definitions, NonTerminalNode);
+      directlyReducedRule = new DirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
     }
 
-    return reducedRule;
+    return directlyReducedRule;
   }
 }

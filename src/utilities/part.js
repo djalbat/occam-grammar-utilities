@@ -3,7 +3,7 @@
 import { arrayUtilities } from "necessary";
 import { Parts, partTypes } from "occam-parsers";
 
-import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
+import { directlyReducedRuleNameFromRuleName } from "../utilities/ruleName";
 
 const { first } = arrayUtilities,
       { RuleNamePart, OptionalPartPart, OneOrMorePartsPart, ZeroOrMorePartsPart } = Parts,
@@ -73,68 +73,6 @@ export function isPartComplex(part) {
   }
 
   return partComplex;
-}
-
-export function reducedPartFromPart(part) {
-  let reducedPart;
-
-  const nonTerminalPart = part, ///
-        type = nonTerminalPart.getType();
-
-  switch (type) {
-    case RuleNamePartType: {
-      const ruleNamePart = nonTerminalPart,  ///
-            ruleName = ruleNamePart.getRuleName(),
-            lookAhead = ruleNamePart.isLookAhead(),
-            reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-            reducedRuleNamePart = new RuleNamePart(reducedRuleName, lookAhead);
-
-      reducedPart = reducedRuleNamePart;  ///
-
-      break;
-    }
-
-    case OptionalPartPartType: {
-      const optionalPartPart = nonTerminalPart, ///
-            part = optionalPartPart.getPart();
-
-      reducedPart = reducedPartFromPart(part);
-
-      const reducedOptionalPartPart = new OptionalPartPart(reducedPart);
-
-      reducedPart = reducedOptionalPartPart;  ///
-
-      break;
-    }
-
-    case OneOrMorePartsPartType: {
-      const oneOrMorePartsPart = nonTerminalPart, ///
-            part = oneOrMorePartsPart.getPart();
-
-      reducedPart = reducedPartFromPart(part);
-
-      const reducedOneOrMorePartsPart = new OneOrMorePartsPart(reducedPart);
-
-      reducedPart = reducedOneOrMorePartsPart;  ///
-
-      break;
-    }
-
-    case ZeroOrMorePartsPartType: {
-      const zeroOrMorePartsPart = nonTerminalPart, ///
-            part = zeroOrMorePartsPart.getPart();
-
-      reducedPart = reducedPartFromPart(part);
-
-      const reducedZeroOrMorePartsPart = new ZeroOrMorePartsPart(reducedPart);
-
-      reducedPart = reducedZeroOrMorePartsPart;  ///
-
-      break;
-    }
-  }
-
-  return reducedPart;
 }
 
 export function ruleNamePartFromRuleName(ruleName) {
@@ -211,6 +149,68 @@ export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
       }
     }
   }
+}
+
+export function directlyReducedPartFromPart(part) {
+  let directlyReducedPart;
+
+  const nonTerminalPart = part, ///
+        type = nonTerminalPart.getType();
+
+  switch (type) {
+    case RuleNamePartType: {
+      const ruleNamePart = nonTerminalPart,  ///
+            ruleName = ruleNamePart.getRuleName(),
+            lookAhead = ruleNamePart.isLookAhead(),
+            directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
+            directlyReducedRuleNamePart = new RuleNamePart(directlyReducedRuleName, lookAhead);
+
+      directlyReducedPart = directlyReducedRuleNamePart;  ///
+
+      break;
+    }
+
+    case OptionalPartPartType: {
+      const optionalPartPart = nonTerminalPart, ///
+            part = optionalPartPart.getPart();
+
+      directlyReducedPart = directlyReducedPartFromPart(part);
+
+      const directlyReducedOptionalPartPart = new OptionalPartPart(directlyReducedPart);
+
+      directlyReducedPart = directlyReducedOptionalPartPart;  ///
+
+      break;
+    }
+
+    case OneOrMorePartsPartType: {
+      const oneOrMorePartsPart = nonTerminalPart, ///
+            part = oneOrMorePartsPart.getPart();
+
+      directlyReducedPart = directlyReducedPartFromPart(part);
+
+      const directlyReducedOneOrMorePartsPart = new OneOrMorePartsPart(directlyReducedPart);
+
+      directlyReducedPart = directlyReducedOneOrMorePartsPart;  ///
+
+      break;
+    }
+
+    case ZeroOrMorePartsPartType: {
+      const zeroOrMorePartsPart = nonTerminalPart, ///
+            part = zeroOrMorePartsPart.getPart();
+
+      directlyReducedPart = directlyReducedPartFromPart(part);
+
+      const directlyReducedZeroOrMorePartsPart = new ZeroOrMorePartsPart(directlyReducedPart);
+
+      directlyReducedPart = directlyReducedZeroOrMorePartsPart;  ///
+
+      break;
+    }
+  }
+
+  return directlyReducedPart;
 }
 
 export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {

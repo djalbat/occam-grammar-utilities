@@ -24,19 +24,6 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return this.leftRecursiveRuleNames;
   }
 
-  static fromReducedRuleName(reducedRuleName) {
-    const reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
-          parts = [
-            reducedRuleNamePart
-          ],
-          ruleName = ruleNameFromReducedRuleName(reducedRuleName),
-          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
-          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
-          leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
-
-    return leftRecursiveDefinition;
-  }
-
   static fromRuleNameAndParts(ruleName, parts) {
     const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
@@ -61,9 +48,38 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return leftRecursiveDefinition;
   }
 
-  static fromLeftRecursiveDefinitionAndReducedRuleName(leftRecursiveDefinition, reducedRuleName) {
+  static fromDirectlyReducedRuleName(directlyReducedRuleName) {
+    const reducedRuleName = directlyReducedRuleName,  ///
+          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
+          parts = [
+            reducedRuleNamePart
+          ],
+          ruleName = ruleNameFromReducedRuleName(reducedRuleName),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+
+    return leftRecursiveDefinition;
+  }
+
+  static fromIndirectlyReducedRuleName(indirectlyReducedRuleName) {
+    const reducedRuleName = indirectlyReducedRuleName,  ///
+          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
+          parts = [
+            reducedRuleNamePart
+          ],
+          ruleName = ruleNameFromReducedRuleName(reducedRuleName),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
+
+    return leftRecursiveDefinition;
+  }
+
+  static fromLeftRecursiveDefinitionAndIndirectlyReducedRuleName(leftRecursiveDefinition, indirectlyReducedRuleName) {
     const leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
           leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
+          reducedRuleName = indirectlyReducedRuleName,  ///
           reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
 
     let parts = [];

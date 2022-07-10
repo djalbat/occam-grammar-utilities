@@ -2,8 +2,8 @@
 
 import { arrayUtilities } from "necessary";
 
-import ReducedRule from "./rule/reduced";
 import RecursiveDefinition from "./definition/recursive";
+import DirectlyReducedRule from "./rule/reduced/directly";
 import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
 
 import { mergeDirectlyLeftRecursiveDefinitions } from "./utilities/definitions";
@@ -21,25 +21,25 @@ export default function eliminateDirectLeftRecursion(leftRecursiveDefinitions, r
 }
 
 function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap) {
-  const leftRecursiveRuleName = directlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
-        directlyLeftRecursiveDefinitions = retrieveDirectlyLeftRecursiveDefinitions(leftRecursiveDefinitions, leftRecursiveRuleName);
-
-  directlyLeftRecursiveDefinition = mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions);  ///
-
   const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
         rule = ruleMap[ruleName],
-        reducedRule = ReducedRule.fromRule(rule);
+        directlyReducedRule = DirectlyReducedRule.fromRule(rule);
 
-  if (reducedRule === null) {
+  if (directlyReducedRule === null) {
     const definition = directlyLeftRecursiveDefinition, ///
           definitionString = definition.asString();
 
     throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is isolated and therefore cannot be rewritten.`);
   }
 
-  const reducedRuleName = reducedRule.getName();
+  const directlyReducedRuleName = directlyReducedRule.getName();
 
-  ruleMap[reducedRuleName] = reducedRule;
+  ruleMap[directlyReducedRuleName] = directlyReducedRule;
+
+  const leftRecursiveRuleName = directlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
+        directlyLeftRecursiveDefinitions = retrieveDirectlyLeftRecursiveDefinitions(leftRecursiveDefinitions, leftRecursiveRuleName);
+
+  directlyLeftRecursiveDefinition = mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions);  ///
 
   const recursiveDefinition = RecursiveDefinition.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition),
         replacementDefinition = recursiveDefinition,  ///

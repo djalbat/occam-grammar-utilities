@@ -120,9 +120,7 @@ A ::= "g"
 `;
 
     it("does not throw an exception", () => {
-      it("does throw an exception", () => {
-        assert.doesNotThrow(() => adjustedBNFFromBNF(bnf));
-      });
+      assert.doesNotThrow(() => adjustedBNFFromBNF(bnf));
     });
   });
 
@@ -294,7 +292,7 @@ A ::= "g"
     });
   });
 
-  describe("two sibling indirectly left recursive definitions that do not match", () => {
+  describe("two mismatched sibling indirectly left recursive definitions", () => {
     const bnf = `
    
     A ::= "e"
@@ -452,17 +450,17 @@ A ::= "g"
 
         ;
     
-   B~ ::= "h" ;
-    
-   B_ ::= "c"
+  B__ ::= "c"
     
         | "d"
 
         ;
     
+   B~ ::= "h" ;
+    
    A_ ::= "e"
     
-        | B_ "g"
+        | B__ "g"
     
         | "f"
     
@@ -529,7 +527,7 @@ A ::= "g"
 
         ;
 
-   B_ ::= "b"
+  B__ ::= "b"
     
         | "c"
 
@@ -537,7 +535,7 @@ A ::= "g"
       
     A_ ::= "d"
     
-        | B_ "g"
+        | B__ "g"
     
         | "e"
     
@@ -604,21 +602,21 @@ A ::= "g"
 
         ;
 
+  B__ ::= "b" 
+   
+        | "c"
+        
+        ;
+
    B~ ::= "h" 
    
         | "f"
         
         ;
 
-   B_ ::= "b" 
-   
-        | "c"
-        
-        ;
-
    A_ ::= "d"
     
-        | B_ "g"
+        | B__ "g"
     
         | "e"
     
@@ -683,7 +681,7 @@ A ::= "g"
     
          |  A C~
          
-         |  C_
+         |  C__
          
          ;
 
@@ -693,19 +691,19 @@ A ::= "g"
          
          ;
 
+   C__ ::=  "d" ;
+    
     C~ ::=  "e" ;
 
-    C_ ::=  "d" ;
-    
+   B__ ::=  C__ ;
+
     B~ ::=  "f" 
     
          |  C~
          
          ;
     
-    B_ ::=  C_ ;
-
-    A_ ::=  B_ "h" 
+    A_ ::=  B__ "h" 
       
          |  "g" 
  
@@ -772,17 +770,17 @@ g[custom] f[custom]               C
 
         ;
 
-   B~ ::= "f" ;
-
-   B_ ::= "b"
+  B__ ::= "b"
 
         | "c"
 
         ;
 
+   B~ ::= "f" ;
+
    A_ ::= "d"
     
-        | B_ "g"
+        | B__ "g"
 
         | "e"
     
@@ -844,7 +842,7 @@ g[custom] f[custom]               C
 
     B  ::=  A C~ "f" 
     
-         |  C_ "f" 
+         |  C__ "f" 
          
          |  "e" 
 
@@ -858,23 +856,23 @@ g[custom] f[custom]               C
          
          ;
 
+   C__ ::=  "b" ;
+
     C~ ::=  "d" 
     
          |  "c" 
          
          ;
 
-    C_ ::=  "b" ;
-
-    B~ ::=  C~ "f" ;         
-
-    B_ ::=  C_ "f" 
+   B__ ::=  C__ "f" 
     
          |  "e"
          
          ;         
 
-    A_ ::=  B_ "h" 
+    B~ ::=  C~ "f" ;         
+
+    A_ ::=  B__ "h" 
       
          |  "g" 
  
@@ -905,7 +903,7 @@ g[custom]     -----------
     });
   });
 
-  xdescribe("an indirectly left recursive definition and sibling directly left recursive definition", () => {
+  describe("an indirectly left recursive definition and sibling directly left recursive definition", () => {
     const bnf = `
   
     A  ::=  B "h" 
@@ -929,19 +927,21 @@ g[custom]     -----------
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A  ::=  A_ ( "f" B~* "h" )* ;
+    A  ::=  A_ ( B~ "h" )* ;
 
-    B  ::=  A "f" ( "e" "g" )* 
+    B  ::=  A "f" ( "e" "g" )*
     
          |  B_ ( "e" "g" )*
 
          ;
-              
-    B~ ::=  "e" "g"; 
 
     B_ ::=  "c" ;
               
-    A_ ::=  B_ B~* "h" 
+   B__ ::=  B_ ( "e" "g" )* ;
+
+    B~ ::=  "f" ( "e" "g" )* ;
+
+    A_ ::=  B__ "h" 
       
          |  "g" 
  
@@ -959,12 +959,12 @@ g[custom]     -----------
                                           A                                    
                                           |                                    
          ------------------------------------------------------------------    
-         |              |              |                   |              |    
-         A          f[custom]          B                   B          h[custom]
-         |                             |                   |                   
-    -----------                   -----------         -----------              
-    |         |                   |         |         |         |              
-    B     h[custom]           e[custom] g[custom] e[custom] g[custom]          
+         |                                  |                             |    
+         A                                  B                         h[custom]
+         |                                  |                                  
+    -----------         -----------------------------------------              
+    |         |         |         |         |         |         |              
+    B     h[custom] f[custom] e[custom] g[custom] e[custom] g[custom]          
     |                                                                          
 c[custom]                                                                      
 

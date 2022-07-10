@@ -1,19 +1,13 @@
 "use strict";
 
-export function reducedRuleNameFromRuleName(ruleName) {
-  const reducedRuleName = `${ruleName}_`;
-
-  return reducedRuleName;
-}
-
 export function ruleNameFromReducedRuleName(reducedRuleName) {
-  const ruleName = reducedRuleName.replace(/_$/, "");
+  const ruleName = reducedRuleName.replace(/(__|_)$/g, "");
 
   return ruleName;
 }
 
 export function ruleNameFromRepeatedRuleName(repeatedRuleName) {
-  const ruleName = repeatedRuleName.replace(/(?:\.\d+)?~$/, "");
+  const ruleName = repeatedRuleName.replace(/~$/, "");
 
   return ruleName;
 }
@@ -36,18 +30,14 @@ export function doesReducedRuleNameMatchRuleName(reducedRuleName, ruleName) {
   return reducedRuleNameMatchesRuleName;
 }
 
-export function reducedRuleNameFromRepeatedRuleName(repeatedRuleName) {
-  const ruleName = ruleNameFromRepeatedRuleName(repeatedRuleName),
-        reducedRuleName = reducedRuleNameFromRuleName(ruleName);
+export function directlyReducedRuleNameFromRuleName(ruleName) {
+  const directlyReducedRuleName = `${ruleName}_`;
 
-  return reducedRuleName;
+  return directlyReducedRuleName;
 }
 
-export function repeatedRuleNameFromRuleNameAndIndex(ruleName,index) {
-  const repeatedRuleName = (index === 0) ?
-                            `${ruleName}~` :
-                              `${ruleName}.${index}~`;
+export function indirectlyReducedRuleNameFromRuleName(ruleName) {
+  const indirectlyReducedRuleName = `${ruleName}__`;
 
-  return repeatedRuleName;
+  return indirectlyReducedRuleName;
 }
-

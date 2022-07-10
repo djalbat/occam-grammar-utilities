@@ -3,7 +3,7 @@
 import { Definition } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
-import { reducedPartFromPart } from "../utilities/part";
+import { directlyReducedPartFromPart } from "../utilities/part";
 import { isDefinitionRecursive, recursiveRuleNamesFromDefinition } from "../utilities/definition";
 import { cloneParts, repeatedPartFromParts, recursiveRuleNamesFromParts } from "../utilities/parts";
 
@@ -50,11 +50,11 @@ export default class RecursiveDefinition extends Definition {
 
     parts = partsTail;  ///
 
-    const reducedPart = reducedPartFromPart(part),
+    const directlyReducedPart = directlyReducedPartFromPart(part),
           repeatedPart = repeatedPartFromParts(parts);
 
     parts = [
-      reducedPart,
+      directlyReducedPart,
       repeatedPart
     ];
 
