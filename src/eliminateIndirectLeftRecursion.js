@@ -12,14 +12,14 @@ import IndirectlyLeftRecursiveDefinition from "./definition/recursive/left/indir
 import { repeatedRuleNameFromRuleName, indirectlyReducedRuleNameFromRuleName } from "./utilities/ruleName";
 import { mergeDirectlyLeftRecursiveDefinitions, mergeIndirectlyLeftRecursiveDefinitions } from "./utilities/definitions";
 
-const { push, first, filter } = arrayUtilities;
+const { find, push, first, filter } = arrayUtilities;
 
 export default function eliminateIndirectLeftRecursion(leftRecursiveDefinitions, ruleMap) {
   let greatestIndirectlyLeftRecursiveDefinition = retrieveGreatestIndirectlyLeftRecursiveDefinition(leftRecursiveDefinitions);
 
   while (greatestIndirectlyLeftRecursiveDefinition !== null) {
     const indirectlyLeftRecursiveDefinition = greatestIndirectlyLeftRecursiveDefinition, ///
-          directlyLeftRecursiveDefinition = retrieveDirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, ruleMap);
+          directlyLeftRecursiveDefinition = findDirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, ruleMap);
 
     (directlyLeftRecursiveDefinition !== null) ?
       rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap) :
@@ -46,10 +46,10 @@ function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyL
   ruleMap[directlyReducedRuleName] = directlyReducedRule;
 
   const definitions = rule.getDefinitions(),
-        directlyLeftRecursiveDefinitions = retrieveDirectlyLeftRecursiveDefinitions(definitions);
+        directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(definitions);
 
   let leftRecursiveDefinition = LeftRecursiveDefinition.fromDirectlyReducedRuleName(directlyReducedRuleName),
-      indirectlyLeftRecursiveDefinitions = retrieveIndirectlyLeftRecursiveDefinitions(definitions);
+      indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(definitions);
 
   const removedLeftRecursiveDefinitions = [
           ...directlyLeftRecursiveDefinitions,
@@ -86,7 +86,7 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
       rule = ruleMap[ruleName];
 
   const definitions = rule.getDefinitions(),
-        indirectlyLeftRecursiveDefinitions = retrieveIndirectlyLeftRecursiveDefinitions(definitions, leftRecursiveRuleName);
+        indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(definitions, leftRecursiveRuleName);
 
   let indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName),
       indirectlyReducedRule = ruleMap[indirectlyReducedRuleName] || null,
@@ -152,28 +152,23 @@ function amendLeftRecursiveDefinitions(leftRecursiveDefinitions, removedLeftRecu
   push(leftRecursiveDefinitions, addedLeftRecursiveDefinitions);
 }
 
-function retrieveDirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, ruleMap) {
-  let directlyLeftRecursiveDefinition = null;
-
+function findDirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, ruleMap) {
   const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
         rule = ruleMap[ruleName],
-        definitions = rule.getDefinitions();
+        definitions = rule.getDefinitions(),
+        directlyLeftRecursiveDefinition = definitions.find((definition) => {
+          const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition);
 
-  definitions.some((definition) => {
-    const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition);
-
-    if (definitionDirectlyLeftRecursiveDefinition) {
-      directlyLeftRecursiveDefinition = definition; ///
-
-      return true;
-    }
-  });
+          if (definitionDirectlyLeftRecursiveDefinition) {
+            return true;
+          }
+        }) || null;
 
   return directlyLeftRecursiveDefinition;
 }
 
-function retrieveDirectlyLeftRecursiveDefinitions(definitions) {
-  const directlyLeftRecursiveDefinitions = definitions.filter((definition) => {
+function findDirectlyLeftRecursiveDefinitions(definitions) {
+  const directlyLeftRecursiveDefinitions = find(definitions, (definition) => {
     const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition);
 
     if (definitionDirectlyLeftRecursiveDefinition) {
@@ -184,8 +179,8 @@ function retrieveDirectlyLeftRecursiveDefinitions(definitions) {
   return directlyLeftRecursiveDefinitions;
 }
 
-function retrieveIndirectlyLeftRecursiveDefinitions(definitions, leftRecursiveRuleName = null) {
-  const indirectlyLeftRecursiveDefinitions = definitions.filter((definition) => {
+function findIndirectlyLeftRecursiveDefinitions(definitions, leftRecursiveRuleName = null) {
+  const indirectlyLeftRecursiveDefinitions = find(definitions, (definition) => {
     const definitionIndirectlyLeftRecursiveDefinition = (definition instanceof IndirectlyLeftRecursiveDefinition);
 
     if (definitionIndirectlyLeftRecursiveDefinition) {
@@ -211,7 +206,7 @@ function retrieveGreatestIndirectlyLeftRecursiveDefinition(leftRecursiveDefiniti
   let greatestIndirectlyLeftRecursiveDefinition = null;
 
   const definitions = leftRecursiveDefinitions, ///
-        indirectlyLeftRecursiveDefinitions = retrieveIndirectlyLeftRecursiveDefinitions(definitions);
+        indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(definitions);
 
   indirectlyLeftRecursiveDefinitions.forEach((indirectlyLeftRecursiveDefinition) => {
     if (greatestIndirectlyLeftRecursiveDefinition === null) {
