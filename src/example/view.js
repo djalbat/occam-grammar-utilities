@@ -6,24 +6,24 @@ import { Element } from "easy";
 import { BasicLexer } from "occam-lexers";
 import { BasicParser } from "occam-parsers";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
-import { rulesUtilities, eliminateLeftRecursion, removeOrRenameIntermediateNodes } from "../index"; ///
 
 import Paragraph from "./paragraph";
 import SubHeading from "./subHeading";
 import SizeableDiv from "./div/sizeable";
 import BNFTextarea from "./textarea/bnf";
+import rulesUtilities from "../utilities/rules";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
 import StartRuleNameInput from "./input/startRuleName";
 import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
+import eliminateLeftRecursion from "../eliminateLeftRecursion";
+import removeOrRenameIntermediateNodes from "../removeOrRenameIntermediateNodes";
 import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIntermediateNodes"
 
-import { rulesFromBNF } from "../utilities/parser";
 import { UNASSIGNED_ENTRY } from "../constants";
-import { rulesFromStartRuleAndRuleMap } from "../utilities/rules";
 
-const { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
+const { rulesFromBNF, rulesAsString, ruleMapFromRules, rulesFromStartRuleAndRuleMap, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 class View extends Element {
   getParseTree(startRule, ruleMap) {
@@ -66,17 +66,16 @@ class View extends Element {
   }
 
   changeHandler(event, element) {
-    // try {
+    try {
       const bnf = this.getBNF(),
             startRuleName = this.getStartRuleName();
 
       let rules = rulesFromBNF(bnf);
 
-      const ruleMap = ruleMapFromRules(rules);
+      const ruleMap = ruleMapFromRules(rules),
+            startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName);
 
-      let startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName);
-
-      startRule = eliminateLeftRecursion(startRule, ruleMap);
+      eliminateLeftRecursion(startRule, ruleMap);
 
       rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap);
 
@@ -89,9 +88,9 @@ class View extends Element {
       const parseTree = this.getParseTree(startRule, ruleMap);
 
       this.setParseTree(parseTree);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   childElements() {

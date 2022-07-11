@@ -4,7 +4,7 @@ import { arrayUtilities } from "necessary";
 import { rulesUtilities } from "occam-parsers";
 
 const { filter } = arrayUtilities,
-      { rulesAsString, ruleMapFromRules, startRuleFromRules } = rulesUtilities;
+      { rulesFromBNF, rulesAsString, ruleMapFromRules, startRuleFromRules } = rulesUtilities;
 
 export function rulesFromStartRuleAndRuleMap(startRule, ruleMap) {
   const rules = Object.values(ruleMap),
@@ -40,6 +40,7 @@ export function startRuleFromRulesAndStartRuleName(rules, startRuleName) {
 }
 
 export default {
+  rulesFromBNF,
   rulesAsString,
   ruleMapFromRules,
   startRuleFromRules,
