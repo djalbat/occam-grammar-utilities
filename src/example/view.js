@@ -21,11 +21,44 @@ import eliminateLeftRecursion from "../eliminateLeftRecursion";
 import removeOrRenameIntermediateNodes from "../removeOrRenameIntermediateNodes";
 import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIntermediateNodes"
 
+import { rulesFromBNF } from "../utilities/parser";
 import { UNASSIGNED_ENTRY } from "../constants";
 
-const { rulesFromBNF, rulesAsString, ruleMapFromRules, rulesFromStartRuleAndRuleMap, startRuleFromRulesAndStartRuleName } = rulesUtilities;
+const { rulesAsString, ruleMapFromRules, rulesFromStartRuleAndRuleMap, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 class View extends Element {
+  keyUpHandler = (event, element) => {
+    this.changeHandler();
+  }
+
+  changeHandler = (event, element) => {
+    try {
+      const bnf = this.getBNF(),
+            startRuleName = this.getStartRuleName();
+
+      let rules = rulesFromBNF(bnf);
+
+      const ruleMap = ruleMapFromRules(rules),
+            startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName);
+
+      eliminateLeftRecursion(startRule, ruleMap);
+
+      rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap);
+
+      const multiLine = true,
+            rulesString = rulesAsString(rules, multiLine),
+            adjustedBNF = rulesString;  ///
+
+      this.setAdjustedBNF(adjustedBNF);
+
+      const parseTree = this.getParseTree(startRule, ruleMap);
+
+      this.setParseTree(parseTree);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   getParseTree(startRule, ruleMap) {
     let parseTree = null;
 
@@ -61,42 +94,7 @@ class View extends Element {
     return parseTree;
   }
 
-  keyUpHandler(event, element) {
-    this.changeHandler();
-  }
-
-  changeHandler(event, element) {
-    try {
-      const bnf = this.getBNF(),
-            startRuleName = this.getStartRuleName();
-
-      let rules = rulesFromBNF(bnf);
-
-      const ruleMap = ruleMapFromRules(rules),
-            startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName);
-
-      eliminateLeftRecursion(startRule, ruleMap);
-
-      rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap);
-
-      const multiLine = true,
-            rulesString = rulesAsString(rules, multiLine),
-            adjustedBNF = rulesString;  ///
-
-      this.setAdjustedBNF(adjustedBNF);
-
-      const parseTree = this.getParseTree(startRule, ruleMap);
-
-      this.setParseTree(parseTree);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   childElements() {
-    const keyUpHandler = this.keyUpHandler.bind(this),
-          changeHandler = this.changeHandler.bind(this);
-
     return ([
 
       <ColumnsDiv>
@@ -105,11 +103,11 @@ class View extends Element {
             <SubHeading>
               Lexical pattern
             </SubHeading>
-            <LexicalPatternInput onKeyUp={keyUpHandler} />
+            <LexicalPatternInput onKeyUp={this.keyUpHandler} />
             <SubHeading>
               BNF
             </SubHeading>
-            <BNFTextarea onKeyUp={keyUpHandler} />
+            <BNFTextarea onKeyUp={this.keyUpHandler} />
             <SubHeading>
               Adjusted BNF
             </SubHeading>
@@ -122,17 +120,17 @@ class View extends Element {
             <SubHeading>
               Start rule name
             </SubHeading>
-            <StartRuleNameInput onKeyUp={keyUpHandler} />
+            <StartRuleNameInput onKeyUp={this.keyUpHandler} />
             <SubHeading>
               Content
             </SubHeading>
-            <ContentTextarea onKeyUp={keyUpHandler} />
+            <ContentTextarea onKeyUp={this.keyUpHandler} />
             <SubHeading>
               Parse tree
             </SubHeading>
             <ParseTreeTextarea />
             <Paragraph>
-              <RemoveOrRenameIntermediateNodesCheckbox onChange={changeHandler} checked />
+              <RemoveOrRenameIntermediateNodesCheckbox onChange={this.changeHandler} checked />
               Remove or rename intermediate nodes
             </Paragraph>
           </RowsDiv>
