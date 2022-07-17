@@ -19,7 +19,7 @@ export function mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefin
   let parts = [];
 
   const firstPart = firstPartFromDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions),
-        singleParts = singlePartsFromDirectlyLeftRecursiveDefinitionsAnbRuleName(directlyLeftRecursiveDefinitions, ruleName),
+        singleParts = singlePartsFromDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions),
         singlePartsLength = singleParts.length;
 
   parts.push(firstPart);
@@ -51,7 +51,7 @@ export function mergeIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveD
   let parts = [];
 
   const firstPart = firstPartFromIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions),
-        singleParts = singlePartsFromIndirectlyLeftRecursiveDefinitionsAndRuleName(indirectlyLeftRecursiveDefinitions, ruleName),
+        singleParts = singlePartsFromIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions),
         singlePartsLength = singleParts.length;
 
   parts.push(firstPart);
@@ -81,49 +81,40 @@ function firstPartFromDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefi
   const firstDirectlyLeftRecursiveDefinition = first(directlyLeftRecursiveDefinitions),
         directlyLeftRecursiveDefinition = firstDirectlyLeftRecursiveDefinition, ///
         parts = directlyLeftRecursiveDefinition.getParts(),
-        firstPart = first(parts);
+        firstPart = first(parts),
+        previousFirstPart = firstPart;  ///
+
+  directlyLeftRecursiveDefinitions.forEach((directlyLeftRecursiveDefinition) => {
+    let parts = directlyLeftRecursiveDefinition.getParts();
+
+    const firstPart = first(parts),
+          matches = matchParts(firstPart, previousFirstPart);
+
+    if (!matches) {
+      const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
+            definition = directlyLeftRecursiveDefinition, ///
+            definitionString = definition.asString();
+
+      throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule does not match one of its sibling directly left recursive definitions and therefore cannot be rewritten.`);
+    }
+  });
 
   return firstPart;
 }
 
-function firstPartFromIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions) {
-  const firstIndirectlyLeftRecursiveDefinition = first(indirectlyLeftRecursiveDefinitions),
-        indirectlyLeftRecursiveDefinition = firstIndirectlyLeftRecursiveDefinition, ///
-        parts = indirectlyLeftRecursiveDefinition.getParts(),
-        firstPart = first(parts);
-
-  return firstPart;
-}
-
-function singlePartsFromDirectlyLeftRecursiveDefinitionsAnbRuleName(directlyLeftRecursiveDefinitions, ruleName) {
-  let previousFirstPart = null;
-
+function singlePartsFromDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions) {
   const singleParts = directlyLeftRecursiveDefinitions.map((directlyLeftRecursiveDefinition) => {
     let parts = directlyLeftRecursiveDefinition.getParts();
 
     const partsLength = parts.length;
 
     if (partsLength === 1) {
-      const definition = directlyLeftRecursiveDefinition, ///
+      const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
+            definition = directlyLeftRecursiveDefinition, ///
             definitionString = definition.asString();
 
       throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
     }
-
-    const firstPart = first(parts);
-
-    if (previousFirstPart !== null) {
-      const matches = matchParts(firstPart, previousFirstPart);
-
-      if (!matches) {
-        const definition = directlyLeftRecursiveDefinition, ///
-              definitionString = definition.asString();
-
-        throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule does not match one of its sibling directly left recursive definitions and therefore cannot be rewritten.`);
-      }
-    }
-
-    previousFirstPart = firstPart;  ///
 
     const partsTail = tail(parts);
 
@@ -137,26 +128,34 @@ function singlePartsFromDirectlyLeftRecursiveDefinitionsAnbRuleName(directlyLeft
   return singleParts;
 }
 
-function singlePartsFromIndirectlyLeftRecursiveDefinitionsAndRuleName(indirectlyLeftRecursiveDefinitions, ruleName) {
-  let previousFirstPart = null;
+function firstPartFromIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions) {
+  const firstIndirectlyLeftRecursiveDefinition = first(indirectlyLeftRecursiveDefinitions),
+        indirectlyLeftRecursiveDefinition = firstIndirectlyLeftRecursiveDefinition, ///
+        parts = indirectlyLeftRecursiveDefinition.getParts(),
+        firstPart = first(parts),
+        previousFirstPart = firstPart;  ///
 
-  const singleParts = indirectlyLeftRecursiveDefinitions.reduce((singleParts, indirectlyLeftRecursiveDefinition) => {
+  indirectlyLeftRecursiveDefinitions.forEach((indirectlyLeftRecursiveDefinition) => {
     let parts = indirectlyLeftRecursiveDefinition.getParts();
 
-    const firstPart = first(parts);
+    const firstPart = first(parts),
+          matches = matchParts(firstPart, previousFirstPart);
 
-    if (previousFirstPart !== null) {
-      const matches = matchParts(firstPart, previousFirstPart);
+    if (!matches) {
+      const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
+            definition = indirectlyLeftRecursiveDefinition, ///
+            definitionString = definition.asString();
 
-      if (!matches) {
-        const definition = indirectlyLeftRecursiveDefinition, ///
-              definitionString = definition.asString();
-
-        throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule does not match one of its sibling directly left recursive definitions and therefore cannot be rewritten.`);
-      }
+      throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule does not match one of its sibling directly left recursive definitions and therefore cannot be rewritten.`);
     }
+  });
 
-    previousFirstPart = firstPart;  ///
+  return firstPart;
+}
+
+function singlePartsFromIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions) {
+  const singleParts = indirectlyLeftRecursiveDefinitions.reduce((singleParts, indirectlyLeftRecursiveDefinition) => {
+    let parts = indirectlyLeftRecursiveDefinition.getParts();
 
     const partsTail = tail(parts),
           partsTailLength = partsTail.length;

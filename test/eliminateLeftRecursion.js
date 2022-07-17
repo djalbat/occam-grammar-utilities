@@ -2,7 +2,8 @@
 
 const { assert } = require("chai"),
       { BasicLexer } = require("occam-lexers"),
-      { BasicParser } = require("occam-parsers");
+      { BasicParser } = require("occam-parsers"),
+      { FlorenceLexer, FlorenceParser } = require("occam-grammars");
 
 const { rulesUtilities, parserUtilities, eliminateLeftRecursion, removeOrRenameIntermediateNodes } = require("../lib/index.js");
 
@@ -972,70 +973,127 @@ c[custom]
     });
   });
 
-  describe.only("Florence", () => {
-    const bnf = `statement            ::= argument operator argument
+  describe("Florence", () => {
+    const bnf = `topLevelInstruction                  ::=   comparatorDeclaration 
+                                           
+                                       |   combinatorDeclaration 
+                                                                                      
+                                       ;
 
-                       | arithmeticStatement
+comparatorDeclaration                ::=   "Comparator" statement <END_OF_LINE> ;
+ 
+combinatorDeclaration                ::=   "Combinator" expression ( ":" type )? <END_OF_LINE> ;
 
-                       ;
+argument                             ::=   type 
 
-expression           ::= arithmeticExpression ;
+                                       |   expression 
+                                       
+                                       ;
 
-term                 ::= arithmeticTerm ;
+type                                 ::=   "NaturalNumber" ;
 
-type                 ::= "Number" ;
+expression!                          ::=   arithmeticExpression ;
 
-argument             ::= type | expression ;
+statement!                           ::=   arithmeticStatement ;
 
-arithmeticTerm       ::= naturalNumber
+arithmeticExpression                 ::=   "(" argument ")"
+                       
+                                       |   argument "+" argument
 
-                       | variable
+                                       ;
 
-                       ;
+arithmeticStatement                  ::=  argument ;
 
-arithmeticExpression ::= argument operator argument
-
-                       | arithmeticTerm
-
-                       ;
-
-arithmeticStatement  ::= argument operator argument ;
-
-naturalNumber        ::= "|" argument "|"
-
-                       | "zero"
-
-                       | variable
-
-                       ;
 `;
 
-    it("is rewritten", () => {
+    it.only("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A  ::=  A_ ( B~ "h" )* ;
+topLevelInstruction                  ::=   comparatorDeclaration 
+                                           
+                                       |   combinatorDeclaration 
+                                                                                      
+                                       ;
 
-    B  ::=  A "f" ( "e" "g" )*
-    
-         |  B_ ( "e" "g" )*
-
-         ;
-
-    B_ ::=  "c" ;
-              
-   B__ ::=  B_ ( "e" "g" )* ;
-
-    B~ ::=  "f" ( "e" "g" )* ;
-
-    A_ ::=  B__ "h" 
-      
-         |  "g" 
+comparatorDeclaration                ::=   "Comparator" statement <END_OF_LINE> ;
  
-         ;
+combinatorDeclaration                ::=   "Combinator" expression ( ":" type )? <END_OF_LINE> ;
+
+argument                             ::=   argument_ expression~* ;
+
+type                                 ::=   "NaturalNumber" ;
+
+expression!                          ::=   argument arithmeticExpression~ 
+ 
+                                       |   arithmeticExpression__
+                                       
+                                       ;
+
+statement!                           ::=   arithmeticStatement ;
+
+arithmeticExpression                 ::=  "(" argument ")"
+                       
+                                       |  argument "+" argument
+
+                                       ;
+
+arithmeticStatement                  ::=  argument ;
+
+arithmeticExpression__               ::=  "(" argument ")" ;
+
+arithmeticExpression~                ::=  "+" argument ;
+
+expression__                         ::=  arithmeticExpression__ ;
+                                       
+expression~                          ::=  arithmeticExpression~ ;
+
+argument_                            ::=   type 
+
+                                       |   expression__
+
+                                       ;
 
       `));
+    });
+
+    it("results in the requisite parse tree" , () => {
+      const content = `Combinator (NaturalNumber + NaturalNumber):NaturalNumber
+`,
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `    
+    
+                                                              topLevelInstruction                                                           
+                                                                       |                                                                    
+                                                             combinatorDeclaration                                                          
+                                                                       |                                                                    
+         -----------------------------------------------------------------------------------------------------------------------------      
+         |                                                |                                          |              |                |      
+Combinator[keyword]                                  expression                                 :[special]        type         <END_OF_LINE>
+                                                          |                                                         |                       
+                                                arithmeticExpression                                       NaturalNumber[name]              
+                                                          |                                                                                 
+                         ------------------------------------------------------------------                                                 
+                         |                           |                                    |                                                 
+                    ([special]                   argument                            )[special]                                             
+                                                     |                                                                                      
+                                        ---------------------------                                                                         
+                                        |                         |                                                                         
+                                    argument                 expression                                                                     
+                                        |                         |                                                                         
+                                      type              arithmeticExpression                                                                
+                                        |                         |                                                                         
+                               NaturalNumber[name]       ------------------                                                                 
+                                                         |                |                                                                 
+                                                   +[unassigned]      argument                                                              
+                                                                          |                                                                 
+                                                                        type                                                                
+                                                                          |                                                                 
+                                                                 NaturalNumber[name]                                                        
+
+`));
     });
   });
 });
@@ -1094,12 +1152,25 @@ function parseTreeStringFromBNFAndContent(bnf, content) {
 
   eliminateLeftRecursion(startRule, ruleMap);
 
-  const lexicalPattern = ".",
-        basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
-        basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
+  const { entries } = FlorenceLexer,
+        lexicalPattern = "\\+",
+        custom = lexicalPattern;  ///
 
-  const tokens = basicLexer.tokenise(content),
-        node = basicParser.parse(tokens);
+  entries.push({
+    custom
+  });
+
+  const florenceLexer = FlorenceLexer.fromEntries(entries),
+        florenceParser = new FlorenceParser(startRule, ruleMap),  ///
+        tokens = florenceLexer.tokenise(content),
+        node = florenceParser.parse(tokens);
+
+  // const lexicalPattern = ".",
+  //       basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
+  //       basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
+  //
+  // const tokens = basicLexer.tokenise(content),
+  //       node = basicParser.parse(tokens);
 
   removeOrRenameIntermediateNodes(node);
 
