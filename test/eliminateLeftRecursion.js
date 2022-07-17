@@ -971,6 +971,73 @@ c[custom]
       `));
     });
   });
+
+  describe.only("Florence", () => {
+    const bnf = `statement            ::= argument operator argument
+
+                       | arithmeticStatement
+
+                       ;
+
+expression           ::= arithmeticExpression ;
+
+term                 ::= arithmeticTerm ;
+
+type                 ::= "Number" ;
+
+argument             ::= type | expression ;
+
+arithmeticTerm       ::= naturalNumber
+
+                       | variable
+
+                       ;
+
+arithmeticExpression ::= argument operator argument
+
+                       | arithmeticTerm
+
+                       ;
+
+arithmeticStatement  ::= argument operator argument ;
+
+naturalNumber        ::= "|" argument "|"
+
+                       | "zero"
+
+                       | variable
+
+                       ;
+`;
+
+    it("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+      
+    A  ::=  A_ ( B~ "h" )* ;
+
+    B  ::=  A "f" ( "e" "g" )*
+    
+         |  B_ ( "e" "g" )*
+
+         ;
+
+    B_ ::=  "c" ;
+              
+   B__ ::=  B_ ( "e" "g" )* ;
+
+    B~ ::=  "f" ( "e" "g" )* ;
+
+    A_ ::=  B__ "h" 
+      
+         |  "g" 
+ 
+         ;
+
+      `));
+    });
+  });
 });
 
 function compare(stringA, stringB) {
