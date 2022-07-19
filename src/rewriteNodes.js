@@ -9,7 +9,7 @@ import { ruleNameFromReducedRuleName, ruleNameFromRepeatedRuleName, repeatedRule
 
 const { first, unshift } = arrayUtilities;
 
-export default function removeOrRenameIntermediateNodes(node) {
+export default function rewriteNodes(node) {
   rearrangeNodes(node);
 
   removeRepeatedNodes(node);

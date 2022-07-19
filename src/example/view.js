@@ -12,15 +12,15 @@ import Paragraph from "./paragraph";
 import SubHeading from "./subHeading";
 import SizeableDiv from "./div/sizeable";
 import BNFTextarea from "./textarea/bnf";
+import rewriteNodes from "../rewriteNodes";
 import rulesUtilities from "../utilities/rules";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
 import StartRuleNameInput from "./input/startRuleName";
 import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
+import RewriteNodesCheckbox from "./checkbox/rewriteNodes"
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
-import removeOrRenameIntermediateNodes from "../removeOrRenameIntermediateNodes";
-import RemoveOrRenameIntermediateNodesCheckbox from "./checkbox/removeOrRenameIntermediateNodes"
 
 import { rulesFromBNF } from "../utilities/parser";
 import { UNASSIGNED_ENTRY } from "../constants";
@@ -86,10 +86,10 @@ class View extends Element {
     //       node = florenceParser.parse(tokens);
 
     if (node !== null) {
-      const removeOrRenameIntermediateNodesCheckboxChecked = this.isRemoveOrRenameIntermediateNodesCheckboxChecked();
+      const rewriteNodesCheckboxChecked = this.isRewriteNodesCheckboxChecked();
 
-      if (removeOrRenameIntermediateNodesCheckboxChecked) {
-        removeOrRenameIntermediateNodes(node);
+      if (rewriteNodesCheckboxChecked) {
+        rewriteNodes(node);
       }
 
       const abridged = true;
@@ -136,8 +136,8 @@ class View extends Element {
             </SubHeading>
             <ParseTreeTextarea />
             <Paragraph>
-              <RemoveOrRenameIntermediateNodesCheckbox onChange={this.changeHandler} checked />
-              Remove or rename intermediate nodes
+              <RewriteNodesCheckbox onChange={this.changeHandler} checked />
+              Rewrite nodes
             </Paragraph>
           </RowsDiv>
         </ColumnDiv>

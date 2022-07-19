@@ -5,7 +5,7 @@ const { assert } = require("chai"),
       { BasicParser } = require("occam-parsers"),
       { FlorenceLexer, FlorenceParser } = require("occam-grammars");
 
-const { rulesUtilities, parserUtilities, eliminateLeftRecursion, removeOrRenameIntermediateNodes } = require("../lib/index.js");
+const { rewriteNodes, rulesUtilities, parserUtilities, eliminateLeftRecursion } = require("../lib/index.js");
 
 const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
@@ -321,7 +321,7 @@ A ::= "g"
     });
   });
 
-  describe("a directly left recursive definition", () => {
+  describe.only("a directly left recursive definition", () => {
     const bnf = `
  
     A ::= A "e"
@@ -340,27 +340,41 @@ A ::= "g"
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
+        
+    A  ::= A_ A~* ;
     
-      A  ::= A_ "g"* ;
-      
-      A_ ::= "f" ;
-           
-      `));
+    A_ ::= "g"
+    
+         | "h"
+    
+         ;
+    
+    A~ ::= "e"
+    
+         | "f"
+    
+         ;
+         
+     `));
     });
 
-    it.only("results in the requisite parse tree", () => {
+    it("results in the requisite parse tree", () => {
       const content = "gef",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-              A              
-              |              
-    ---------------------    
-    |         |         |    
-    A     g[custom] g[custom]
-    |                        
-f[custom]                    
+                   A           
+                   |           
+           ----------------    
+           |              |    
+           A          f[custom]
+           |                   
+      -----------              
+      |         |              
+      A     e[custom]          
+      |                        
+  g[custom]                    
 
       `));
     });
@@ -1187,7 +1201,7 @@ function parseTreeStringFromBNFAndContent(bnf, content) {
   const tokens = basicLexer.tokenise(content),
         node = basicParser.parse(tokens);
 
-  removeOrRenameIntermediateNodes(node);
+  rewriteNodes(node);
 
   const abridged = true,
         parseTree = node.asParseTree(tokens, abridged);
