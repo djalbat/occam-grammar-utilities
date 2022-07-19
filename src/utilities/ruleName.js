@@ -18,18 +18,6 @@ export function repeatedRuleNameFromRuleName(ruleName) {
   return repeatedRuleName;
 }
 
-export function doesReducedRuleNameMatchRuleName(reducedRuleName, ruleName) {
-  const ruleNameA = ruleName; ///
-
-  ruleName = ruleNameFromReducedRuleName(reducedRuleName);
-
-  const ruleNameB = ruleName; ///
-
-  const reducedRuleNameMatchesRuleName = (ruleNameA === ruleNameB);  ///
-
-  return reducedRuleNameMatchesRuleName;
-}
-
 export function directlyReducedRuleNameFromRuleName(ruleName) {
   const directlyReducedRuleName = `${ruleName}_`;
 

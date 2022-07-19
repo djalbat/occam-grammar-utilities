@@ -13,6 +13,14 @@ export function cloneParts(parts) {
   return parts;
 }
 
+export function arePartsRecursive(parts) {
+  const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+        recursiveRuleNamesLength = recursiveRuleNames.length,
+        partsRecursive = (recursiveRuleNamesLength > 0);
+
+  return partsRecursive;
+}
+
 export function singlePartFromParts(parts) {
   let singlePart;
 
@@ -29,6 +37,14 @@ export function singlePartFromParts(parts) {
   }
 
   return singlePart;
+}
+
+export function arePartsLeftRecursive(parts) {
+  const leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+        leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length,
+        partsLeftRecursive = (leftRecursiveRuleNamesLength > 0);
+
+  return partsLeftRecursive;
 }
 
 export function repeatedPartFromParts(parts) {

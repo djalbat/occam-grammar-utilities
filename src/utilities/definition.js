@@ -3,7 +3,7 @@
 import { arrayUtilities } from "necessary";
 
 import { isPartComplex } from "../utilities/part";
-import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../utilities/parts";
+import { arePartsRecursive, arePartsLeftRecursive, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../utilities/parts";
 
 const { first } = arrayUtilities;
 
@@ -17,17 +17,17 @@ export function isDefinitionComplex(definition) {
 }
 
 export function isDefinitionRecursive(definition) {
-  const recursiveRuleNames = recursiveRuleNamesFromDefinition(definition),
-        recursiveRuleNamesLength = recursiveRuleNames.length,
-        definitionRecursive = (recursiveRuleNamesLength > 0);
+  const parts = definition.getParts(),
+        partsRecursive = arePartsRecursive(parts),
+        definitionRecursive = partsRecursive; ///
 
   return definitionRecursive;
 }
 
 export function isDefinitionLeftRecursive(definition) {
-  const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
-        leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length,
-        definitionLeftRecursive = (leftRecursiveRuleNamesLength > 0);
+  const parts = definition.getParts(),
+        partsLeftRecursive = arePartsLeftRecursive(parts),
+        definitionLeftRecursive = partsLeftRecursive; ///
 
   return definitionLeftRecursive;
 }

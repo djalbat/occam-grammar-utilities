@@ -5,7 +5,6 @@ import { arrayUtilities } from "necessary";
 
 import ReducedNode from "../../node/reduced";
 import DirectlyLeftRecursiveDefinition from "../../definition/recursive/left/directly";
-import IndirectlyLeftRecursiveDefinition from "../../definition/recursive/left/indirectly";
 
 import { directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
@@ -18,10 +17,9 @@ export default class DirectlyReducedRule extends Rule {
     let definitions = rule.getDefinitions();
 
     definitions = find(definitions, (definition) => { ///
-      const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition),
-            definitionIndirectlyLeftRecursiveDefinition = (definition instanceof IndirectlyLeftRecursiveDefinition);
+      const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition);
 
-      if (!definitionDirectlyLeftRecursiveDefinition && !definitionIndirectlyLeftRecursiveDefinition) {
+      if (!definitionDirectlyLeftRecursiveDefinition) {
         return true;
       }
     });

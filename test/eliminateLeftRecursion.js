@@ -324,12 +324,16 @@ A ::= "g"
   describe("a directly left recursive definition", () => {
     const bnf = `
  
-    A ::= A "g"
+    A ::= A "e"
     
-        | "f"
+        | A "f"
     
+        | "g"
+
+        | "h"
+
         ;
-  
+    
 `;
 
     it("is rewritten", () => {
@@ -344,20 +348,20 @@ A ::= "g"
       `));
     });
 
-    it("results in the requisite parse tree", () => {
-      const content = "fgg",
+    it.only("results in the requisite parse tree", () => {
+      const content = "gef",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-                A              
-                |              
-      ---------------------    
-      |         |         |    
-      A     g[custom] g[custom]
-      |                        
-  f[custom]                    
-           
+              A              
+              |              
+    ---------------------    
+    |         |         |    
+    A     g[custom] g[custom]
+    |                        
+f[custom]                    
+
       `));
     });
   });
@@ -472,17 +476,21 @@ A ::= "g"
 
     it("result in the requisite parse tree" , () => {
       const content = "cghg",
-          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
-          
-                        A                
-                        |                
-           --------------------------    
-           |              |         |    
-           A              B     g[custom]
+            
+                            A            
+                            |            
+                   ------------------    
+                   |                |    
+                   B            g[custom]
+                   |                     
+           ----------------              
            |              |              
-      -----------     h[custom]          
+           A          h[custom]          
+           |                             
+      -----------                        
       |         |                        
       B     g[custom]                    
       |                                  
@@ -628,17 +636,21 @@ A ::= "g"
 
     it("result in the requisite parse tree" , () => {
       const content = "cghg",
-          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
-          
-                        A                
-                        |                
-           --------------------------    
-           |              |         |    
-           A              B     g[custom]
+            
+                            A            
+                            |            
+                   ------------------    
+                   |                |    
+                   B            g[custom]
+                   |                     
+           ----------------              
            |              |              
-      -----------     h[custom]          
+           A          h[custom]          
+           |                             
+      -----------                        
       |         |                        
       B     g[custom]                    
       |                                  
@@ -714,21 +726,29 @@ A ::= "g"
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "gfheh",
-          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+      const content = "dhfh",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-                        A                        
-                        |                        
-    -----------------------------------------    
-    |         |         |         |         |    
-    A         B     h[custom]     B     h[custom]
-    |         |                   |              
-g[custom] f[custom]               C              
-                                  |              
-                              e[custom]          
-             
+                            A            
+                            |            
+                   ------------------    
+                   |                |    
+                   B            h[custom]
+                   |                     
+           ----------------              
+           |              |              
+           A          f[custom]          
+           |                             
+      -----------                        
+      |         |                        
+      B     h[custom]                    
+      |                                  
+      C                                  
+      |                                  
+  d[custom]                              
+  
       `));
     });
   });
@@ -793,7 +813,7 @@ g[custom] f[custom]               C
 
     it("result in the requisite parse tree" , () => {
       const content = "dhfg",
-          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
@@ -973,7 +993,7 @@ c[custom]
     });
   });
 
-  describe("Florence", () => {
+  xdescribe("Florence", () => {
     const bnf = `topLevelInstruction                  ::=   comparatorDeclaration 
                                            
                                        |   combinatorDeclaration 
@@ -1006,7 +1026,7 @@ arithmeticStatement                  ::=  argument ;
 
 `;
 
-    it.only("is rewritten", () => {
+    it("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -1076,22 +1096,17 @@ Combinator[keyword]                                  expression                 
                                                 arithmeticExpression                                       NaturalNumber[name]              
                                                           |                                                                                 
                          ------------------------------------------------------------------                                                 
-                         |                           |                                    |                                                 
-                    ([special]                   argument                            )[special]                                             
-                                                     |                                                                                      
-                                        ---------------------------                                                                         
-                                        |                         |                                                                         
-                                    argument                 expression                                                                     
-                                        |                         |                                                                         
-                                      type              arithmeticExpression                                                                
-                                        |                         |                                                                         
-                               NaturalNumber[name]       ------------------                                                                 
-                                                         |                |                                                                 
-                                                   +[unassigned]      argument                                                              
-                                                                          |                                                                 
-                                                                        type                                                                
-                                                                          |                                                                 
-                                                                 NaturalNumber[name]                                                        
+                         |                               |                                |                                                 
+                    ([special]                       argument                        )[special]                                             
+                                                         |                                                                                  
+                                        -----------------------------------                                                                 
+                                        |                |                |                                                                 
+                                    argument       +[unassigned]      argument                                                              
+                                        |                                 |                                                                 
+                                      type                              type                                                                
+                                        |                                 |                                                                 
+                               NaturalNumber[name]               NaturalNumber[name]                                                        
+
 
 `));
     });
@@ -1152,25 +1167,25 @@ function parseTreeStringFromBNFAndContent(bnf, content) {
 
   eliminateLeftRecursion(startRule, ruleMap);
 
-  const { entries } = FlorenceLexer,
-        lexicalPattern = "\\+",
-        custom = lexicalPattern;  ///
-
-  entries.push({
-    custom
-  });
-
-  const florenceLexer = FlorenceLexer.fromEntries(entries),
-        florenceParser = new FlorenceParser(startRule, ruleMap),  ///
-        tokens = florenceLexer.tokenise(content),
-        node = florenceParser.parse(tokens);
-
-  // const lexicalPattern = ".",
-  //       basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
-  //       basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
+  // const { entries } = FlorenceLexer,
+  //       lexicalPattern = "\\+",
+  //       custom = lexicalPattern;  ///
   //
-  // const tokens = basicLexer.tokenise(content),
-  //       node = basicParser.parse(tokens);
+  // entries.push({
+  //   custom
+  // });
+  //
+  // const florenceLexer = FlorenceLexer.fromEntries(entries),
+  //       florenceParser = new FlorenceParser(startRule, ruleMap),  ///
+  //       tokens = florenceLexer.tokenise(content),
+  //       node = florenceParser.parse(tokens);
+
+  const lexicalPattern = ".", ///
+        basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
+        basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
+
+  const tokens = basicLexer.tokenise(content),
+        node = basicParser.parse(tokens);
 
   removeOrRenameIntermediateNodes(node);
 

@@ -1,100 +1,138 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
+
 import ReducedNode from "./node/reduced";
 import RepeatedNode from "./node/repeated";
 
-import { ruleNameFromReducedRuleName, ruleNameFromRepeatedRuleName, doesReducedRuleNameMatchRuleName } from "./utilities/ruleName";
+import { ruleNameFromReducedRuleName, ruleNameFromRepeatedRuleName, repeatedRuleNameFromRuleName } from "./utilities/ruleName";
+
+const { first, unshift } = arrayUtilities;
 
 export default function removeOrRenameIntermediateNodes(node) {
-  removeOrRenameReducedNodes(node);
+  rearrangeNodes(node);
 
-  renameRepeatedNodes(node);
+  removeRepeatedNodes(node);
+
+  renameReducedNodesAndRepeatedNodes(node);
 }
 
-function renameRepeatedNodes(node) {
+function rearrangeNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (nodeNonTerminalNode) {
-    const nonTerminalNode = node,
-          childNodes = nonTerminalNode.getChildNodes();
+    const nonTerminalNode = node; ///
+
+    let childNodes = nonTerminalNode.getChildNodes();
 
     childNodes.forEach((childNode) => {
-      const childNodeRepeatedNode = (childNode instanceof RepeatedNode);
+      const node = childNode; ///
 
-      if (childNodeRepeatedNode) {
-        const repeatedNode = childNode, ///
-              repeatedNodeRuleName = repeatedNode.getRuleName(),
-              repeatedRuleName = repeatedNodeRuleName,  ///
-              ruleName = ruleNameFromRepeatedRuleName(repeatedRuleName);
+      rearrangeNodes(node);
+    });
 
-        childNode.setRuleName(ruleName);
-      }
+    let rearranged = rearrangeChildNodes(childNodes);
 
-      renameRepeatedNodes(childNode);
-    })
+    while (rearranged) {
+      childNodes = nonTerminalNode.getChildNodes();
+
+      rearranged = rearrangeChildNodes(childNodes)
+    }
   }
 }
 
-function removeOrRenameReducedNodes(node) {
+function removeRepeatedNodes(node) {
+  const nodeNonTerminalNode = node.isNonTerminalNode();
+
+  if (nodeNonTerminalNode) {
+    const nonTerminalNode = node; ///
+
+    let childNodes = nonTerminalNode.getChildNodes();
+
+    childNodes.forEach((childNode) => {
+      const node = childNode; ///
+
+      removeRepeatedNodes(node);
+    });
+
+    const childNodesLength = childNodes.length;
+
+    if (childNodesLength === 1) {
+      const firstChildNode = first(childNodes),
+            childNode = firstChildNode,
+            childNodeRepeatedNode = (childNode instanceof RepeatedNode);
+
+      if (childNodeRepeatedNode) {
+        const ruleName = node.getRuleName(),
+              repeatedNode = childNode,
+              repeatedNodeRuleName = repeatedNode.getRuleName(),
+              repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
+
+        if (repeatedNodeRuleName === repeatedRuleName) {
+          const repeatedNodeChildNodes = repeatedNode.getChildNodes(),
+                start = 0,
+                deleteCount = 1;
+
+          childNodes.splice(start, deleteCount, ...repeatedNodeChildNodes);
+        }
+      }
+    }
+  }
+}
+
+function rearrangeChildNodes(childNodes) {
+  const rearranged = childNodes.some((childNode, index) => {
+    if (index > 0) {
+      const childNodeRepeatedNode = (childNode instanceof RepeatedNode);
+
+      if (childNodeRepeatedNode) {
+        const start = 0,
+              deleteCount = index;  ///
+
+        childNodes = childNodes.splice(start, deleteCount);
+
+        const repeatedNode = childNode, ///
+              repeatedNodeChildNodes = repeatedNode.getChildNodes();
+
+        unshift(repeatedNodeChildNodes, childNodes);
+
+        return true;
+      }
+    }
+  });
+
+  return rearranged;
+}
+
+function renameReducedNodesAndRepeatedNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (nodeNonTerminalNode) {
     const nonTerminalNode = node, ///
-          ruleName = nonTerminalNode.getRuleName();
+          childNodes = nonTerminalNode.getChildNodes();
 
-    let childNodes = nonTerminalNode.getChildNodes();
+    childNodes.forEach((childNode) => {
+      const childNodeReducedNode = (childNode instanceof ReducedNode),
+            childNodeRepeatedNode = (childNode instanceof RepeatedNode);
 
-    childNodes = removeOrRenameReducedChildNodes(childNodes, ruleName);
+      if (false) {
+        ///
+      } else if (childNodeReducedNode) {
+        const reducedNode = childNode,  ///
+              reducedNodeRuleName = reducedNode.getRuleName(),
+              reducedRuleName = reducedNodeRuleName,  ///
+              ruleName = ruleNameFromReducedRuleName(reducedRuleName);
 
-    nonTerminalNode.setChildNodes(childNodes)
-  }
-}
+        reducedNode.setRuleName(ruleName);
+      } else if (childNodeRepeatedNode) {
+        const repeatedNode = childNode,  ///
+              repeatedNodeRuleName = repeatedNode.getRuleName(),
+              repeatedRuleName = repeatedNodeRuleName,  ///
+              ruleName = ruleNameFromRepeatedRuleName(repeatedRuleName);
 
-function removeOrRenameReducedChildNodes(childNodes, ruleName) {
-  const childNodesLength = childNodes.length;
-
-  childNodes = childNodes.reduce((childNodes, childNode) => {
-    const childNodeReducedNode = (childNode instanceof ReducedNode);
-
-    if (childNodeReducedNode) {
-      const reducedNode = childNode, ///
-            reducedNodeRuleName = reducedNode.getRuleName(),
-            reducedRuleName = reducedNodeRuleName,  ///
-            reducedRuleNameMatchesRuleName = doesReducedRuleNameMatchRuleName(reducedRuleName, ruleName);
-
-      if (reducedRuleNameMatchesRuleName) {
-        if (childNodesLength > 1) {
-          const ruleName = ruleNameFromReducedRuleName(reducedRuleName);
-
-          childNode.setRuleName(ruleName);
-
-          removeOrRenameReducedNodes(childNode);
-
-          childNodes.push(childNode);
-        } else {
-          let childNodeChildNodes = childNode.getChildNodes();
-
-          childNodeChildNodes = removeOrRenameReducedChildNodes(childNodeChildNodes);
-
-          childNodes = childNodes.concat(childNodeChildNodes);
-        }
-      } else {
-        const ruleName = ruleNameFromReducedRuleName(reducedRuleName);
-
-        childNode.setRuleName(ruleName);
-
-        removeOrRenameReducedNodes(childNode);
-
-        childNodes.push(childNode);
+        repeatedNode.setRuleName(ruleName);
       }
-    } else {
-      removeOrRenameReducedNodes(childNode);
-
-      childNodes.push(childNode);
-    }
-
-    return childNodes;
-  }, []);
-
-  return childNodes;
+      renameReducedNodesAndRepeatedNodes(childNode);
+    });
+  }
 }

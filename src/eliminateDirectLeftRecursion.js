@@ -4,9 +4,8 @@ import { arrayUtilities } from "necessary";
 
 import RecursiveDefinition from "./definition/recursive";
 import DirectlyReducedRule from "./rule/reduced/directly";
+import DirectlyRepeatedRule from "./rule/repeated/directly";
 import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
-
-import { mergeDirectlyLeftRecursiveDefinitions } from "./utilities/definitions";
 
 const { find, filter } = arrayUtilities;
 
@@ -22,24 +21,36 @@ export default function eliminateDirectLeftRecursion(leftRecursiveDefinitions, r
 
 function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap) {
   const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
-        rule = ruleMap[ruleName],
-        directlyReducedRule = DirectlyReducedRule.fromRule(rule);
+        rule = ruleMap[ruleName];
+
+  const directlyReducedRule = DirectlyReducedRule.fromRule(rule),
+        directlyRepeatedRule = DirectlyRepeatedRule.fromRule(rule);
 
   if (directlyReducedRule === null) {
     const definition = directlyLeftRecursiveDefinition, ///
           definitionString = definition.asString();
 
-    throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is isolated and therefore cannot be rewritten.`);
+    throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is isolated and therefore the rule cannot be rewritten.`);
   }
 
-  const directlyReducedRuleName = directlyReducedRule.getName();
+  if (directlyRepeatedRule === null) {
+    const definition = directlyLeftRecursiveDefinition, ///
+          definitionString = definition.asString();
+
+    throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore the rule cannot be rewritten.`);
+  }
+
+  const directlyReducedRuleName = directlyReducedRule.getName(),
+        directlyRepeatedRuleName = directlyRepeatedRule.getName();
 
   ruleMap[directlyReducedRuleName] = directlyReducedRule;
+
+  ruleMap[directlyRepeatedRuleName] = directlyRepeatedRule;
 
   const leftRecursiveRuleName = directlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
         directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(leftRecursiveDefinitions, leftRecursiveRuleName);
 
-  directlyLeftRecursiveDefinition = mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions);  ///
+  // directlyLeftRecursiveDefinition = mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions);  ///
 
   const recursiveDefinition = RecursiveDefinition.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition),
         replacementDefinition = recursiveDefinition,  ///

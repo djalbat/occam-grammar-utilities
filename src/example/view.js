@@ -33,7 +33,7 @@ class View extends Element {
   }
 
   changeHandler = (event, element) => {
-    // try {
+    try {
       const bnf = this.getBNF(),
             startRuleName = this.getStartRuleName();
 
@@ -55,27 +55,35 @@ class View extends Element {
       const parseTree = this.getParseTree(startRule, ruleMap);
 
       this.setParseTree(parseTree);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   getParseTree(startRule, ruleMap) {
     let parseTree = null;
 
-    const { entries } = FlorenceLexer,
-          lexicalPattern = this.getLexicalPattern(),
-          custom = lexicalPattern;  ///
+    const lexicalPattern = this.getLexicalPattern(),
+          basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
+          basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
 
-    entries.push({
-      custom
-    });
+    const content = this.getContent(),
+          tokens = basicLexer.tokenise(content),
+          node = basicParser.parse(tokens);
 
-    const florenceLexer = FlorenceLexer.fromEntries(entries),
-          florenceParser = new FlorenceParser(startRule, ruleMap),  ///
-          content = this.getContent(),
-          tokens = florenceLexer.tokenise(content),
-          node = florenceParser.parse(tokens);
+    // const { entries } = FlorenceLexer,
+    //       lexicalPattern = this.getLexicalPattern(),
+    //       custom = lexicalPattern;  ///
+    //
+    // entries.push({
+    //   custom
+    // });
+    //
+    // const florenceLexer = FlorenceLexer.fromEntries(entries),
+    //       florenceParser = new FlorenceParser(startRule, ruleMap),  ///
+    //       content = this.getContent(),
+    //       tokens = florenceLexer.tokenise(content),
+    //       node = florenceParser.parse(tokens);
 
     if (node !== null) {
       const removeOrRenameIntermediateNodesCheckboxChecked = this.isRemoveOrRenameIntermediateNodesCheckboxChecked();
@@ -158,45 +166,23 @@ class View extends Element {
     this.keyUpHandler();
   }
 
-  static initialBNF = `topLevelInstruction                  ::=   comparatorDeclaration 
-                                           
-                                       |   combinatorDeclaration 
-                                                                                      
-                                       ;
+  static initialBNF = `    A ::= A "e"
+    
+        | A "f"
+    
+        | "g"
 
-comparatorDeclaration                ::=   "Comparator" statement <END_OF_LINE> ;
- 
-combinatorDeclaration                ::=   "Combinator" expression ( ":" type )? <END_OF_LINE> ;
+        | "h"
 
-argument                             ::=   type 
-
-                                       |   expression 
-                                       
-                                       ;
-
-type                                 ::=   "NaturalNumber" ;
-
-expression!                          ::=   arithmeticExpression ;
-
-statement!                           ::=   arithmeticStatement ;
-
-arithmeticExpression                 ::=  "(" argument ")"
-                       
-                                       |  argument "+" argument
-
-                                       ;
-
-arithmeticStatement                  ::=  argument ;
-
-
+        ;
+  
 `;
 
-  static initialContent = `Combinator (NaturalNumber + NaturalNumber):NaturalNumber
-`;
+  static initialContent = "gef";
 
   static initialStartRuleName = "";
 
-  static initialLexicalPattern = "\\+";
+  static initialLexicalPattern = ".";
 
   static tagName = "div";
 
@@ -210,3 +196,25 @@ export default withStyle(View)`
   padding: 1rem;
   
 `;
+
+function basicLexerFromLexicalPattern(lexicalPattern) {
+  const unassigned = "^.*$",  ///
+        custom = lexicalPattern,  ///
+        entries = [
+          {
+            custom
+          },
+          {
+            unassigned
+          }
+        ],
+        basicLexer = BasicLexer.fromEntries(entries);
+
+  return basicLexer;
+}
+
+function basicParserFromStartRuleAndRuleMap(startRule, ruleMap) {
+  const basicParser = new BasicParser(startRule, ruleMap);
+
+  return basicParser;
+}
