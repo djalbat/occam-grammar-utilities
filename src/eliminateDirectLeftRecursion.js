@@ -24,39 +24,22 @@ function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, leftRecursi
         rule = ruleMap[ruleName];
 
   const directlyReducedRule = DirectlyReducedRule.fromRule(rule),
-        directlyRepeatedRule = DirectlyRepeatedRule.fromRule(rule);
-
-  if (directlyReducedRule === null) {
-    const definition = directlyLeftRecursiveDefinition, ///
-          definitionString = definition.asString();
-
-    throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is isolated and therefore the rule cannot be rewritten.`);
-  }
-
-  if (directlyRepeatedRule === null) {
-    const definition = directlyLeftRecursiveDefinition, ///
-          definitionString = definition.asString();
-
-    throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore the rule cannot be rewritten.`);
-  }
-
-  const directlyReducedRuleName = directlyReducedRule.getName(),
+        directlyRepeatedRule = DirectlyRepeatedRule.fromRule(rule),
+        directlyReducedRuleName = directlyReducedRule.getName(),
         directlyRepeatedRuleName = directlyRepeatedRule.getName();
 
   ruleMap[directlyReducedRuleName] = directlyReducedRule;
 
   ruleMap[directlyRepeatedRuleName] = directlyRepeatedRule;
 
-  const leftRecursiveRuleName = directlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
-        directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(leftRecursiveDefinitions, leftRecursiveRuleName);
-
-  // directlyLeftRecursiveDefinition = mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions);  ///
-
   const recursiveDefinition = RecursiveDefinition.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition),
-        replacementDefinition = recursiveDefinition,  ///
-        removedLeftRecursiveDefinitions = directlyLeftRecursiveDefinitions; ///
+        replacementDefinition = recursiveDefinition; ///
 
   rule.replaceAllDefinitions(replacementDefinition);
+
+  const leftRecursiveRuleName = directlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
+        directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(leftRecursiveDefinitions, leftRecursiveRuleName),  ///
+        removedLeftRecursiveDefinitions = directlyLeftRecursiveDefinitions;
 
   amendLeftRecursiveDefinitions(leftRecursiveDefinitions, removedLeftRecursiveDefinitions);
 }

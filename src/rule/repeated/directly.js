@@ -7,49 +7,60 @@ import RepeatedNode from "../../node/repeated";
 import RecursiveDefinition from "../../definition/recursive";
 import DirectlyLeftRecursiveDefinition from "../../definition/recursive/left/directly";
 
+import { matchParts } from "../../utilities/part";
 import { repeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
-const { find, tail } = arrayUtilities;
+const { first, find, tail } = arrayUtilities;
 
 export default class DirectlyRepeatedRule extends Rule {
   static fromRule(rule) {
-    let directlyRepeatedRule = null;
-
     let definitions = rule.getDefinitions();
 
-    definitions = find(definitions, (definition) => { ///
-      const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition);
+    const ruleName = rule.getName(),
+          directlyLeftRecursiveDefinitions = find(definitions, (definition) => { ///
+            const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition);
 
-      if (definitionDirectlyLeftRecursiveDefinition) {
-        return true;
+            if (definitionDirectlyLeftRecursiveDefinition) {
+              return true;
+            }
+          }),
+          firstDirectlyLeftRecursiveDefinition = first(directlyLeftRecursiveDefinitions),
+          directlyLeftRecursiveDefinition = firstDirectlyLeftRecursiveDefinition, ///
+          parts = directlyLeftRecursiveDefinition.getParts(),
+          firstPart = first(parts),
+          previousFirstPart = firstPart;  ///
+
+    definitions = directlyLeftRecursiveDefinitions.map((directlyLeftRecursiveDefinition) => {
+      let parts = directlyLeftRecursiveDefinition.getParts();
+
+      const firstPart = first(parts),
+            matches = matchParts(firstPart, previousFirstPart);
+
+      if (!matches) {
+        const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
+              definition = directlyLeftRecursiveDefinition, ///
+              definitionString = definition.asString();
+
+        throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule does not match one of its sibling directly left recursive definitions and therefore the rule cannot be rewritten.`);
       }
+
+      const partsTail = tail(parts);
+
+      parts = partsTail;  ///
+
+      const recursiveDefinition = RecursiveDefinition.fromRuleNameAndParts(ruleName, parts),
+            definition = (recursiveDefinition !== null) ?
+                            recursiveDefinition : ///
+                              new Definition(parts);
+
+      return definition;
     });
 
-    const definitionsLength = definitions.length;
-
-    if (definitionsLength > 0) {
-      const ruleName = rule.getName();
-
-      definitions = definitions.map((definition) => {
-        let parts = definition.getParts();
-
-        const partsTail = tail(parts);
-
-        parts = partsTail;  ///
-
-        definition = RecursiveDefinition.fromRuleNameAndParts(ruleName, parts) ||
-                      new Definition(parts);
-
-        return definition;
-      });
-
-      const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
-            name = repeatedRuleName, ///
-            ambiguous = false,
-            NonTerminalNode = RepeatedNode;  ///
-
-      directlyRepeatedRule = new DirectlyRepeatedRule(name, ambiguous, definitions, NonTerminalNode);
-    }
+    const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+          name = repeatedRuleName, ///
+          ambiguous = false,
+          NonTerminalNode = RepeatedNode,  ///
+          directlyRepeatedRule = new DirectlyRepeatedRule(name, ambiguous, definitions, NonTerminalNode);
 
     return directlyRepeatedRule;
   }

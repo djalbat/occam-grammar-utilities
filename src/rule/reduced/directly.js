@@ -12,11 +12,9 @@ const { find } = arrayUtilities;
 
 export default class DirectlyReducedRule extends Rule {
   static fromRule(rule) {
-    let directlyReducedRule = null;
-
     let definitions = rule.getDefinitions();
 
-    definitions = find(definitions, (definition) => { ///
+    const directlyLeftRecursiveDefinitions = find(definitions, (definition) => { ///
       const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition);
 
       if (!definitionDirectlyLeftRecursiveDefinition) {
@@ -24,17 +22,23 @@ export default class DirectlyReducedRule extends Rule {
       }
     });
 
-    const definitionsLength = definitions.length;
+    const directlyLeftRecursiveDefinitionsLength = directlyLeftRecursiveDefinitions.length;
 
-    if (definitionsLength > 0) {
-      const ruleName = rule.getName(),
-            directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
-            name = directlyReducedRuleName, ///
-            ambiguous = false,
-            NonTerminalNode = ReducedNode;  ///
+    if (directlyLeftRecursiveDefinitionsLength === 0) {
+      const ruleName = rule.getName();
 
-      directlyReducedRule = new DirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
+      throw new Error(`The '${ruleName}' rule is isolated and therefore the rule cannot be rewritten.`);
     }
+
+    const ruleName = rule.getName(),
+          directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
+          name = directlyReducedRuleName, ///
+          ambiguous = false;
+
+    definitions = directlyLeftRecursiveDefinitions; ///
+
+    const NonTerminalNode = ReducedNode,  ///
+          directlyReducedRule = new DirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
 
     return directlyReducedRule;
   }

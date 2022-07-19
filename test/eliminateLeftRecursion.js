@@ -321,12 +321,10 @@ A ::= "g"
     });
   });
 
-  describe.only("a directly left recursive definition", () => {
+  describe("a directly left recursive definition", () => {
     const bnf = `
  
-    A ::= A "e"
-    
-        | A "f"
+    A ::= A "f"
     
         | "g"
 
@@ -349,47 +347,43 @@ A ::= "g"
     
          ;
     
-    A~ ::= "e"
-    
-         | "f"
-    
-         ;
+    A~ ::= "f" ;
          
      `));
     });
 
     it("results in the requisite parse tree", () => {
-      const content = "gef",
+      const content = "gff",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-                   A           
-                   |           
-           ----------------    
-           |              |    
-           A          f[custom]
-           |                   
-      -----------              
-      |         |              
-      A     e[custom]          
-      |                        
-  g[custom]                    
+                     A           
+                     |           
+             ----------------    
+             |              |    
+             A          f[custom]
+             |                   
+        -----------              
+        |         |              
+        A     f[custom]          
+        |                        
+    g[custom]                    
 
       `));
     });
   });
 
-  describe("two sibling directly left recursive definitions", () => {
+  describe.only("two sibling directly left recursive definitions", () => {
     const bnf = `
    
     A ::= "c"
 
-        | A* "f" "g"
+        | A... "f" "g"
     
         | "d"
 
-        | A* "h"
+        | A... "h"
     
         | "e"
     
@@ -402,32 +396,42 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
     
-  A  ::= A_* ( ( "f" "g" ) | "h" )* ;
-  
-  A_ ::= "c" 
-  
-       | "d" 
-  
-       | "e"
-       
-       ;
-
+    A  ::= A_... A~* ;
+    
+    A_ ::= "c"
+    
+         | "d"
+    
+         | "e"
+    
+         ;
+    
+    A~ ::= "f" "g"
+    
+         | "h"
+    
+         ;
+     
       `));
     });
 
     it("result in the requisite parse tree", () => {
-      const content = "ehfg",
+      const content = "cfgh",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-                     A                   
-                     |                   
-      -------------------------------    
-      |         |         |         |    
-      A     h[custom] f[custom] g[custom]
-      |                                  
-  e[custom]                              
+                            A              
+                            |              
+                  ---------------------    
+                  |                   |    
+                  A               h[custom]
+                  |                        
+        ---------------------              
+        |         |         |              
+        A     f[custom] g[custom]          
+        |                                  
+    c[custom]                              
              
       `));
     });

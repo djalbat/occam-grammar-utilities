@@ -1,13 +1,15 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
 import { Definition, Parts } from "occam-parsers";
 
-import {ruleNamePartFromRuleName} from "../utilities/part";
+import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 import { arePartsRecursive, recursiveRuleNamesFromParts } from "../utilities/parts";
+import { ruleNamePartFromRuleName, directlyReducedPartFromPart } from "../utilities/part";
 import { isDefinitionRecursive, recursiveRuleNamesFromDefinition } from "../utilities/definition";
-import { repeatedRuleNameFromRuleName, directlyReducedRuleNameFromRuleName } from "../utilities/ruleName";
 
-const { ZeroOrMorePartsPart } = Parts;
+const { first } = arrayUtilities,
+      { ZeroOrMorePartsPart } = Parts;
 
 export default class RecursiveDefinition extends Definition {
   constructor(parts, ruleName, recursiveRuleNames) {
@@ -56,17 +58,22 @@ export default class RecursiveDefinition extends Definition {
   }
 
   static fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {
-    const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
+    let parts = directlyLeftRecursiveDefinition.getParts();
+
+    const firstPart = first(parts),
+          part = firstPart, ///
+          directlyReducedPart = directlyReducedPartFromPart(part),
+          ruleName = directlyLeftRecursiveDefinition.getRuleName(),
           repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
           repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
-          directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
-          directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyReducedRuleName),
-          zeroOrMoreDirectlyRepeatedRuleNamePartPart = new ZeroOrMorePartsPart(repeatedRuleNamePart),
-          parts = [
-            directlyRepeatedRuleNamePart,
-            zeroOrMoreDirectlyRepeatedRuleNamePartPart
-          ],
-          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          zeroOrMoreDirectlyRepeatedRuleNamePartPart = new ZeroOrMorePartsPart(repeatedRuleNamePart);
+
+    parts = [
+      directlyReducedPart,
+      zeroOrMoreDirectlyRepeatedRuleNamePartPart
+    ];
+
+    const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           recursiveDefinition = new RecursiveDefinition(parts, ruleName, recursiveRuleNames);
 
     return recursiveDefinition;
