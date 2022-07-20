@@ -23,7 +23,7 @@ import RewriteNodesCheckbox from "./checkbox/rewriteNodes"
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
 import { rulesFromBNF } from "../utilities/parser";
-import { UNASSIGNED_ENTRY } from "../constants";
+import { UNASSIGNED_ENTRY } from "./constants";
 
 const { rulesAsString, ruleMapFromRules, rulesFromStartRuleAndRuleMap, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
@@ -33,7 +33,7 @@ class View extends Element {
   }
 
   changeHandler = (event, element) => {
-    try {
+    // try {
       const bnf = this.getBNF(),
             startRuleName = this.getStartRuleName();
 
@@ -55,9 +55,9 @@ class View extends Element {
       const parseTree = this.getParseTree(startRule, ruleMap);
 
       this.setParseTree(parseTree);
-    } catch (error) {
-      console.log(error);
-    }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   getParseTree(startRule, ruleMap) {
@@ -136,7 +136,7 @@ class View extends Element {
             </SubHeading>
             <ParseTreeTextarea />
             <Paragraph>
-              <RewriteNodesCheckbox onChange={this.changeHandler} checked />
+              <RewriteNodesCheckbox onChange={this.changeHandler} />
               Rewrite nodes
             </Paragraph>
           </RowsDiv>
@@ -166,21 +166,17 @@ class View extends Element {
     this.keyUpHandler();
   }
 
-  static initialBNF = `    A ::= "c"
-
-        | A... "f" "g"
+  static initialBNF = `    A ::= B "d"
     
-        | "d"
-
-        | A... "h"
-    
-        | "e"
+        | "c"
     
         ;
+    
+    B ::= A ;
 
 `;
 
-  static initialContent = "gef";
+  static initialContent = "cdd";
 
   static initialStartRuleName = "";
 

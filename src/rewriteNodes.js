@@ -10,34 +10,32 @@ import { ruleNameFromReducedRuleName, ruleNameFromRepeatedRuleName, repeatedRule
 const { first, unshift } = arrayUtilities;
 
 export default function rewriteNodes(node) {
-  rearrangeNodes(node);
+  rearrangeNode(node);
 
   removeRepeatedNodes(node);
 
   renameReducedNodesAndRepeatedNodes(node);
 }
 
-function rearrangeNodes(node) {
+function rearrangeNode(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (nodeNonTerminalNode) {
+    let childNodes;
+
     const nonTerminalNode = node; ///
 
-    let childNodes = nonTerminalNode.getChildNodes();
+    childNodes = nonTerminalNode.getChildNodes();
+
+    rearrangeChildNodes(childNodes);
+
+    childNodes = nonTerminalNode.getChildNodes();
 
     childNodes.forEach((childNode) => {
       const node = childNode; ///
 
-      rearrangeNodes(node);
+      rearrangeNode(node);
     });
-
-    let rearranged = rearrangeChildNodes(childNodes);
-
-    while (rearranged) {
-      childNodes = nonTerminalNode.getChildNodes();
-
-      rearranged = rearrangeChildNodes(childNodes)
-    }
   }
 }
 
@@ -45,15 +43,12 @@ function removeRepeatedNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (nodeNonTerminalNode) {
-    const nonTerminalNode = node; ///
+    let childNodes;
 
-    let childNodes = nonTerminalNode.getChildNodes();
+    const nonTerminalNode = node, ///
+          ruleName = nonTerminalNode.getRuleName();
 
-    childNodes.forEach((childNode) => {
-      const node = childNode; ///
-
-      removeRepeatedNodes(node);
-    });
+    childNodes = nonTerminalNode.getChildNodes();
 
     const childNodesLength = childNodes.length;
 
@@ -63,45 +58,72 @@ function removeRepeatedNodes(node) {
             childNodeRepeatedNode = (childNode instanceof RepeatedNode);
 
       if (childNodeRepeatedNode) {
-        const ruleName = node.getRuleName(),
-              repeatedNode = childNode,
+        const repeatedNode = childNode, ///
+              repeatedNodeChildNodes = repeatedNode.getChildNodes(),
+              start = 0,
+              deleteCount = 1;
+
+        childNodes.splice(start, deleteCount, ...repeatedNodeChildNodes);
+      }
+    }
+
+    childNodes = nonTerminalNode.getChildNodes();
+
+    childNodes.forEach((childNode, index) => {
+      const node = childNode; ///
+
+      removeRepeatedNodes(node);
+
+      const childNodeRepeatedNode = (childNode instanceof RepeatedNode);
+
+      if (childNodeRepeatedNode) {
+        const repeatedNode = childNode, ///
               repeatedNodeRuleName = repeatedNode.getRuleName(),
               repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
 
         if (repeatedNodeRuleName === repeatedRuleName) {
           const repeatedNodeChildNodes = repeatedNode.getChildNodes(),
-                start = 0,
-                deleteCount = 1;
+                repeatedNodeChildNodesLength = repeatedNodeChildNodes.length;
 
-          childNodes.splice(start, deleteCount, ...repeatedNodeChildNodes);
+          if (repeatedNodeChildNodesLength === 1) {
+            const start = index,
+                  deleteCount = 1;
+
+            childNodes.splice(start, deleteCount, ...repeatedNodeChildNodes);
+          }
         }
       }
-    }
+    });
   }
 }
 
 function rearrangeChildNodes(childNodes) {
-  const rearranged = childNodes.some((childNode, index) => {
+  let index = 0,
+      childNodesLength = childNodes.length;
+
+  while (index < childNodesLength) {
     if (index > 0) {
-      const childNodeRepeatedNode = (childNode instanceof RepeatedNode);
+      const childNode = childNodes[ index ],
+            childNodeRepeatedNode = (childNode instanceof RepeatedNode);
 
       if (childNodeRepeatedNode) {
         const start = 0,
-              deleteCount = index;  ///
-
-        childNodes = childNodes.splice(start, deleteCount);
+              deleteCount = index,  ///
+              deletedChildNodes = childNodes.splice(start, deleteCount);
 
         const repeatedNode = childNode, ///
               repeatedNodeChildNodes = repeatedNode.getChildNodes();
 
-        unshift(repeatedNodeChildNodes, childNodes);
+        unshift(repeatedNodeChildNodes, deletedChildNodes);
 
-        return true;
+        childNodesLength = childNodes.length;
+
+        index = -1;
       }
     }
-  });
 
-  return rearranged;
+    index++;
+  }
 }
 
 function renameReducedNodesAndRepeatedNodes(node) {

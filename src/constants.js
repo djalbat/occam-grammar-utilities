@@ -1,3 +1,3 @@
 "use strict";
 
-export const UNASSIGNED_ENTRY = "^.*$";
+export const EMPTY_STRING = "";
