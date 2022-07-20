@@ -7,17 +7,19 @@ import RepeatedNode from "./node/repeated";
 
 import { ruleNameFromReducedRuleName, ruleNameFromRepeatedRuleName, repeatedRuleNameFromRuleName } from "./utilities/ruleName";
 
-const { first, unshift } = arrayUtilities;
+const { first, filter, unshift } = arrayUtilities;
 
 export default function rewriteNodes(node) {
-  rearrangeNode(node);
+  rearrangeNodes(node);
+
+  removeEpsilonNodes(node);
 
   removeRepeatedNodes(node);
 
   renameReducedNodesAndRepeatedNodes(node);
 }
 
-function rearrangeNode(node) {
+function rearrangeNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (nodeNonTerminalNode) {
@@ -34,8 +36,23 @@ function rearrangeNode(node) {
     childNodes.forEach((childNode) => {
       const node = childNode; ///
 
-      rearrangeNode(node);
+      rearrangeNodes(node);
     });
+  }
+}
+
+function removeEpsilonNodes(node) {
+  const nodeNonTerminalNode = node.isNonTerminalNode();
+
+  if (nodeNonTerminalNode) {
+    const nonTerminalNode = node, ///
+          childNodes = nonTerminalNode.getChildNodes();
+
+    filter(childNodes, (childNode) => {
+
+    });
+
+
   }
 }
 

@@ -136,7 +136,7 @@ class View extends Element {
             </SubHeading>
             <ParseTreeTextarea />
             <Paragraph>
-              <RewriteNodesCheckbox onChange={this.changeHandler} />
+              <RewriteNodesCheckbox onChange={this.changeHandler} checked />
               Rewrite nodes
             </Paragraph>
           </RowsDiv>
