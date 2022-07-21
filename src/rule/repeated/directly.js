@@ -7,6 +7,7 @@ import RepeatedNode from "../../node/repeated";
 import RecursiveDefinition from "../../definition/recursive";
 import DirectlyLeftRecursiveDefinition from "../../definition/recursive/left/directly";
 
+import { cloneParts } from "../../utilities/parts";
 import { matchParts } from "../../utilities/part";
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
@@ -44,9 +45,21 @@ export default class DirectlyRepeatedRule extends Rule {
         throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule does not match one of its sibling directly left recursive definitions and therefore the rule cannot be rewritten.`);
       }
 
+      const partsLength = parts.length;
+
+      if (partsLength === 1) {
+        const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
+              definition = directlyLeftRecursiveDefinition, ///
+              definitionString = definition.asString();
+
+        throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
+      }
+
       const partsTail = tail(parts);
 
       parts = partsTail;  ///
+
+      parts = cloneParts(parts);  ///
 
       const recursiveDefinition = RecursiveDefinition.fromRuleNameAndParts(ruleName, parts),
             definition = (recursiveDefinition !== null) ?

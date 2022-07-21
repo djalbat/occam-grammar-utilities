@@ -12,7 +12,7 @@ import Paragraph from "./paragraph";
 import SubHeading from "./subHeading";
 import SizeableDiv from "./div/sizeable";
 import BNFTextarea from "./textarea/bnf";
-import rewriteNodes from "../rewriteNodes";
+import rewriteParseTree from "../rewriteNodes";
 import rulesUtilities from "../utilities/rules";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
@@ -89,7 +89,7 @@ class View extends Element {
       const rewriteNodesCheckboxChecked = this.isRewriteNodesCheckboxChecked();
 
       if (rewriteNodesCheckboxChecked) {
-        rewriteNodes(node);
+        rewriteParseTree(node);
       }
 
       const abridged = true;

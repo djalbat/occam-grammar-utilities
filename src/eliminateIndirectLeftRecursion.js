@@ -10,7 +10,6 @@ import LeftRecursiveDefinition from "./definition/recursive/left";
 import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
 import IndirectlyLeftRecursiveDefinition from "./definition/recursive/left/indirectly";
 
-import { mergeIndirectlyLeftRecursiveDefinitions } from "./utilities/definitions";
 import { indirectlyRepeatedRuleNameFromRuleName, indirectlyReducedRuleNameFromRuleName } from "./utilities/ruleName";
 
 const { find, push, first, filter } = arrayUtilities;
@@ -103,8 +102,6 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
 
   const definitions = rule.getDefinitions(),
         indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(definitions, leftRecursiveRuleName);
-
-  indirectlyLeftRecursiveDefinition = mergeIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions);  ///
 
   const replacedDefinition = leftRecursiveDefinition, ///
         replacementDefinitions = [],

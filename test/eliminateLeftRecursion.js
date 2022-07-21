@@ -81,7 +81,7 @@ A ::= "g""
     });
   });
 
-  xdescribe("a unary directly left recursive definition", () => {
+  describe("a unary directly left recursive definition", () => {
     const bnf = `
   
 A ::= "g"
