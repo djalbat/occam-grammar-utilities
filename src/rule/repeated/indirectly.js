@@ -7,7 +7,7 @@ import RepeatedNode from "../../node/repeated";
 import IndirectlyLeftRecursiveDefinition from "../../definition/recursive/left/indirectly";
 
 import { cloneParts } from "../../utilities/parts";
-import { repeatedRuleNameFromRuleName } from "../../utilities/ruleName";
+import { indirectlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 const { EpsilonPart } = Parts,
       { first, tail, find } = arrayUtilities;
@@ -53,8 +53,8 @@ export default class IndirectlyRepeatedRule extends Rule {
     const firstIndirectlyLeftRecursiveDefinition = first(indirectlyLeftRecursiveDefinitions),
           indirectlyLeftRecursiveDefinition = firstIndirectlyLeftRecursiveDefinition, ///
           ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
-          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
-          name = repeatedRuleName,  ///
+          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleName(ruleName),
+          name = indirectlyRepeatedRuleName,  ///
           ambiguous = false,
           NonTerminalNode = RepeatedNode,  ///
           indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, ambiguous, definitions, NonTerminalNode);

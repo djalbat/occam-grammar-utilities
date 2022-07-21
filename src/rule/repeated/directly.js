@@ -8,7 +8,7 @@ import RecursiveDefinition from "../../definition/recursive";
 import DirectlyLeftRecursiveDefinition from "../../definition/recursive/left/directly";
 
 import { matchParts } from "../../utilities/part";
-import { repeatedRuleNameFromRuleName } from "../../utilities/ruleName";
+import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 const { first, find, tail } = arrayUtilities;
 
@@ -56,8 +56,8 @@ export default class DirectlyRepeatedRule extends Rule {
       return definition;
     });
 
-    const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
-          name = repeatedRuleName, ///
+    const directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
+          name = directlyRepeatedRuleName, ///
           ambiguous = false,
           NonTerminalNode = RepeatedNode,  ///
           directlyRepeatedRule = new DirectlyRepeatedRule(name, ambiguous, definitions, NonTerminalNode);

@@ -57,17 +57,17 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
     return directlyLeftRecursiveDefinition;
   }
 
-  static fromIndirectlyLeftRecursiveDefinitionLeftRecursiveDefinitionAndRepeatedRuleName(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition, repeatedRuleName) {
+  static fromIndirectlyLeftRecursiveDefinitionLeftRecursiveDefinitionAndIndirectlyRepeatedRuleName(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition, indirectlyRepeatedRuleName) {
     const leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
           leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
           indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts(),
           indirectlyLeftRecursiveDefinitionPartsFront = front(indirectlyLeftRecursiveDefinitionParts);
 
-    const repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName);
+    const indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName);
 
     let parts = [
       ...indirectlyLeftRecursiveDefinitionPartsFront,
-      repeatedRuleNamePart,
+      indirectlyRepeatedRuleNamePart,
       ...leftRecursiveDefinitionPartsTail
     ];
 

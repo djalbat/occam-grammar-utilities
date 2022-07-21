@@ -3,7 +3,7 @@
 import { arrayUtilities } from "necessary";
 import { Definition, Parts } from "occam-parsers";
 
-import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
+import { directlyRepeatedRuleNameFromRuleName } from "../utilities/ruleName";
 import { arePartsRecursive, recursiveRuleNamesFromParts } from "../utilities/parts";
 import { ruleNamePartFromRuleName, directlyReducedPartFromPart } from "../utilities/part";
 import { isDefinitionRecursive, recursiveRuleNamesFromDefinition } from "../utilities/definition";
@@ -64,9 +64,9 @@ export default class RecursiveDefinition extends Definition {
           part = firstPart, ///
           directlyReducedPart = directlyReducedPartFromPart(part),
           ruleName = directlyLeftRecursiveDefinition.getRuleName(),
-          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
-          repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
-          zeroOrMoreDirectlyRepeatedRuleNamePartPart = new ZeroOrMorePartsPart(repeatedRuleNamePart);
+          directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
+          directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName),
+          zeroOrMoreDirectlyRepeatedRuleNamePartPart = new ZeroOrMorePartsPart(directlyRepeatedRuleNamePart);
 
     parts = [
       directlyReducedPart,
