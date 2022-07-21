@@ -9,7 +9,7 @@ import { ruleNamePartFromRuleName } from "../../../utilities/part";
 import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
 import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
-const { push, tail, first, front } = arrayUtilities;
+const { tail, first, front } = arrayUtilities;
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   getLeftRecursiveRuleName() {
@@ -63,17 +63,13 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
           indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts(),
           indirectlyLeftRecursiveDefinitionPartsFront = front(indirectlyLeftRecursiveDefinitionParts);
 
-    let parts = [];
+    const repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName);
 
-    push(parts, indirectlyLeftRecursiveDefinitionPartsFront);
-
-    if (repeatedRuleName !== null) {
-      const repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName);
-
-      parts.push(repeatedRuleNamePart);
-    }
-
-    push(parts, leftRecursiveDefinitionPartsTail);
+    let parts = [
+      ...indirectlyLeftRecursiveDefinitionPartsFront,
+      repeatedRuleNamePart,
+      ...leftRecursiveDefinitionPartsTail
+    ];
 
     parts = cloneParts(parts);  ///
 

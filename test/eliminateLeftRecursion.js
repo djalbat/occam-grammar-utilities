@@ -81,7 +81,7 @@ A ::= "g""
     });
   });
 
-  describe("a unary directly left recursive definition", () => {
+  xdescribe("a unary directly left recursive definition", () => {
     const bnf = `
   
 A ::= "g"
@@ -125,7 +125,7 @@ A ::= "g"
     });
   });
 
-  describe("a unary implicitly left recursive definition", () => {
+  xdescribe("a unary implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= "d" 
@@ -547,19 +547,27 @@ A~ ::= B~ "d" ;
       `));
     });
 
-    it.only("results in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "cdd",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
             
-                     A                   
-                     |                   
-      -------------------------------    
-      |         |         |         |    
-      A     g[custom] g[custom] g[custom]
-      |                                  
-  e[custom]                              
+                     A           
+                     |           
+             ----------------    
+             |              |    
+             B          d[custom]
+             |                   
+             A                   
+             |                   
+        -----------              
+        |         |              
+        B     d[custom]          
+        |                        
+        A                        
+        |                        
+    c[custom]                    
              
       `));
     });
@@ -593,37 +601,39 @@ A~ ::= B~ "d" ;
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A ::= A_ ( B~ "g" )* ;
+    A   ::= A_ A~* ;
     
-    B ::= A "h"
+    B   ::= A "h"
     
-        | "b"
-
-        | A "f"
+          | "b"
     
-        | "c"
-
-        ;
-
-  B__ ::= "b" 
-   
-        | "c"
-        
-        ;
-
-   B~ ::= "h" 
-   
-        | "f"
-        
-        ;
-
-   A_ ::= "d"
+          | A "f"
     
-        | B__ "g"
+          | "c"
     
-        | "e"
+          ;
     
-        ;
+    B__ ::= "b"
+    
+          | "c"
+    
+          ;
+    
+    B~  ::= "h"
+    
+          | "f"
+    
+          ;
+    
+    A_  ::= "d"
+    
+          | B__ "g"
+    
+          | "e"
+    
+          ;
+    
+    A~  ::= B~ "g" ;
     
       `));
     });
@@ -634,21 +644,21 @@ A~ ::= B~ "d" ;
 
       assert.isTrue(compare(parseTreeString, `
             
-                            A            
-                            |            
-                   ------------------    
-                   |                |    
-                   B            g[custom]
-                   |                     
-           ----------------              
-           |              |              
-           A          h[custom]          
-           |                             
-      -----------                        
-      |         |                        
-      B     g[custom]                    
-      |                                  
-  c[custom]                              
+                              A            
+                              |            
+                     ------------------    
+                     |                |    
+                     B            g[custom]
+                     |                     
+             ----------------              
+             |              |              
+             A          h[custom]          
+             |                             
+        -----------                        
+        |         |                        
+        B     g[custom]                    
+        |                                  
+    c[custom]                              
              
       `));
     });
@@ -682,40 +692,42 @@ A~ ::= B~ "d" ;
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A  ::=  A_ ( B~ "h" )* ;
-
-    B  ::=  A "f" 
+    A   ::= A_ A~* ;
     
-         |  A C~
-         
-         |  C__
-         
-         ;
-
-    C  ::=  A "e" 
+    B   ::= A "f"
     
-         |  "d"
-         
-         ;
-
-   C__ ::=  "d" ;
+          | A C~
     
-    C~ ::=  "e" ;
-
-   B__ ::=  C__ ;
-
-    B~ ::=  "f" 
+          | C__
     
-         |  C~
-         
-         ;
+          ;
     
-    A_ ::=  B__ "h" 
-      
-         |  "g" 
- 
-         ;
-
+    C   ::= A "e"
+    
+          | "d"
+    
+          ;
+    
+    C__ ::= "d" ;
+    
+    C~  ::= "e" ;
+    
+    B__ ::= C__ ;
+    
+    B~  ::= "f"
+    
+          | C~
+    
+          ;
+    
+    A_  ::= B__ "h"
+    
+          | "g"
+    
+          ;
+    
+    A~  ::= B~ "h" ;
+    
       `));
     });
 
@@ -774,34 +786,39 @@ A~ ::= B~ "d" ;
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-
-    A ::= A_ ( "h" | ( B~ "g" ) )* ;
     
-    B ::= "b"
-
-        | A "f"
+    A   ::= A_ A~* ;
     
-        | "c"
-
-        ;
-
-  B__ ::= "b"
-
-        | "c"
-
-        ;
-
-   B~ ::= "f" ;
-
-   A_ ::= "d"
+    B   ::= "b"
     
-        | B__ "g"
-
-        | "e"
+          | A "f"
     
-        ;
+          | "c"
     
+          ;
     
+    B__ ::= "b"
+    
+          | "c"
+    
+          ;
+    
+    B~  ::= "f" ;
+    
+    A_  ::= "d"
+    
+          | B__ "g"
+    
+          | "e"
+    
+          ;
+    
+    A~  ::= "h"
+    
+          | B~ "g"
+    
+          ;
+          
       `));
     });
 
@@ -810,14 +827,22 @@ A~ ::= B~ "d" ;
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
-          
-                     A                   
-                     |                   
-      -------------------------------    
-      |         |         |         |    
-      A     h[custom]     B     g[custom]
-      |                   |              
-  d[custom]           f[custom]          
+              
+                              A            
+                              |            
+                     ------------------    
+                     |                |    
+                     B            g[custom]
+                     |                     
+             ----------------              
+             |              |              
+             A          f[custom]          
+             |                             
+        -----------                        
+        |         |                        
+        A     h[custom]                    
+        |                                  
+    d[custom]                              
              
       `));
     });
@@ -853,46 +878,48 @@ A~ ::= B~ "d" ;
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A  ::=  A_ ( B~ "h" )* ;
-
-    B  ::=  A C~ "f" 
+    A   ::= A_ A~* ;
     
-         |  C__ "f" 
-         
-         |  "e" 
-
-         ;         
-
-    C  ::=  A "d" 
+    B   ::= A C~ "f"
     
-         |  A "c" 
+          | C__ "f"
     
-         |  "b"
-         
-         ;
-
-   C__ ::=  "b" ;
-
-    C~ ::=  "d" 
+          | "e"
     
-         |  "c" 
-         
-         ;
-
-   B__ ::=  C__ "f" 
+          ;
     
-         |  "e"
-         
-         ;         
-
-    B~ ::=  C~ "f" ;         
-
-    A_ ::=  B__ "h" 
-      
-         |  "g" 
- 
-         ;
-
+    C   ::= A "d"
+    
+          | A "c"
+    
+          | "b"
+    
+          ;
+    
+    C__ ::= "b" ;
+    
+    C~  ::= "d"
+    
+          | "c"
+    
+          ;
+    
+    B__ ::= C__ "f"
+    
+          | "e"
+    
+          ;
+    
+    B~  ::= C~ "f" ;
+    
+    A_  ::= B__ "h"
+    
+          | "g"
+    
+          ;
+    
+    A~  ::= B~ "h" ;
+    
       `));
     });
 
@@ -902,17 +929,21 @@ A~ ::= B~ "d" ;
 
       assert.isTrue(compare(parseTreeString, `
           
-                   A                   
-                   |                   
-    -------------------------------    
-    |              |              |    
-    A              B          h[custom]
-    |              |                   
-g[custom]     -----------              
-              |         |              
-              C     f[custom]          
-              |                        
-          c[custom]                    
+                              A            
+                              |            
+                     ------------------    
+                     |                |    
+                     B            h[custom]
+                     |                     
+             ----------------              
+             |              |              
+             C          f[custom]          
+             |                             
+        -----------                        
+        |         |                        
+        A     c[custom]                    
+        |                                  
+    g[custom]                              
              
       `));
     });
@@ -927,9 +958,9 @@ g[custom]     -----------
  
          ;
 
-    B  ::=  B "e" "g"
+    B  ::=  B "e" "f"
     
-         |  A "f" 
+         |  A "d" 
     
          |  "c" 
 
@@ -942,32 +973,108 @@ g[custom]     -----------
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A  ::=  A_ ( B~ "h" )* ;
-
-    B  ::=  A "f" ( "e" "g" )*
+    A   ::= A_ A~* ;
     
-         |  B_ ( "e" "g" )*
+    B   ::= A "d" ( "e" "f" )*
+    
+          | B_ ( "e" "f" )*
+    
+          ;
+    
+    B_  ::= "c" ;
+    
+    B__ ::= B_ ( "e" "f" )* ;
+    
+    B~  ::= "d" ( "e" "f" )* ;
+    
+    A_  ::= B__ "h"
+    
+          | "g"
+    
+          ;
 
+    A~  ::= B~ "h" ;    
+
+      `));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = "cefhdefh",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                                                               A                   
+                                                               |                   
+                                                -------------------------------    
+                                                |                             |    
+                                                B                         h[custom]
+                                                |                                  
+                            -----------------------------------------              
+                            |                   |         |         |              
+                            A               d[custom] e[custom] f[custom]          
+                            |                                                      
+                  ---------------------                                            
+                  |                   |                                            
+                  B               h[custom]                                        
+                  |                                                                
+        ---------------------                                                      
+        |         |         |                                                      
+        B     e[custom] f[custom]                                                  
+        |                                                                          
+    c[custom]                                                                      
+
+      `));
+    });
+  });
+
+  xdescribe("an indirectly left recursive definition and an isolated sibling directly left recursive definition", () => {
+    const bnf = `
+  
+    A  ::=  B "g" 
+      
+         |  "f" 
+ 
          ;
 
-    B_ ::=  "c" ;
+    B  ::=  B "e" "e"
+    
+         |  A "d" 
+    
+         ;
               
-   B__ ::=  B_ ( "e" "g" )* ;
+`;
 
-    B~ ::=  "f" ( "e" "g" )* ;
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
 
-    A_ ::=  B__ "h" 
+      assert.isTrue(compare(adjustedBNF, `
+      
+    A  ::=  B "h" 
       
          |  "g" 
  
          ;
+
+    B  ::=  A "d" ( "e" "f" )*
+    
+         |  B_ ( "e" "f" )*
+
+         ;
+              
+    B_ ::=  A "d" 
+    
+         |  "c" 
+
+         ;
+              
 
       `));
     });
 
     it("result in the requisite parse tree" , () => {
       const content = "chfegegh",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
@@ -1181,7 +1288,7 @@ function parseTreeStringFromBNFAndContent(bnf, content) {
   const tokens = basicLexer.tokenise(content),
         node = basicParser.parse(tokens);
 
-  // rewriteNodes(node);
+  rewriteNodes(node);
 
   const abridged = true,
         parseTree = node.asParseTree(tokens, abridged);

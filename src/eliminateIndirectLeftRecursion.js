@@ -32,16 +32,8 @@ export default function eliminateIndirectLeftRecursion(leftRecursiveDefinitions,
 function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap) {
   const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
         rule = ruleMap[ruleName],
-        directlyReducedRule = DirectlyReducedRule.fromRule(rule);
-
-  if (directlyReducedRule === null) {
-    const definition = directlyLeftRecursiveDefinition, ///
-          definitionString = definition.asString();
-
-    throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is isolated and therefore cannot be rewritten.`);
-  }
-
-  const directlyReducedRuleName = directlyReducedRule.getName();
+        directlyReducedRule = DirectlyReducedRule.fromRule(rule),
+        directlyReducedRuleName = directlyReducedRule.getName();
 
   ruleMap[directlyReducedRuleName] = directlyReducedRule;
 
@@ -52,9 +44,9 @@ function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyL
       indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(definitions);
 
   const removedLeftRecursiveDefinitions = [
-          ...directlyLeftRecursiveDefinitions,
-          ...indirectlyLeftRecursiveDefinitions
-        ];
+    ...directlyLeftRecursiveDefinitions,
+    ...indirectlyLeftRecursiveDefinitions
+  ];
 
   directlyLeftRecursiveDefinition = mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions);  ///
 
@@ -103,11 +95,7 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
   if (repeatedRule === null) {
     repeatedRule = IndirectlyRepeatedRule.fromRuleAndLeftRecursiveRuleName(rule, leftRecursiveRuleName);
 
-    if (repeatedRule !== null) {
-      ruleMap[repeatedRuleName] = repeatedRule;
-    } else {
-      repeatedRuleName = null;
-    }
+    ruleMap[repeatedRuleName] = repeatedRule;
   }
 
   const definitions = rule.getDefinitions(),
