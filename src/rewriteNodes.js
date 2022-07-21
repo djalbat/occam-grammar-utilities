@@ -8,10 +8,12 @@ import RepeatedNode from "./node/repeated";
 
 import { ruleNameFromReducedRuleName, ruleNameFromRepeatedRuleName } from "./utilities/ruleName";
 
-const { first, filter, unshift } = arrayUtilities;
+const { last, first, filter, unshift } = arrayUtilities;
 
 export default function rewriteNodes(node) {
-  rearrangeNodes(node);
+  flattenNodes(node);
+
+  expandNodes(node);
 
   renameRepeatedNodes(node);
 
@@ -22,7 +24,52 @@ export default function rewriteNodes(node) {
   removeSingularNodes(node);
 }
 
-function rearrangeNodes(node) {
+function flattenNodes(node) {
+  const nodeNonTerminalNode = node.isNonTerminalNode();
+
+  if (nodeNonTerminalNode) {
+    const nonTerminalNode = node, ///
+          childNodes = nonTerminalNode.getChildNodes();
+
+    childNodes.forEach((childNode) => {
+      const node = childNode; ///
+
+      flattenNodes(node);
+    });
+
+    let index = 0,
+        childNodesLength = childNodes.length;
+
+    while (index < childNodesLength) {
+      const childNode = childNodes[index],
+            childNodeRepeatedNode = (childNode instanceof RepeatedNode);
+
+      if (childNodeRepeatedNode) {
+        const repeatedNode = childNode, ///
+              repeatedNodeChildNodes = repeatedNode.getChildNodes(),
+              lastRepeatedNodeChildNode = last(repeatedNodeChildNodes),
+              lastRepeatedNodeChildNodeRepeatedNode = (lastRepeatedNodeChildNode instanceof RepeatedNode);
+
+        if (lastRepeatedNodeChildNodeRepeatedNode) {
+          repeatedNodeChildNodes.pop();
+
+          const start = index + 1,
+                deleteCount = 0;
+
+          childNodes.splice(start, deleteCount, lastRepeatedNodeChildNode);
+
+          childNodesLength = childNodes.length;
+
+          index++;
+        }
+      }
+
+      index++;
+    }
+  }
+}
+
+function expandNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (nodeNonTerminalNode) {
@@ -58,7 +105,7 @@ function rearrangeNodes(node) {
     childNodes.forEach((childNode) => {
       const node = childNode; ///
 
-      rearrangeNodes(node);
+      expandNodes(node);
     });
   }
 }

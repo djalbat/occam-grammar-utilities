@@ -973,58 +973,58 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A  ::=  A_ A~* ;
-
-    B  ::=  A "d" B~*
+    A   ::= A_ A~* ;
     
-         |  B_ B~*
+    B   ::= A "d" B~
+    
+          | B_ B~*
+    
+          ;
+    
+    B_  ::= "c" ;
+    
+    B~  ::= "e" "f" ;
+    
+    B~~ ::= "d" B~ ;
+    
+    B__ ::= B_ B~* ;
+    
+    A_  ::= B__ "h"
+    
+          | "g"
+    
+          ;
+    
+    A~  ::= B~~ "h" ;
 
-         ;
-              
-    B_ ::=  "c" ;
-      
-    B~ ::=  "e" "f" ;
-              
-   B~~ ::=  "d" B~* ;
-              
-   B__ ::=  B_ B~* ;
-              
-    A_ ::=  B__ "h" 
-      
-         |  "g" 
- 
-         ;
-
-    A~ ::=  B~~ "h" ;
-     
       `));
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "cefhdefh",
+      const content = "chdefh",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-                                                               A                   
-                                                               |                   
-                                                -------------------------------    
-                                                |                             |    
-                                                B                         h[custom]
-                                                |                                  
-                            -----------------------------------------              
-                            |                   |         |         |              
-                            A               d[custom] e[custom] f[custom]          
-                            |                                                      
-                  ---------------------                                            
-                  |                   |                                            
-                  B               h[custom]                                        
-                  |                                                                
-        ---------------------                                                      
-        |         |         |                                                      
-        B     e[custom] f[custom]                                                  
-        |                                                                          
-    c[custom]                                                                      
+                                               A               
+                                               |               
+                                   ------------------------    
+                                   |                      |    
+                                   B                  h[custom]
+                                   |                           
+                     ----------------------------              
+                     |                |         |              
+                     B            e[custom] f[custom]          
+                     |                                         
+             ----------------                                  
+             |              |                                  
+             A          d[custom]                              
+             |                                                 
+        -----------                                            
+        |         |                                            
+        B     h[custom]                                        
+        |                                                      
+    c[custom]                                                  
 
       `));
     });
