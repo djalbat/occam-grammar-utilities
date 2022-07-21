@@ -3,14 +3,15 @@
 import { arrayUtilities } from "necessary";
 
 import DirectlyReducedRule from "./rule/reduced/directly";
+import DirectlyRepeatedRule from "./rule/repeated/directly";
 import IndirectlyReducedRule from "./rule/reduced/indirectly";
 import IndirectlyRepeatedRule from "./rule/repeated/indirectly";
 import LeftRecursiveDefinition from "./definition/recursive/left";
 import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
 import IndirectlyLeftRecursiveDefinition from "./definition/recursive/left/indirectly";
 
+import { mergeIndirectlyLeftRecursiveDefinitions } from "./utilities/definitions";
 import { indirectlyRepeatedRuleNameFromRuleName, indirectlyReducedRuleNameFromRuleName } from "./utilities/ruleName";
-import { mergeDirectlyLeftRecursiveDefinitions, mergeIndirectlyLeftRecursiveDefinitions } from "./utilities/definitions";
 
 const { find, push, first, filter } = arrayUtilities;
 
@@ -33,9 +34,13 @@ function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyL
   const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
         rule = ruleMap[ruleName],
         directlyReducedRule = DirectlyReducedRule.fromRule(rule),
-        directlyReducedRuleName = directlyReducedRule.getName();
+        directlyRepeatedRule = DirectlyRepeatedRule.fromRule(rule),
+        directlyReducedRuleName = directlyReducedRule.getName(),
+        directlyRepeatedRuleName = directlyRepeatedRule.getName();
 
   ruleMap[directlyReducedRuleName] = directlyReducedRule;
+
+  ruleMap[directlyRepeatedRuleName] = directlyRepeatedRule;
 
   const definitions = rule.getDefinitions(),
         directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(definitions);
@@ -48,12 +53,10 @@ function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyL
     ...indirectlyLeftRecursiveDefinitions
   ];
 
-  directlyLeftRecursiveDefinition = mergeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions);  ///
-
-  leftRecursiveDefinition = LeftRecursiveDefinition.fromLeftRecursiveDefinitionAndDirectlyLeftRecursiveDefinition(leftRecursiveDefinition, directlyLeftRecursiveDefinition);  ///
+  leftRecursiveDefinition = LeftRecursiveDefinition.fromLeftRecursiveDefinitionAndDirectlyRepeatedRuleName(leftRecursiveDefinition, directlyRepeatedRuleName);  ///
 
   indirectlyLeftRecursiveDefinitions = indirectlyLeftRecursiveDefinitions.map((indirectlyLeftRecursiveDefinition) => {
-    indirectlyLeftRecursiveDefinition = IndirectlyLeftRecursiveDefinition.fromIndirectlyLeftRecursiveDefinitionAndDirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, directlyLeftRecursiveDefinition);  ///
+    indirectlyLeftRecursiveDefinition = IndirectlyLeftRecursiveDefinition.fromIndirectlyLeftRecursiveDefinitionAndDirectlyRepeatedRuleName(indirectlyLeftRecursiveDefinition, directlyRepeatedRuleName);  ///
 
     return indirectlyLeftRecursiveDefinition;
   });

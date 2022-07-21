@@ -7,7 +7,7 @@ import RecursiveDefinition from "../../definition/recursive";
 
 import { ruleNamePartFromRuleName } from "../../utilities/part";
 import { ruleNameFromReducedRuleName } from "../../utilities/ruleName";
-import { cloneParts, singlePartFromParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
+import { cloneParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
 import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 const { tail, push } = arrayUtilities,
@@ -76,6 +76,31 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return leftRecursiveDefinition;
   }
 
+  static fromLeftRecursiveDefinitionAndDirectlyRepeatedRuleName(leftRecursiveDefinition, directlyRecursiveRuleName) {
+    let parts;
+
+    const directlyRecursiveRuleNamePart = ruleNamePartFromRuleName(directlyRecursiveRuleName),
+          part = directlyRecursiveRuleNamePart,  ///
+          zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
+
+    parts = leftRecursiveDefinition.getParts();
+
+    parts = [ ///
+      ...parts,
+      zeroOrMorePartsPart
+    ];
+
+    parts = cloneParts(parts);  ///
+
+    const ruleName = leftRecursiveDefinition.getRuleName(),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts);
+
+    leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames); ///
+
+    return leftRecursiveDefinition;
+  }
+
   static fromLeftRecursiveDefinitionAndIndirectlyReducedRuleName(leftRecursiveDefinition, indirectlyReducedRuleName) {
     const leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
           leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
@@ -91,37 +116,6 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     parts = cloneParts(parts);  ///
 
     const ruleName = leftRecursiveDefinition.getRuleName(),
-          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
-          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts);
-
-    leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames); ///
-
-    return leftRecursiveDefinition;
-  }
-
-  static fromLeftRecursiveDefinitionAndDirectlyLeftRecursiveDefinition(leftRecursiveDefinition, directlyLeftRecursiveDefinition) {
-    let parts;
-
-    parts = directlyLeftRecursiveDefinition.getParts();
-
-    const partsTail = tail(parts);
-
-    parts = partsTail;  ///
-
-    const singlePart = singlePartFromParts(parts),
-          part = singlePart,  ///
-          zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
-
-    parts = leftRecursiveDefinition.getParts();
-
-    parts = [ ///
-      ...parts,
-      zeroOrMorePartsPart
-    ];
-
-    parts = cloneParts(parts);  ///
-
-    const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
           recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts);
 
