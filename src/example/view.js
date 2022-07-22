@@ -63,27 +63,27 @@ class View extends Element {
   getParseTree(startRule, ruleMap) {
     let parseTree = null;
 
-    const lexicalPattern = this.getLexicalPattern(),
-          basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
-          basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
-
-    const content = this.getContent(),
-          tokens = basicLexer.tokenise(content),
-          node = basicParser.parse(tokens);
-
-    // const { entries } = FlorenceLexer,
-    //       lexicalPattern = this.getLexicalPattern(),
-    //       custom = lexicalPattern;  ///
+    // const lexicalPattern = this.getLexicalPattern(),
+    //       basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
+    //       basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
     //
-    // entries.push({
-    //   custom
-    // });
-    //
-    // const florenceLexer = FlorenceLexer.fromEntries(entries),
-    //       florenceParser = new FlorenceParser(startRule, ruleMap),  ///
-    //       content = this.getContent(),
-    //       tokens = florenceLexer.tokenise(content),
-    //       node = florenceParser.parse(tokens);
+    // const content = this.getContent(),
+    //       tokens = basicLexer.tokenise(content),
+    //       node = basicParser.parse(tokens);
+
+    const { entries } = FlorenceLexer,
+          lexicalPattern = this.getLexicalPattern(),
+          custom = lexicalPattern;  ///
+
+    entries.push({
+      custom
+    });
+
+    const florenceLexer = FlorenceLexer.fromEntries(entries),
+          florenceParser = new FlorenceParser(startRule, ruleMap),  ///
+          content = this.getContent(),
+          tokens = florenceLexer.tokenise(content),
+          node = florenceParser.parse(tokens);
 
     if (node !== null) {
       const rewriteNodesCheckboxChecked = this.isRewriteNodesCheckboxChecked();
@@ -166,25 +166,43 @@ class View extends Element {
     this.keyUpHandler();
   }
 
-  static initialBNF = `    A  ::=  B "g" 
-      
-         |  "f" 
+  static initialBNF = `topLevelInstruction                  ::=   comparatorDeclaration 
+                                           
+                                       |   combinatorDeclaration 
+                                                                                      
+                                       ;
+
+comparatorDeclaration                ::=   "Comparator" statement <END_OF_LINE> ;
  
-         ;
+combinatorDeclaration                ::=   "Combinator" expression ( ":" type )? <END_OF_LINE> ;
 
-    B  ::=  B "e"
-    
-         |  A "d" 
-    
-         ;
+argument                             ::=   type 
 
+                                       |   expression 
+                                       
+                                       ;
+
+type                                 ::=   "NaturalNumber" ;
+
+expression!                          ::=   arithmeticExpression ;
+
+statement!                           ::=   arithmeticStatement ;
+
+arithmeticExpression                 ::=   "(" argument ")"
+                       
+                                       |   argument "+" argument
+
+                                       ;
+
+arithmeticStatement                  ::=  argument ;
 `;
 
-  static initialContent = "fdeeg";
+  static initialContent = `Combinator (NaturalNumber + NaturalNumber):NaturalNumber
+`;
 
   static initialStartRuleName = "";
 
-  static initialLexicalPattern = ".";
+  static initialLexicalPattern = "\\+";
 
   static tagName = "div";
 

@@ -1097,8 +1097,10 @@ A ::= "g"
     });
   });
 
-  xdescribe("Florence", () => {
-    const bnf = `topLevelInstruction                  ::=   comparatorDeclaration 
+  describe("Florence", () => {
+    const bnf = `
+
+topLevelInstruction                  ::=   comparatorDeclaration 
                                            
                                        |   combinatorDeclaration 
                                                                                       
@@ -1130,7 +1132,7 @@ arithmeticStatement                  ::=  argument ;
 
 `;
 
-    it("is rewritten", () => {
+    it.only("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -1271,25 +1273,25 @@ function parseTreeStringFromBNFAndContent(bnf, content) {
 
   eliminateLeftRecursion(startRule, ruleMap);
 
-  // const { entries } = FlorenceLexer,
-  //       lexicalPattern = "\\+",
-  //       custom = lexicalPattern;  ///
-  //
-  // entries.push({
-  //   custom
-  // });
-  //
-  // const florenceLexer = FlorenceLexer.fromEntries(entries),
-  //       florenceParser = new FlorenceParser(startRule, ruleMap),  ///
-  //       tokens = florenceLexer.tokenise(content),
-  //       node = florenceParser.parse(tokens);
+  const { entries } = FlorenceLexer,
+        lexicalPattern = "\\+",
+        custom = lexicalPattern;  ///
 
-  const lexicalPattern = ".", ///
-        basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
-        basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
+  entries.push({
+    custom
+  });
 
-  const tokens = basicLexer.tokenise(content),
-        node = basicParser.parse(tokens);
+  const florenceLexer = FlorenceLexer.fromEntries(entries),
+        florenceParser = new FlorenceParser(startRule, ruleMap),  ///
+        tokens = florenceLexer.tokenise(content),
+        node = florenceParser.parse(tokens);
+
+  // const lexicalPattern = ".", ///
+  //       basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
+  //       basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
+  //
+  // const tokens = basicLexer.tokenise(content),
+  //       node = basicParser.parse(tokens);
 
   rewriteNodes(node);
 
