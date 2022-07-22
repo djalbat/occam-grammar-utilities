@@ -46,21 +46,33 @@ function flattenNodes(node) {
 
       if (childNodeRepeatedNode) {
         const repeatedNode = childNode, ///
+              repeatedNodes = [],
               repeatedNodeChildNodes = repeatedNode.getChildNodes(),
               lastRepeatedNodeChildNode = last(repeatedNodeChildNodes),
               lastRepeatedNodeChildNodeRepeatedNode = (lastRepeatedNodeChildNode instanceof RepeatedNode);
 
         if (lastRepeatedNodeChildNodeRepeatedNode) {
-          repeatedNodeChildNodes.pop();
+          filter(repeatedNodeChildNodes, (repeatedNodeChildNode) => {
+            const repeatedNodeChildNodeRepeatedNode = (repeatedNodeChildNode instanceof RepeatedNode);
+
+            if (repeatedNodeChildNodeRepeatedNode) {
+              const repeatedNode = repeatedNodeChildNode; ///
+
+              repeatedNodes.unshift(repeatedNode);
+            } else {
+              return true;
+            }
+          });
 
           const start = index + 1,
-                deleteCount = 0;
+                deleteCount = 0,
+                repeatedNodesLength = repeatedNodes.length;
 
-          childNodes.splice(start, deleteCount, lastRepeatedNodeChildNode);
+          childNodes.splice(start, deleteCount, ...repeatedNodes);
 
           childNodesLength = childNodes.length;
 
-          index++;
+          index += repeatedNodesLength;
         }
       }
 

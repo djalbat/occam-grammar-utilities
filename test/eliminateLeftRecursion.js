@@ -1067,27 +1067,31 @@ A ::= "g"
       `));
     });
 
-    xit("result in the requisite parse tree" , () => {
-      const content = "fdeg",
+    it("result in the requisite parse tree" , () => {
+      const content = "fdeeg",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-                              A            
-                              |            
-                     ------------------    
-                     |                |    
-                     B            g[custom]
-                     |                     
-             ----------------              
-             |              |              
-             B          e[custom]          
-             |                             
-        -----------                        
-        |         |                        
-        A     d[custom]                    
-        |                                  
-    f[custom]                              
+                                       A             
+                                       |             
+                              -------------------    
+                              |                 |    
+                              B             g[custom]
+                              |                      
+                     ------------------              
+                     |                |              
+                     B            e[custom]          
+                     |                               
+             ----------------                        
+             |              |                        
+             B          e[custom]                    
+             |                                       
+        -----------                                  
+        |         |                                  
+        A     d[custom]                              
+        |                                            
+    f[custom]                                        
 
       `));
     });
