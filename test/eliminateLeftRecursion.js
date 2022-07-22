@@ -972,10 +972,10 @@ A ::= "g"
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-      
+
     A   ::= A_ A~* ;
     
-    B   ::= A "d" B~
+    B   ::= A "d" B~*
     
           | B_ B~*
     
@@ -985,7 +985,7 @@ A ::= "g"
     
     B~  ::= "e" "f" ;
     
-    B~~ ::= "d" B~ ;
+    B~~ ::= "d" B~* ;
     
     B__ ::= B_ B~* ;
     
@@ -1030,16 +1030,16 @@ A ::= "g"
     });
   });
 
-  xdescribe("an indirectly left recursive definition and an isolated sibling directly left recursive definition", () => {
+  describe("an indirectly left recursive definition and an isolated sibling directly left recursive definition", () => {
     const bnf = `
   
-    A  ::=  B "h" 
+    A  ::=  B "g" 
       
-         |  "g" 
+         |  "f" 
  
          ;
 
-    B  ::=  B "e" "f"
+    B  ::=  B "e"
     
          |  A "d" 
     
@@ -1052,38 +1052,42 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A  ::=  B "h" 
-      
-         |  "g" 
- 
-         ;
+    A  ::=  A_ A~* ;
 
-    B  ::=  B "e" "f"
-    
-         |  A "d" 
-    
-         ;
+    B  ::=  A "d" B~* ;
+
+    B~ ::=  "e" ;
+
+   B~~ ::=  "d" B~* ;
+
+    A_ ::=  "f" ;
+
+    A~ ::=  B~~ "g" ;
 
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
-      const content = "chfegegh",
-          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+    xit("result in the requisite parse tree" , () => {
+      const content = "fdeg",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-                                          A                                    
-                                          |                                    
-         ------------------------------------------------------------------    
-         |                                  |                             |    
-         A                                  B                         h[custom]
-         |                                  |                                  
-    -----------         -----------------------------------------              
-    |         |         |         |         |         |         |              
-    B     h[custom] f[custom] e[custom] g[custom] e[custom] g[custom]          
-    |                                                                          
-c[custom]                                                                      
+                              A            
+                              |            
+                     ------------------    
+                     |                |    
+                     B            g[custom]
+                     |                     
+             ----------------              
+             |              |              
+             B          e[custom]          
+             |                             
+        -----------                        
+        |         |                        
+        A     d[custom]                    
+        |                                  
+    f[custom]                              
 
       `));
     });

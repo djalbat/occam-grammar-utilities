@@ -1,5 +1,6 @@
 "use strict";
 
+import { Parts } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
@@ -8,7 +9,8 @@ import { ruleNamePartFromRuleName } from "../../../utilities/part";
 import { cloneParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
 import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
-const { head, tail, last, front, first, backwardsFind, backwardsEvery } = arrayUtilities;
+const { ZeroOrMorePartsPart } = Parts,
+      { head, tail, last, front, first, backwardsFind, backwardsEvery } = arrayUtilities;
 
 export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   constructor(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinitions) {
@@ -119,13 +121,15 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
   static fromIndirectlyLeftRecursiveDefinitionAndDirectlyRepeatedRuleName(indirectlyLeftRecursiveDefinition, directlyRepeatedRuleName) {
     let parts;
 
-    const directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName);
+    const directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName),
+          zeroOrMoreDirectlyRepeatedRuleNamePartsPart = new ZeroOrMorePartsPart(directlyRepeatedRuleNamePart);  ///
+
 
     parts = indirectlyLeftRecursiveDefinition.getParts();
 
     parts = [ ///
       ...parts,
-      directlyRepeatedRuleNamePart
+      zeroOrMoreDirectlyRepeatedRuleNamePartsPart
     ];
 
     parts = cloneParts(parts);  ///

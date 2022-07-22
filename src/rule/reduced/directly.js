@@ -12,7 +12,9 @@ import { directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 const { find } = arrayUtilities;
 
 export default class DirectlyReducedRule extends Rule {
-  static fromRule(rule) {
+  static fromRule(rule, disallowIsolated = true) {
+    let directlyReducedRule = null;
+
     let definitions = rule.getDefinitions();
 
     definitions = find(definitions, (definition) => { ///
@@ -27,17 +29,22 @@ export default class DirectlyReducedRule extends Rule {
     const definitionsLength = definitions.length;
 
     if (definitionsLength === 0) {
-      const ruleName = rule.getName();
+      if (disallowIsolated) {
+        const ruleName = rule.getName();
 
-      throw new Error(`The directly left recursive definitions of the '${ruleName}' rule are isolated and therefore cannot be rewritten.`);
+        throw new Error(`The directly left recursive definitions of the '${ruleName}' rule are isolated and therefore cannot be rewritten.`);
+      }
     }
 
-    const ruleName = rule.getName(),
-          directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
-          name = directlyReducedRuleName, ///
-          ambiguous = false,
-          NonTerminalNode = ReducedNode,  ///
-          directlyReducedRule = new DirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
+    if (definitionsLength > 0) {
+      const ruleName = rule.getName(),
+            directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
+            name = directlyReducedRuleName, ///
+            ambiguous = false,
+            NonTerminalNode = ReducedNode;  ///
+
+      directlyReducedRule = new DirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
+    }
 
     return directlyReducedRule;
   }

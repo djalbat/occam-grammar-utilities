@@ -80,14 +80,13 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     let parts;
 
     const directlyRecursiveRuleNamePart = ruleNamePartFromRuleName(directlyRecursiveRuleName),
-          part = directlyRecursiveRuleNamePart,  ///
-          zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
+          zeroOrMoreDirectlyRecursiveRuleNamePartsPart = new ZeroOrMorePartsPart(directlyRecursiveRuleNamePart);
 
     parts = leftRecursiveDefinition.getParts();
 
     parts = [ ///
       ...parts,
-      zeroOrMorePartsPart
+      zeroOrMoreDirectlyRecursiveRuleNamePartsPart
     ];
 
     parts = cloneParts(parts);  ///
