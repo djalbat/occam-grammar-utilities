@@ -15,7 +15,6 @@ import rewriteNodes from "../rewriteNodes";
 import rulesUtilities from "../utilities/rules";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
-import StartRuleNameInput from "./input/startRuleName";
 import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RewriteNodesCheckbox from "./checkbox/rewriteNodes"
@@ -23,7 +22,7 @@ import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
 import { rulesFromBNF } from "../utilities/parser";
 
-const { rulesAsString, ruleMapFromRules, rulesFromStartRuleAndRuleMap, startRuleFromRulesAndStartRuleName } = rulesUtilities;
+const { rulesAsString, ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
 class View extends Element {
   keyUpHandler = (event, element) => {
@@ -31,13 +30,12 @@ class View extends Element {
   }
 
   changeHandler = (event, element) => {
-    const bnf = this.getBNF(),
-          startRuleName = this.getStartRuleName();
+    const bnf = this.getBNF();
 
     let rules = rulesFromBNF(bnf);
 
     const ruleMap = ruleMapFromRules(rules),
-          startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName);
+          startRule = startRuleFromRules(rules);
 
     eliminateLeftRecursion(startRule, ruleMap);
 
@@ -104,10 +102,6 @@ class View extends Element {
         <ColumnDiv>
           <RowsDiv>
             <SubHeading>
-              Start rule name
-            </SubHeading>
-            <StartRuleNameInput onKeyUp={this.keyUpHandler} />
-            <SubHeading>
               Content
             </SubHeading>
             <ContentTextarea onKeyUp={this.keyUpHandler} />
@@ -129,17 +123,14 @@ class View extends Element {
   initialise() {
     this.assignContext();
 
-    const { initialBNF, initialContent, initialStartRuleName, initialLexicalPattern } = this.constructor,
+    const { initialBNF, initialContent, initialLexicalPattern } = this.constructor,
           bnf = initialBNF, ///
           content = initialContent, ///
-          startRuleName = initialStartRuleName, ///
           lexicalPattern = initialLexicalPattern; ///
 
     this.setBNF(bnf);
 
     this.setContent(content);
-
-    this.setStartRuleName(startRuleName);
 
     this.setLexicalPattern(lexicalPattern);
 
@@ -168,8 +159,6 @@ class View extends Element {
 
   static initialContent = `(n+n)
 `;
-
-  static initialStartRuleName = "";
 
   static initialLexicalPattern = ".";
 

@@ -31,10 +31,13 @@ export function parserFromRules(Class, rules) {
 }
 
 export function parserFromRulesAndStartRuleName(Class, rules, startRuleName) {
-  const ruleMap = ruleMapFromRules(rules),
-        startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName);
+  const ruleMap = ruleMapFromRules(rules);
+
+  let startRule = startRuleFromRules(rules);
 
   eliminateLeftRecursion(startRule, ruleMap);
+
+  startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName);
 
   const parser = new Class(startRule, ruleMap);
 
