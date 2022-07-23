@@ -2,8 +2,7 @@
 
 const { assert } = require("chai"),
       { BasicLexer } = require("occam-lexers"),
-      { BasicParser } = require("occam-parsers"),
-      { FlorenceLexer, FlorenceParser } = require("occam-grammars");
+      { BasicParser } = require("occam-parsers");
 
 const { rewriteNodes, rulesUtilities, parserUtilities, eliminateLeftRecursion } = require("../lib/index.js");
 
@@ -1097,124 +1096,102 @@ A ::= "g"
     });
   });
 
-  describe("Florence", () => {
+  describe("an indirectly left recursive definition of length two and a unary intermediate left recursive definition", () => {
     const bnf = `
-
-topLevelInstruction                  ::=   comparatorDeclaration 
+    
+    S  ::=  A ;
+    
+    A  ::=  E 
+    
+         |  T 
                                            
-                                       |   combinatorDeclaration 
-                                                                                      
-                                       ;
-
-comparatorDeclaration                ::=   "Comparator" statement <END_OF_LINE> ;
- 
-combinatorDeclaration                ::=   "Combinator" expression ( ":" type )? <END_OF_LINE> ;
-
-argument                             ::=   type 
-
-                                       |   expression 
-                                       
-                                       ;
-
-type                                 ::=   "NaturalNumber" ;
-
-expression!                          ::=   arithmeticExpression ;
-
-statement!                           ::=   arithmeticStatement ;
-
-arithmeticExpression                 ::=   "(" argument ")"
-                       
-                                       |   argument "+" argument
-
-                                       ;
-
-arithmeticStatement                  ::=  argument ;
-
+         ;
+    
+    E  ::=  F ;
+    
+    T  ::=  "n" ;
+    
+    F  ::=  "(" A ")"
+                           
+         |  A "+" A
+    
+         ;
+     
 `;
 
-    it.only("is rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
       
-topLevelInstruction                  ::=   comparatorDeclaration 
-                                           
-                                       |   combinatorDeclaration 
-                                                                                      
-                                       ;
-
-comparatorDeclaration                ::=   "Comparator" statement <END_OF_LINE> ;
- 
-combinatorDeclaration                ::=   "Combinator" expression ( ":" type )? <END_OF_LINE> ;
-
-argument                             ::=   argument_ expression~* ;
-
-type                                 ::=   "NaturalNumber" ;
-
-expression!                          ::=   argument arithmeticExpression~ 
- 
-                                       |   arithmeticExpression__
-                                       
-                                       ;
-
-statement!                           ::=   arithmeticStatement ;
-
-arithmeticExpression                 ::=  "(" argument ")"
-                       
-                                       |  argument "+" argument
-
-                                       ;
-
-arithmeticStatement                  ::=  argument ;
-
-arithmeticExpression__               ::=  "(" argument ")" ;
-
-arithmeticExpression~                ::=  "+" argument ;
-
-expression__                         ::=  arithmeticExpression__ ;
-                                       
-expression~                          ::=  arithmeticExpression~ ;
-
-argument_                            ::=   type 
-
-                                       |   expression__
-
-                                       ;
+    S   ::= A ;
+    
+    A   ::= A_ A~* ;
+    
+    E   ::= A F~~
+    
+          | F__
+    
+          ;
+    
+    T   ::= "n" ;
+    
+    F   ::= "(" A ")"
+    
+          | A "+" A
+    
+          ;
+    
+    F~~ ::= "+" A ;
+    
+    F__ ::= "(" A ")" ;
+    
+    E~~ ::= F~~ ;
+    
+    E__ ::= F__ ;
+    
+    A_  ::= E__
+    
+          | T
+    
+          ;
+    
+    A~  ::= E~~ ;
 
       `));
     });
 
-    it("results in the requisite parse tree" , () => {
-      const content = `Combinator (NaturalNumber + NaturalNumber):NaturalNumber
-`,
+    it("result in the requisite parse tree" , () => {
+      const content = "(n+n)",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
-      assert.isTrue(compare(parseTreeString, `    
-    
-                                                              topLevelInstruction                                                           
-                                                                       |                                                                    
-                                                             combinatorDeclaration                                                          
-                                                                       |                                                                    
-         -----------------------------------------------------------------------------------------------------------------------------      
-         |                                                |                                          |              |                |      
-Combinator[keyword]                                  expression                                 :[special]        type         <END_OF_LINE>
-                                                          |                                                         |                       
-                                                arithmeticExpression                                       NaturalNumber[name]              
-                                                          |                                                                                 
-                         ------------------------------------------------------------------                                                 
-                         |                               |                                |                                                 
-                    ([special]                       argument                        )[special]                                             
-                                                         |                                                                                  
-                                        -----------------------------------                                                                 
-                                        |                |                |                                                                 
-                                    argument       +[unassigned]      argument                                                              
-                                        |                                 |                                                                 
-                                      type                              type                                                                
-                                        |                                 |                                                                 
-                               NaturalNumber[name]               NaturalNumber[name]                                                        
+      assert.isTrue(compare(parseTreeString, `
+          
+                            S                        
+                            |                        
+                            A                        
+                            |                        
+                            E                        
+                            |                        
+                            F                        
+                            |                        
+        -----------------------------------------    
+        |                   |                   |    
+    ([custom]               A               )[custom]
+                            |                        
+                            E                        
+                            |                        
+                            F                        
+                            |                        
+                  ---------------------              
+                  |         |         |              
+                  A     +[custom]     A              
+                  |                   |              
+                  T                   T              
+                  |                   |              
+              n[custom]           n[custom]          
 
-
-`));
+      `));
     });
   });
 });
@@ -1273,25 +1250,12 @@ function parseTreeStringFromBNFAndContent(bnf, content) {
 
   eliminateLeftRecursion(startRule, ruleMap);
 
-  const { entries } = FlorenceLexer,
-        lexicalPattern = "\\+",
-        custom = lexicalPattern;  ///
+  const lexicalPattern = ".", ///
+        basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
+        basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
 
-  entries.push({
-    custom
-  });
-
-  const florenceLexer = FlorenceLexer.fromEntries(entries),
-        florenceParser = new FlorenceParser(startRule, ruleMap),  ///
-        tokens = florenceLexer.tokenise(content),
-        node = florenceParser.parse(tokens);
-
-  // const lexicalPattern = ".", ///
-  //       basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
-  //       basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
-  //
-  // const tokens = basicLexer.tokenise(content),
-  //       node = basicParser.parse(tokens);
+  const tokens = basicLexer.tokenise(content),
+        node = basicParser.parse(tokens);
 
   rewriteNodes(node);
 

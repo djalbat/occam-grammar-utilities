@@ -8,7 +8,7 @@ import RepeatedNode from "./node/repeated";
 
 import { ruleNameFromReducedRuleName, ruleNameFromRepeatedRuleName } from "./utilities/ruleName";
 
-const { last, first, filter, unshift } = arrayUtilities;
+const { last, first, filter, unshift, separate } = arrayUtilities;
 
 export default function rewriteNodes(node) {
   flattenNodes(node);
@@ -47,32 +47,37 @@ function flattenNodes(node) {
       if (childNodeRepeatedNode) {
         const repeatedNode = childNode, ///
               repeatedNodes = [],
+              nonRepeatedNodes = [],
               repeatedNodeChildNodes = repeatedNode.getChildNodes(),
               lastRepeatedNodeChildNode = last(repeatedNodeChildNodes),
               lastRepeatedNodeChildNodeRepeatedNode = (lastRepeatedNodeChildNode instanceof RepeatedNode);
 
         if (lastRepeatedNodeChildNodeRepeatedNode) {
-          filter(repeatedNodeChildNodes, (repeatedNodeChildNode) => {
+          separate(repeatedNodeChildNodes, repeatedNodes, nonRepeatedNodes, (repeatedNodeChildNode) => {
             const repeatedNodeChildNodeRepeatedNode = (repeatedNodeChildNode instanceof RepeatedNode);
 
             if (repeatedNodeChildNodeRepeatedNode) {
-              const repeatedNode = repeatedNodeChildNode; ///
-
-              repeatedNodes.unshift(repeatedNode);
-            } else {
               return true;
             }
           });
 
-          const start = index + 1,
-                deleteCount = 0,
-                repeatedNodesLength = repeatedNodes.length;
+          const nonRepeatedNodesLength = nonRepeatedNodes.length;
 
-          childNodes.splice(start, deleteCount, ...repeatedNodes);
+          if (nonRepeatedNodesLength > 0) {
+            const start = index + 1,
+                  deleteCount = 0,
+                  repeatedNodesLength = repeatedNodes.length;
 
-          childNodesLength = childNodes.length;
+            childNodes.splice(start, deleteCount, ...repeatedNodes);
 
-          index += repeatedNodesLength;
+            childNodesLength = childNodes.length;
+
+            index += repeatedNodesLength;
+
+            const repeatedNodeChildNodes = nonRepeatedNodes;  ///
+
+            repeatedNode.setChildNodes(repeatedNodeChildNodes);
+          }
         }
       }
 

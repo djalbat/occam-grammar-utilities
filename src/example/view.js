@@ -5,14 +5,13 @@ import withStyle from "easy-with-style";  ///
 import { Element } from "easy";
 import { BasicLexer } from "occam-lexers";
 import { BasicParser } from "occam-parsers";
-import { FlorenceLexer, FlorenceParser } from "occam-grammars";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 
 import Paragraph from "./paragraph";
 import SubHeading from "./subHeading";
 import SizeableDiv from "./div/sizeable";
 import BNFTextarea from "./textarea/bnf";
-import rewriteParseTree from "../rewriteNodes";
+import rewriteNodes from "../rewriteNodes";
 import rulesUtilities from "../utilities/rules";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
@@ -23,7 +22,6 @@ import RewriteNodesCheckbox from "./checkbox/rewriteNodes"
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
 import { rulesFromBNF } from "../utilities/parser";
-import { UNASSIGNED_ENTRY } from "./constants";
 
 const { rulesAsString, ruleMapFromRules, rulesFromStartRuleAndRuleMap, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
@@ -33,63 +31,45 @@ class View extends Element {
   }
 
   changeHandler = (event, element) => {
-    // try {
-      const bnf = this.getBNF(),
-            startRuleName = this.getStartRuleName();
+    const bnf = this.getBNF(),
+          startRuleName = this.getStartRuleName();
 
-      let rules = rulesFromBNF(bnf);
+    let rules = rulesFromBNF(bnf);
 
-      const ruleMap = ruleMapFromRules(rules),
-            startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName);
+    const ruleMap = ruleMapFromRules(rules),
+          startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName);
 
-      eliminateLeftRecursion(startRule, ruleMap);
+    eliminateLeftRecursion(startRule, ruleMap);
 
-      rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap);
+    rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap);
 
-      const multiLine = true,
-            rulesString = rulesAsString(rules, multiLine),
-            adjustedBNF = rulesString;  ///
+    const multiLine = true,
+          rulesString = rulesAsString(rules, multiLine),
+          adjustedBNF = rulesString;  ///
 
-      this.setAdjustedBNF(adjustedBNF);
+    this.setAdjustedBNF(adjustedBNF);
 
-      const parseTree = this.getParseTree(startRule, ruleMap);
+    const parseTree = this.getParseTree(startRule, ruleMap);
 
-      this.setParseTree(parseTree);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    this.setParseTree(parseTree);
   }
 
   getParseTree(startRule, ruleMap) {
     let parseTree = null;
 
-    // const lexicalPattern = this.getLexicalPattern(),
-    //       basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
-    //       basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
-    //
-    // const content = this.getContent(),
-    //       tokens = basicLexer.tokenise(content),
-    //       node = basicParser.parse(tokens);
+    const lexicalPattern = this.getLexicalPattern(),
+          basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
+          basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
 
-    const { entries } = FlorenceLexer,
-          lexicalPattern = this.getLexicalPattern(),
-          custom = lexicalPattern;  ///
-
-    entries.push({
-      custom
-    });
-
-    const florenceLexer = FlorenceLexer.fromEntries(entries),
-          florenceParser = new FlorenceParser(startRule, ruleMap),  ///
-          content = this.getContent(),
-          tokens = florenceLexer.tokenise(content),
-          node = florenceParser.parse(tokens);
+    const content = this.getContent(),
+          tokens = basicLexer.tokenise(content),
+          node = basicParser.parse(tokens);
 
     if (node !== null) {
       const rewriteNodesCheckboxChecked = this.isRewriteNodesCheckboxChecked();
 
       if (rewriteNodesCheckboxChecked) {
-        rewriteParseTree(node);
+        rewriteNodes(node);
       }
 
       const abridged = true;
@@ -166,43 +146,32 @@ class View extends Element {
     this.keyUpHandler();
   }
 
-  static initialBNF = `topLevelInstruction                  ::=   comparatorDeclaration 
+  static initialBNF = `    S  ::=  A ;
+    
+    A  ::=  E 
+    
+         |  T 
                                            
-                                       |   combinatorDeclaration 
-                                                                                      
-                                       ;
+         ;
+    
+    E  ::=  F ;
+    
+    T  ::=  "n" ;
+    
+    F  ::=  "(" A ")"
+                           
+         |  A "+" A
+    
+         ;
 
-comparatorDeclaration                ::=   "Comparator" statement <END_OF_LINE> ;
- 
-combinatorDeclaration                ::=   "Combinator" expression ( ":" type )? <END_OF_LINE> ;
-
-argument                             ::=   type 
-
-                                       |   expression 
-                                       
-                                       ;
-
-type                                 ::=   "NaturalNumber" ;
-
-expression!                          ::=   arithmeticExpression ;
-
-statement!                           ::=   arithmeticStatement ;
-
-arithmeticExpression                 ::=   "(" argument ")"
-                       
-                                       |   argument "+" argument
-
-                                       ;
-
-arithmeticStatement                  ::=  argument ;
 `;
 
-  static initialContent = `Combinator (NaturalNumber + NaturalNumber):NaturalNumber
+  static initialContent = `(n+n)
 `;
 
   static initialStartRuleName = "";
 
-  static initialLexicalPattern = "\\+";
+  static initialLexicalPattern = ".";
 
   static tagName = "div";
 
