@@ -4,10 +4,10 @@ const { assert } = require("chai"),
       { BasicLexer } = require("occam-lexers"),
       { BasicParser } = require("occam-parsers");
 
-const { rewriteNodes, rulesUtilities, parserUtilities, eliminateLeftRecursion } = require("../lib/index.js");
+const { rewriteNodes, rulesUtilities, parserUtilities, eliminateLeftRecursion } = require("../lib/index.js"); ///
 
 const { rulesFromBNF } = parserUtilities,
-      { rulesAsString, ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
+      { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
   describe("a complex directly left recursive definition", () => {
@@ -327,8 +327,6 @@ A ::= "g"
     
         | "g"
 
-        | "h"
-
         ;
     
 `;
@@ -340,11 +338,7 @@ A ::= "g"
         
     A  ::= A_ A~* ;
     
-    A_ ::= "g"
-    
-         | "h"
-    
-         ;
+    A_ ::= "g" ;
     
     A~ ::= "f" ;
          
@@ -443,13 +437,9 @@ A ::= "g"
     
         | "e"
     
-        | "f"
-    
         ;
     
     B ::= A "h"
-    
-        | "c"
     
         | "d"
 
@@ -462,34 +452,26 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A ::= A_ A~* ;
+    A   ::= A_ A~* ;
     
-    B ::= A "h"
+    B   ::= A
     
-        | "c"
+          | "d"
     
-        | "d"
-
-        ;
-      
-  B~~ ::= "h" ;
-      
-  B__ ::= "c"
+          ;
     
-        | "d"
-
-        ;
-      
-   A_ ::= B__ "g"
+    B~~ ::= "h" ;
     
-        | "e"
+    B__ ::= "d" ;
     
-        | "f"
+    A_  ::= B__ "g"
     
-        ;
+          | "e"
     
-   A~ ::= B~~ "g" ;
-
+          ;
+    
+    A~  ::= B~~ "g" ;
+        
       `));
     });
 
@@ -602,11 +584,11 @@ A ::= "g"
 
     A   ::= A_ A~* ;
     
-    B   ::= A "h"
+    B   ::= A
     
           | "b"
     
-          | A "f"
+          | A
     
           | "c"
     
@@ -693,15 +675,15 @@ A ::= "g"
       
     A   ::= A_ A~* ;
     
-    B   ::= A "f"
+    B   ::= A
     
-          | A C~~
+          | A
     
           | C__
     
           ;
     
-    C   ::= A "e"
+    C   ::= A
     
           | "d"
     
@@ -731,28 +713,32 @@ A ::= "g"
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "dhfh",
+      const content = "gfheh",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-                            A            
-                            |            
-                   ------------------    
-                   |                |    
-                   B            h[custom]
-                   |                     
-           ----------------              
-           |              |              
-           A          f[custom]          
-           |                             
-      -----------                        
-      |         |                        
-      B     h[custom]                    
-      |                                  
-      C                                  
-      |                                  
-  d[custom]                              
+                                       A             
+                                       |             
+                              -------------------    
+                              |                 |    
+                              B             h[custom]
+                              |                      
+                              C                      
+                              |                      
+                     ------------------              
+                     |                |              
+                     A            e[custom]          
+                     |                               
+             ----------------                        
+             |              |                        
+             B          h[custom]                    
+             |                                       
+        -----------                                  
+        |         |                                  
+        A     f[custom]                              
+        |                                            
+    g[custom]                                        
   
       `));
     });
@@ -790,7 +776,7 @@ A ::= "g"
     
     B   ::= "b"
     
-          | A "f"
+          | A
     
           | "c"
     
@@ -847,7 +833,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition if length greater than one", () => {
+  describe("an indirectly left recursive definition of length two", () => {
     const bnf = `
     
     A  ::=  B "h" 
@@ -879,7 +865,7 @@ A ::= "g"
 
     A   ::= A_ A~* ;
     
-    B   ::= A C~~ "f"
+    B   ::= A
     
           | C__ "f"
     
@@ -887,9 +873,9 @@ A ::= "g"
     
           ;
     
-    C   ::= A "d"
+    C   ::= A
     
-          | A "c"
+          | A
     
           | "b"
     
@@ -974,7 +960,7 @@ A ::= "g"
 
     A   ::= A_ A~* ;
     
-    B   ::= A "d" B~*
+    B   ::= A
     
           | B_ B~*
     
@@ -1053,7 +1039,7 @@ A ::= "g"
       
     A  ::=  A_ A~* ;
 
-    B  ::=  A "d" B~* ;
+    B  ::=  A ;
 
     B~ ::=  "e" ;
 
@@ -1128,7 +1114,7 @@ A ::= "g"
     
     A   ::= A_ A~* ;
     
-    E   ::= A F~~
+    E   ::= A
     
           | F__
     
@@ -1138,7 +1124,7 @@ A ::= "g"
     
     F   ::= "(" A ")"
     
-          | A "+" A
+          | A
     
           ;
     
@@ -1194,6 +1180,70 @@ A ::= "g"
       `));
     });
   });
+
+  describe("an indirectly left recursive definition", () => {
+    const bnf = `
+    
+    A ::=  E ;
+    
+    E ::=  A "+" A
+    
+        |  V
+    
+        ;
+    
+    V ::=  . ;
+     
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+              
+    A    ::= A_ A~* ;
+    
+    E    ::= A
+    
+           | V
+    
+           ;
+    
+    V    ::= . ;
+    
+    E~~  ::= "+" A ;
+    
+    E__  ::= V ;
+    
+    A_   ::= E__ ;
+    
+    A~   ::= E~~ ;
+        
+      `));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = "n+m",
+            startRuleName = "E",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                  E              
+                  |              
+        ---------------------    
+        |         |         |    
+        A     +[custom]     A    
+        |                   |    
+        E                   E    
+        |                   |    
+        V                   V    
+        |                   |    
+    n[custom]           m[custom]
+    
+      `));
+    });
+  });
 });
 
 function compare(stringA, stringB) {
@@ -1212,12 +1262,7 @@ function stripWhitespace(string) {
 function adjustedBNFFromBNF(bnf) {
   let rules = rulesFromBNF(bnf);
 
-  const ruleMap = ruleMapFromRules(rules),
-        startRule = startRuleFromRules(rules);
-
-  eliminateLeftRecursion(startRule, ruleMap);
-
-  rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap);
+  rules = eliminateLeftRecursion(rules);
 
   const multiLine = true,
         rulesString = rulesAsString(rules, multiLine),
@@ -1242,17 +1287,14 @@ function basicLexerFromLexicalPattern(lexicalPattern) {
   return basicLexer;
 }
 
-function parseTreeStringFromBNFAndContent(bnf, content) {
+function parseTreeStringFromBNFAndContent(bnf, content, startRuleName = null) {
   let rules = rulesFromBNF(bnf);
 
-  const ruleMap = ruleMapFromRules(rules),
-        startRule = startRuleFromRules(rules);
-
-  eliminateLeftRecursion(startRule, ruleMap);
+  rules = eliminateLeftRecursion(rules);
 
   const lexicalPattern = ".", ///
         basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
-        basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
+        basicParser =  basicParserFromRulesAndStartRuleName(rules, startRuleName);
 
   const tokens = basicLexer.tokenise(content),
         node = basicParser.parse(tokens);
@@ -1269,8 +1311,10 @@ function parseTreeStringFromBNFAndContent(bnf, content) {
   return parseTreeString;
 }
 
-function basicParserFromStartRuleAndRuleMap(startRule, ruleMap) {
-  const basicParser = new BasicParser(startRule, ruleMap);
+function basicParserFromRulesAndStartRuleName(rules, startRuleName) {
+  const ruleMap = ruleMapFromRules(rules),
+        startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
+        basicParser = new BasicParser(startRule, ruleMap);
 
   return basicParser;
 }

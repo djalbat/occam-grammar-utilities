@@ -2,6 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
+import EpsilonRepeatedRule from "./rule/repeated/epsilon";
 import DirectlyReducedRule from "./rule/reduced/directly";
 import DirectlyRepeatedRule from "./rule/repeated/directly";
 import IndirectlyReducedRule from "./rule/reduced/indirectly";
@@ -92,6 +93,11 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
         leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
         least = indirectlyLeftRecursiveDefinition.isLeast();
 
+  // const epsilonRepeatedRule = EpsilonRepeatedRule.fromLeftRecursiveRuleName(leftRecursiveRuleName),
+  //       epsilonRepeatedRuleName = epsilonRepeatedRule.getName();
+  //
+  // ruleMap[epsilonRepeatedRuleName] = epsilonRepeatedRule;
+
   let ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
       rule = ruleMap[ruleName];
 
@@ -118,6 +124,10 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
 
   const definitions = rule.getDefinitions(),
         indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(definitions, leftRecursiveRuleName);
+
+  indirectlyLeftRecursiveDefinitions.forEach((indirectlyLeftRecursiveDefinition) => {
+    indirectlyLeftRecursiveDefinition.removeTail();
+  });
 
   const replacedDefinition = leftRecursiveDefinition, ///
         replacementDefinitions = [],

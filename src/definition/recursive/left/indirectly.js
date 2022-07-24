@@ -6,6 +6,7 @@ import { arrayUtilities } from "necessary";
 import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
 import { ruleNamePartFromRuleName } from "../../../utilities/part";
+import { epsilonRepeatedRuleNameFromRuleName } from "../../../utilities/ruleName";
 import { cloneParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
 import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
@@ -58,6 +59,21 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
           least = (length === 1);
 
     return least;
+  }
+
+  removeTail() {
+    const parts = this.getParts(),
+          start = 1;
+
+    parts.splice(start);
+
+    //       deleteCount = Infinity
+    //       leftRecursiveRuleName = this.getLeftRecursiveRuleName(),
+    //       ruleName = leftRecursiveRuleName, ///
+    //       epsilonRepeatedRuleName = epsilonRepeatedRuleNameFromRuleName(ruleName),
+    //       epsilonRepeatedRuleNamePart = ruleNamePartFromRuleName(epsilonRepeatedRuleName);
+    //
+    // parts.splice(start, deleteCount, epsilonRepeatedRuleNamePart);
   }
 
   static fromPartsRuleNameAndLeftRecursiveDefinitions(parts, ruleName, leftRecursiveDefinitions) {

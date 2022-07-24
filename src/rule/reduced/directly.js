@@ -3,7 +3,7 @@
 import { Rule } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
-import ReducedNode from "../../node/reduced";
+import DirectlyReducedNode from "../../node/reduced/directly";
 import DirectlyLeftRecursiveDefinition from "../../definition/recursive/left/directly";
 import IndirectlyLeftRecursiveDefinition from "../../definition/recursive/left/indirectly";
 
@@ -41,7 +41,7 @@ export default class DirectlyReducedRule extends Rule {
             directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
             name = directlyReducedRuleName, ///
             ambiguous = false,
-            NonTerminalNode = ReducedNode;  ///
+            NonTerminalNode = DirectlyReducedNode;  ///
 
       directlyReducedRule = new DirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
     }

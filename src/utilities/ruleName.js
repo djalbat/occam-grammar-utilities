@@ -7,9 +7,15 @@ export function ruleNameFromReducedRuleName(reducedRuleName) {
 }
 
 export function ruleNameFromRepeatedRuleName(repeatedRuleName) {
-  const ruleName = repeatedRuleName.replace(/~~|~$/, "");
+  const ruleName = repeatedRuleName.replace(/~~~|~~|~$/, "");
 
   return ruleName;
+}
+
+export function epsilonRepeatedRuleNameFromRuleName(ruleName) {
+  const epsilonRepeatedRuleName = `${ruleName}~~~`;
+
+  return epsilonRepeatedRuleName;
 }
 
 export function directlyReducedRuleNameFromRuleName(ruleName) {

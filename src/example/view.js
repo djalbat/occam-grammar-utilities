@@ -15,6 +15,7 @@ import rewriteNodes from "../rewriteNodes";
 import rulesUtilities from "../utilities/rules";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
+import StartRuleNameInput from "./input/startRuleName";
 import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RewriteNodesCheckbox from "./checkbox/rewriteNodes"
@@ -22,24 +23,26 @@ import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
 import { rulesFromBNF } from "../utilities/parser";
 
-const { rulesAsString, ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
+const { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 class View extends Element {
   keyUpHandler = (event, element) => {
-    this.changeHandler();
+    this.update();
   }
 
   changeHandler = (event, element) => {
-    const bnf = this.getBNF();
+    this.update();
+  }
+
+  update() {
+    const bnf = this.getBNF(),
+          content = this.getContent(),
+          startRuleName = this.getStartRuleName(),
+          lexicalPattern = this.getLexicalPattern();
 
     let rules = rulesFromBNF(bnf);
 
-    const ruleMap = ruleMapFromRules(rules),
-          startRule = startRuleFromRules(rules);
-
-    eliminateLeftRecursion(startRule, ruleMap);
-
-    rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap);
+    rules = eliminateLeftRecursion(rules);
 
     const multiLine = true,
           rulesString = rulesAsString(rules, multiLine),
@@ -47,21 +50,12 @@ class View extends Element {
 
     this.setAdjustedBNF(adjustedBNF);
 
-    const parseTree = this.getParseTree(startRule, ruleMap);
-
-    this.setParseTree(parseTree);
-  }
-
-  getParseTree(startRule, ruleMap) {
-    let parseTree = null;
-
-    const lexicalPattern = this.getLexicalPattern(),
-          basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
-          basicParser =  basicParserFromStartRuleAndRuleMap(startRule, ruleMap);
-
-    const content = this.getContent(),
+    const basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
+          basicParser =  basicParserFromRulesAndStartRuleName(rules, startRuleName),
           tokens = basicLexer.tokenise(content),
           node = basicParser.parse(tokens);
+
+    let parseTree = null;
 
     if (node !== null) {
       const rewriteNodesCheckboxChecked = this.isRewriteNodesCheckboxChecked();
@@ -75,7 +69,7 @@ class View extends Element {
       parseTree = node.asParseTree(tokens, abridged);
     }
 
-    return parseTree;
+    this.setParseTree(parseTree);
   }
 
   childElements() {
@@ -102,6 +96,10 @@ class View extends Element {
         <ColumnDiv>
           <RowsDiv>
             <SubHeading>
+              Start rule name
+            </SubHeading>
+            <StartRuleNameInput onKeyUp={this.keyUpHandler} />
+            <SubHeading>
               Content
             </SubHeading>
             <ContentTextarea onKeyUp={this.keyUpHandler} />
@@ -123,42 +121,42 @@ class View extends Element {
   initialise() {
     this.assignContext();
 
-    const { initialBNF, initialContent, initialLexicalPattern } = this.constructor,
+    const { initialBNF, initialContent, initialStartRuleName, initialLexicalPattern } = this.constructor,
           bnf = initialBNF, ///
           content = initialContent, ///
+          startRuleName = initialStartRuleName, ///
           lexicalPattern = initialLexicalPattern; ///
 
     this.setBNF(bnf);
 
     this.setContent(content);
 
+    this.setStartRuleName(startRuleName);
+
     this.setLexicalPattern(lexicalPattern);
 
     this.keyUpHandler();
   }
 
-  static initialBNF = `    S  ::=  A ;
+  static initialBNF = `
+ 
+    A ::=  E ;
     
-    A  ::=  E 
+    E ::=  S ;
     
-         |  T 
-                                           
-         ;
+    S ::=  A "+" A
     
-    E  ::=  F ;
+        |  V
     
-    T  ::=  "n" ;
+        ;
     
-    F  ::=  "(" A ")"
-                           
-         |  A "+" A
-    
-         ;
+    V ::=  . ;
 
 `;
 
-  static initialContent = `(n+n)
-`;
+  static initialContent = `n+m`;
+
+  static initialStartRuleName = "E";
 
   static initialLexicalPattern = ".";
 
@@ -191,8 +189,10 @@ function basicLexerFromLexicalPattern(lexicalPattern) {
   return basicLexer;
 }
 
-function basicParserFromStartRuleAndRuleMap(startRule, ruleMap) {
-  const basicParser = new BasicParser(startRule, ruleMap);
+function basicParserFromRulesAndStartRuleName(rules, startRuleName) {
+  const ruleMap = ruleMapFromRules(rules),
+        startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
+        basicParser = new BasicParser(startRule, ruleMap);
 
   return basicParser;
 }

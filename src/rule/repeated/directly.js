@@ -3,8 +3,8 @@
 import { arrayUtilities } from "necessary";
 import { Rule, Definition } from "occam-parsers";
 
-import RepeatedNode from "../../node/repeated";
 import RecursiveDefinition from "../../definition/recursive";
+import DirectlyRepeatedNode from "../../node/repeated/directly";
 import DirectlyLeftRecursiveDefinition from "../../definition/recursive/left/directly";
 
 import { cloneParts } from "../../utilities/parts";
@@ -72,7 +72,7 @@ export default class DirectlyRepeatedRule extends Rule {
     const directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
           name = directlyRepeatedRuleName, ///
           ambiguous = false,
-          NonTerminalNode = RepeatedNode,  ///
+          NonTerminalNode = DirectlyRepeatedNode,  ///
           directlyRepeatedRule = new DirectlyRepeatedRule(name, ambiguous, definitions, NonTerminalNode);
 
     return directlyRepeatedRule;

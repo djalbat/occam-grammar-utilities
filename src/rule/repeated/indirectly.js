@@ -3,7 +3,7 @@
 import { arrayUtilities } from "necessary";
 import { Rule, Parts, Definition } from "occam-parsers";
 
-import RepeatedNode from "../../node/repeated";
+import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 import IndirectlyLeftRecursiveDefinition from "../../definition/recursive/left/indirectly";
 
 import { matchParts } from "../../utilities/part";
@@ -71,7 +71,7 @@ export default class IndirectlyRepeatedRule extends Rule {
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleName(ruleName),
           name = indirectlyRepeatedRuleName,  ///
           ambiguous = false,
-          NonTerminalNode = RepeatedNode,  ///
+          NonTerminalNode = IndirectlyRepeatedNode,  ///
           indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, ambiguous, definitions, NonTerminalNode);
 
     return indirectlyRepeatedRule;
