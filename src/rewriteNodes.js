@@ -10,7 +10,7 @@ import IndirectlyRepeatedNode from "./node/repeated/indirectly";
 
 import { ruleNameFromReducedRuleName, ruleNameFromRepeatedRuleName } from "./utilities/ruleName";
 
-const { first, last, front, filter, forwardsSome } = arrayUtilities;
+const { push, last, first, front, filter, forwardsSome } = arrayUtilities;
 
 export default function rewriteNodes(node) {
   rewriteRepeatedNodes(node);
@@ -87,7 +87,8 @@ function rewriteRepeatedNodes(node) {
     const nonTerminalNode = node, ///
           childNodes = nonTerminalNode.getChildNodes(),
           lastChildNode = last(childNodes),
-          lastChildNodeDirectlyRepeatedNode = (lastChildNode instanceof DirectlyRepeatedNode);
+          lastChildNodeDirectlyRepeatedNode = (lastChildNode instanceof DirectlyRepeatedNode),
+          lastChildNodeIndirectlyRepeatedNode = (lastChildNode instanceof IndirectlyRepeatedNode);
 
     if (lastChildNodeDirectlyRepeatedNode) {
       const directlyRepeatedNode = lastChildNode, ///
@@ -101,6 +102,28 @@ function rewriteRepeatedNodes(node) {
             directlyRepeatedNodeChildNodes = directlyRepeatedNode.getChildNodes();
 
       childNodes.splice(start, deleteCount, newNonTerminalNode, ...directlyRepeatedNodeChildNodes);
+    }
+
+    if (lastChildNodeIndirectlyRepeatedNode) {
+      const firstChildNode = first(childNodes),
+            directlyReducedNode = firstChildNode, ///
+            indirectlyRepeatedNode = lastChildNode, ///
+            directlyReducedNodeRuleName = directlyReducedNode.getRuleName(),
+            reducedRuleName = directlyReducedNodeRuleName,  ///
+            ruleName = ruleNameFromReducedRuleName(reducedRuleName),
+            childNodesLength = childNodes.length,
+            start = 0,
+            deleteCount = childNodesLength - 1,
+            newNonTerminalNodeChildNodes = childNodes.splice(start, deleteCount),
+            indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes(),
+            newNonTerminalNode = new NonTerminalNode(ruleName, newNonTerminalNodeChildNodes);
+
+      childNodes.pop();
+
+      push(childNodes, [
+         newNonTerminalNode,
+        ...indirectlyRepeatedNodeChildNodes
+      ]);
     }
 
     forwardsSome(childNodes, (childNode, index) => {

@@ -430,7 +430,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition", () => {
+  describe.only("an indirectly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g"
@@ -454,7 +454,7 @@ A ::= "g"
       
     A   ::= A_ A~* ;
     
-    B   ::= A
+    B   ::= A_ A~* B~~
     
           | "d"
     
@@ -476,22 +476,23 @@ A ::= "g"
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "ehg",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+      const content = "dgh",
+            startRuleName = "B",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
 
       assert.isTrue(compare(parseTreeString, `
             
-                     A           
+                     B           
                      |           
              ----------------    
              |              |    
-             B          g[custom]
+             A          h[custom]
              |                   
         -----------              
         |         |              
-        A     h[custom]          
+        B     g[custom]          
         |                        
-    e[custom]                    
+    d[custom]                    
              
       `));
     });

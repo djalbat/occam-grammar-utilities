@@ -6,9 +6,12 @@ import { arrayUtilities } from "necessary";
 import RecursiveDefinition from "../../definition/recursive";
 
 import { ruleNamePartFromRuleName } from "../../utilities/part";
-import { ruleNameFromReducedRuleName } from "../../utilities/ruleName";
 import { cloneParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
 import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+import { ruleNameFromReducedRuleName,
+         directlyReducedRuleNameFromRuleName,
+         directlyRepeatedRuleNameFromRuleName,
+         indirectlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 const { tail, push } = arrayUtilities,
       { ZeroOrMorePartsPart } = Parts;
@@ -49,10 +52,9 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
   }
 
   static fromDirectlyReducedRuleName(directlyReducedRuleName) {
-    const reducedRuleName = directlyReducedRuleName,  ///
-          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
+    const directlyReducedRuleNamePart = ruleNamePartFromRuleName(directlyReducedRuleName),
           parts = [
-            reducedRuleNamePart
+            directlyReducedRuleNamePart
           ],
           ruleName = ruleNameFromReducedRuleName(reducedRuleName),
           recursiveRuleNames = recursiveRuleNamesFromParts(parts),
@@ -76,26 +78,38 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return leftRecursiveDefinition;
   }
 
-  static fromLeftRecursiveDefinitionAndDirectlyRepeatedRuleName(leftRecursiveDefinition, directlyRecursiveRuleName) {
-    let parts;
-
-    const directlyRecursiveRuleNamePart = ruleNamePartFromRuleName(directlyRecursiveRuleName),
-          zeroOrMoreDirectlyRecursiveRuleNamePartsPart = new ZeroOrMorePartsPart(directlyRecursiveRuleNamePart);
-
-    parts = leftRecursiveDefinition.getParts();
-
-    parts = [ ///
-      ...parts,
-      zeroOrMoreDirectlyRecursiveRuleNamePartsPart
-    ];
-
-    parts = cloneParts(parts);  ///
-
-    const ruleName = leftRecursiveDefinition.getRuleName(),
+  static fromLeftRecursiveRuleNameAndRuleName(leftRecursiveRuleName, ruleName) {
+    const indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleName(ruleName),
+          indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName),
+          directlyReducedLeftRecursiveRuleName = directlyReducedRuleNameFromRuleName(leftRecursiveRuleName),
+          directlyRepeatedLeftRecursiveRuleName = directlyRepeatedRuleNameFromRuleName(leftRecursiveRuleName),
+          directlyReducedLeftRecursiveRuleNamePart = ruleNamePartFromRuleName(directlyReducedLeftRecursiveRuleName),
+          directlyRepeatedLeftRecursiveRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedLeftRecursiveRuleName),
+          zeroOrMoreDirectlyRepeatedLeftRecursiveRuleNamePartsPart = new ZeroOrMorePartsPart(directlyRepeatedLeftRecursiveRuleNamePart),
+          parts = [
+            directlyReducedLeftRecursiveRuleNamePart,
+            zeroOrMoreDirectlyRepeatedLeftRecursiveRuleNamePartsPart,
+            indirectlyRepeatedRuleNamePart
+          ],
           recursiveRuleNames = recursiveRuleNamesFromParts(parts),
-          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts);
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
 
-    leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames); ///
+    return leftRecursiveDefinition;
+  }
+
+  static fromDirectlyReducedRuleNameAndDirectlyRepeatedRuleName(directlyReducedRuleName, directlyRepeatedRuleName) {
+    const directlyReducedRuleNamePart = ruleNamePartFromRuleName(directlyReducedRuleName),
+          directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName),
+          zeroOrMoreDirectlyRecursiveRuleNamePartsPart = new ZeroOrMorePartsPart(directlyRepeatedRuleNamePart),
+          parts = [
+            directlyReducedRuleNamePart,
+            zeroOrMoreDirectlyRecursiveRuleNamePartsPart
+          ],
+          ruleName = ruleNameFromReducedRuleName(reducedRuleName),
+          recursiveRuleNames = recursiveRuleNamesFromParts(parts),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+          leftRecursiveDefinition = new LeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
 
     return leftRecursiveDefinition;
   }
