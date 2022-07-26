@@ -161,7 +161,7 @@ function removeDefinitions(rule, definitions) {
 
     if (index > -1) {
       const start = index,  ///
-            deleteCount = 0;
+            deleteCount = 1;
 
       ruleDefinitions.splice(start, deleteCount);
     }

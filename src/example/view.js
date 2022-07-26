@@ -138,25 +138,17 @@ class View extends Element {
     this.keyUpHandler();
   }
 
-  static initialBNF = `
- 
-    A ::= B "g"
-    
-        | "e"
-    
-        ;
-    
-    B ::= A "h"
-    
-        | "d"
+  static initialBNF = ` 
+  A ::= A "f"
+  
+      | "g"
 
-        ;
-
+      ;
 `;
 
-  static initialContent = `eh`;
+  static initialContent = "gf";
 
-  static initialStartRuleName = "B";
+  static initialStartRuleName = "";
 
   static initialLexicalPattern = ".";
 

@@ -345,8 +345,8 @@ A ::= "g"
      `));
     });
 
-    it("results in the requisite parse tree", () => {
-      const content = "gff",
+    it.only("results in the requisite parse tree", () => {
+      const content = "gf",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
@@ -430,7 +430,7 @@ A ::= "g"
     });
   });
 
-  describe.only("an indirectly left recursive definition", () => {
+  describe("an indirectly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g"
@@ -476,23 +476,31 @@ A ::= "g"
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "dgh",
-            startRuleName = "B",
+      const content = "ehg",
+            startRuleName = "",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
 
       assert.isTrue(compare(parseTreeString, `
             
-                     B           
-                     |           
-             ----------------    
-             |              |    
-             A          h[custom]
-             |                   
-        -----------              
-        |         |              
-        B     g[custom]          
-        |                        
-    d[custom]                    
+                                       B             
+                                       |             
+                              -------------------    
+                              |                 |    
+                              A             h[custom]
+                              |                      
+                     ------------------              
+                     |                |              
+                     B            g[custom]          
+                     |                               
+             ----------------                        
+             |              |                        
+             A          h[custom]                    
+             |                                       
+        -----------                                  
+        |         |                                  
+        B     g[custom]                              
+        |                                            
+    d[custom]                                        
              
       `));
     });
@@ -518,7 +526,7 @@ A ::= "g"
       
    A  ::= A_ A~* ;
   
-   B  ::= A ;
+   B  ::= A_ A~* B~~ ;
   
   B~~ ::= ε ;
   
@@ -585,11 +593,9 @@ A ::= "g"
 
     A   ::= A_ A~* ;
     
-    B   ::= A
+    B   ::= A_ A~* B~~
     
           | "b"
-    
-          | A
     
           | "c"
     
@@ -674,48 +680,47 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A   ::= A_ A~* ;
+    A  ::=  A_ A~* ;
+
+    B  ::=  A_ A~* B~~ 
     
-    B   ::= A
+         |  C__
+         
+         ;
+
+    C  ::=  A_ A~* C~~ 
     
-          | A
+         |  "d"
+         
+         ;
     
-          | C__
+   C~~ ::=  "e" ;
     
-          ;
+   C__ ::=  "d" ;
     
-    C   ::= A
+   B~~ ::=  "f" 
     
-          | "d"
-    
-          ;
-    
-    C~~ ::= "e" ;
-    
-    C__ ::= "d" ;
-    
-    B~~  ::= "f"
-    
-          | C~~
-    
-          ;
-    
-    B__ ::= C__ ;
-    
-    A_  ::= B__ "h"
-    
-          | "g"
-    
-          ;
-    
-    A~  ::= B~~ "h" ;
-    
+         |  C~~
+         
+         ;
+
+   B__ ::=  C__ ;
+
+    A_ ::=  B__ "h" 
+      
+         |  "g" 
+ 
+         ;
+
+    A~ ::=  B~~ "h" ;
+
       `));
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "gfheh",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+      const content = "gehe",
+            startRuleName = "C",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
 
       assert.isTrue(compare(parseTreeString, `
           
@@ -843,7 +848,7 @@ A ::= "g"
  
          ;
 
-    B  ::=  C "f" 
+    B  ::=  C 
     
          |  "e"
          
@@ -866,17 +871,15 @@ A ::= "g"
 
     A   ::= A_ A~* ;
     
-    B   ::= A
+    B   ::= A_ A~* B~~
     
-          | C__ "f"
+          | C__
     
           | "e"
     
           ;
     
-    C   ::= A
-    
-          | A
+    C   ::= A_ A~* C~~
     
           | "b"
     
@@ -890,9 +893,9 @@ A ::= "g"
     
     C__ ::= "b" ;
     
-    B~~ ::= C~~ "f" ;
+    B~~ ::= C~~ ;
     
-    B__ ::= C__ "f"
+    B__ ::= C__
     
           | "e"
     
@@ -910,7 +913,7 @@ A ::= "g"
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "gcfh",
+      const content = "g",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
