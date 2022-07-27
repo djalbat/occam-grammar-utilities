@@ -13,8 +13,8 @@ import { ruleNameFromReducedRuleName,
          directlyRepeatedRuleNameFromRuleName,
          indirectlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
-const { tail, push } = arrayUtilities,
-      { ZeroOrMorePartsPart } = Parts;
+const { tail } = arrayUtilities,
+      { OptionalPartPart, ZeroOrMorePartsPart } = Parts;
 
 export default class LeftRecursiveDefinition extends RecursiveDefinition {
   constructor(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames) {
@@ -85,11 +85,12 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
           directlyRepeatedLeftRecursiveRuleName = directlyRepeatedRuleNameFromRuleName(leftRecursiveRuleName),
           directlyReducedLeftRecursiveRuleNamePart = ruleNamePartFromRuleName(directlyReducedLeftRecursiveRuleName),
           directlyRepeatedLeftRecursiveRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedLeftRecursiveRuleName),
+          optionalIndirectlyRepeatedRuleNamePartPart = new OptionalPartPart(indirectlyRepeatedRuleNamePart),
           zeroOrMoreDirectlyRepeatedLeftRecursiveRuleNamePartsPart = new ZeroOrMorePartsPart(directlyRepeatedLeftRecursiveRuleNamePart),
           parts = [
             directlyReducedLeftRecursiveRuleNamePart,
             zeroOrMoreDirectlyRepeatedLeftRecursiveRuleNamePartsPart,
-            indirectlyRepeatedRuleNamePart
+            optionalIndirectlyRepeatedRuleNamePartPart
           ],
           recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
@@ -121,11 +122,10 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
           reducedRuleName = indirectlyReducedRuleName,  ///
           reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
 
-    let parts = [];
-
-    parts.push(reducedRuleNamePart);
-
-    push(parts, leftRecursiveDefinitionPartsTail);
+    let parts = [
+      reducedRuleNamePart,
+      ...leftRecursiveDefinitionPartsTail
+    ];
 
     parts = cloneParts(parts);  ///
 
