@@ -139,14 +139,22 @@ class View extends Element {
   }
 
   static initialBNF = ` 
-  A ::= A "f"
-  
-      | "g"
+  A  ::=  B "h" 
+    
+       |  "g" 
 
-      ;
+       ;
+
+  B  ::=  B "e" "f"
+  
+       |  A "d" 
+  
+       |  "c" 
+
+       ;
 `;
 
-  static initialContent = "gf";
+  static initialContent = "gdefh";
 
   static initialStartRuleName = "";
 

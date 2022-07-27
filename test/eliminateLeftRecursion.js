@@ -345,8 +345,8 @@ A ::= "g"
      `));
     });
 
-    it.only("results in the requisite parse tree", () => {
-      const content = "gf",
+    it("results in the requisite parse tree", () => {
+      const content = "gff",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
@@ -476,31 +476,23 @@ A ::= "g"
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "ehg",
-            startRuleName = "",
+      const content = "dgh",
+            startRuleName = "B",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
 
       assert.isTrue(compare(parseTreeString, `
             
-                                       B             
-                                       |             
-                              -------------------    
-                              |                 |    
-                              A             h[custom]
-                              |                      
-                     ------------------              
-                     |                |              
-                     B            g[custom]          
-                     |                               
-             ----------------                        
-             |              |                        
-             A          h[custom]                    
-             |                                       
-        -----------                                  
-        |         |                                  
-        B     g[custom]                              
-        |                                            
-    d[custom]                                        
+                     B           
+                     |           
+             ----------------    
+             |              |    
+             A          h[custom]
+             |                   
+        -----------              
+        |         |              
+        B     g[custom]          
+        |                        
+    d[custom]                    
              
       `));
     });
@@ -627,26 +619,30 @@ A ::= "g"
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "cghg",
+      const content = "efghg",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
             
-                              A            
-                              |            
-                     ------------------    
-                     |                |    
-                     B            g[custom]
-                     |                     
-             ----------------              
-             |              |              
-             A          h[custom]          
-             |                             
-        -----------                        
-        |         |                        
-        B     g[custom]                    
-        |                                  
-    c[custom]                              
+                                       A             
+                                       |             
+                              -------------------    
+                              |                 |    
+                              B             g[custom]
+                              |                      
+                     ------------------              
+                     |                |              
+                     A            h[custom]          
+                     |                               
+             ----------------                        
+             |              |                        
+             B          g[custom]                    
+             |                                       
+        -----------                                  
+        |         |                                  
+        A     f[custom]                              
+        |                                            
+    e[custom]                                        
              
       `));
     });
@@ -724,27 +720,23 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
           
-                                       A             
-                                       |             
-                              -------------------    
-                              |                 |    
-                              B             h[custom]
-                              |                      
-                              C                      
-                              |                      
-                     ------------------              
-                     |                |              
-                     A            e[custom]          
-                     |                               
-             ----------------                        
-             |              |                        
-             B          h[custom]                    
-             |                                       
-        -----------                                  
-        |         |                                  
-        A     f[custom]                              
-        |                                            
-    g[custom]                                        
+                              C            
+                              |            
+                     ------------------    
+                     |                |    
+                     A            e[custom]
+                     |                     
+             ----------------              
+             |              |              
+             B          h[custom]          
+             |                             
+             C                             
+             |                             
+        -----------                        
+        |         |                        
+        A     e[custom]                    
+        |                                  
+    g[custom]                              
   
       `));
     });
@@ -777,12 +769,12 @@ A ::= "g"
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-    
+        
     A   ::= A_ A~* ;
     
     B   ::= "b"
     
-          | A
+          | A_ A~* B~~
     
           | "c"
     
@@ -809,7 +801,7 @@ A ::= "g"
           | B~~ "g"
     
           ;
-          
+                    
       `));
     });
 
@@ -913,32 +905,35 @@ A ::= "g"
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "g",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+      const content = "gchd",
+            startRuleName = "C",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
 
       assert.isTrue(compare(parseTreeString, `
           
-                              A            
+                              C            
                               |            
                      ------------------    
                      |                |    
-                     B            h[custom]
+                     A            d[custom]
                      |                     
              ----------------              
              |              |              
-             C          f[custom]          
+             B          h[custom]          
+             |                             
+             C                             
              |                             
         -----------                        
         |         |                        
         A     c[custom]                    
         |                                  
     g[custom]                              
-             
+    
       `));
     });
   });
 
-  describe("an indirectly left recursive definition and sibling directly left recursive definition", () => {
+  xdescribe("an indirectly left recursive definition and sibling directly left recursive definition", () => {
     const bnf = `
   
     A  ::=  B "h" 
@@ -1019,7 +1014,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition and an isolated sibling directly left recursive definition", () => {
+  xdescribe("an indirectly left recursive definition and an isolated sibling directly left recursive definition", () => {
     const bnf = `
   
     A  ::=  B "g" 
@@ -1086,7 +1081,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition of length two and a unary intermediate left recursive definition", () => {
+  xdescribe("an indirectly left recursive definition of length two and a unary intermediate left recursive definition", () => {
     const bnf = `
     
     S  ::=  A ;

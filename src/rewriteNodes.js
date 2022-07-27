@@ -87,24 +87,15 @@ function rewriteDirectRecursion(nonTerminalNode) {
 }
 
 function rewriteDirectReduction(nonTerminalNode) {
-  const ruleName = nonTerminalNode.getRuleName(),
-        childNodes = nonTerminalNode.getChildNodes(),
+  const childNodes = nonTerminalNode.getChildNodes(),
         firstChildNode = first(childNodes),
         firstDirectlyReducedChildNode = firstChildNode, ///
         reducedNode = firstDirectlyReducedChildNode,  ///
         rewrittenNode = RewrittenNode.fromReducedNode(reducedNode),
-        childNodesLength = childNodes.length,
-        rewrittenNodeRuleName = rewrittenNode.getRuleName(),
         start = 0,
         deleteCount = 1;
 
-  if ((childNodesLength === 1) && (ruleName === rewrittenNodeRuleName)) {
-    const rewrittenNodeChildNodes = rewrittenNode.getChildNodes();
-
-    childNodes.splice(start, deleteCount, ...rewrittenNodeChildNodes);
-  } else {
-    childNodes.splice(start, deleteCount, rewrittenNode);
-  }
+  childNodes.splice(start, deleteCount, rewrittenNode);
 }
 
 function rewriteIndirectReduction(nonTerminalNode) {
@@ -124,30 +115,18 @@ function rewriteIndirectReduction(nonTerminalNode) {
 }
 
 function rewriteTrailingDirectRepetition(nonTerminalNode) {
-  const ruleName = nonTerminalNode.getRuleName(),
-        childNodes = nonTerminalNode.getChildNodes(),
+  const childNodes = nonTerminalNode.getChildNodes(),
         directlyRepeatedChildNodes = childNodes.filter((childNode) => (childNode instanceof DirectlyRepeatedNode)),
         directlyRepeatedChildNodesLength = directlyRepeatedChildNodes.length,
         lastDirectlyRepeatedChildNode = last(directlyRepeatedChildNodes),
-        trailingDirectlyRepeatedNode = lastDirectlyRepeatedChildNode, ///
-        repeatedNode = trailingDirectlyRepeatedNode,  ///
+        repeatedNode = lastDirectlyRepeatedChildNode,  ///
         rewrittenNode = RewrittenNode.fromRepeatedNode(repeatedNode),
-        childNodesLength = childNodes.length,
-        rewrittenNodeRuleName = rewrittenNode.getRuleName(),
         start = 0,
         deleteCount = 1 + directlyRepeatedChildNodesLength;
 
-  if ((childNodesLength === 1) && (ruleName === rewrittenNodeRuleName)) {
-    const rewrittenNodeChildNodes = rewrittenNode.getChildNodes();
-
-    childNodes.splice(start, deleteCount, ...rewrittenNodeChildNodes);
-  } else {
-    childNodes.splice(start, deleteCount, rewrittenNode);
-
-    nonTerminalNode = rewrittenNode;
-  }
-
   childNodes.splice(start, deleteCount, rewrittenNode);
+
+  nonTerminalNode = rewrittenNode;
 
   return nonTerminalNode;
 }
@@ -191,19 +170,42 @@ function rewriteTrailingIndirectRepetition(nonTerminalNode) {
 }
 
 function rewriteDirectRecursionAndTrailingIndirectRepetition(nonTerminalNode) {
-  const childNodes = nonTerminalNode.getChildNodes(),
-        firstChildNode = first(childNodes),
+  let childNodes;
+
+  childNodes = nonTerminalNode.getChildNodes();
+
+  const firstChildNode = first(childNodes),
         firstChildNodeDirectlyReducedChildNode = (firstChildNode instanceof DirectlyReducedNode);
 
   if (firstChildNodeDirectlyReducedChildNode) {
     rewriteTrailingIndirectRepetition(nonTerminalNode);
 
-    const childNodes = nonTerminalNode.getChildNodes(),
-          directlyRepeatedChildNodes = childNodes.filter((childNode) => (childNode instanceof DirectlyRepeatedNode)),
+    childNodes = nonTerminalNode.getChildNodes();
+
+    const directlyRepeatedChildNodes = childNodes.filter((childNode) => (childNode instanceof DirectlyRepeatedNode)),
           directlyRepeatedChildNodesLength = directlyRepeatedChildNodes.length;
 
     (directlyRepeatedChildNodesLength === 0) ?
       rewriteDirectReduction(nonTerminalNode) :
         rewriteDirectRecursion(nonTerminalNode);
+
+    childNodes = nonTerminalNode.getChildNodes();
+
+    const childNodesLength = childNodes.length;
+
+    if (childNodesLength === 1) {
+      const firstChildNode = first(childNodes),
+            rewrittenNode = firstChildNode, ///
+            ruleName = nonTerminalNode.getRuleName(),
+            rewrittenNodeRuleName = rewrittenNode.getRuleName();
+
+      if (ruleName === rewrittenNodeRuleName) {
+        const start = 0,
+              deleteCount = 1,
+              rewrittenNodeChildNodes = rewrittenNode.getChildNodes();
+
+        childNodes.splice(start, deleteCount, ...rewrittenNodeChildNodes);
+      }
+    }
   }
 }

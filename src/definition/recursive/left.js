@@ -106,6 +106,7 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
             directlyReducedRuleNamePart,
             zeroOrMoreDirectlyRecursiveRuleNamePartsPart
           ],
+          reducedRuleName = directlyReducedRuleName,  ///
           ruleName = ruleNameFromReducedRuleName(reducedRuleName),
           recursiveRuleNames = recursiveRuleNamesFromParts(parts),
           leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
