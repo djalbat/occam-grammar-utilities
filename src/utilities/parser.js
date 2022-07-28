@@ -20,26 +20,21 @@ export function rulesFromBNF(bnf) {
 }
 
 export function parserFromRules(Class, rules) {
-  const ruleMap = ruleMapFromRules(rules),
-        startRule = startRuleFromRules(rules);
+  rules = eliminateLeftRecursion(rules);
 
-  eliminateLeftRecursion(startRule, ruleMap);
-
-  const parser = new Class(startRule, ruleMap);
+  const startRule = startRuleFromRules(rules),
+        ruleMap = ruleMapFromRules(rules),
+        parser = new Class(startRule, ruleMap);
 
   return parser;
 }
 
 export function parserFromRulesAndStartRuleName(Class, rules, startRuleName) {
-  const ruleMap = ruleMapFromRules(rules);
+  rules = eliminateLeftRecursion(rules);
 
-  let startRule = startRuleFromRules(rules);
-
-  eliminateLeftRecursion(startRule, ruleMap);
-
-  startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName);
-
-  const parser = new Class(startRule, ruleMap);
+  const startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
+        ruleMap = ruleMapFromRules(rules),
+        parser = new Class(startRule, ruleMap);
 
   return parser;
 }
