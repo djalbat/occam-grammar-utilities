@@ -516,15 +516,15 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF,`
       
-   A  ::= A_ A~* ;
-  
-   B  ::= A_ A~* B~~? ;
-  
-  B~~ ::= ε ;
-  
-   A_ ::= "c" ;
-  
-   A~ ::= B~~ "d" ;
+    A   ::= A_ A~* ;
+    
+    B   ::= A_ A~* B~~? ;
+    
+    B~~ ::= ε ;
+    
+    A_  ::= "c" ;
+    
+    A~  ::= B~~ "d" ;
 
       `));
     });
@@ -997,7 +997,7 @@ A ::= "g"
     });
   });
 
-  describe.only("an indirectly left recursive definition and sibling directly left recursive definition", () => {
+  describe("an indirectly left recursive definition and sibling directly left recursive definition", () => {
     const bnf = `
   
     A  ::=  B "h" 
@@ -1078,7 +1078,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("a unary indirectly left recursive definition and a sibling directly left recursive definition", () => {
+  describe("a unary indirectly left recursive definition and a sibling directly left recursive definition", () => {
     const bnf = `
  
     A  ::=  B "h" 
@@ -1097,7 +1097,7 @@ A ::= "g"
               
 `;
 
-    it("are rewritten", () => {
+    it.only("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, ``));

@@ -22,6 +22,8 @@ export default function rewriteNodes(node) {  ///
 }
 
 function rewrite(nonTerminalNode) {
+  const childNodes = nonTerminalNode.getChildNodes();
+
   rewriteIndirectRepetition(nonTerminalNode);
 
   rewriteDirectRepetition(nonTerminalNode);
@@ -29,8 +31,6 @@ function rewrite(nonTerminalNode) {
   rewriteDirectReduction(nonTerminalNode);
 
   rewriteIndirectReduction(nonTerminalNode);
-
-  const childNodes = nonTerminalNode.getChildNodes();
 
   childNodes.forEach((childNode) => {
     const childNodeNonTerminalNode = childNode.isNonTerminalNode();
@@ -66,35 +66,35 @@ function removeEpsilons(nonTerminalNode) {
 }
 
 function removeIntermediaries(nonTerminalNode) {
-  const nonTerminalNodeRuleName = nonTerminalNode.getRuleName(),
-        nonTerminalNodeChildNodes = nonTerminalNode.getChildNodes();
+  const childNodes = nonTerminalNode.getChildNodes(),
+        ruleName = nonTerminalNode.getRuleName();
 
-  let childNodes = nonTerminalNodeChildNodes, ///
-      childNodesLength = childNodes.length;
+  let nonTerminalNodeChildNodes = childNodes, ///
+      nonTerminalNodeChildNodesLength = nonTerminalNodeChildNodes.length;
 
-  while (childNodesLength === 1) {
-    const firstChildNode = first(childNodes),
-          firstChildNodeNonTerminalNode = firstChildNode.isNonTerminalNode();
+  while (nonTerminalNodeChildNodesLength === 1) {
+    const firstNonTerminalNodeChildNode = first(nonTerminalNodeChildNodes),
+          firstNonTerminalNodeChildNodeNonTerminalNode = firstNonTerminalNodeChildNode.isNonTerminalNode();
 
-    if (!firstChildNodeNonTerminalNode) {
+    if (!firstNonTerminalNodeChildNodeNonTerminalNode) {
       break;
     }
 
-    const nonTerminalNode = firstChildNode, ///
-          ruleName = nonTerminalNode.getRuleName();
+    const nonTerminalNode = firstNonTerminalNodeChildNode, ///
+          nonTerminalNodeRuleName = nonTerminalNode.getRuleName();
 
-    childNodes = nonTerminalNode.getChildNodes();
+    nonTerminalNodeChildNodes = nonTerminalNode.getChildNodes();
 
-    if (ruleName === nonTerminalNodeRuleName) {
+    if (nonTerminalNodeRuleName === ruleName) {
       const start = 0,
             deleteCount = 1;
 
-      nonTerminalNodeChildNodes.splice(start, deleteCount, ...childNodes);
+      childNodes.splice(start, deleteCount, ...nonTerminalNodeChildNodes);
 
       break;
     }
 
-    childNodesLength = childNodes.length;
+    nonTerminalNodeChildNodesLength = nonTerminalNodeChildNodes.length;
   }
 
   childNodes.forEach((childNode) => {
