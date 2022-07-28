@@ -1104,7 +1104,7 @@ A ::= "g"
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "fdeeg",
+      const content = "gefh",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, ``));

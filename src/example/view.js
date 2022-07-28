@@ -147,14 +147,14 @@ class View extends Element {
 
   B  ::=  B "e" "f"
   
-       |  A "d" 
+       |  A 
   
        |  "c" 
 
        ;
 `;
 
-  static initialContent = "gdefh";
+  static initialContent = "gefh";
 
   static initialStartRuleName = "";
 
