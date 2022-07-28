@@ -125,7 +125,7 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
 
   rule.replaceDefinition(replacedDefinition, replacementDefinition);
 
-  removeDefinitions(rule, indirectlyLeftRecursiveDefinitions);
+  rule.removeDefinitions(indirectlyLeftRecursiveDefinitions);
 
   replacedDefinition = leftRecursiveDefinition; ///
   replacementDefinition = least ?
@@ -151,21 +151,6 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
   rule.replaceDefinition(replacedDefinition, ...replacementDefinitions);
 
   amendLeftRecursiveDefinitions(leftRecursiveDefinitions, removedLeftRecursiveDefinitions, addedLeftRecursiveDefinition);
-}
-
-function removeDefinitions(rule, definitions) {
-  const ruleDefinitions = rule.getDefinitions();
-
-  definitions.forEach((definition) => {
-    const index = ruleDefinitions.indexOf(definition);
-
-    if (index > -1) {
-      const start = index,  ///
-            deleteCount = 1;
-
-      ruleDefinitions.splice(start, deleteCount);
-    }
-  });
 }
 
 function amendLeftRecursiveDefinitions(leftRecursiveDefinitions, removedLeftRecursiveDefinitions, ...addedLeftRecursiveDefinitions) {
