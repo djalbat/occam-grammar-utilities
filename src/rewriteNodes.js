@@ -110,14 +110,13 @@ function removeIntermediaries(nonTerminalNode) {
 
 function rewriteDirectReduction(nonTerminalNode) {
   const childNodes = nonTerminalNode.getChildNodes(),
-        firstChildNode = first(childNodes),
-        firstChildNodeReducedNode = (firstChildNode instanceof DirectlyReducedNode);
+        directlyReducedNode = childNodes.find((childNode) => (childNode instanceof DirectlyReducedNode)) || null;
 
-  if (firstChildNodeReducedNode) {
-    const firstDirectlyReducedChildNode = firstChildNode, ///
-          reducedNode = firstDirectlyReducedChildNode,  ///
+  if (directlyReducedNode !== null) {
+    const index = childNodes.indexOf(directlyReducedNode),
+          reducedNode = directlyReducedNode,  ///
           rewrittenNode = RewrittenNode.fromReducedNode(reducedNode),
-          start = 0,
+          start = index,  ///
           deleteCount = 1;
 
     childNodes.splice(start, deleteCount, rewrittenNode);
@@ -127,15 +126,15 @@ function rewriteDirectReduction(nonTerminalNode) {
 function rewriteDirectRepetition(nonTerminalNode) {
   let childNodes = nonTerminalNode.getChildNodes();
 
-  const directlyRepeatedChildNodes = childNodes.filter((childNode) => (childNode instanceof DirectlyRepeatedNode)),
-        directlyRepeatedChildNodesLength = directlyRepeatedChildNodes.length;
+  const directlyRepeatedNodes = childNodes.filter((childNode) => (childNode instanceof DirectlyRepeatedNode)),
+        directlyRepeatedNodesLength = directlyRepeatedNodes.length;
 
-  if (directlyRepeatedChildNodesLength > 0) {
-    const lastDirectlyRepeatedChildNode = last(directlyRepeatedChildNodes),
-          index = childNodes.indexOf(lastDirectlyRepeatedChildNode),
+  if (directlyRepeatedNodesLength > 0) {
+    const lastDirectlyRepeatedNode = last(directlyRepeatedNodes),
+          index = childNodes.indexOf(lastDirectlyRepeatedNode),
           start = 0,
           deleteCount = index + 1,
-          repeatedNode = lastDirectlyRepeatedChildNode,  ///
+          repeatedNode = lastDirectlyRepeatedNode,  ///
           rewrittenNode = RewrittenNode.fromRepeatedNode(repeatedNode),
           deletedChildNodes = childNodes.splice(start, deleteCount, rewrittenNode);
 
@@ -153,14 +152,13 @@ function rewriteDirectRepetition(nonTerminalNode) {
 
 function rewriteIndirectReduction(nonTerminalNode) {
   const childNodes = nonTerminalNode.getChildNodes(),
-        firstChildNode = first(childNodes),
-        firstChildNodeIndirectlyReducedNode = (firstChildNode instanceof IndirectlyReducedNode);
+        indirectlyReducedNode = childNodes.find((childNode) => (childNode instanceof IndirectlyReducedNode)) || null;
 
-  if (firstChildNodeIndirectlyReducedNode) {
-    const firstIndirectlyReducedChildNode = firstChildNode, ///
-          reducedNode = firstIndirectlyReducedChildNode,  ///
+  if (indirectlyReducedNode !== null) {
+    const index = childNodes.indexOf(indirectlyReducedNode),
+          reducedNode = indirectlyReducedNode,  ///
           rewrittenNode = RewrittenNode.fromReducedNode(reducedNode),
-          start = 0,
+          start = index,  ///
           deleteCount = 1;
 
     childNodes.splice(start, deleteCount, rewrittenNode);
@@ -169,14 +167,44 @@ function rewriteIndirectReduction(nonTerminalNode) {
 
 function rewriteIndirectRepetition(nonTerminalNode) {
   const childNodes = nonTerminalNode.getChildNodes(),
-        indirectlyRepeatedChildNode = childNodes.find((childNode) => (childNode instanceof IndirectlyRepeatedNode)) || null;
+        indirectlyRepeatedNode = childNodes.find((childNode) => (childNode instanceof IndirectlyRepeatedNode)) || null;
 
-  if (indirectlyRepeatedChildNode !== null) {
-    const index = childNodes.indexOf(indirectlyRepeatedChildNode),
+  if (indirectlyRepeatedNode !== null) {
+    const indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes(),
+          directlyRepeatedNode = indirectlyRepeatedNodeChildNodes.find((indirectlyRepeatedNodeChildNode) => (indirectlyRepeatedNodeChildNode instanceof DirectlyRepeatedNode)) || null;
+
+    if (directlyRepeatedNode !== null) {
+      let index = indirectlyRepeatedNodeChildNodes.indexOf(directlyRepeatedNode),
           start = index,  ///
-          deleteCount = 1,
-          indirectlyRepeatedChildNodeChildNodes = indirectlyRepeatedChildNode.getChildNodes();
+          deleteCount = Infinity;
 
-    childNodes.splice(start, deleteCount, ...indirectlyRepeatedChildNodeChildNodes);
+      const directlyRepeatedNodes = indirectlyRepeatedNodeChildNodes.splice(start, deleteCount);
+
+      index = childNodes.indexOf(indirectlyRepeatedNode);
+
+      start = index + 1;
+
+      deleteCount = 0;
+
+      childNodes.splice(start, deleteCount, ...directlyRepeatedNodes);
+    }
+
+    const repeatedNode = indirectlyRepeatedNode,  ///
+          rewrittenNode = RewrittenNode.fromRepeatedNode(repeatedNode);
+
+    let index = childNodes.indexOf(indirectlyRepeatedNode),
+        start = index,
+        deleteCount = 1;
+
+    childNodes.splice(start, deleteCount, rewrittenNode);
+
+    start = 0;
+
+    deleteCount = index;  ///
+
+    const deleteChildNodes = childNodes.splice(start, deleteCount),
+          rewrittenNodeChildNodes = rewrittenNode.getChildNodes();
+
+    unshift(rewrittenNodeChildNodes, deleteChildNodes);
   }
 }
