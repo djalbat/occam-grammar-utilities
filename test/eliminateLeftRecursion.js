@@ -1097,17 +1097,59 @@ A ::= "g"
               
 `;
 
-    it.only("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
-      assert.isTrue(compare(adjustedBNF, ``));
+      assert.isTrue(compare(adjustedBNF, `
+      
+    A   ::= A_ A~* ;
+    
+    B   ::= A_ A~* B~~?
+    
+          | B_ B~*
+    
+          ;
+    
+    B_  ::= "c" ;
+    
+    B~  ::= "e" "f" ;
+    
+    B~~ ::= B~* ;
+    
+    B__ ::= B_ B~* ;
+    
+    A_  ::= B__ "h"
+    
+          | "g"
+    
+          ;
+    
+    A~  ::= B~~ "h" ;
+      
+      `));
     });
 
     it("result in the requisite parse tree" , () => {
       const content = "gefh",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
-      assert.isTrue(compare(parseTreeString, ``));
+      assert.isTrue(compare(parseTreeString, `
+
+                        A              
+                        |              
+              ---------------------    
+              |                   |    
+              B               h[custom]
+              |                        
+    ---------------------              
+    |         |         |              
+    B     e[custom] f[custom]          
+    |                                  
+    A                                  
+    |                                  
+g[custom]                              
+      
+      `));
     });
   });
 
