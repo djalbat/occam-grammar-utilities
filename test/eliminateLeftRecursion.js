@@ -464,9 +464,9 @@ A ::= "g"
     
     B__  ::= "d" ;
     
-    A_   ::= B__ "g"
+    A_   ::= "e"
     
-           | "e"
+           | B__ "g"
     
            ;
     
@@ -607,11 +607,11 @@ A ::= "g"
     
            ;
     
-    A_   ::= B__ "g"
-    
-           | "d"
+    A_   ::= "d"
     
            | "e"
+    
+           | B__ "g"
     
            ;
     
@@ -673,16 +673,16 @@ A ::= "g"
 
 `;
 
-    it("are rewritten", () => {
+    it("1. are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
       
     A    ::= A_ A~* ;
     
-    B    ::= C__
+    B    ::= A_ A~* B~A~?
     
-           | A_ A~* B~A~?
+           | C__
     
            ;
     
@@ -696,17 +696,17 @@ A ::= "g"
     
     C__  ::= "d" ;
     
-    B~A~ ::= C~A~
+    B~A~ ::= "f"
     
-           | "f"
+           | C~A~
     
            ;
     
     B__  ::= C__ ;
     
-    A_   ::= B__ "h"
+    A_   ::= "g"
     
-           | "g"
+           | B__ "h"
     
            ;
     
@@ -715,7 +715,7 @@ A ::= "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("2. result in the requisite parse tree" , () => {
       const content = "gehe",
             startRuleName = "C",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
@@ -771,7 +771,7 @@ A ::= "g"
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-        
+            
     A    ::= A_ A~* ;
     
     B    ::= "b"
@@ -790,20 +790,20 @@ A ::= "g"
     
            ;
     
-    A_   ::= B__ "g"
-    
-           | "d"
+    A_   ::= "d"
     
            | "e"
     
-           ;
-    
-    A~   ::= B~A~ "g"
-    
-           | "h"
+           | B__ "g"
     
            ;
-                           
+    
+    A~   ::= "h"
+    
+           | B~A~ "g"
+    
+           ;
+                                      
       `));
     });
 
@@ -863,13 +863,17 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A    ::= A_ A~* ;
+    A    ::= B "h"
     
-    B    ::= C__
+           | "g"
     
-           | A_ A~* B~A~?
+           ;
     
-           | "e"
+    B    ::= "e"
+    
+           | A C~A~
+    
+           | C__
     
            ;
     
@@ -886,22 +890,6 @@ A ::= "g"
            ;
     
     C__  ::= "b" ;
-    
-    B~A~ ::= C~A~ ;
-    
-    B__  ::= C__
-    
-           | "e"
-    
-           ;
-    
-    A_   ::= B__ "h"
-    
-           | "g"
-    
-           ;
-    
-    A~   ::= B~A~ "h" ;
     
       `));
     });
@@ -1126,9 +1114,9 @@ A ::= "g"
     
     B__  ::= B_ B~* ;
     
-    A_   ::= B__ "h"
+    A_   ::= "g"
     
-           | "g"
+           | B__ "h"
     
            ;
     
@@ -1207,9 +1195,9 @@ A ::= "g"
     
     B__  ::= B_ B~* ;
     
-    A_   ::= B__ "h"
+    A_   ::= "g"
     
-           | "g"
+           | B__ "h"
     
            ;
     
@@ -1224,19 +1212,19 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
 
-                        A              
-                        |              
-              ---------------------    
-              |                   |    
-              B               h[custom]
-              |                        
-    ---------------------              
-    |         |         |              
-    B     e[custom] f[custom]          
-    |                                  
-    A                                  
-    |                                  
-g[custom]                              
+                            A              
+                            |              
+                  ---------------------    
+                  |                   |    
+                  B               h[custom]
+                  |                        
+        ---------------------              
+        |         |         |              
+        B     e[custom] f[custom]          
+        |                                  
+        A                                  
+        |                                  
+    g[custom]                              
       
       `));
     });
@@ -1341,11 +1329,15 @@ g[custom]
       
     S    ::= A ;
     
-    A    ::= A_ A~* ;
+    A    ::= E
     
-    E    ::= F__
+           | T
     
-           | A_ A~* E~A~?
+           ;
+    
+    E    ::= A F~A~
+    
+           | F__
     
            ;
     
@@ -1360,18 +1352,6 @@ g[custom]
     F~A~ ::= "+" A ;
     
     F__  ::= "(" A ")" ;
-    
-    E~A~ ::= F~A~ ;
-    
-    E__  ::= F__ ;
-    
-    A_   ::= E__
-    
-           | T
-    
-           ;
-    
-    A~   ::= E~A~ ;
 
       `));
     });
@@ -1402,54 +1382,6 @@ g[custom]
               n[custom]           n[custom]          
 
       `));
-    });
-  });
-
-  xdescribe("Florence", () => {
-    const bnf = `
-    
-    F ::= T
-    
-        | S 
-                                               
-        | T 
-    
-        ;
-    
-    A ::= E ;
-    
-    V ::= . ; 
-     
-    T ::= R ;
-    
-    E ::= A "+" A
-    
-        | T
-    
-        ;
-    
-    S  ::= A "<" A ;
-    
-    R  ::= A "/" A
-    
-         | V
-    
-         ;
-     
-`;
-
-    it("are rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF, ``));
-    });
-
-    it("result in the requisite parse tree" , () => {
-      const content = "n/n",
-            startRuleName = "T",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
-
-      assert.isTrue(compare(parseTreeString, ``));
     });
   });
 });
