@@ -145,8 +145,6 @@ function rewriteDirectRepetition(nonTerminalNode) {
     deletedChildNodes.pop();
 
     unshift(childNodes, deletedChildNodes);
-
-    rewriteDirectRepetition(nonTerminalNode);
   }
 }
 

@@ -1,15 +1,14 @@
 "use strict";
 
+import { Rule } from "occam-parsers";
 import { arrayUtilities } from "necessary";
-import { Rule, Parts, Definition } from "occam-parsers";
 
 import IndirectlyReducedNode from "../../node/reduced/indirectly";
 import IndirectlyLeftRecursiveDefinition from "../../definition/recursive/left/indirectly";
 
 import { indirectlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
-const { find } = arrayUtilities,
-      { EpsilonPart } = Parts;
+const { find } = arrayUtilities;
 
 export default class IndirectlyReducedRule extends Rule {
   static fromRule(rule) {
@@ -22,18 +21,6 @@ export default class IndirectlyReducedRule extends Rule {
         return true;
       }
     });
-
-    const definitionsLength = definitions.length;
-
-    if (definitionsLength === 0) {
-      const epsilonPart = new EpsilonPart(),
-            parts = [
-              epsilonPart
-            ],
-            definition = new Definition(parts);
-
-      definitions.push(definition);
-    }
 
     const ruleName = rule.getName(),
           indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName),

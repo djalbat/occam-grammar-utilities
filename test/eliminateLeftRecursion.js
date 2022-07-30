@@ -452,25 +452,25 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A   ::= A_ A~* ;
+    A    ::= A_ A~* ;
     
-    B   ::= A_ A~* B~~?
+    B    ::= A_ A~* B~A~?
     
-          | "d"
+           | "d"
     
-          ;
+           ;
     
-    B~~ ::= "h" ;
+    B~A~ ::= "h" ;
     
-    B__ ::= "d" ;
+    B__  ::= "d" ;
     
-    A_  ::= B__ "g"
+    A_   ::= B__ "g"
     
-          | "e"
+           | "e"
     
-          ;
+           ;
     
-    A~  ::= B~~ "g" ;        
+    A~   ::= B~A~ "g" ;
 
       `));
     });
@@ -516,15 +516,17 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF,`
       
-    A   ::= A_ A~* ;
+    A    ::= A_ A~* ;
     
-    B   ::= A_ A~* B~~? ;
+    B    ::= A_ A~* B~A~? ;
     
-    B~~ ::= ε ;
+    B~A~ ::= ε ;
     
-    A_  ::= "c" ;
+    B__  ::=  ;
     
-    A~  ::= B~~ "d" ;
+    A_   ::= "c" ;
+    
+    A~   ::= B~A~ "d" ;
 
       `));
     });
@@ -583,37 +585,37 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A   ::= A_ A~* ;
+    A    ::= A_ A~* ;
     
-    B   ::= A_ A~* B~~?
+    B    ::= A_ A~* B~A~?
     
-          | "b"
+           | "b"
     
-          | "c"
+           | "c"
     
-          ;
+           ;
     
-    B~~ ::= "h"
+    B~A~ ::= "h"
     
-          | "f"
+           | "f"
     
-          ;
+           ;
     
-    B__ ::= "b"
+    B__  ::= "b"
     
-          | "c"
+           | "c"
     
-          ;
+           ;
     
-    A_  ::= "d"
+    A_   ::= B__ "g"
     
-          | B__ "g"
+           | "d"
     
-          | "e"
+           | "e"
     
-          ;
+           ;
     
-    A~  ::= B~~ "g" ;
+    A~   ::= B~A~ "g" ;
     
       `));
     });
@@ -676,39 +678,39 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A  ::=  A_ A~* ;
-
-    B  ::=  A_ A~* B~~? 
+    A    ::= A_ A~* ;
     
-         |  C__
-         
-         ;
-
-    C  ::=  A_ A~* C~~?
+    B    ::= C__
     
-         |  "d"
-         
-         ;
+           | A_ A~* B~A~?
     
-   C~~ ::=  "e" ;
+           ;
     
-   C__ ::=  "d" ;
+    C    ::= A_ A~* C~A~?
     
-   B~~ ::=  "f" 
+           | "d"
     
-         |  C~~
-         
-         ;
-
-   B__ ::=  C__ ;
-
-    A_ ::=  B__ "h" 
-      
-         |  "g" 
- 
-         ;
-
-    A~ ::=  B~~ "h" ;
+           ;
+    
+    C~A~ ::= "e" ;
+    
+    C__  ::= "d" ;
+    
+    B~A~ ::= C~A~
+    
+           | "f"
+    
+           ;
+    
+    B__  ::= C__ ;
+    
+    A_   ::= B__ "h"
+    
+           | "g"
+    
+           ;
+    
+    A~   ::= B~A~ "h" ;
 
       `));
     });
@@ -770,38 +772,38 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
         
-    A   ::= A_ A~* ;
+    A    ::= A_ A~* ;
     
-    B   ::= "b"
+    B    ::= "b"
     
-          | A_ A~* B~~?
+           | A_ A~* B~A~?
     
-          | "c"
+           | "c"
     
-          ;
+           ;
     
-    B~~ ::= "f" ;
+    B~A~ ::= "f" ;
     
-    B__ ::= "b"
+    B__  ::= "b"
     
-          | "c"
+           | "c"
     
-          ;
+           ;
     
-    A_  ::= "d"
+    A_   ::= B__ "g"
     
-          | B__ "g"
+           | "d"
     
-          | "e"
+           | "e"
     
-          ;
+           ;
     
-    A~  ::= "h"
+    A~   ::= B~A~ "g"
     
-          | B~~ "g"
+           | "h"
     
-          ;
-                    
+           ;
+                           
       `));
     });
 
@@ -861,45 +863,45 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A   ::= A_ A~* ;
+    A    ::= A_ A~* ;
     
-    B   ::= A_ A~* B~~?
+    B    ::= C__
     
-          | C__
+           | A_ A~* B~A~?
     
-          | "e"
+           | "e"
     
-          ;
+           ;
     
-    C   ::= A_ A~* C~~?
+    C    ::= A_ A~* C~A~?
     
-          | "b"
+           | "b"
     
-          ;
+           ;
     
-    C~~ ::= "d"
+    C~A~ ::= "d"
     
-          | "c"
+           | "c"
     
-          ;
+           ;
     
-    C__ ::= "b" ;
+    C__  ::= "b" ;
     
-    B~~ ::= C~~ ;
+    B~A~ ::= C~A~ ;
     
-    B__ ::= C__
+    B__  ::= C__
     
-          | "e"
+           | "e"
     
-          ;
+           ;
     
-    A_  ::= B__ "h"
+    A_   ::= B__ "h"
     
-          | "g"
+           | "g"
     
-          ;
+           ;
     
-    A~  ::= B~~ "h" ;
+    A~   ::= B~A~ "h" ;
     
       `));
     });
@@ -952,17 +954,71 @@ A ::= "g"
     
     `;
 
-    it.only("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
-      assert.isTrue(compare(adjustedBNF, ``));
+      assert.isTrue(compare(adjustedBNF, `
+      
+    T    ::= T_ T~* ;
+    
+    A    ::= T_ T~* A~T~? ;
+    
+    E    ::= A_ A~* E~A~?
+    
+           | T_ T~* E~T~?
+    
+           ;
+    
+    E~T~ ::= "d" ;
+    
+    E__  ::=  ;
+    
+    E~A~ ::= "c" ;
+    
+    A~   ::= E~A~ "h" ;
+    
+    A~T~ ::= E~T~ "h" A~* ;
+    
+    A__  ::=  ;
+    
+    T_   ::= "f" ;
+    
+    T~   ::= A~T~ "g" ;
+      
+      `));
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "",
-          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+      const content = "fdhchg",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
-      assert.isTrue(compare(parseTreeString, ``));
+      assert.isTrue(compare(parseTreeString, `
+      
+                                                 T             
+                                                 |             
+                                       --------------------    
+                                       |                  |    
+                                       A              g[custom]
+                                       |                       
+                              -------------------              
+                              |                 |              
+                              E             h[custom]          
+                              |                                
+                     ------------------                        
+                     |                |                        
+                     A            c[custom]                    
+                     |                                         
+             ----------------                                  
+             |              |                                  
+             E          h[custom]                              
+             |                                                 
+        -----------                                            
+        |         |                                            
+        T     d[custom]                                        
+        |                                                      
+    f[custom]                                                  
+      
+      `));
     });
   });
 
@@ -986,23 +1042,23 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
               
-    A   ::= A_ A~* ;
+    A    ::= A_ A~* ;
     
-    E   ::= A_ A~* E~~?
+    E    ::= A_ A~* E~A~?
     
-          | V
+           | V
     
-          ;
+           ;
     
-    V   ::= . ;
+    V    ::= . ;
     
-    E~~ ::= "+" A ;
+    E~A~ ::= "+" A ;
     
-    E__ ::= V ;
+    E__  ::= V ;
     
-    A_  ::= E__ ;
+    A_   ::= E__ ;
     
-    A~  ::= E~~ ;
+    A~   ::= E~A~ ;
         
       `));
     });
@@ -1054,29 +1110,29 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A   ::= A_ A~* ;
+    A    ::= A_ A~* ;
     
-    B   ::= A_ A~* B~~?
+    B    ::= A_ A~* B~A~?
     
-          | B_ B~*
+           | B_ B~*
     
-          ;
+           ;
     
-    B_  ::= "c" ;
+    B_   ::= "c" ;
     
-    B~  ::= "e" "f" ;
+    B~   ::= "e" "f" ;
     
-    B~~ ::= "d" B~* ;
+    B~A~ ::= "d" B~* ;
     
-    B__ ::= B_ B~* ;
+    B__  ::= B_ B~* ;
     
-    A_  ::= B__ "h"
+    A_   ::= B__ "h"
     
-          | "g"
+           | "g"
     
-          ;
+           ;
     
-    A~  ::= B~~ "h" ;
+    A~   ::= B~A~ "h" ;
 
       `));
     });
@@ -1135,29 +1191,29 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A   ::= A_ A~* ;
+    A    ::= A_ A~* ;
     
-    B   ::= A_ A~* B~~?
+    B    ::= A_ A~* B~A~?
     
-          | B_ B~*
+           | B_ B~*
     
-          ;
+           ;
     
-    B_  ::= "c" ;
+    B_   ::= "c" ;
     
-    B~  ::= "e" "f" ;
+    B~   ::= "e" "f" ;
     
-    B~~ ::= B~* ;
+    B~A~ ::= B~* ;
     
-    B__ ::= B_ B~* ;
+    B__  ::= B_ B~* ;
     
-    A_  ::= B__ "h"
+    A_   ::= B__ "h"
     
-          | "g"
+           | "g"
     
-          ;
+           ;
     
-    A~  ::= B~~ "h" ;
+    A~   ::= B~A~ "h" ;
       
       `));
     });
@@ -1208,17 +1264,19 @@ g[custom]
 
       assert.isTrue(compare(adjustedBNF, `
       
-    A   ::= A_ A~* ;
+    A    ::= A_ A~* ;
     
-    B   ::= A_ A~* B~~? ;
+    B    ::= A_ A~* B~A~? ;
     
-    B~  ::= "e" ;
+    B~   ::= "e" ;
     
-    B~~ ::= "d" B~* ;
+    B~A~ ::= "d" B~* ;
     
-    A_  ::= "f" ;
+    B__  ::=  ;
     
-    A~  ::= B~~ "g" ;
+    A_   ::= "f" ;
+    
+    A~   ::= B~A~ "g" ;
 
       `));
     });
@@ -1281,39 +1339,39 @@ g[custom]
 
       assert.isTrue(compare(adjustedBNF, `
       
-    S   ::= A ;
+    S    ::= A ;
     
-    A   ::= A_ A~* ;
+    A    ::= A_ A~* ;
     
-    E   ::= A_ A~* E~~?
+    E    ::= F__
     
-          | F__
+           | A_ A~* E~A~?
     
-          ;
+           ;
     
-    T   ::= "n" ;
+    T    ::= "n" ;
     
-    F   ::= "(" A ")"
+    F    ::= "(" A ")"
     
-          | A_ A~* F~~?
+           | A_ A~* F~A~?
     
-          ;
+           ;
     
-    F~~ ::= "+" A ;
+    F~A~ ::= "+" A ;
     
-    F__ ::= "(" A ")" ;
+    F__  ::= "(" A ")" ;
     
-    E~~ ::= F~~ ;
+    E~A~ ::= F~A~ ;
     
-    E__ ::= F__ ;
+    E__  ::= F__ ;
     
-    A_  ::= E__
+    A_   ::= E__
     
-          | T
+           | T
     
-          ;
+           ;
     
-    A~  ::= E~~ ;
+    A~   ::= E~A~ ;
 
       `));
     });

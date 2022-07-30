@@ -158,7 +158,7 @@ class View extends Element {
       ;
 `;
 
-  static initialContent = "f";
+  static initialContent = "fdhchg";
 
   static initialStartRuleName = "T";
 
