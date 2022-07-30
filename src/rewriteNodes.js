@@ -9,7 +9,7 @@ import DirectlyRepeatedNode from "./node/repeated/directly";
 import IndirectlyReducedNode from "./node/reduced/indirectly";
 import IndirectlyRepeatedNode from "./node/repeated/indirectly";
 
-const { last, first, filter, unshift } = arrayUtilities;
+const { last, first, filter, unshift, backwardsSome } = arrayUtilities;
 
 export default function rewriteNodes(node) {  ///
   const nonTerminalNode = node; ///
@@ -66,35 +66,50 @@ function removeEpsilons(nonTerminalNode) {
 }
 
 function removeIntermediaries(nonTerminalNode) {
-  const childNodes = nonTerminalNode.getChildNodes(),
-        ruleName = nonTerminalNode.getRuleName();
+  const ruleName = nonTerminalNode.getRuleName(),
+        childNodes = nonTerminalNode.getChildNodes(),
+        singularNonTerminalNodes = [];
 
-  let nonTerminalNodeChildNodes = childNodes, ///
-      nonTerminalNodeChildNodesLength = nonTerminalNodeChildNodes.length;
+  for (;;) {
+    const childNodes = nonTerminalNode.getChildNodes(),
+          childNodesLength = childNodes.length;
 
-  while (nonTerminalNodeChildNodesLength === 1) {
-    const firstNonTerminalNodeChildNode = first(nonTerminalNodeChildNodes),
-          firstNonTerminalNodeChildNodeNonTerminalNode = firstNonTerminalNodeChildNode.isNonTerminalNode();
-
-    if (!firstNonTerminalNodeChildNodeNonTerminalNode) {
+    if (childNodesLength > 1) {
       break;
     }
 
-    const nonTerminalNode = firstNonTerminalNodeChildNode, ///
-          nonTerminalNodeRuleName = nonTerminalNode.getRuleName();
+    const firstChildNode = first(childNodes),
+          firstChildNodeTerminalNode = firstChildNode.isTerminalNode();
 
-    nonTerminalNodeChildNodes = nonTerminalNode.getChildNodes();
-
-    if (nonTerminalNodeRuleName === ruleName) {
-      const start = 0,
-            deleteCount = 1;
-
-      childNodes.splice(start, deleteCount, ...nonTerminalNodeChildNodes);
-
+    if (firstChildNodeTerminalNode) {
       break;
     }
 
-    nonTerminalNodeChildNodesLength = nonTerminalNodeChildNodes.length;
+    const singularNonTerminalNode = firstChildNode; ///
+
+    singularNonTerminalNodes.push(singularNonTerminalNode);
+
+    nonTerminalNode = singularNonTerminalNode; ///
+  }
+
+  nonTerminalNode = null;
+
+  backwardsSome(singularNonTerminalNodes, (singularNonTerminalNode) => {
+    const singularNonTerminalNodeRuleName = singularNonTerminalNode.getRuleName();
+
+    if (singularNonTerminalNodeRuleName === ruleName) {
+      nonTerminalNode = singularNonTerminalNode;  ///
+
+      return true;
+    }
+  });
+
+  if (nonTerminalNode !== null) {
+    const nonTerminalNodeChildNodes = nonTerminalNode.getChildNodes(),
+          start = 0,
+          deleteCount = 1;
+
+    childNodes.splice(start, deleteCount, ...nonTerminalNodeChildNodes);
   }
 
   childNodes.forEach((childNode) => {

@@ -1404,6 +1404,54 @@ g[custom]
       `));
     });
   });
+
+  xdescribe("Florence", () => {
+    const bnf = `
+    
+    F ::= T
+    
+        | S 
+                                               
+        | T 
+    
+        ;
+    
+    A ::= E ;
+    
+    V ::= . ; 
+     
+    T ::= R ;
+    
+    E ::= A "+" A
+    
+        | T
+    
+        ;
+    
+    S  ::= A "<" A ;
+    
+    R  ::= A "/" A
+    
+         | V
+    
+         ;
+     
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, ``));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = "n/n",
+            startRuleName = "T",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
+
+      assert.isTrue(compare(parseTreeString, ``));
+    });
+  });
 });
 
 function compare(stringA, stringB) {

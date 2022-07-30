@@ -143,22 +143,36 @@ class View extends Element {
   }
 
   static initialBNF = ` 
-  T  ::= A "g"
+  F ::= T
   
-       | "f"
-  
-       ;
-
-  A ::= E "h" ;
-  
-  E ::= A "c"
-  
-      | T "d"
+      | S 
+                                             
+      | T 
   
       ;
+  
+  A ::= E ;
+  
+  V ::= . ; 
+   
+  T ::= R ;
+  
+  E ::= A "+" A
+  
+      | T
+  
+      ;
+  
+  S  ::= A "<" A ;
+  
+  R  ::= A "/" A
+  
+       | V
+  
+       ;
 `;
 
-  static initialContent = "fdhchg";
+  static initialContent = "n/n";
 
   static initialStartRuleName = "T";
 
@@ -200,35 +214,3 @@ function basicParserFromRulesAndStartRuleName(rules, startRuleName) {
 
   return basicParser;
 }
-
-`
-  F ::= T
-  
-      | S 
-                                             
-      | T 
-  
-      ;
-  
-  A ::= E ;
-  
-  V ::= . ; 
-   
-  T ::= R ;
-  
-  E ::= A "+" A
-  
-      | T
-  
-      ;
-  
-  S  ::= A "<" A ;
-  
-  R  ::= A "/" A
-  
-       | V
-  
-       ;
-`
-
-"n/n"
