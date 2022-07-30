@@ -124,7 +124,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("a unary implicitly left recursive definition", () => {
+  describe("a unary implicitly left recursive definition", () => {
     const bnf = `
   
     A ::= "d" 
@@ -367,69 +367,6 @@ A ::= "g"
     });
   });
 
-  describe("two sibling directly left recursive definitions", () => {
-    const bnf = `
-   
-    A ::= "c"
-
-        | A... "f" "g"
-    
-        | "d"
-
-        | A... "h"
-    
-        | "e"
-    
-        ;
-
-`;
-
-    it("are rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF, `
-    
-    A  ::= A_... A~* ;
-    
-    A_ ::= "c"
-    
-         | "d"
-    
-         | "e"
-    
-         ;
-    
-    A~ ::= "f" "g"
-    
-         | "h"
-    
-         ;
-     
-      `));
-    });
-
-    it("result in the requisite parse tree", () => {
-      const content = "cfgh",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
-
-      assert.isTrue(compare(parseTreeString, `
-          
-                            A              
-                            |              
-                  ---------------------    
-                  |                   |    
-                  A               h[custom]
-                  |                        
-        ---------------------              
-        |         |         |              
-        A     f[custom] g[custom]          
-        |                                  
-    c[custom]                              
-             
-      `));
-    });
-  });
-
   describe("an indirectly left recursive definition", () => {
     const bnf = `
   
@@ -557,6 +494,69 @@ A ::= "g"
     });
   });
 
+  describe("two sibling directly left recursive definitions", () => {
+    const bnf = `
+   
+    A ::= "c"
+
+        | A... "f" "g"
+    
+        | "d"
+
+        | A... "h"
+    
+        | "e"
+    
+        ;
+
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+    
+    A  ::= A_... A~* ;
+    
+    A_ ::= "c"
+    
+         | "d"
+    
+         | "e"
+    
+         ;
+    
+    A~ ::= "f" "g"
+    
+         | "h"
+    
+         ;
+     
+      `));
+    });
+
+    it("result in the requisite parse tree", () => {
+      const content = "cfgh",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                            A              
+                            |              
+                  ---------------------    
+                  |                   |    
+                  A               h[custom]
+                  |                        
+        ---------------------              
+        |         |         |              
+        A     f[custom] g[custom]          
+        |                                  
+    c[custom]                              
+             
+      `));
+    });
+  });
+
   describe("two sibling indirectly left recursive definitions", () => {
     const bnf = `
   
@@ -673,7 +673,7 @@ A ::= "g"
 
 `;
 
-    it("1. are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -715,7 +715,7 @@ A ::= "g"
       `));
     });
 
-    it("2. result in the requisite parse tree" , () => {
+    it("result in the requisite parse tree" , () => {
       const content = "gehe",
             startRuleName = "C",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
@@ -863,15 +863,11 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
 
-    A    ::= B "h"
-    
-           | "g"
-    
-           ;
+    A    ::= A_ A~* ;
     
     B    ::= "e"
     
-           | A C~A~
+           | A_ A~* B~A~?
     
            | C__
     
@@ -890,6 +886,22 @@ A ::= "g"
            ;
     
     C__  ::= "b" ;
+    
+    B~A~ ::= C~A~ ;
+    
+    B__  ::= "e"
+    
+           | C__
+    
+           ;
+    
+    A_   ::= "g"
+    
+           | B__ "h"
+    
+           ;
+    
+    A~   ::= B~A~ "h" ;
     
       `));
     });
@@ -1329,13 +1341,9 @@ A ::= "g"
       
     S    ::= A ;
     
-    A    ::= E
+    A    ::= A_ A~* ;
     
-           | T
-    
-           ;
-    
-    E    ::= A F~A~
+    E    ::= A_ A~* E~A~?
     
            | F__
     
@@ -1352,6 +1360,18 @@ A ::= "g"
     F~A~ ::= "+" A ;
     
     F__  ::= "(" A ")" ;
+    
+    E~A~ ::= F~A~ ;
+    
+    E__  ::= F__ ;
+    
+    A_   ::= T
+    
+           | E__
+    
+           ;
+    
+    A~   ::= E~A~ ;
 
       `));
     });

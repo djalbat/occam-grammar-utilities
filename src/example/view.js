@@ -143,19 +143,21 @@ class View extends Element {
   }
 
   static initialBNF = ` 
-  A  ::=  B "h" 
+    A ::= "d" 
     
-       |  "g" 
+        | B 
+    
+        | "e"
+    
+        ;
+    
+    B ::= "b"
+    
+        | A
+    
+        | "c"
 
-       ;
-
-  B  ::=  B "e" "f"
-  
-       |  A 
-  
-       |  "c" 
-
-       ;
+        ;
 `;
 
   static initialContent = "gefh";
