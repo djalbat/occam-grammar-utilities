@@ -831,7 +831,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition of length two", () => {
+  describe("an indirectly left recursive definition of length three", () => {
     const bnf = `
     
     A  ::=  B "h" 
@@ -930,6 +930,39 @@ A ::= "g"
     g[custom]                              
     
       `));
+    });
+  });
+
+  describe("two sibling but unrelated indirectly left recursive definitions", () => {
+    const bnf = `
+    
+    T  ::= A "g"
+    
+         | "f"
+    
+         ;
+
+    A ::= E "h" ;
+    
+    E ::= A "c"
+    
+        | T "d"
+    
+        ;
+    
+    `;
+
+    it.only("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, ``));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = "",
+          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, ``));
     });
   });
 

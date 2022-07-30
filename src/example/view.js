@@ -50,26 +50,30 @@ class View extends Element {
 
     this.setAdjustedBNF(adjustedBNF);
 
-    const basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
-          basicParser =  basicParserFromRulesAndStartRuleName(rules, startRuleName),
-          tokens = basicLexer.tokenise(content),
-          node = basicParser.parse(tokens);
+    try {
+      const basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
+            basicParser =  basicParserFromRulesAndStartRuleName(rules, startRuleName),
+            tokens = basicLexer.tokenise(content),
+            node = basicParser.parse(tokens);
 
-    let parseTree = null;
+      let parseTree = null;
 
-    if (node !== null) {
-      const rewriteNodesCheckboxChecked = this.isRewriteNodesCheckboxChecked();
+      if (node !== null) {
+        const rewriteNodesCheckboxChecked = this.isRewriteNodesCheckboxChecked();
 
-      if (rewriteNodesCheckboxChecked) {
-        rewriteNodes(node);
+        if (rewriteNodesCheckboxChecked) {
+          rewriteNodes(node);
+        }
+
+        const abridged = true;
+
+        parseTree = node.asParseTree(tokens, abridged);
       }
 
-      const abridged = true;
-
-      parseTree = node.asParseTree(tokens, abridged);
+      this.setParseTree(parseTree);
+    } catch (error) {
+      console.log(error);
     }
-
-    this.setParseTree(parseTree);
   }
 
   childElements() {
@@ -139,24 +143,24 @@ class View extends Element {
   }
 
   static initialBNF = ` 
-  A  ::=  B "h" 
-    
-       |  "g" 
-
+  T  ::= A "g"
+  
+       | "f"
+  
        ;
 
-  B  ::=  B "e" "f"
+  A ::= E "h" ;
   
-       |  A 
+  E ::= A "c"
   
-       |  "c" 
-
-       ;
+      | T "d"
+  
+      ;
 `;
 
-  static initialContent = "gefh";
+  static initialContent = "f";
 
-  static initialStartRuleName = "";
+  static initialStartRuleName = "T";
 
   static initialLexicalPattern = ".";
 
@@ -196,3 +200,35 @@ function basicParserFromRulesAndStartRuleName(rules, startRuleName) {
 
   return basicParser;
 }
+
+`
+  F ::= T
+  
+      | S 
+                                             
+      | T 
+  
+      ;
+  
+  A ::= E ;
+  
+  V ::= . ; 
+   
+  T ::= R ;
+  
+  E ::= A "+" A
+  
+      | T
+  
+      ;
+  
+  S  ::= A "<" A ;
+  
+  R  ::= A "/" A
+  
+       | V
+  
+       ;
+`
+
+"n/n"

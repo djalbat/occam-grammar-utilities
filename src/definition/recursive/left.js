@@ -11,7 +11,7 @@ import { isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecurs
 import { ruleNameFromReducedRuleName,
          directlyReducedRuleNameFromRuleName,
          directlyRepeatedRuleNameFromRuleName,
-         indirectlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
+         indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 
 const { tail } = arrayUtilities,
       { OptionalPartPart, ZeroOrMorePartsPart } = Parts;
@@ -78,8 +78,8 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return leftRecursiveDefinition;
   }
 
-  static fromLeftRecursiveRuleNameAndRuleName(leftRecursiveRuleName, ruleName) {
-    const indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleName(ruleName),
+  static fromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {
+    const indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
           indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName),
           directlyReducedLeftRecursiveRuleName = directlyReducedRuleNameFromRuleName(leftRecursiveRuleName),
           directlyRepeatedLeftRecursiveRuleName = directlyRepeatedRuleNameFromRuleName(leftRecursiveRuleName),
