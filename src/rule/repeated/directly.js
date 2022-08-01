@@ -7,8 +7,9 @@ import RecursiveDefinition from "../../definition/recursive";
 import DirectlyRepeatedNode from "../../node/repeated/directly";
 import DirectlyLeftRecursiveDefinition from "../../definition/recursive/left/directly";
 
-import { cloneParts } from "../../utilities/parts";
 import { matchParts } from "../../utilities/part";
+import { cloneParts } from "../../utilities/parts";
+import { isDefinitionUnary } from "../../utilities/definition";
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 const { first, find, tail } = arrayUtilities;
@@ -32,39 +33,39 @@ export default class DirectlyRepeatedRule extends Rule {
           previousFirstPart = firstPart;  ///
 
     definitions = directlyLeftRecursiveDefinitions.map((directlyLeftRecursiveDefinition) => {
-      let parts = directlyLeftRecursiveDefinition.getParts();
+      let parts = directlyLeftRecursiveDefinition.getParts(),
+          definition;
 
-      const firstPart = first(parts),
-            matches = matchParts(firstPart, previousFirstPart);
+      const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
+            firstPart = first(parts),
+            partsTail = tail(parts);
+
+      definition = directlyLeftRecursiveDefinition; ///
+
+      const matches = matchParts(firstPart, previousFirstPart),
+            definitionUnary = isDefinitionUnary(definition);
 
       if (!matches) {
-        const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
-              definition = directlyLeftRecursiveDefinition, ///
-              definitionString = definition.asString();
+        const definitionString = definition.asString();
 
         throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule does not match one of its sibling directly left recursive definitions and therefore the rule cannot be rewritten.`);
       }
 
-      const partsLength = parts.length;
-
-      if (partsLength === 1) {
-        const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
-              definition = directlyLeftRecursiveDefinition, ///
-              definitionString = definition.asString();
+      if (definitionUnary) {
+        const definitionString = definition.asString();
 
         throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
       }
-
-      const partsTail = tail(parts);
 
       parts = partsTail;  ///
 
       parts = cloneParts(parts);  ///
 
-      const recursiveDefinition = RecursiveDefinition.fromRuleNameAndParts(ruleName, parts),
-            definition = (recursiveDefinition !== null) ?
-                            recursiveDefinition : ///
-                              new Definition(parts);
+      const recursiveDefinition = RecursiveDefinition.fromRuleNameAndParts(ruleName, parts);
+
+      definition = (recursiveDefinition !== null) ?
+                      recursiveDefinition : ///
+                        new Definition(parts);
 
       return definition;
     });

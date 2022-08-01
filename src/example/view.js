@@ -142,7 +142,70 @@ class View extends Element {
     this.keyUpHandler();
   }
 
-  static initialBNF = ` 
+  static initialBNF = `
+      A ::= "d" 
+    
+        | B
+    
+        | "e"
+    
+        ;
+    
+    B ::= C C ;
+    
+    C ::= "b"
+    
+        | A
+    
+        | "c"
+
+        ;
+`;
+
+  static initialContent = "d";
+
+  static initialStartRuleName = "";
+
+  static initialLexicalPattern = ".";
+
+  static tagName = "div";
+
+  static defaultProperties = {
+    className: "view"
+  };
+}
+
+export default withStyle(View)`
+
+  padding: 1rem;
+  
+`;
+
+function basicLexerFromLexicalPattern(lexicalPattern) {
+  const unassigned = "^.*$",  ///
+        custom = lexicalPattern,  ///
+        entries = [
+          {
+            custom
+          },
+          {
+            unassigned
+          }
+        ],
+        basicLexer = BasicLexer.fromEntries(entries);
+
+  return basicLexer;
+}
+
+function basicParserFromRulesAndStartRuleName(rules, startRuleName) {
+  const ruleMap = ruleMapFromRules(rules),
+        startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
+        basicParser = new BasicParser(startRule, ruleMap);
+
+  return basicParser;
+}
+
+` 
 document                             ::=   ( topLevelInstruction | verticalSpace | error )+ ;
 
 
@@ -514,47 +577,4 @@ rationalNumber       ::= argument <NO_WHITESPACE> "/" <NO_WHITESPACE> argument
                        | variable
 
                        ;
-`;
-
-  static initialContent = "n/n";
-
-  static initialStartRuleName = "term";
-
-  static initialLexicalPattern = ".";
-
-  static tagName = "div";
-
-  static defaultProperties = {
-    className: "view"
-  };
-}
-
-export default withStyle(View)`
-
-  padding: 1rem;
-  
-`;
-
-function basicLexerFromLexicalPattern(lexicalPattern) {
-  const unassigned = "^.*$",  ///
-        custom = lexicalPattern,  ///
-        entries = [
-          {
-            custom
-          },
-          {
-            unassigned
-          }
-        ],
-        basicLexer = BasicLexer.fromEntries(entries);
-
-  return basicLexer;
-}
-
-function basicParserFromRulesAndStartRuleName(rules, startRuleName) {
-  const ruleMap = ruleMapFromRules(rules),
-        startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
-        basicParser = new BasicParser(startRule, ruleMap);
-
-  return basicParser;
-}
+`

@@ -2,10 +2,27 @@
 
 import { arrayUtilities } from "necessary";
 
-import { isPartComplex } from "../utilities/part";
+import { isPartUnary, isPartComplex } from "../utilities/part";
 import { arePartsRecursive, arePartsLeftRecursive, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../utilities/parts";
 
 const { first } = arrayUtilities;
+
+export function isDefinitionUnary(definition) {
+  let definitionUnary = false;
+
+  const parts = definition.getParts(),
+        partsLength = parts.length;
+
+  if (partsLength === 1) {
+    const firstPart = first(parts),
+          part = firstPart, ///
+          partUnary = isPartUnary(part);
+
+    definitionUnary = partUnary;  ///
+  }
+
+  return definitionUnary;
+}
 
 export function isDefinitionComplex(definition) {
   const parts = definition.getParts(),

@@ -22,6 +22,59 @@ export function matchParts(partA, partB) {
   return matches;
 }
 
+export function isPartUnary(part) {
+  let partUnary = false;
+
+  const partNonTerminalPart = part.isNonTerminalPart();
+
+  if (partNonTerminalPart) {
+    const nonTerminalPart = part, ///
+          type = nonTerminalPart.getType();
+
+    switch (type) {
+      case RuleNamePartType:
+        partUnary = true;
+
+        break;
+
+      case OptionalPartPartType: {
+        const optionalPartPart = nonTerminalPart, ///
+              part = optionalPartPart.getPart();
+
+        partUnary = isPartUnary(part);
+
+        break;
+      }
+
+      case OneOrMorePartsPartType: {
+        const oneOrMorePartsPart = nonTerminalPart,  ///
+              part = oneOrMorePartsPart.getPart();
+
+        partUnary = isPartUnary(part);
+
+        break;
+      }
+
+      case ZeroOrMorePartsPartType: {
+        const zeroOrMorePartsPart = nonTerminalPart, ///
+              part = zeroOrMorePartsPart.getPart();  ///
+
+        partUnary = isPartUnary(part);
+
+        break;
+      }
+
+      case ChoiceOfPartsPartType:
+      case SequenceOfPartsPartType:
+        partUnary = false;
+
+        break;
+    }
+  }
+
+  return partUnary;
+}
+
 export function isPartComplex(part) {
   let partComplex = true;
 

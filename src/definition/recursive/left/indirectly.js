@@ -7,7 +7,7 @@ import LeftRecursiveDefinition from "../../../definition/recursive/left";
 
 import { ruleNamePartFromRuleName } from "../../../utilities/part";
 import { cloneParts, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../../utilities/parts";
-import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
+import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../../utilities/definition";
 
 const { ZeroOrMorePartsPart } = Parts,
       { head, tail, last, front, first, backwardsFind, backwardsEvery } = arrayUtilities;
@@ -87,12 +87,29 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
         const leftRecursiveDefinitions = findLeftRecursiveDefinitions(recursiveDefinitions);
 
         if (leftRecursiveDefinitions !== null) {
-          const definitionComplex = isDefinitionComplex(definition);
+          const definitionUnary = isDefinitionUnary(definition),
+                definitionComplex = isDefinitionComplex(definition);
+
+          if (definitionUnary) {
+            const leftRecursiveDefinitionsUnary = leftRecursiveDefinitions.every((leftRecursiveDefinition) => {
+              const leftRecursiveDefinitionUnary = isDefinitionUnary(leftRecursiveDefinition);
+
+              if (leftRecursiveDefinitionUnary) {
+                return true;
+              }
+            });
+
+            if (leftRecursiveDefinitionsUnary) {
+              const definitionString = definition.asString();
+
+              throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule and all of its intermediate definitions are unary and therefore it cannot be rewritten.`);
+            }
+          }
 
           if (definitionComplex) {
             const definitionString = definition.asString();
 
-            throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+            throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule is complex and therefore it cannot be rewritten.`);
           }
 
           leftRecursiveDefinitions.forEach((leftRecursiveDefinition) => {
