@@ -5,6 +5,7 @@ import withStyle from "easy-with-style";  ///
 import { Element } from "easy";
 import { BasicLexer } from "occam-lexers";
 import { BasicParser } from "occam-parsers";
+import { FlorenceLexer } from "occam-grammars";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 
 import Paragraph from "./paragraph";
@@ -52,8 +53,9 @@ class View extends Element {
 
     try {
       const basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
+            florenceLexer = florenceLexerFromLexicalPattern(lexicalPattern),
             basicParser =  basicParserFromRulesAndStartRuleName(rules, startRuleName),
-            tokens = basicLexer.tokenise(content),
+            tokens = florenceLexer.tokenise(content),
             node = basicParser.parse(tokens);
 
       let parseTree = null;
@@ -142,70 +144,7 @@ class View extends Element {
     this.keyUpHandler();
   }
 
-  static initialBNF = `
-      A ::= "d" 
-    
-        | B
-    
-        | "e"
-    
-        ;
-    
-    B ::= C C ;
-    
-    C ::= "b"
-    
-        | A
-    
-        | "c"
-
-        ;
-`;
-
-  static initialContent = "d";
-
-  static initialStartRuleName = "";
-
-  static initialLexicalPattern = ".";
-
-  static tagName = "div";
-
-  static defaultProperties = {
-    className: "view"
-  };
-}
-
-export default withStyle(View)`
-
-  padding: 1rem;
-  
-`;
-
-function basicLexerFromLexicalPattern(lexicalPattern) {
-  const unassigned = "^.*$",  ///
-        custom = lexicalPattern,  ///
-        entries = [
-          {
-            custom
-          },
-          {
-            unassigned
-          }
-        ],
-        basicLexer = BasicLexer.fromEntries(entries);
-
-  return basicLexer;
-}
-
-function basicParserFromRulesAndStartRuleName(rules, startRuleName) {
-  const ruleMap = ruleMapFromRules(rules),
-        startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
-        basicParser = new BasicParser(startRule, ruleMap);
-
-  return basicParser;
-}
-
-` 
+  static initialBNF = ` 
 document                             ::=   ( topLevelInstruction | verticalSpace | error )+ ;
 
 
@@ -577,4 +516,61 @@ rationalNumber       ::= argument <NO_WHITESPACE> "/" <NO_WHITESPACE> argument
                        | variable
 
                        ;
-`
+`;
+
+  static initialContent = `Constructor n/n
+`;
+
+  static initialStartRuleName = "";
+
+  static initialLexicalPattern = "\\/";
+
+  static tagName = "div";
+
+  static defaultProperties = {
+    className: "view"
+  };
+}
+
+export default withStyle(View)`
+
+  padding: 1rem;
+  
+`;
+
+function basicLexerFromLexicalPattern(lexicalPattern) {
+  const unassigned = "^.*$",  ///
+        custom = lexicalPattern,  ///
+        entries = [
+          {
+            custom
+          },
+          {
+            unassigned
+          }
+        ],
+        basicLexer = BasicLexer.fromEntries(entries);
+
+  return basicLexer;
+}
+
+function florenceLexerFromLexicalPattern(lexicalPattern) {
+  const { entries } = FlorenceLexer,
+        custom = lexicalPattern;  ///
+
+  entries.unshift({
+    custom
+  });
+
+  const florenceLexer = FlorenceLexer.fromEntries(entries);
+
+  return florenceLexer;
+}
+
+function basicParserFromRulesAndStartRuleName(rules, startRuleName) {
+  const ruleMap = ruleMapFromRules(rules),
+        startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
+        basicParser = new BasicParser(startRule, ruleMap);
+
+  return basicParser;
+}
