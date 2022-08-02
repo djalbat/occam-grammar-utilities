@@ -23,6 +23,7 @@ import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RewriteNodesCheckbox from "./checkbox/rewriteNodes"
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
+import { EMPTY_STRING } from "../constants";
 import { rulesFromBNF } from "../utilities/parser";
 
 const { unshift } = arrayUtilities,
@@ -57,7 +58,7 @@ class View extends Element {
       const basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
             florenceLexer = florenceLexerFromLexicalPattern(lexicalPattern),
             basicParser =  basicParserFromRulesAndStartRuleName(rules, startRuleName),
-            tokens = florenceLexer.tokenise(content),
+            tokens = basicLexer.tokenise(content),
             node = basicParser.parse(tokens);
 
       let parseTree = null;
@@ -146,40 +147,37 @@ class View extends Element {
     this.keyUpHandler();
   }
 
-  static initialBNF = ` 
-reference                            ::=   term | expression | term ;
+  static initialBNF = `
+T ::= R
 
-argument                             ::=   type | expression ;
+    | V
 
-type                                 ::=   [type] ;
+    ;
 
-variable                             ::=   [name] ; 
+R ::= A "/" A
 
+    | V
 
-term       ::= rationalNumber
+    ;
 
-                       | variable
+A ::= E ;
 
-                       ;
+E ::= F ;
 
-expression ::= argument ( "+" | "-" | "×" | "÷" ) argument
+F ::= A "+" A
 
-                       | term
+    | T
 
-                       ;
+    ;
 
-rationalNumber       ::= argument <NO_WHITESPACE> "/" <NO_WHITESPACE> argument
-
-                       | variable
-
-                       ;
+V ::= . ;
 `;
 
-  static initialContent = `Integer/Integer`;
+  static initialContent = `p+q`;
 
-  static initialStartRuleName = "term";
+  static initialStartRuleName = "E";
 
-  static initialLexicalPattern = "\\/";
+  static initialLexicalPattern = ".";
 
   static tagName = "div";
 
@@ -212,7 +210,7 @@ function basicLexerFromLexicalPattern(lexicalPattern) {
 
 function florenceLexerFromLexicalPattern(lexicalPattern) {
   const { entries } = FlorenceLexer,
-        type = "Integer",
+        type = EMPTY_STRING,
         operator = lexicalPattern;  //
 
   unshift(entries, [

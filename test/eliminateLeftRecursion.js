@@ -1404,6 +1404,106 @@ A ::= "g"
       `));
     });
   });
+
+  describe("florence", () => {
+    const bnf = `
+    
+    T ::= R
+    
+        | V
+    
+        ;
+    
+    R ::= A "/" A
+    
+        | V
+    
+        ;
+    
+    A ::= E ;
+    
+    E ::= F ;
+    
+    F ::= A "+" A
+    
+        | T
+    
+        ;
+    
+    V ::= . ;
+     
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+      
+    S    ::= A ;
+    
+    A    ::= A_ A~* ;
+    
+    E    ::= A_ A~* E~A~?
+    
+           | F__
+    
+           ;
+    
+    T    ::= "n" ;
+    
+    F    ::= "(" A ")"
+    
+           | A_ A~* F~A~?
+    
+           ;
+    
+    F~A~ ::= "+" A ;
+    
+    F__  ::= "(" A ")" ;
+    
+    E~A~ ::= F~A~ ;
+    
+    E__  ::= F__ ;
+    
+    A_   ::= T
+    
+           | E__
+    
+           ;
+    
+    A~   ::= E~A~ ;
+
+      `));
+    });
+
+    it.only("result in the requisite parse tree" , () => {
+      const content = "p+q",
+            startRuleName = "T",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                  E              
+                  |              
+                  F              
+                  |              
+        ---------------------    
+        |         |         |    
+        A     +[custom]     A    
+        |                   |    
+        E                   E    
+        |                   |    
+        F                   F    
+        |                   |    
+        T                   T    
+        |                   |    
+        V                   V    
+        |                   |    
+    p[custom]           q[custom]
+
+      `));
+    });
+  });
 });
 
 function compare(stringA, stringB) {
