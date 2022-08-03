@@ -384,14 +384,14 @@ A ::= "g"
 
 `;
 
-    xit("is rewritten", () => {
+    it("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-      
+          
     A    ::= A_ A~* ;
     
-    B    ::= A_ A~* B~A~?
+    B    ::= A B~A~
     
            | "d"
     
@@ -408,7 +408,7 @@ A ::= "g"
            ;
     
     A~   ::= B~A~ "g" ;
-
+    
       `));
     });
 
@@ -448,14 +448,14 @@ A ::= "g"
 
 `;
 
-    xit("is rewritten", () => {
+    it("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF,`
       
     A    ::= A_ A~* ;
     
-    B    ::= A_ A~* B~A~? ;
+    B    ::= A B~A~ ;
     
     B~A~ ::= ε ;
     
@@ -511,7 +511,7 @@ A ::= "g"
 
 `;
 
-    xit("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -580,14 +580,14 @@ A ::= "g"
 
 `;
 
-    xit("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
 
     A    ::= A_ A~* ;
     
-    B    ::= A_ A~* B~A~?
+    B    ::= A B~A~
     
            | "b"
     
@@ -673,20 +673,20 @@ A ::= "g"
 
 `;
 
-    xit("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
       
     A    ::= A_ A~* ;
     
-    B    ::= A_ A~* B~A~?
+    B    ::= A B~A~
     
            | C__
     
            ;
     
-    C    ::= A_ A~* C~A~?
+    C    ::= A C~A~
     
            | "d"
     
@@ -767,16 +767,16 @@ A ::= "g"
 
 `;
 
-    xit("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-            
+                
     A    ::= A_ A~* ;
     
     B    ::= "b"
     
-           | A_ A~* B~A~?
+           | A B~A~
     
            | "c"
     
@@ -803,7 +803,7 @@ A ::= "g"
            | B~A~ "g"
     
            ;
-                                      
+                                                 
       `));
     });
 
@@ -858,7 +858,7 @@ A ::= "g"
 
 `;
 
-    xit("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -867,13 +867,13 @@ A ::= "g"
     
     B    ::= "e"
     
-           | A_ A~* B~A~?
+           | A B~A~
     
            | C__
     
            ;
     
-    C    ::= A_ A~* C~A~?
+    C    ::= A C~A~
     
            | "b"
     
@@ -954,18 +954,18 @@ A ::= "g"
     
     `;
 
-    xit("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
       
     T    ::= T_ T~* ;
     
-    A    ::= T_ T~* A~T~? ;
+    A    ::= T A~T~ ;
     
-    E    ::= A_ A~* E~A~?
+    E    ::= A E~A~
     
-           | T_ T~* E~T~?
+           | T E~T~
     
            ;
     
@@ -1022,7 +1022,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition with a unary direct directly repeated rule", () => {
+  xdescribe("an indirectly left recursive definition with a unary direct directly repeated rule", () => {
     const bnf = `
     
     A ::=  E ;
@@ -1044,7 +1044,7 @@ A ::= "g"
               
     A    ::= A_ A~* ;
     
-    E    ::= A_ A~* E~A~?
+    E    ::= A E~A~
     
            | V
     
@@ -1063,7 +1063,7 @@ A ::= "g"
       `));
     });
 
-    it.only("result in the requisite parse tree" , () => {
+    it("result in the requisite parse tree" , () => {
       const content = "n+m",
             startRuleName = "E",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
@@ -1105,14 +1105,14 @@ A ::= "g"
               
 `;
 
-    xit("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
 
     A    ::= A_ A~* ;
     
-    B    ::= A_ A~* B~A~?
+    B    ::= A B~A~
     
            | B_ B~*
     
@@ -1186,14 +1186,14 @@ A ::= "g"
               
 `;
 
-    xit("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
       
     A    ::= A_ A~* ;
     
-    B    ::= A_ A~* B~A~?
+    B    ::= A B~A~
     
            | B_ B~*
     
@@ -1259,14 +1259,14 @@ A ::= "g"
               
 `;
 
-    xit("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
       
     A    ::= A_ A~* ;
     
-    B    ::= A_ A~* B~A~? ;
+    B    ::= A B~A~ ;
     
     B~   ::= "e" ;
     
@@ -1334,7 +1334,7 @@ A ::= "g"
      
 `;
 
-    xit("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -1343,7 +1343,7 @@ A ::= "g"
     
     A    ::= A_ A~* ;
     
-    E    ::= A_ A~* E~A~?
+    E    ::= A E~A~
     
            | F__
     
@@ -1353,7 +1353,7 @@ A ::= "g"
     
     F    ::= "(" A ")"
     
-           | A_ A~* F~A~?
+           | A F~A~
     
            ;
     
