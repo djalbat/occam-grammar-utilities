@@ -148,32 +148,32 @@ class View extends Element {
   }
 
   static initialBNF = `
-T ::= R
-
-    | V
-
-    ;
-
-R ::= A "/" A
-
-    | V
-
-    ;
-
-A ::= E ;
-
-E ::= F ;
-
-F ::= A "+" A
-
-    | T
-
-    ;
-
-V ::= . ;
+    T ::= R
+    
+        | V
+    
+        ;
+    
+    R ::= A "/" A
+    
+        | V
+    
+        ;
+    
+    A ::= E ;
+    
+    E ::= F ;
+    
+    F ::= A "+" A
+    
+        | T
+    
+        ;
+    
+    V ::= . ;
 `;
 
-  static initialContent = `p+q`;
+  static initialContent = `n+m`;
 
   static initialStartRuleName = "E";
 

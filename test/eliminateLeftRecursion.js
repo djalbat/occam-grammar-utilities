@@ -384,7 +384,7 @@ A ::= "g"
 
 `;
 
-    it("is rewritten", () => {
+    xit("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -448,7 +448,7 @@ A ::= "g"
 
 `;
 
-    it("is rewritten", () => {
+    xit("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF,`
@@ -511,7 +511,7 @@ A ::= "g"
 
 `;
 
-    it("are rewritten", () => {
+    xit("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -580,7 +580,7 @@ A ::= "g"
 
 `;
 
-    it("are rewritten", () => {
+    xit("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -673,7 +673,7 @@ A ::= "g"
 
 `;
 
-    it("are rewritten", () => {
+    xit("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -767,7 +767,7 @@ A ::= "g"
 
 `;
 
-    it("are rewritten", () => {
+    xit("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -858,7 +858,7 @@ A ::= "g"
 
 `;
 
-    it("are rewritten", () => {
+    xit("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -954,7 +954,7 @@ A ::= "g"
     
     `;
 
-    it("are rewritten", () => {
+    xit("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -1063,10 +1063,10 @@ A ::= "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it.only("result in the requisite parse tree" , () => {
       const content = "n+m",
-          startRuleName = "E",
-          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
+            startRuleName = "E",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
 
       assert.isTrue(compare(parseTreeString, `
           
@@ -1105,7 +1105,7 @@ A ::= "g"
               
 `;
 
-    it("are rewritten", () => {
+    xit("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -1186,7 +1186,7 @@ A ::= "g"
               
 `;
 
-    it("are rewritten", () => {
+    xit("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -1259,7 +1259,7 @@ A ::= "g"
               
 `;
 
-    it("are rewritten", () => {
+    xit("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -1334,7 +1334,7 @@ A ::= "g"
      
 `;
 
-    it("are rewritten", () => {
+    xit("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -1405,7 +1405,7 @@ A ::= "g"
     });
   });
 
-  describe("florence", () => {
+  xdescribe("florence", () => {
     const bnf = `
     
     T ::= R
@@ -1476,7 +1476,7 @@ A ::= "g"
       `));
     });
 
-    it.only("result in the requisite parse tree" , () => {
+    it("result in the requisite parse tree" , () => {
       const content = "p+q",
             startRuleName = "T",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
