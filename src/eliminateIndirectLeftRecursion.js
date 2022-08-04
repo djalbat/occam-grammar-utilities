@@ -11,6 +11,7 @@ import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directl
 import IndirectlyLeftRecursiveDefinition from "./definition/recursive/left/indirectly";
 
 import { indirectlyReducedRuleNameFromRuleName } from "./utilities/ruleName";
+import {isDefinitionUnary} from "./utilities/definition";
 
 const { find, push, first, filter } = arrayUtilities;
 
@@ -122,7 +123,9 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
 
   const definitions = rule.getDefinitions(),
         replacedDefinition = indirectlyLeftRecursiveDefinition, ///
-        replacementDefinition = LeftRecursiveDefinition.fromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),  ///
+        leftRecursiveDefinitionUnary = isDefinitionUnary(leftRecursiveDefinition),
+        unary = leftRecursiveDefinitionUnary, ///
+        replacementDefinition = LeftRecursiveDefinition.fromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName, unary),  ///
         indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(definitions, leftRecursiveRuleName);
 
   rule.replaceDefinition(replacedDefinition, replacementDefinition);

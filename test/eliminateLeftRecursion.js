@@ -1022,7 +1022,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("an indirectly left recursive definition with a unary direct directly repeated rule", () => {
+  describe("an indirectly left recursive definition with a unary direct directly repeated rule", () => {
     const bnf = `
     
     A ::=  E ;
@@ -1041,10 +1041,10 @@ A ::= "g"
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-              
+                  
     A    ::= A_ A~* ;
     
-    E    ::= A E~A~
+    E    ::= A
     
            | V
     
@@ -1058,12 +1058,12 @@ A ::= "g"
     
     A_   ::= E__ ;
     
-    A~   ::= E~A~ ;
-        
+    A~   ::= E~A~ ;        
+    
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it.only("result in the requisite parse tree" , () => {
       const content = "n+m",
             startRuleName = "E",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
