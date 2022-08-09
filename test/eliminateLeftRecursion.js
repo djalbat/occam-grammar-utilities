@@ -2,11 +2,14 @@
 
 const { assert } = require("chai"),
       { BasicLexer } = require("occam-lexers"),
-      { BasicParser } = require("occam-parsers");
+      { BasicParser } = require("occam-parsers"),
+      { FlorenceLexer } = require("occam-grammars"),
+      { arrayUtilities } = require("necessary");
 
-const { rewriteNodes, rulesUtilities, parserUtilities, eliminateLeftRecursion } = require("../lib/index.js"); ///
+const { rewriteNodes, rulesUtilities, parserUtilities, eliminateLeftRecursion } = require("../lib/index.js");
 
-const { rulesFromBNF } = parserUtilities,
+const { unshift } = arrayUtilities,
+      { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
@@ -320,7 +323,7 @@ A ::= "g"
     });
   });
 
-  describe("a directly left recursive definition", () => {
+  describe.only("a directly left recursive definition", () => {
     const bnf = `
  
     A ::= A "f"
@@ -1025,6 +1028,8 @@ A ::= "g"
   describe("an indirectly left recursive definition with a unary direct directly repeated rule", () => {
     const bnf = `
     
+    S ::=  E... <END_OF_LINE> ;
+
     A ::=  E ;
     
     E ::=  A "+" A
@@ -1042,45 +1047,49 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
                   
-    A    ::= A_ A~* ;
+    S    ::= E... <END_OF_LINE> ;
     
-    E    ::= A
+    A    ::= E A~E~ ;
     
-           | V
-    
-           ;
+    E    ::= E_ E~* ;
     
     V    ::= . ;
     
-    E~A~ ::= "+" A ;
+    A~E~ ::= ε ;
     
-    E__  ::= V ;
+    A__  ::=  ;
     
-    A_   ::= E__ ;
+    E_   ::= V ;
     
-    A~   ::= E~A~ ;        
+    E~   ::= A~E~ "+" A ;
     
       `));
     });
 
-    it.only("result in the requisite parse tree" , () => {
-      const content = "n+m",
-            startRuleName = "E",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
+    it("result in the requisite parse tree" , () => {
+      const content = `n+m
+`,
+            florence = true,
+            startRuleName = null,
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName, florence);
 
       assert.isTrue(compare(parseTreeString, `
           
-                  E              
-                  |              
-        ---------------------    
-        |         |         |    
-        A     +[custom]     A    
-        |                   |    
-        E                   E    
-        |                   |    
-        V                   V    
-        |                   |    
-    n[custom]           m[custom]
+                                  S                  
+                                  |                  
+                     --------------------------      
+                     |                        |      
+                     E                  <END_OF_LINE>
+                     |                               
+         -------------------------                   
+         |           |           |                   
+         A      +[operator]      A                   
+         |                       |                   
+         E                       E                   
+         |                       |                   
+         V                       V                   
+         |                       |                   
+    n[operator]             m[operator]              
     
       `));
     });
@@ -1405,9 +1414,11 @@ A ::= "g"
     });
   });
 
-  xdescribe("florence", () => {
+  describe("florence", () => {
     const bnf = `
     
+    S ::= E... <END_OF_LINE> ;
+
     T ::= R
     
         | V
@@ -1439,67 +1450,97 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
       
-    S    ::= A ;
+    T    ::= T_ T~* ;
+    
+    R    ::= V
+    
+           | T R~T~
+    
+           ;
     
     A    ::= A_ A~* ;
     
-    E    ::= A_ A~* E~A~?
+    E    ::= T E~T~
     
-           | F__
+           | A E~A~
+    
+           ;
+    
+    F    ::= A F~A~
+    
+           | T F~T~
     
            ;
     
-    T    ::= "n" ;
+    V    ::= . ;
     
-    F    ::= "(" A ")"
+    S    ::= E... <END_OF_LINE> ;
     
-           | A_ A~* F~A~?
+    F~T~ ::= ε ;
     
-           ;
+    F__  ::=  ;
+    
+    E~T~ ::= F~T~ ;
+    
+    E__  ::=  ;
     
     F~A~ ::= "+" A ;
     
-    F__  ::= "(" A ")" ;
+    A~T~ ::= E~T~ ;
+    
+    A__  ::=  ;
     
     E~A~ ::= F~A~ ;
     
-    E__  ::= F__ ;
+    R~T~ ::= A~T~ "/" A ;
     
-    A_   ::= T
+    R__  ::= V ;
     
-           | E__
+    A_   ::= T A~T~ ;
+    
+    A~   ::= E~A~ ;
+    
+    T_   ::= V
+    
+           | R__
     
            ;
     
-    A~   ::= E~A~ ;
+    T~   ::= R~T~ ;
 
       `));
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "p+q",
-            startRuleName = "T",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
+      const content = `n+m
+`,
+            florence = true,
+            startRuleName = "S",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName, florence);
 
       assert.isTrue(compare(parseTreeString, `
           
-                  E              
-                  |              
-                  F              
-                  |              
-        ---------------------    
-        |         |         |    
-        A     +[custom]     A    
-        |                   |    
-        E                   E    
-        |                   |    
-        F                   F    
-        |                   |    
-        T                   T    
-        |                   |    
-        V                   V    
-        |                   |    
-    p[custom]           q[custom]
+                                  S                  
+                                  |                  
+                     --------------------------      
+                     |                        |      
+                     E                  <END_OF_LINE>
+                     |                               
+                     F                               
+                     |                               
+         -------------------------                   
+         |           |           |                   
+         A      +[operator]      A                   
+         |                       |                   
+         E                       E                   
+         |                       |                   
+         F                       F                   
+         |                       |                   
+         T                       T                   
+         |                       |                   
+         V                       V                   
+         |                       |                   
+    n[operator]             m[operator]              
 
       `));
     });
@@ -1547,17 +1588,38 @@ function basicLexerFromLexicalPattern(lexicalPattern) {
   return basicLexer;
 }
 
-function parseTreeStringFromBNFAndContent(bnf, content, startRuleName = null) {
+function florenceLexerFromLexicalPattern(lexicalPattern) {
+  const { entries } = FlorenceLexer,
+        type = "",
+        operator = lexicalPattern;  //
+
+  unshift(entries, [
+    {
+      type
+    },
+    {
+      operator
+    }
+  ]);
+
+  const florenceLexer = FlorenceLexer.fromEntries(entries);
+
+  return florenceLexer;
+}
+
+function parseTreeStringFromBNFAndContent(bnf, content, startRuleName = null, florence = false) {
   let rules = rulesFromBNF(bnf);
 
   rules = eliminateLeftRecursion(rules);
 
   const lexicalPattern = ".", ///
-        basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
-        basicParser =  basicParserFromRulesAndStartRuleName(rules, startRuleName);
+        lexer = florence ?
+                  florenceLexerFromLexicalPattern(lexicalPattern) :
+                    basicLexerFromLexicalPattern(lexicalPattern),
+        parser =  basicParserFromRulesAndStartRuleName(rules, startRuleName); ///
 
-  const tokens = basicLexer.tokenise(content),
-        node = basicParser.parse(tokens);
+  const tokens = lexer.tokenise(content),
+        node = parser.parse(tokens);
 
   rewriteNodes(node);
 

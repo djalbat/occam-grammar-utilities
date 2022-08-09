@@ -3,9 +3,8 @@
 import { arrayUtilities } from "necessary";
 import { Rule, Definition } from "occam-parsers";
 
-import RecursiveDefinition from "../../definition/recursive";
 import DirectlyRepeatedNode from "../../node/repeated/directly";
-import DirectlyLeftRecursiveDefinition from "../../definition/recursive/left/directly";
+import DirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/directly";
 
 import { matchParts } from "../../utilities/part";
 import { cloneParts } from "../../utilities/parts";
@@ -15,32 +14,27 @@ import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 const { first, find, tail } = arrayUtilities;
 
 export default class DirectlyRepeatedRule extends Rule {
-  static fromRule(rule) {
-    let definitions = rule.getDefinitions();
-
+  static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
     const ruleName = rule.getName(),
-          directlyLeftRecursiveDefinitions = find(definitions, (definition) => { ///
-            const definitionDirectlyLeftRecursiveDefinition = (definition instanceof DirectlyLeftRecursiveDefinition);
+          directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions);
 
-            if (definitionDirectlyLeftRecursiveDefinition) {
-              return true;
-            }
-          }),
-          firstDirectlyLeftRecursiveDefinition = first(directlyLeftRecursiveDefinitions),
-          directlyLeftRecursiveDefinition = firstDirectlyLeftRecursiveDefinition, ///
-          parts = directlyLeftRecursiveDefinition.getParts(),
+    let definitions = directlyLeftRecursiveDefinitions.map((directlyLeftRecursiveDefinition) => {
+      const definition = directlyLeftRecursiveDefinition.getDefinition();
+
+      return definition;
+    });
+
+    const firstDefinition = first(definitions),
+          definition = firstDefinition, ///
+          parts = definition.getParts(),
           firstPart = first(parts),
           previousFirstPart = firstPart;  ///
 
-    definitions = directlyLeftRecursiveDefinitions.map((directlyLeftRecursiveDefinition) => {
-      let parts = directlyLeftRecursiveDefinition.getParts(),
-          definition;
+    definitions = definitions.map((definition) => {
+      let parts = definition.getParts();
 
-      const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
-            firstPart = first(parts),
+      const firstPart = first(parts),
             partsTail = tail(parts);
-
-      definition = directlyLeftRecursiveDefinition; ///
 
       const matches = matchParts(firstPart, previousFirstPart),
             definitionUnary = isDefinitionUnary(definition);
@@ -61,11 +55,7 @@ export default class DirectlyRepeatedRule extends Rule {
 
       parts = cloneParts(parts);  ///
 
-      const recursiveDefinition = RecursiveDefinition.fromRuleNameAndParts(ruleName, parts);
-
-      definition = (recursiveDefinition !== null) ?
-                      recursiveDefinition : ///
-                        new Definition(parts);
+      definition = new Definition(parts);
 
       return definition;
     });
@@ -78,4 +68,20 @@ export default class DirectlyRepeatedRule extends Rule {
 
     return directlyRepeatedRule;
   }
+}
+
+function findDirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
+  const directlyLeftRecursiveDefinitions = find(leftRecursiveDefinitions, (leftRecursiveDefinition) => {
+    const leftRecursiveDefinitionRule = leftRecursiveDefinition.getRule();
+
+    if (leftRecursiveDefinitionRule === rule) {
+      const leftRecursiveDefinitionDirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof DirectlyLeftRecursiveDefinition);
+
+      if (leftRecursiveDefinitionDirectlyLeftRecursiveDefinition) {
+        return true;
+      }
+    }
+  });
+
+  return directlyLeftRecursiveDefinitions;
 }

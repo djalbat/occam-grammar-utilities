@@ -6,9 +6,9 @@ import DirectlyReducedRule from "./rule/reduced/directly";
 import DirectlyRepeatedRule from "./rule/repeated/directly";
 import IndirectlyReducedRule from "./rule/reduced/indirectly";
 import IndirectlyRepeatedRule from "./rule/repeated/indirectly";
-import LeftRecursiveDefinition from "./definition/recursive/left";
-import DirectlyLeftRecursiveDefinition from "./definition/recursive/left/directly";
-import IndirectlyLeftRecursiveDefinition from "./definition/recursive/left/indirectly";
+import LeftRecursiveDefinition from "./recursiveDefinition/left";
+import DirectlyLeftRecursiveDefinition from "./recursiveDefinition/left/directly";
+import IndirectlyLeftRecursiveDefinition from "./recursiveDefinition/left/indirectly";
 
 import { indirectlyReducedRuleNameFromRuleName } from "./utilities/ruleName";
 import {isDefinitionUnary} from "./utilities/definition";
@@ -91,7 +91,7 @@ function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyL
 function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap) {
   const leftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinition(),
         leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
-        least = indirectlyLeftRecursiveDefinition.isLeast();
+        lowest = indirectlyLeftRecursiveDefinition.isLowest();
 
   const leftRecursiveDefinitionRuleName = leftRecursiveDefinition.getRuleName(),
         leftRecursiveDefinitionRule = ruleMap[leftRecursiveDefinitionRuleName];
@@ -132,7 +132,7 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, leftRec
 
   rule.removeDefinitions(indirectlyLeftRecursiveDefinitions);
 
-  const addedLeftRecursiveDefinition = least ?
+  const addedLeftRecursiveDefinition = lowest ?
                                          DirectlyLeftRecursiveDefinition.fromIndirectlyLeftRecursiveDefinitionLeftRecursiveDefinitionAndIndirectlyRepeatedRuleName(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition, indirectlyRepeatedRuleName) :  ///
                                            IndirectlyLeftRecursiveDefinition.fromIndirectlyLeftRecursiveDefinitionLeftRecursiveDefinitionAndIndirectlyRepeatedRuleName(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition, indirectlyRepeatedRuleName),  ///
         removedLeftRecursiveDefinitions = indirectlyLeftRecursiveDefinitions; ///

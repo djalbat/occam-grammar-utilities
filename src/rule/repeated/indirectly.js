@@ -4,7 +4,7 @@ import { arrayUtilities } from "necessary";
 import { Rule, Parts, Definition } from "occam-parsers";
 
 import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
-import IndirectlyLeftRecursiveDefinition from "../../definition/recursive/left/indirectly";
+import IndirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/indirectly";
 
 import { matchParts } from "../../utilities/part";
 import { cloneParts } from "../../utilities/parts";

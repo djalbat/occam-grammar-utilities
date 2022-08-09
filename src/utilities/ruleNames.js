@@ -5,9 +5,7 @@ export function retrieveLeftRecursiveRuleNames(lLeftRecursiveRule, LeftRecursive
         definitions = lLeftRecursiveRule.getDefinitions();
 
   definitions.forEach((definition) => {
-    const definitionLeftRecursiveDefinition = (definition instanceof LeftRecursiveDefinition);
-
-    if (definitionLeftRecursiveDefinition) {
+    if (definition instanceof LeftRecursiveDefinition) {
       const leftRecursiveDefinition = definition, ///
             ruleName = callback(leftRecursiveDefinition),
             leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);

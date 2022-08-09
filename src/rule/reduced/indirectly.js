@@ -4,7 +4,7 @@ import { Rule } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
 import IndirectlyReducedNode from "../../node/reduced/indirectly";
-import IndirectlyLeftRecursiveDefinition from "../../definition/recursive/left/indirectly";
+import IndirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/indirectly";
 
 import { indirectlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 

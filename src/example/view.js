@@ -55,11 +55,13 @@ class View extends Element {
     this.setAdjustedBNF(adjustedBNF);
 
     try {
-      const basicLexer = basicLexerFromLexicalPattern(lexicalPattern),
-            florenceLexer = florenceLexerFromLexicalPattern(lexicalPattern),
-            basicParser =  basicParserFromRulesAndStartRuleName(rules, startRuleName),
-            tokens = basicLexer.tokenise(content),
-            node = basicParser.parse(tokens);
+      const florence = true,  ///
+            lexer = florence ?  ///
+                      florenceLexerFromLexicalPattern(lexicalPattern) :
+                        basicLexerFromLexicalPattern(lexicalPattern),
+            parser =  basicParserFromRulesAndStartRuleName(rules, startRuleName), ///
+            tokens = lexer.tokenise(content),
+            node = parser.parse(tokens);
 
       let parseTree = null;
 
@@ -148,6 +150,8 @@ class View extends Element {
   }
 
   static initialBNF = `
+  S ::= E... <END_OF_LINE> ;
+
   T ::= R
   
       | V
@@ -173,9 +177,10 @@ class View extends Element {
   V ::= . ;
 `;
 
-  static initialContent = `n+m`;
+  static initialContent = `n+m
+`;
 
-  static initialStartRuleName = "E";
+  static initialStartRuleName = "S";
 
   static initialLexicalPattern = ".";
 
