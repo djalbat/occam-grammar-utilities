@@ -27,6 +27,8 @@ export default class RecursiveDefinition {
     return ruleName;
   }
 
+  getParts() { return this.definition.getParts(); }
+
   static fromRuleAndDefinition(rule, definition) {
     let recursiveDefinition = null;
 

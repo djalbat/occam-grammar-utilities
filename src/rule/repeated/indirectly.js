@@ -14,48 +14,45 @@ const { EpsilonPart } = Parts,
       { first, tail, find } = arrayUtilities;
 
 export default class IndirectlyRepeatedRule extends Rule {
-  static fromRuleAndLeftRecursiveRuleName(rule, leftRecursiveRuleName) {
-    let definitions = rule.getDefinitions();
-
-    const indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(definitions, leftRecursiveRuleName),
+  static fromRuleLeftRecursiveRuleNameAndLeftRecursiveDefinitions(rule, leftRecursiveRuleName, leftRecursiveDefinitions) {
+    const indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions),
           firstIndirectlyLeftRecursiveDefinition = first(indirectlyLeftRecursiveDefinitions),
           indirectlyLeftRecursiveDefinition = firstIndirectlyLeftRecursiveDefinition, ///
-          parts = indirectlyLeftRecursiveDefinition.getParts(),
-          firstPart = first(parts),
-          previousFirstPart = firstPart;  ///
+          indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts(),
+          firstIndirectlyLeftRecursiveDefinitionPart = first(indirectlyLeftRecursiveDefinitionParts),
+          previousFirstPart = firstIndirectlyLeftRecursiveDefinitionPart,  ///
+          definitions = indirectlyLeftRecursiveDefinitions.reduce((definitions, indirectlyLeftRecursiveDefinition) => {
+            const indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts();
 
-    definitions = indirectlyLeftRecursiveDefinitions.reduce((definitions, indirectlyLeftRecursiveDefinition) => {
-      let parts = indirectlyLeftRecursiveDefinition.getParts();
+            let parts = indirectlyLeftRecursiveDefinitionParts; ///
 
-      const firstPart = first(parts),
-            matches = matchParts(firstPart, previousFirstPart);
+            const firstPart = first(parts),
+                  matches = matchParts(firstPart, previousFirstPart);
 
-      if (!matches) {
-        const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
-              definition = indirectlyLeftRecursiveDefinition, ///
-              definitionString = definition.asString();
+            if (!matches) {
+              const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
+                    definitionString = definition.asString();
 
-        throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule does not match one of its sibling indirectly left recursive definitions and therefore the rule cannot be rewritten.`);
-      }
+              throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule does not match one of its sibling indirectly left recursive definitions and therefore the rule cannot be rewritten.`);
+            }
 
-      const partsLength = parts.length;
+            const partsLength = parts.length;
 
-      if (partsLength > 1) {
-        const partsTail = tail(parts);
+            if (partsLength > 1) {
+              const partsTail = tail(parts);
 
-        parts = partsTail;  ///
+              parts = partsTail;  ///
 
-        parts = cloneParts(parts);  ///
+              parts = cloneParts(parts);  ///
 
-        const definition = new Definition(parts);
+              const definition = new Definition(parts);
 
-        definitions.push(definition);
-      }
+              definitions.push(definition);
+            }
 
-      return definitions;
-    }, []);
-
-    const definitionsLength = definitions.length;
+            return definitions;
+          }, []),
+          definitionsLength = definitions.length;
 
     if (definitionsLength === 0) {
       const epsilonPart = new EpsilonPart(),
@@ -78,20 +75,18 @@ export default class IndirectlyRepeatedRule extends Rule {
   }
 }
 
-function findIndirectlyLeftRecursiveDefinitions(definitions, leftRecursiveRuleName) {
-  const ruleName = leftRecursiveRuleName, ///
-        indirectlyLeftRecursiveDefinitions = find(definitions, (definition) => {
-          const definitionIndirectlyLeftRecursiveDefinition = (definition instanceof IndirectlyLeftRecursiveDefinition);
+function findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
+  const indirectlyLeftRecursiveDefinitions = find(leftRecursiveDefinitions, (leftRecursiveDefinition) => {
+    const leftRecursiveDefinitionRule = leftRecursiveDefinition.getRule();
 
-          if (definitionIndirectlyLeftRecursiveDefinition) {
-            const indirectlyLeftRecursiveDefinition = definition,  ///
-                  leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName();
+    if (leftRecursiveDefinitionRule === rule) {
+      const leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
 
-            if (ruleName === leftRecursiveRuleName) {
-              return true;
-            }
-          }
-        });
+      if (leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition) {
+        return true;
+      }
+    }
+  });
 
   return indirectlyLeftRecursiveDefinitions;
 }

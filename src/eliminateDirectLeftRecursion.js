@@ -35,7 +35,7 @@ function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, leftRecursi
   rule.replaceAllDefinitions(replacementDefinition);
 
   const directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions),
-        removedLeftRecursiveDefinitions = directlyLeftRecursiveDefinitions;
+        removedLeftRecursiveDefinitions = directlyLeftRecursiveDefinitions; ///
 
   amendLeftRecursiveDefinitions(leftRecursiveDefinitions, removedLeftRecursiveDefinitions);
 }

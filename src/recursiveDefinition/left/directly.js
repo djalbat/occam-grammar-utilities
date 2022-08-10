@@ -4,12 +4,9 @@ import { arrayUtilities } from "necessary";
 
 import LeftRecursiveDefinition from "../../recursiveDefinition/left";
 
-import { cloneParts } from "../../utilities/parts";
-import { ruleNamePartFromRuleName } from "../../utilities/part";
-import { recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../../utilities/parts";
 import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
-const { head, tail, first } = arrayUtilities;
+const { first } = arrayUtilities;
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   getLeftRecursiveRuleName() {
@@ -48,28 +45,4 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
 
     return directlyLeftRecursiveDefinition;
   }
-
-  // static fromIndirectlyLeftRecursiveDefinitionLeftRecursiveDefinitionAndIndirectlyRepeatedRuleName(indirectlyLeftRecursiveDefinition, leftRecursiveDefinition, indirectlyRepeatedRuleName) {
-  //   const leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
-  //         leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
-  //         indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts(),
-  //         indirectlyLeftRecursiveDefinitionPartsHead = head(indirectlyLeftRecursiveDefinitionParts);
-  //
-  //   const indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName);
-  //
-  //   let parts = [
-  //     ...indirectlyLeftRecursiveDefinitionPartsHead,
-  //     indirectlyRepeatedRuleNamePart,
-  //     ...leftRecursiveDefinitionPartsTail
-  //   ];
-  //
-  //   parts = cloneParts(parts);  ///
-  //
-  //   const ruleName = leftRecursiveDefinition.getRuleName(),
-  //         recursiveRuleNames = recursiveRuleNamesFromParts(parts),
-  //         leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
-  //         directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(parts, ruleName, recursiveRuleNames, leftRecursiveRuleNames);
-  //
-  //   return directlyLeftRecursiveDefinition;
-  // }
 }

@@ -323,7 +323,7 @@ A ::= "g"
     });
   });
 
-  describe.only("a directly left recursive definition", () => {
+  describe("a directly left recursive definition", () => {
     const bnf = `
  
     A ::= A "f"
@@ -387,7 +387,7 @@ A ::= "g"
 
 `;
 
-    it("is rewritten", () => {
+    it.only("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -1025,6 +1025,138 @@ A ::= "g"
     });
   });
 
+  describe("two indirectly left recursive definitions with the same underlying definition", () => {
+    const bnf = `
+    
+    S ::= E... <END_OF_LINE> ;
+
+    T ::= R
+    
+        | V
+    
+        ;
+    
+    R ::= A "/" A
+    
+        | V
+    
+        ;
+    
+    A ::= E ;
+    
+    E ::= F ;
+    
+    F ::= A "+" A
+    
+        | T
+    
+        ;
+    
+    V ::= . ;
+     
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+      
+    T    ::= T_ T~* ;
+    
+    R    ::= V
+    
+           | T R~T~
+    
+           ;
+    
+    A    ::= A_ A~* ;
+    
+    E    ::= T E~T~
+    
+           | A E~A~
+    
+           ;
+    
+    F    ::= A F~A~
+    
+           | T F~T~
+    
+           ;
+    
+    V    ::= . ;
+    
+    S    ::= E... <END_OF_LINE> ;
+    
+    F~T~ ::= ε ;
+    
+    F__  ::=  ;
+    
+    E~T~ ::= F~T~ ;
+    
+    E__  ::=  ;
+    
+    F~A~ ::= "+" A ;
+    
+    A~T~ ::= E~T~ ;
+    
+    A__  ::=  ;
+    
+    E~A~ ::= F~A~ ;
+    
+    R~T~ ::= A~T~ "/" A ;
+    
+    R__  ::= V ;
+    
+    A_   ::= T A~T~ ;
+    
+    A~   ::= E~A~ ;
+    
+    T_   ::= V
+    
+           | R__
+    
+           ;
+    
+    T~   ::= R~T~ ;
+
+      `));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = `n+m
+`,
+          florence = true,
+          startRuleName = "S",
+          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName, florence);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                                  S                  
+                                  |                  
+                     --------------------------      
+                     |                        |      
+                     E                  <END_OF_LINE>
+                     |                               
+                     F                               
+                     |                               
+         -------------------------                   
+         |           |           |                   
+         A      +[operator]      A                   
+         |                       |                   
+         E                       E                   
+         |                       |                   
+         F                       F                   
+         |                       |                   
+         T                       T                   
+         |                       |                   
+         V                       V                   
+         |                       |                   
+    n[operator]             m[operator]              
+
+      `));
+    });
+  });
+
   describe("an indirectly left recursive definition with a unary direct directly repeated rule", () => {
     const bnf = `
     
@@ -1409,138 +1541,6 @@ A ::= "g"
                   T                   T              
                   |                   |              
               n[custom]           n[custom]          
-
-      `));
-    });
-  });
-
-  describe("florence", () => {
-    const bnf = `
-    
-    S ::= E... <END_OF_LINE> ;
-
-    T ::= R
-    
-        | V
-    
-        ;
-    
-    R ::= A "/" A
-    
-        | V
-    
-        ;
-    
-    A ::= E ;
-    
-    E ::= F ;
-    
-    F ::= A "+" A
-    
-        | T
-    
-        ;
-    
-    V ::= . ;
-     
-`;
-
-    it("are rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF, `
-      
-    T    ::= T_ T~* ;
-    
-    R    ::= V
-    
-           | T R~T~
-    
-           ;
-    
-    A    ::= A_ A~* ;
-    
-    E    ::= T E~T~
-    
-           | A E~A~
-    
-           ;
-    
-    F    ::= A F~A~
-    
-           | T F~T~
-    
-           ;
-    
-    V    ::= . ;
-    
-    S    ::= E... <END_OF_LINE> ;
-    
-    F~T~ ::= ε ;
-    
-    F__  ::=  ;
-    
-    E~T~ ::= F~T~ ;
-    
-    E__  ::=  ;
-    
-    F~A~ ::= "+" A ;
-    
-    A~T~ ::= E~T~ ;
-    
-    A__  ::=  ;
-    
-    E~A~ ::= F~A~ ;
-    
-    R~T~ ::= A~T~ "/" A ;
-    
-    R__  ::= V ;
-    
-    A_   ::= T A~T~ ;
-    
-    A~   ::= E~A~ ;
-    
-    T_   ::= V
-    
-           | R__
-    
-           ;
-    
-    T~   ::= R~T~ ;
-
-      `));
-    });
-
-    it("result in the requisite parse tree" , () => {
-      const content = `n+m
-`,
-            florence = true,
-            startRuleName = "S",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName, florence);
-
-      assert.isTrue(compare(parseTreeString, `
-          
-                                  S                  
-                                  |                  
-                     --------------------------      
-                     |                        |      
-                     E                  <END_OF_LINE>
-                     |                               
-                     F                               
-                     |                               
-         -------------------------                   
-         |           |           |                   
-         A      +[operator]      A                   
-         |                       |                   
-         E                       E                   
-         |                       |                   
-         F                       F                   
-         |                       |                   
-         T                       T                   
-         |                       |                   
-         V                       V                   
-         |                       |                   
-    n[operator]             m[operator]              
 
       `));
     });
