@@ -12,6 +12,8 @@ const { find } = arrayUtilities;
 
 export default class IndirectlyReducedRule extends Rule {
   static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
+    let indirectlyReducedRule = null;
+
     const indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions);
 
     let definitions = rule.getDefinitions();
@@ -27,12 +29,17 @@ export default class IndirectlyReducedRule extends Rule {
         definitions.splice(start, deleteCount);
     });
 
-    const ruleName = rule.getName(),
-          indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName),
-          name = indirectlyReducedRuleName, ///
-          ambiguous = false,
-          NonTerminalNode = IndirectlyReducedNode,  ///
-          indirectlyReducedRule = new IndirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
+    const definitionsLength = definitions.length;
+
+    if (definitionsLength > 0) {
+      const ruleName = rule.getName(),
+            indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName),
+            name = indirectlyReducedRuleName, ///
+            ambiguous = false,
+            NonTerminalNode = IndirectlyReducedNode;  ///
+
+      indirectlyReducedRule = new IndirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
+    }
 
     return indirectlyReducedRule;
   }

@@ -45,4 +45,13 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
 
     return directlyLeftRecursiveDefinition;
   }
+
+  static fromRuleAndReplacementDefinition(rule, replacementDefinition) {
+    const definition = replacementDefinition, ///
+          recursiveRuleNames = recursiveRuleNamesFromDefinition(definition),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
+          directlyLeftRecursiveDefinition = new DirectlyLeftRecursiveDefinition(rule, definition, recursiveRuleNames, leftRecursiveRuleNames);
+
+    return directlyLeftRecursiveDefinition;
+  }
 }
