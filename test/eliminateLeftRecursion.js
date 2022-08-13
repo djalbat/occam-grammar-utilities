@@ -370,7 +370,7 @@ A ::= "g"
     });
   });
 
-  describe.only("an indirectly left recursive definition", () => {
+  describe("an indirectly left recursive definition", () => {
     const bnf = `
   
     A ::= B "g"
@@ -461,8 +461,6 @@ A ::= "g"
     B    ::= A B~A~ ;
     
     B~A~ ::= ε ;
-    
-    B__  ::=  ;
     
     A_   ::= "c" ;
     
@@ -598,15 +596,15 @@ A ::= "g"
     
            ;
     
-    B~A~ ::= "h"
-    
-           | "f"
-    
-           ;
-    
     B__  ::= "b"
     
            | "c"
+    
+           ;
+    
+    B~A~ ::= "h"
+    
+           | "f"
     
            ;
     
@@ -676,7 +674,7 @@ A ::= "g"
 
 `;
 
-    it("are rewritten", () => {
+    it.only("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -695,17 +693,17 @@ A ::= "g"
     
            ;
     
+    C__  ::= "d" ;
+    
     C~A~ ::= "e" ;
     
-    C__  ::= "d" ;
+    B__  ::= C__ ;
     
     B~A~ ::= "f"
     
            | C~A~
     
            ;
-    
-    B__  ::= C__ ;
     
     A_   ::= "g"
     
