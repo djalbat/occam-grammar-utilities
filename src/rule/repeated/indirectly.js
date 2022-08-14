@@ -22,9 +22,7 @@ export default class IndirectlyRepeatedRule extends Rule {
           firstIndirectlyLeftRecursiveDefinitionPart = first(indirectlyLeftRecursiveDefinitionParts),
           previousFirstPart = firstIndirectlyLeftRecursiveDefinitionPart,  ///
           definitions = indirectlyLeftRecursiveDefinitions.reduce((definitions, indirectlyLeftRecursiveDefinition) => {
-            const indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts();
-
-            let parts = indirectlyLeftRecursiveDefinitionParts; ///
+            let parts  = indirectlyLeftRecursiveDefinition.getParts();
 
             const firstPart = first(parts),
                   matches = matchParts(firstPart, previousFirstPart);

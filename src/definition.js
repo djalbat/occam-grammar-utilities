@@ -3,14 +3,14 @@
 import { arrayUtilities } from "necessary";
 import { Parts, Definition } from "occam-parsers";
 
-import { cloneParts } from "../utilities/parts";
-import { ruleNamePartFromRuleName, directlyReducedPartFromPart } from "../utilities/part";
-import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../utilities/ruleName";
+import { cloneParts } from "./utilities/parts";
+import { ruleNamePartFromRuleName, directlyReducedPartFromPart } from "./utilities/part";
+import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "./utilities/ruleName";
 
 const { first, head, tail } = arrayUtilities,
       { ZeroOrMorePartsPart } = Parts;
 
-export default class ReplacementDefinition extends Definition {
+export default class extends Definition {
   static fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {
     const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
           directlyLeftRecursiveDefinitionParts = directlyLeftRecursiveDefinition.getParts(),
@@ -28,9 +28,9 @@ export default class ReplacementDefinition extends Definition {
 
     parts = cloneParts(parts);  ///
 
-    const replacementDefinition = new ReplacementDefinition(parts);
+    const definition = new Definition(parts);
 
-    return replacementDefinition;
+    return definition;
   }
 
   static fromIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition) {
@@ -48,13 +48,14 @@ export default class ReplacementDefinition extends Definition {
 
     parts = cloneParts(parts);  ///
 
-    const replacementDefinition = new ReplacementDefinition(parts);
+    const definition = new Definition(parts);
 
-    return replacementDefinition;
+    return definition;
   }
 
-  static fromLeftRecursiveDefinitionAndIndirectlyReducedRule(leftRecursiveDefinition, indirectlyReducedRule) {
-    const indirectlyReducedRuleName = indirectlyReducedRule.getName(),
+  static fromIndirectlyLeftRecursiveDefinitionAndIndirectlyReducedRule(indirectlyLeftRecursiveDefinition, indirectlyReducedRule) {
+    const leftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinition(),
+          indirectlyReducedRuleName = indirectlyReducedRule.getName(),
           leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
           leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
           reducedRuleName = indirectlyReducedRuleName,  ///
@@ -67,13 +68,14 @@ export default class ReplacementDefinition extends Definition {
 
     parts = cloneParts(parts);  ///
 
-    const replacementDefinition = new ReplacementDefinition(parts);
+    const definition = new Definition(parts);
 
-    return replacementDefinition;
+    return definition;
   }
 
-  static fromIndirectlyLeftRecursiveDefinitionAndIndirectlyRepeatedRuleName(indirectlyLeftRecursiveDefinition, indirectlyRepeatedRuleName) {
+  static fromIndirectlyLeftRecursiveDefinitionAndIndirectlyRepeatedRule(indirectlyLeftRecursiveDefinition, indirectlyRepeatedRule) {
     const leftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinition(),
+          indirectlyRepeatedRuleName = indirectlyRepeatedRule.getName(),
           leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
           indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName),
           leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
@@ -88,8 +90,8 @@ export default class ReplacementDefinition extends Definition {
 
     parts = cloneParts(parts);  ///
 
-    const replacementDefinition = new ReplacementDefinition(parts);
+    const definition = new Definition(parts);
 
-    return replacementDefinition;
+    return definition;
   }
 }

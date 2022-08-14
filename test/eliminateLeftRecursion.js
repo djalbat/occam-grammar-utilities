@@ -674,7 +674,7 @@ A ::= "g"
 
 `;
 
-    it.only("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -745,7 +745,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition of length three", () => {
+  describe.only("an indirectly left recursive definition of length three", () => {
     const bnf = `
     
     A  ::=  B "h" 

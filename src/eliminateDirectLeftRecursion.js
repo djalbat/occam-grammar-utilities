@@ -2,9 +2,9 @@
 
 import { arrayUtilities } from "necessary";
 
+import Definition from "./definition";
 import DirectlyReducedRule from "./rule/reduced/directly";
 import DirectlyRepeatedRule from "./rule/repeated/directly";
-import ReplacementDefinition from "./definition/replacement";
 import DirectlyLeftRecursiveDefinition from "./recursiveDefinition/left/directly";
 
 const { find, filter } = arrayUtilities;
@@ -87,7 +87,8 @@ function findDirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
 function rewriteDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinition, leftRecursiveDefinitions) {
   const rule = directlyLeftRecursiveDefinition.getRule(),
         directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions),
-        replacementDefinition = ReplacementDefinition.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition);
+        definition = Definition.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition),
+        replacementDefinition = definition; ///
 
   rule.replaceAllDefinitions(replacementDefinition);
 
