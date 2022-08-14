@@ -9,9 +9,18 @@ export default function retrieveLeftRecursiveDefinitions(rule, recursiveDefiniti
   const definitions = rule.getDefinitions();
 
   definitions.forEach((definition) => {
-    const recursiveDefinition = retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions, leftRecursiveDefinitions);
+    const recursiveDefinition = IndirectlyLeftRecursiveDefinition.fromRuleDefinitionAndRecursiveDefinitions(rule, definition, recursiveDefinitions) ||
+                                DirectlyLeftRecursiveDefinition.fromRuleAndDefinition(rule, definition) ||
+                                LeftRecursiveDefinition.fromRuleAndDefinition(rule, definition) ||
+                                RecursiveDefinition.fromRuleAndDefinition(rule, definition);
 
     if (recursiveDefinition !== null) {
+      if (recursiveDefinition instanceof LeftRecursiveDefinition) {
+        const leftRecursiveDefinition = recursiveDefinition;  ///
+
+        leftRecursiveDefinitions.push(leftRecursiveDefinition);
+      }
+
       const previousRecursiveDefinitions = [ ...recursiveDefinitions, recursiveDefinition ],
             previousRecursiveRuleNames = previousRecursiveDefinitions.map((previousRecursiveDefinition) => {
               const previousRecursiveDefinitionRuleName = previousRecursiveDefinition.getRuleName(),
@@ -37,19 +46,4 @@ export default function retrieveLeftRecursiveDefinitions(rule, recursiveDefiniti
       });
     }
   });
-}
-
-function retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions, leftRecursiveDefinitions) {
-  const recursiveDefinition = IndirectlyLeftRecursiveDefinition.fromRuleDefinitionAndRecursiveDefinitions(rule, definition, recursiveDefinitions) ||
-                              DirectlyLeftRecursiveDefinition.fromRuleAndDefinition(rule, definition) ||
-                              LeftRecursiveDefinition.fromRuleAndDefinition(rule, definition) ||
-                              RecursiveDefinition.fromRuleAndDefinition(rule, definition);
-
-  if (recursiveDefinition instanceof LeftRecursiveDefinition) {
-    const leftRecursiveDefinition = recursiveDefinition;  ///
-
-    leftRecursiveDefinitions.push(leftRecursiveDefinition);
-  }
-
-  return recursiveDefinition;
 }

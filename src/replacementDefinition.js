@@ -10,7 +10,7 @@ import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRul
 const { first, head, tail } = arrayUtilities,
       { ZeroOrMorePartsPart } = Parts;
 
-export default class extends Definition {
+export default class ReplacementDefinition extends Definition {
   static fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {
     const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
           directlyLeftRecursiveDefinitionParts = directlyLeftRecursiveDefinition.getParts(),
@@ -28,9 +28,9 @@ export default class extends Definition {
 
     parts = cloneParts(parts);  ///
 
-    const definition = new Definition(parts);
+    const replacementDefinition = new ReplacementDefinition(parts);
 
-    return definition;
+    return replacementDefinition;
   }
 
   static fromIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition) {
@@ -48,9 +48,9 @@ export default class extends Definition {
 
     parts = cloneParts(parts);  ///
 
-    const definition = new Definition(parts);
+    const replacementDefinition = new ReplacementDefinition(parts);
 
-    return definition;
+    return replacementDefinition;
   }
 
   static fromIndirectlyLeftRecursiveDefinitionAndIndirectlyReducedRule(indirectlyLeftRecursiveDefinition, indirectlyReducedRule) {
@@ -68,9 +68,9 @@ export default class extends Definition {
 
     parts = cloneParts(parts);  ///
 
-    const definition = new Definition(parts);
+    const replacementDefinition = new ReplacementDefinition(parts);
 
-    return definition;
+    return replacementDefinition;
   }
 
   static fromIndirectlyLeftRecursiveDefinitionAndIndirectlyRepeatedRule(indirectlyLeftRecursiveDefinition, indirectlyRepeatedRule) {
@@ -90,8 +90,8 @@ export default class extends Definition {
 
     parts = cloneParts(parts);  ///
 
-    const definition = new Definition(parts);
+    const replacementDefinition = new ReplacementDefinition(parts);
 
-    return definition;
+    return replacementDefinition;
   }
 }

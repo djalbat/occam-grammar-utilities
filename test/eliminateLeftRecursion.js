@@ -745,7 +745,7 @@ A ::= "g"
     });
   });
 
-  describe.only("an indirectly left recursive definition of length three", () => {
+  describe("an indirectly left recursive definition of length three", () => {
     const bnf = `
     
     A  ::=  B "h" 
@@ -777,9 +777,9 @@ A ::= "g"
 
     A    ::= A_ A~* ;
     
-    B    ::= "e"
+    B    ::= A B~A~
     
-           | A B~A~
+           | "e"
     
            | C__
     
@@ -791,21 +791,21 @@ A ::= "g"
     
            ;
     
+    C__  ::= "b" ;
+    
     C~A~ ::= "d"
     
            | "c"
     
            ;
     
-    C__  ::= "b" ;
-    
-    B~A~ ::= C~A~ ;
-    
     B__  ::= "e"
     
            | C__
     
            ;
+    
+    B~A~ ::= C~A~ ;
     
     A_   ::= "g"
     
@@ -866,7 +866,7 @@ A ::= "g"
     
     `;
 
-    it("are rewritten", () => {
+    it.only("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -883,15 +883,11 @@ A ::= "g"
     
     E~T~ ::= "d" ;
     
-    E__  ::=  ;
-    
     E~A~ ::= "c" ;
     
     A~   ::= E~A~ "h" ;
     
     A~T~ ::= E~T~ "h" A~* ;
-    
-    A__  ::=  ;
     
     T_   ::= "f" ;
     

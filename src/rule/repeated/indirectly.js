@@ -15,7 +15,7 @@ const { EpsilonPart } = Parts,
 
 export default class IndirectlyRepeatedRule extends Rule {
   static fromRuleLeftRecursiveRuleNameAndLeftRecursiveDefinitions(rule, leftRecursiveRuleName, leftRecursiveDefinitions) {
-    const indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions),
+    const indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveRuleName, leftRecursiveDefinitions),
           firstIndirectlyLeftRecursiveDefinition = first(indirectlyLeftRecursiveDefinitions),
           indirectlyLeftRecursiveDefinition = firstIndirectlyLeftRecursiveDefinition, ///
           indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts(),
@@ -73,7 +73,7 @@ export default class IndirectlyRepeatedRule extends Rule {
   }
 }
 
-function findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
+function findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveRuleName, leftRecursiveDefinitions) {
   const indirectlyLeftRecursiveDefinitions = find(leftRecursiveDefinitions, (leftRecursiveDefinition) => {
     const leftRecursiveDefinitionRule = leftRecursiveDefinition.getRule();
 
@@ -81,7 +81,12 @@ function findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) 
       const leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
 
       if (leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition) {
-        return true;
+        const indirectlyLeftRecursiveDefinition = leftRecursiveDefinition,  ///
+              indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName();
+
+        if (indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName === leftRecursiveRuleName) {
+          return true;
+        }
       }
     }
   });

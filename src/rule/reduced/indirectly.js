@@ -3,12 +3,13 @@
 import { Rule } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
+import ReplacementDefinition from "../../replacementDefinition";
 import IndirectlyReducedNode from "../../node/reduced/indirectly";
 import IndirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/indirectly";
 
 import { indirectlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
-const { find } = arrayUtilities;
+const { find, filter } = arrayUtilities;
 
 export default class IndirectlyReducedRule extends Rule {
   static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
@@ -20,13 +21,21 @@ export default class IndirectlyReducedRule extends Rule {
 
     definitions = definitions.slice(0);  ///
 
+    filter(definitions, (definition) => {
+      const definitionReplacementDefinition = (definition instanceof ReplacementDefinition);
+
+      if (!definitionReplacementDefinition) {
+        return true;
+      }
+    });
+
     indirectlyLeftRecursiveDefinitions.forEach((indirectlyLeftRecursiveDefinition) => {
       const definition = indirectlyLeftRecursiveDefinition.getDefinition(),
             index = definitions.indexOf(definition),
             start = index,  ///
             deleteCount = 1;
 
-        definitions.splice(start, deleteCount);
+      definitions.splice(start, deleteCount);
     });
 
     const definitionsLength = definitions.length;

@@ -150,23 +150,19 @@ class View extends Element {
   }
 
   static initialBNF = `
-  A  ::=  B "h" 
-    
-       |  "g" 
-
-       ;
-
-  B  ::=  A "f" 
+  T  ::= A "g"
   
-       |  C
-       
+       | "f"
+  
        ;
 
-  C  ::=  A "e" 
+  A ::= E "h" ;
   
-       |  "d"
-       
-       ;
+  E ::= A "c"
+  
+      | T "d"
+  
+      ;
 `;
 
   static initialContent = `n+m
