@@ -3,31 +3,27 @@
 import { Rule } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
-import ReplacementDefinition from "../../replacementDefinition";
 import IndirectlyReducedNode from "../../node/reduced/indirectly";
 import IndirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/indirectly";
 
 import { indirectlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
-const { find, filter } = arrayUtilities;
+const { find } = arrayUtilities;
 
 export default class IndirectlyReducedRule extends Rule {
-  static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
-    let indirectlyReducedRule = null;
+  isVacuous() {
+    const definitionsLength = this.definitions.length,
+          vacuous = (definitionsLength === 0);
 
+    return vacuous;
+  }
+
+  static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
     const indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions);
 
     let definitions = rule.getDefinitions();
 
     definitions = definitions.slice(0);  ///
-
-    filter(definitions, (definition) => {
-      const definitionReplacementDefinition = (definition instanceof ReplacementDefinition);
-
-      if (!definitionReplacementDefinition) {
-        return true;
-      }
-    });
 
     indirectlyLeftRecursiveDefinitions.forEach((indirectlyLeftRecursiveDefinition) => {
       const definition = indirectlyLeftRecursiveDefinition.getDefinition(),
@@ -38,17 +34,12 @@ export default class IndirectlyReducedRule extends Rule {
       definitions.splice(start, deleteCount);
     });
 
-    const definitionsLength = definitions.length;
-
-    if (definitionsLength > 0) {
-      const ruleName = rule.getName(),
-            indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName),
-            name = indirectlyReducedRuleName, ///
-            ambiguous = false,
-            NonTerminalNode = IndirectlyReducedNode;  ///
-
-      indirectlyReducedRule = new IndirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
-    }
+    const ruleName = rule.getName(),
+          indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName),
+          name = indirectlyReducedRuleName, ///
+          ambiguous = false,
+          NonTerminalNode = IndirectlyReducedNode,  ///
+          indirectlyReducedRule = new IndirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
 
     return indirectlyReducedRule;
   }

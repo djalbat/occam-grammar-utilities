@@ -99,16 +99,23 @@ function directlyRepeatRule(directlyLeftRecursiveDefinition, leftRecursiveDefini
 function indirectlyReduceRule(indirectlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap) {
   const rule = indirectlyLeftRecursiveDefinition.getRule(),
         ruleName = rule.getName(),
-        indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName),
-        indirectlyReducedRule = ruleMap[indirectlyReducedRuleName] || IndirectlyReducedRule.fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions);  ///
+        indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName);
 
-  if (indirectlyReducedRule !== null) {
+  let indirectlyReducedRule = ruleMap[indirectlyReducedRuleName] || null;
+
+  if (indirectlyReducedRule === null) {
+    indirectlyReducedRule = IndirectlyReducedRule.fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions);
+
+    ruleMap[indirectlyReducedRuleName] = indirectlyReducedRule;
+  }
+
+  const vacuous = indirectlyReducedRule.isVacuous();
+
+  if (!vacuous) {
     const replacementDefinition = ReplacementDefinition.fromIndirectlyLeftRecursiveDefinitionAndIndirectlyReducedRule(indirectlyLeftRecursiveDefinition, indirectlyReducedRule),
           leftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinition(),
           rule = leftRecursiveDefinition.getRule(),
           definition = replacementDefinition; ///
-
-    ruleMap[indirectlyReducedRuleName] = indirectlyReducedRule;
 
     rule.addDefinition(definition);
   }
