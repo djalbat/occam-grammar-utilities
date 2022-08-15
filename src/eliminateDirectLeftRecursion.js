@@ -24,7 +24,7 @@ function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, leftRecursi
 
   directlyRepeatRule(directlyLeftRecursiveDefinition, leftRecursiveDefinitions, ruleMap);
 
-  const directlyLeftRecursiveDefinitions = rewriteDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinition, leftRecursiveDefinitions),
+  const directlyLeftRecursiveDefinitions = rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition, leftRecursiveDefinitions),
         removedLeftRecursiveDefinitions = directlyLeftRecursiveDefinitions; ///
 
   amendLeftRecursiveDefinitions(leftRecursiveDefinitions, removedLeftRecursiveDefinitions);
@@ -84,7 +84,7 @@ function findDirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
   return directlyLeftRecursiveDefinitions;
 }
 
-function rewriteDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinition, leftRecursiveDefinitions) {
+function rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition, leftRecursiveDefinitions) {
   const rule = directlyLeftRecursiveDefinition.getRule(),
         directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions),
         replacementDefinition = ReplacementDefinition.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition);

@@ -847,7 +847,7 @@ A ::= "g"
     });
   });
 
-  describe("two sibling but unrelated indirectly left recursive definitions", () => {
+  describe.only("two sibling but unrelated indirectly left recursive definitions", () => {
     const bnf = `
     
     T  ::= A "g"
@@ -866,7 +866,7 @@ A ::= "g"
     
     `;
 
-    it.only("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
