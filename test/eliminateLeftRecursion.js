@@ -1036,9 +1036,9 @@ A ::= "g"
     it("result in the requisite parse tree" , () => {
       const content = `n+m
 `,
-          florence = true,
-          startRuleName = "S",
-          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName, florence);
+            florence = true,
+            startRuleName = "S",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName, florence);
 
       assert.isTrue(compare(parseTreeString, `
           
