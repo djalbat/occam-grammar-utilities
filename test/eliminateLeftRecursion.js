@@ -1171,7 +1171,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition and sibling directly left recursive definition", () => {
+  describe.only("an indirectly left recursive definition and sibling directly left recursive definition", () => {
     const bnf = `
   
     A  ::=  B "h" 
@@ -1190,16 +1190,16 @@ A ::= "g"
               
 `;
 
-    it.only("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
 
     A    ::= A_ A~* ;
     
-    B    ::= A B~A~
+    B    ::= B_ B~*
     
-           | B_ B~*
+           | A B~A~
     
            ;
     
