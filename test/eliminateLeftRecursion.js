@@ -1171,7 +1171,7 @@ A ::= "g"
     });
   });
 
-  describe.only("an indirectly left recursive definition and sibling directly left recursive definition", () => {
+  describe("an indirectly left recursive definition and sibling directly left recursive definition", () => {
     const bnf = `
   
     A  ::=  B "h" 
@@ -1290,13 +1290,13 @@ A ::= "g"
     
            ;
     
-    B~A~ ::= "f" ;
-    
     B__  ::= "b"
     
            | "c"
     
            ;
+    
+    B~A~ ::= "f" ;
     
     A_   ::= "d"
     
@@ -1367,9 +1367,9 @@ A ::= "g"
       
     A    ::= A_ A~* ;
     
-    B    ::= A B~A~
+    B    ::= B_ B~*
     
-           | B_ B~*
+           | A B~A~
     
            ;
     
@@ -1377,9 +1377,9 @@ A ::= "g"
     
     B~   ::= "e" "f" ;
     
-    B~A~ ::= B~* ;
-    
     B__  ::= B_ B~* ;
+    
+    B~A~ ::= B~* ;
     
     A_   ::= "g"
     
@@ -1444,9 +1444,9 @@ A ::= "g"
     
     B~   ::= "e" ;
     
-    B~A~ ::= "d" B~* ;
-    
     B__  ::=  ;
+    
+    B~A~ ::= "d" B~* ;
     
     A_   ::= "f" ;
     
@@ -1531,13 +1531,13 @@ A ::= "g"
     
            ;
     
-    F~A~ ::= "+" A ;
-    
     F__  ::= "(" A ")" ;
     
-    E~A~ ::= F~A~ ;
+    F~A~ ::= "+" A ;
     
     E__  ::= F__ ;
+    
+    E~A~ ::= F~A~ ;
     
     A_   ::= T
     
