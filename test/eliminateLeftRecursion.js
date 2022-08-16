@@ -460,6 +460,8 @@ A ::= "g"
     
     B    ::= A B~A~ ;
     
+    B__  ::=  ;
+    
     B~A~ ::= ε ;
     
     A_   ::= "c" ;
@@ -847,7 +849,7 @@ A ::= "g"
     });
   });
 
-  describe.only("two sibling but unrelated indirectly left recursive definitions", () => {
+  describe("two sibling but unrelated indirectly left recursive definitions", () => {
     const bnf = `
     
     T  ::= A "g"
@@ -934,7 +936,7 @@ A ::= "g"
     });
   });
 
-  describe("two indirectly left recursive definitions with the same underlying definition", () => {
+  xdescribe("two indirectly left recursive definitions with the same underlying definition", () => {
     const bnf = `
     
     S ::= E... <END_OF_LINE> ;
@@ -1066,7 +1068,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("indirectly left recursive definition with two sibling left recursive definitions", () => {
+  xdescribe("an indirectly left recursive definition with two sibling left recursive definitions", () => {
     const bnf = `
   
     A ::= B "f"
@@ -1129,9 +1131,9 @@ A ::= "g"
     
     V    ::= . ;
     
-    A~E~ ::= ε ;
-    
     A__  ::=  ;
+    
+    A~E~ ::= ε ;
     
     E_   ::= V ;
     
@@ -1188,7 +1190,7 @@ A ::= "g"
               
 `;
 
-    it("are rewritten", () => {
+    it.only("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -1205,9 +1207,9 @@ A ::= "g"
     
     B~   ::= "e" "f" ;
     
-    B~A~ ::= "d" B~* ;
-    
     B__  ::= B_ B~* ;
+    
+    B~A~ ::= "d" B~* ;
     
     A_   ::= "g"
     
