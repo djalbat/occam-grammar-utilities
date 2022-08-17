@@ -3,10 +3,6 @@
 import withStyle from "easy-with-style";  ///
 
 import { Element } from "easy";
-import { BasicLexer } from "occam-lexers";
-import { BasicParser } from "occam-parsers";
-import { FlorenceLexer } from "occam-grammars";
-import { arrayUtilities } from "necessary";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 
 import Paragraph from "./paragraph";
@@ -14,6 +10,8 @@ import SubHeading from "./subHeading";
 import SizeableDiv from "./div/sizeable";
 import BNFTextarea from "./textarea/bnf";
 import rewriteNodes from "../rewriteNodes";
+import ExampleLexer from "../example/lexer";
+import ExampleParser from "../example/parser";
 import rulesUtilities from "../utilities/rules";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
@@ -23,11 +21,9 @@ import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RewriteNodesCheckbox from "./checkbox/rewriteNodes"
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
-import { EMPTY_STRING } from "./constants";
 import { rulesFromBNF } from "../utilities/parser";
 
-const { unshift } = arrayUtilities,
-      { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
+const { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 class View extends Element {
   keyUpHandler = (event, element) => {
@@ -55,13 +51,10 @@ class View extends Element {
     this.setAdjustedBNF(adjustedBNF);
 
     try {
-      const florence = true,  ///
-            lexer = florence ?  ///
-                      florenceLexerFromLexicalPattern(lexicalPattern) :
-                        basicLexerFromLexicalPattern(lexicalPattern),
-            parser =  basicParserFromRulesAndStartRuleName(rules, startRuleName), ///
-            tokens = lexer.tokenise(content),
-            node = parser.parse(tokens);
+      const exampleLexer = exampleLexerFromLexicalPattern(lexicalPattern),
+            exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName),
+            tokens = exampleLexer.tokenise(content),
+            node = exampleParser.parse(tokens);
 
       let parseTree = null;
 
@@ -184,45 +177,22 @@ export default withStyle(View)`
   
 `;
 
-function basicLexerFromLexicalPattern(lexicalPattern) {
-  const unassigned = "^.*$",  ///
-        custom = lexicalPattern,  ///
+function exampleLexerFromLexicalPattern(lexicalPattern) {
+  const unassigned = lexicalPattern,  ///
         entries = [
-          {
-            custom
-          },
           {
             unassigned
           }
         ],
-        basicLexer = BasicLexer.fromEntries(entries);
+        exampleLexer = ExampleLexer.fromEntries(entries);
 
-  return basicLexer;
+  return exampleLexer;
 }
 
-function florenceLexerFromLexicalPattern(lexicalPattern) {
-  const { entries } = FlorenceLexer,
-        type = EMPTY_STRING,
-        operator = lexicalPattern;  //
-
-  unshift(entries, [
-    {
-      type
-    },
-    {
-      operator
-    }
-  ]);
-
-  const florenceLexer = FlorenceLexer.fromEntries(entries);
-
-  return florenceLexer;
-}
-
-function basicParserFromRulesAndStartRuleName(rules, startRuleName) {
+function exampleParserFromRulesAndStartRuleName(rules, startRuleName) {
   const ruleMap = ruleMapFromRules(rules),
         startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
-        basicParser = new BasicParser(startRule, ruleMap);
+        exampleParser = new ExampleParser(startRule, ruleMap);
 
-  return basicParser;
+  return exampleParser;
 }

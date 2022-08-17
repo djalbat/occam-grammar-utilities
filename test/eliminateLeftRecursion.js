@@ -1,15 +1,10 @@
 "use strict";
 
-const { assert } = require("chai"),
-      { BasicLexer } = require("occam-lexers"),
-      { BasicParser } = require("occam-parsers"),
-      { FlorenceLexer } = require("occam-grammars"),
-      { arrayUtilities } = require("necessary");
+const { assert } = require("chai");
 
-const { rewriteNodes, rulesUtilities, parserUtilities, eliminateLeftRecursion } = require("../lib/index.js");
+const { rewriteNodes, rulesUtilities, parserUtilities, eliminateLeftRecursion, ExampleLexer, ExampleParser } = require("../lib/index.js");
 
-const { unshift } = arrayUtilities,
-      { rulesFromBNF } = parserUtilities,
+const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
@@ -354,17 +349,17 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
           
-                     A           
-                     |           
-             ----------------    
-             |              |    
-             A          f[custom]
-             |                   
-        -----------              
-        |         |              
-        A     f[custom]          
-        |                        
-    g[custom]                    
+                          A                
+                          |                
+               ----------------------      
+               |                    |      
+               A              f[unassigned]
+               |                           
+        ---------------                    
+        |             |                    
+        A       f[unassigned]              
+        |                                  
+  g[unassigned]                            
 
       `));
     });
@@ -422,27 +417,25 @@ A ::= "g"
     it("result in the requisite parse tree" , () => {
       const content = `ehg
 `,
-            florence = true,
-            startRuleName = null,
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName, florence);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
             
-                                   S                 
-                                   |                 
-                        -----------------------      
-                        |                     |      
-                        A               <END_OF_LINE>
-                        |                            
-               -------------------                   
-               |                 |                   
-               B            g[operator]              
-               |                                     
-         -------------                               
-         |           |                               
-         A      h[operator]                          
-         |                                           
-    e[operator]                                      
+                                        S                  
+                                        |                  
+                            -------------------------      
+                            |                       |      
+                            A                 <END_OF_LINE>
+                            |                              
+                 ----------------------                    
+                 |                    |                    
+                 B              g[unassigned]              
+                 |                                         
+          ---------------                                  
+          |             |                                  
+          A       h[unassigned]                            
+          |                                                
+    e[unassigned]                                          
              
       `));
     });
@@ -487,21 +480,21 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
             
-                     A           
-                     |           
-             ----------------    
-             |              |    
-             B          d[custom]
-             |                   
-             A                   
-             |                   
-        -----------              
-        |         |              
-        B     d[custom]          
-        |                        
-        A                        
-        |                        
-    c[custom]                    
+                            A                
+                            |                
+                 ----------------------      
+                 |                    |      
+                 B              d[unassigned]
+                 |                           
+                 A                           
+                 |                           
+          ---------------                    
+          |             |                    
+          B       d[unassigned]              
+          |                                  
+          A                                  
+          |                                  
+    c[unassigned]                            
              
       `));
     });
@@ -554,17 +547,17 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
           
-                            A              
-                            |              
-                  ---------------------    
-                  |                   |    
-                  A               h[custom]
-                  |                        
-        ---------------------              
-        |         |         |              
-        A     f[custom] g[custom]          
-        |                                  
-    c[custom]                              
+                                      A                    
+                                      |                    
+                        -----------------------------      
+                        |                           |      
+                        A                     h[unassigned]
+                        |                                  
+          -----------------------------                    
+          |             |             |                    
+          A       f[unassigned] g[unassigned]              
+          |                                                
+    c[unassigned]                                          
              
       `));
     });
@@ -639,25 +632,25 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
             
-                                       A             
-                                       |             
-                              -------------------    
-                              |                 |    
-                              B             g[custom]
-                              |                      
-                     ------------------              
-                     |                |              
-                     A            h[custom]          
-                     |                               
-             ----------------                        
-             |              |                        
-             B          g[custom]                    
-             |                                       
-        -----------                                  
-        |         |                                  
-        A     f[custom]                              
-        |                                            
-    e[custom]                                        
+                                                     A                   
+                                                     |                   
+                                        ---------------------------      
+                                        |                         |      
+                                        B                   g[unassigned]
+                                        |                                
+                            -------------------------                    
+                            |                       |                    
+                            A                 h[unassigned]              
+                            |                                            
+                 ----------------------                                  
+                 |                    |                                  
+                 B              g[unassigned]                            
+                 |                                                       
+          ---------------                                                
+          |             |                                                
+          A       f[unassigned]                                          
+          |                                                              
+    e[unassigned]                                                        
              
       `));
     });
@@ -735,23 +728,23 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
           
-                              C            
-                              |            
-                     ------------------    
-                     |                |    
-                     A            e[custom]
-                     |                     
-             ----------------              
-             |              |              
-             B          h[custom]          
-             |                             
-             C                             
-             |                             
-        -----------                        
-        |         |                        
-        A     e[custom]                    
-        |                                  
-    g[custom]                              
+                                        C                  
+                                        |                  
+                            -------------------------      
+                            |                       |      
+                            A                 e[unassigned]
+                            |                              
+                 ----------------------                    
+                 |                    |                    
+                 B              h[unassigned]              
+                 |                                         
+                 C                                         
+                 |                                         
+          ---------------                                  
+          |             |                                  
+          A       e[unassigned]                            
+          |                                                
+    g[unassigned]                                          
   
       `));
     });
@@ -837,23 +830,23 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
           
-                              C            
-                              |            
-                     ------------------    
-                     |                |    
-                     A            d[custom]
-                     |                     
-             ----------------              
-             |              |              
-             B          h[custom]          
-             |                             
-             C                             
-             |                             
-        -----------                        
-        |         |                        
-        A     c[custom]                    
-        |                                  
-    g[custom]                              
+                                        C                  
+                                        |                  
+                            -------------------------      
+                            |                       |      
+                            A                 d[unassigned]
+                            |                              
+                 ----------------------                    
+                 |                    |                    
+                 B              h[unassigned]              
+                 |                                         
+                 C                                         
+                 |                                         
+          ---------------                                  
+          |             |                                  
+          A       c[unassigned]                            
+          |                                                
+    g[unassigned]                                          
     
       `));
     });
@@ -918,29 +911,29 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
       
-                                                 T             
-                                                 |             
-                                       --------------------    
-                                       |                  |    
-                                       A              g[custom]
-                                       |                       
-                              -------------------              
-                              |                 |              
-                              E             h[custom]          
-                              |                                
-                     ------------------                        
-                     |                |                        
-                     A            c[custom]                    
-                     |                                         
-             ----------------                                  
-             |              |                                  
-             E          h[custom]                              
-             |                                                 
-        -----------                                            
-        |         |                                            
-        T     d[custom]                                        
-        |                                                      
-    f[custom]                                                  
+                                                                   T                   
+                                                                   |                   
+                                                     ----------------------------      
+                                                     |                          |      
+                                                     A                    g[unassigned]
+                                                     |                                 
+                                        ---------------------------                    
+                                        |                         |                    
+                                        E                   h[unassigned]              
+                                        |                                              
+                            -------------------------                                  
+                            |                       |                                  
+                            A                 c[unassigned]                            
+                            |                                                          
+                 ----------------------                                                
+                 |                    |                                                
+                 E              h[unassigned]                                          
+                 |                                                                     
+          ---------------                                                              
+          |             |                                                              
+          T       d[unassigned]                                                        
+          |                                                                            
+    f[unassigned]                                                                      
       
       `));
     });
@@ -1044,33 +1037,32 @@ A ::= "g"
     it("result in the requisite parse tree" , () => {
       const content = `n+m
 `,
-            florence = true,
             startRuleName = "S",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName, florence);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
 
       assert.isTrue(compare(parseTreeString, `
           
-                                  S                  
-                                  |                  
-                     --------------------------      
-                     |                        |      
-                     E                  <END_OF_LINE>
-                     |                               
-                     F                               
-                     |                               
-         -------------------------                   
-         |           |           |                   
-         A      +[operator]      A                   
-         |                       |                   
-         E                       E                   
-         |                       |                   
-         F                       F                   
-         |                       |                   
-         T                       T                   
-         |                       |                   
-         V                       V                   
-         |                       |                   
-    n[operator]             m[operator]              
+                                      S                    
+                                      |                    
+                        -----------------------------      
+                        |                           |      
+                        E                     <END_OF_LINE>
+                        |                                  
+                        F                                  
+                        |                                  
+          -----------------------------                    
+          |             |             |                    
+          A       +[unassigned]       A                    
+          |                           |                    
+          E                           E                    
+          |                           |                    
+          F                           F                    
+          |                           |                    
+          T                           T                    
+          |                           |                    
+          V                           V                    
+          |                           |                    
+    n[unassigned]               m[unassigned]              
 
       `));
     });
@@ -1120,27 +1112,25 @@ A ::= "g"
     it("result in the requisite parse tree" , () => {
       const content = `n+m
 `,
-            florence = true,
-            startRuleName = null,
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName, florence);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-                                  S                  
-                                  |                  
-                     --------------------------      
-                     |                        |      
-                     E                  <END_OF_LINE>
-                     |                               
-         -------------------------                   
-         |           |           |                   
-         A      +[operator]      A                   
-         |                       |                   
-         E                       E                   
-         |                       |                   
-         V                       V                   
-         |                       |                   
-    n[operator]             m[operator]              
+                                      S                    
+                                      |                    
+                        -----------------------------      
+                        |                           |      
+                        E                     <END_OF_LINE>
+                        |                                  
+          -----------------------------                    
+          |             |             |                    
+          A       +[unassigned]       A                    
+          |                           |                    
+          E                           E                    
+          |                           |                    
+          V                           V                    
+          |                           |                    
+    n[unassigned]               m[unassigned]              
     
       `));
     });
@@ -1201,27 +1191,25 @@ A ::= "g"
 
     it("results in the requisite parse tree" , () => {
       const content = "dfhg",
-            florence = true,
-            startRuleName = null,
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName, florence);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
       
-                                   A               
-                                   |               
-                        ----------------------     
-                        |                    |     
-                        B               g[operator]
-                        |                          
-               -------------------                 
-               |                 |                 
-               A            h[operator]            
-               |                                   
-         -------------                             
-         |           |                             
-         B      f[operator]                        
-         |                                         
-    d[operator]                                    
+                                        A                  
+                                        |                  
+                            -------------------------      
+                            |                       |      
+                            B                 g[unassigned]
+                            |                              
+                 ----------------------                    
+                 |                    |                    
+                 A              h[unassigned]              
+                 |                                         
+          ---------------                                  
+          |             |                                  
+          B       f[unassigned]                            
+          |                                                
+    d[unassigned]                                          
       
       `));
     });
@@ -1284,25 +1272,25 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
           
-                                                       A                 
-                                                       |                 
-                                          ---------------------------    
-                                          |                         |    
-                                          B                     h[custom]
-                                          |                              
-                          ---------------------------------              
-                          |                     |         |              
-                          B                 e[custom] f[custom]          
-                          |                                              
-             --------------------------                                  
-             |              |         |                                  
-             B          e[custom] f[custom]                              
-             |                                                           
-        -----------                                                      
-        |         |                                                      
-        A     d[custom]                                                  
-        |                                                                
-    g[custom]                                                            
+                                                                            A                        
+                                                                            |                        
+                                                          -------------------------------------      
+                                                          |                                   |      
+                                                          B                             h[unassigned]
+                                                          |                                          
+                                   ----------------------------------------------                    
+                                   |                              |             |                    
+                                   B                        e[unassigned] f[unassigned]              
+                                   |                                                                 
+                 ------------------------------------                                                
+                 |                    |             |                                                
+                 B              e[unassigned] f[unassigned]                                          
+                 |                                                                                   
+          ---------------                                                                            
+          |             |                                                                            
+          A       d[unassigned]                                                                      
+          |                                                                                          
+    g[unassigned]                                                                                    
 
       `));
     });
@@ -1377,21 +1365,21 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
               
-                              A            
-                              |            
-                     ------------------    
-                     |                |    
-                     B            g[custom]
-                     |                     
-             ----------------              
-             |              |              
-             A          f[custom]          
-             |                             
-        -----------                        
-        |         |                        
-        A     h[custom]                    
-        |                                  
-    d[custom]                              
+                                        A                  
+                                        |                  
+                            -------------------------      
+                            |                       |      
+                            B                 g[unassigned]
+                            |                              
+                 ----------------------                    
+                 |                    |                    
+                 A              f[unassigned]              
+                 |                                         
+          ---------------                                  
+          |             |                                  
+          A       h[unassigned]                            
+          |                                                
+    d[unassigned]                                          
              
       `));
     });
@@ -1454,19 +1442,19 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
 
-                            A              
-                            |              
-                  ---------------------    
-                  |                   |    
-                  B               h[custom]
-                  |                        
-        ---------------------              
-        |         |         |              
-        B     e[custom] f[custom]          
-        |                                  
-        A                                  
-        |                                  
-    g[custom]                              
+                                      A                    
+                                      |                    
+                        -----------------------------      
+                        |                           |      
+                        B                     h[unassigned]
+                        |                                  
+          -----------------------------                    
+          |             |             |                    
+          B       e[unassigned] f[unassigned]              
+          |                                                
+          A                                                
+          |                                                
+    g[unassigned]                                          
       
       `));
     });
@@ -1517,25 +1505,25 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
           
-                                       A             
-                                       |             
-                              -------------------    
-                              |                 |    
-                              B             g[custom]
-                              |                      
-                     ------------------              
-                     |                |              
-                     B            e[custom]          
-                     |                               
-             ----------------                        
-             |              |                        
-             B          e[custom]                    
-             |                                       
-        -----------                                  
-        |         |                                  
-        A     d[custom]                              
-        |                                            
-    f[custom]                                        
+                                                     A                   
+                                                     |                   
+                                        ---------------------------      
+                                        |                         |      
+                                        B                   g[unassigned]
+                                        |                                
+                            -------------------------                    
+                            |                       |                    
+                            B                 e[unassigned]              
+                            |                                            
+                 ----------------------                                  
+                 |                    |                                  
+                 B              e[unassigned]                            
+                 |                                                       
+          ---------------                                                
+          |             |                                                
+          A       d[unassigned]                                          
+          |                                                              
+    f[unassigned]                                                        
 
       `));
     });
@@ -1613,23 +1601,23 @@ A ::= "g"
 
       assert.isTrue(compare(parseTreeString, `
           
-                            F                        
-                            |                        
-        -----------------------------------------    
-        |                   |                   |    
-    ([custom]               A               )[custom]
-                            |                        
-                            E                        
-                            |                        
-                            F                        
-                            |                        
-                  ---------------------              
-                  |         |         |              
-                  A     +[custom]     A              
-                  |                   |              
-                  T                   T              
-                  |                   |              
-              n[custom]           n[custom]          
+                                      F                                  
+                                      |                                  
+          ---------------------------------------------------------      
+          |                           |                           |      
+    ([unassigned]                     A                     )[unassigned]
+                                      |                                  
+                                      E                                  
+                                      |                                  
+                                      F                                  
+                                      |                                  
+                        -----------------------------                    
+                        |             |             |                    
+                        A       +[unassigned]       A                    
+                        |                           |                    
+                        T                           T                    
+                        |                           |                    
+                  n[unassigned]               n[unassigned]              
 
       `));
     });
@@ -1661,54 +1649,27 @@ function adjustedBNFFromBNF(bnf) {
   return adjustedBNF;
 }
 
-function basicLexerFromLexicalPattern(lexicalPattern) {
-  const unassigned = "^.*$",  ///
-        custom = lexicalPattern,  ///
+function exampleLexerFromNothing() {
+  const unassigned = ".",
         entries = [
-          {
-            custom
-          },
           {
             unassigned
           }
         ],
-        basicLexer = BasicLexer.fromEntries(entries);
+        exampleLexer = ExampleLexer.fromEntries(entries);
 
-  return basicLexer;
+  return exampleLexer;
 }
 
-function florenceLexerFromLexicalPattern(lexicalPattern) {
-  const { entries } = FlorenceLexer,
-        type = "",
-        operator = lexicalPattern;  //
-
-  unshift(entries, [
-    {
-      type
-    },
-    {
-      operator
-    }
-  ]);
-
-  const florenceLexer = FlorenceLexer.fromEntries(entries);
-
-  return florenceLexer;
-}
-
-function parseTreeStringFromBNFAndContent(bnf, content, startRuleName = null, florence = false) {
+function parseTreeStringFromBNFAndContent(bnf, content, startRuleName = null) {
   let rules = rulesFromBNF(bnf);
 
   rules = eliminateLeftRecursion(rules);
 
-  const lexicalPattern = ".", ///
-        lexer = florence ?
-                  florenceLexerFromLexicalPattern(lexicalPattern) :
-                    basicLexerFromLexicalPattern(lexicalPattern),
-        parser =  basicParserFromRulesAndStartRuleName(rules, startRuleName); ///
-
-  const tokens = lexer.tokenise(content),
-        node = parser.parse(tokens);
+  const exampleLexer = exampleLexerFromNothing(),
+        exampleParser = exampleParserFromRulesAndStartRuleName(rules, startRuleName),
+        tokens = exampleLexer.tokenise(content),
+        node = exampleParser.parse(tokens);
 
   rewriteNodes(node);
 
@@ -1722,10 +1683,10 @@ function parseTreeStringFromBNFAndContent(bnf, content, startRuleName = null, fl
   return parseTreeString;
 }
 
-function basicParserFromRulesAndStartRuleName(rules, startRuleName) {
+function exampleParserFromRulesAndStartRuleName(rules, startRuleName) {
   const ruleMap = ruleMapFromRules(rules),
         startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
-        basicParser = new BasicParser(startRule, ruleMap);
+        exampleParser = new ExampleParser(startRule, ruleMap);
 
-  return basicParser;
+  return exampleParser;
 }
