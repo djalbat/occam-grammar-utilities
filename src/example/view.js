@@ -23,7 +23,7 @@ import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RewriteNodesCheckbox from "./checkbox/rewriteNodes"
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
-import { EMPTY_STRING } from "../constants";
+import { EMPTY_STRING } from "./constants";
 import { rulesFromBNF } from "../utilities/parser";
 
 const { unshift } = arrayUtilities,

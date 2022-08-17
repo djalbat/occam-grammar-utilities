@@ -946,7 +946,7 @@ A ::= "g"
     });
   });
 
-  xdescribe("two indirectly left recursive definitions with the same underlying definition", () => {
+  describe("two indirectly left recursive definitions with the same underlying definition", () => {
     const bnf = `
     
     S ::= E... <END_OF_LINE> ;
@@ -982,65 +982,67 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
       
-    T    ::= T_ T~* ;
+    S    ::= E... <END_OF_LINE> ;
+    
+    T    ::= V
+    
+           | R__
+    
+           | E T~E~
+    
+           ;
     
     R    ::= V
     
-           | T R~T~
+           | E R~E~
     
            ;
     
-    A    ::= A_ A~* ;
+    A    ::= E A~E~
     
-    E    ::= T E~T~
-    
-           | A E~A~
+           | E A~E~
     
            ;
     
-    F    ::= A F~A~
+    E    ::= E_ E~* ;
     
-           | T F~T~
+    F    ::= T__
+    
+           | E F~E~
     
            ;
     
     V    ::= . ;
     
-    S    ::= E... <END_OF_LINE> ;
-    
-    F~T~ ::= ε ;
-    
-    F__  ::=  ;
-    
-    E~T~ ::= F~T~ ;
-    
-    E__  ::=  ;
-    
-    F~A~ ::= "+" A ;
-    
-    A~T~ ::= E~T~ ;
-    
     A__  ::=  ;
     
-    E~A~ ::= F~A~ ;
-    
-    R~T~ ::= A~T~ "/" A ;
+    A~E~ ::= ε ;
     
     R__  ::= V ;
     
-    A_   ::= T A~T~ ;
+    R~E~ ::= A~E~ "/" A ;
     
-    A~   ::= E~A~ ;
-    
-    T_   ::= V
+    T__  ::= V
     
            | R__
     
            ;
     
-    T~   ::= R~T~ ;
-
-      `));
+    T~E~ ::= R~E~ ;
+    
+    F__  ::= T__ ;
+    
+    F~E~ ::= A~E~ "+" A
+    
+           | T~E~
+    
+           ;
+    
+    E_   ::= F__ ;
+    
+    E~   ::= F~E~ ;
+    
+     `));
     });
 
     it("result in the requisite parse tree" , () => {
