@@ -17,40 +17,56 @@ export default class IndirectlyRepeatedRule extends Rule {
   static fromRuleLeftRecursiveRuleNameAndLeftRecursiveDefinitions(rule, leftRecursiveRuleName, leftRecursiveDefinitions) {
     const indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveRuleName, leftRecursiveDefinitions),
           firstIndirectlyLeftRecursiveDefinition = first(indirectlyLeftRecursiveDefinitions),
-          indirectlyLeftRecursiveDefinition = firstIndirectlyLeftRecursiveDefinition, ///
-          indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts(),
-          firstIndirectlyLeftRecursiveDefinitionPart = first(indirectlyLeftRecursiveDefinitionParts),
-          previousFirstPart = firstIndirectlyLeftRecursiveDefinitionPart,  ///
-          definitions = indirectlyLeftRecursiveDefinitions.reduce((definitions, indirectlyLeftRecursiveDefinition) => {
-            let parts  = indirectlyLeftRecursiveDefinition.getParts();
+          indirectlyLeftRecursiveDefinition = firstIndirectlyLeftRecursiveDefinition; ///
 
-            const firstPart = first(parts),
-                  matches = matchParts(firstPart, previousFirstPart);
+    let definitions = indirectlyLeftRecursiveDefinitions.reduce((definitions, indirectlyLeftRecursiveDefinition) => {
+      const definition = indirectlyLeftRecursiveDefinition.getDefinition(),
+            definitionsIncludesDefinition = definitions.includes(definition);
 
-            if (!matches) {
-              const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
-                    definitionString = definition.asString();
+      if (!definitionsIncludesDefinition) {
+        definitions.push(definition);
+      }
 
-              throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule does not match one of its sibling indirectly left recursive definitions and therefore the rule cannot be rewritten.`);
-            }
+      return definitions;
+    }, []);
 
-            const partsLength = parts.length;
+    const firstDefinition = first(definitions),
+          definition = firstDefinition, ///
+          parts = definition.getParts(),
+          firstPart = first(parts),
+          previousFirstPart = firstPart;  ///
 
-            if (partsLength > 1) {
-              const partsTail = tail(parts);
+    definitions = definitions.reduce((definitions, definition) => {
+      let parts  = definition.getParts();
 
-              parts = partsTail;  ///
+      const firstPart = first(parts),
+            matches = matchParts(firstPart, previousFirstPart);
 
-              parts = cloneParts(parts);  ///
+      if (!matches) {
+        const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
+              definitionString = definition.asString();
 
-              const definition = new Definition(parts);
+        throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule does not match one of its sibling indirectly left recursive definitions and therefore the rule cannot be rewritten.`);
+      }
 
-              definitions.push(definition);
-            }
+      const partsLength = parts.length;
 
-            return definitions;
-          }, []),
-          definitionsLength = definitions.length;
+      if (partsLength > 1) {
+        const partsTail = tail(parts);
+
+        parts = partsTail;  ///
+
+        parts = cloneParts(parts);  ///
+
+        definition = new Definition(parts);
+
+        definitions.push(definition);
+      }
+
+      return definitions;
+    }, []);
+
+    const definitionsLength = definitions.length;
 
     if (definitionsLength === 0) {
       const epsilonPart = new EpsilonPart(),

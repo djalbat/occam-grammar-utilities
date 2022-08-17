@@ -27,11 +27,14 @@ export default class IndirectlyReducedRule extends Rule {
 
     indirectlyLeftRecursiveDefinitions.forEach((indirectlyLeftRecursiveDefinition) => {
       const definition = indirectlyLeftRecursiveDefinition.getDefinition(),
-            index = definitions.indexOf(definition),
-            start = index,  ///
-            deleteCount = 1;
+            index = definitions.indexOf(definition);
 
-      definitions.splice(start, deleteCount);
+      if (index > -1) {
+        const start = index,  ///
+              deleteCount = 1;
+
+        definitions.splice(start, deleteCount);
+      }
     });
 
     const ruleName = rule.getName(),

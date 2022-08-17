@@ -119,7 +119,7 @@ class View extends Element {
             </SubHeading>
             <ParseTreeTextarea />
             <Paragraph>
-              <RewriteNodesCheckbox onChange={this.changeHandler} />
+              <RewriteNodesCheckbox onChange={this.changeHandler} checked />
               Rewrite nodes
             </Paragraph>
           </RowsDiv>
@@ -150,26 +150,24 @@ class View extends Element {
   }
 
   static initialBNF = `
-  
-  S ::= A... <END_OF_LINE> ;
-  
-  A ::= B "g"
-  
-      | "e"
-  
-      ;
-  
-  B ::= A "h"
-  
-      | "d"
+    A ::= B "f"
+    
+        | B "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "h"
+    
+        | "d"
 
-      ;
+        ;
 `;
 
-  static initialContent = `dgh
-`;
+  static initialContent = `dfhg`;
 
-  static initialStartRuleName = "B";
+  static initialStartRuleName = "";
 
   static initialLexicalPattern = ".";
 

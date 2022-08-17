@@ -18,11 +18,16 @@ export default class DirectlyRepeatedRule extends Rule {
     const ruleName = rule.getName(),
           directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions);
 
-    let definitions = directlyLeftRecursiveDefinitions.map((directlyLeftRecursiveDefinition) => {
-      const definition = directlyLeftRecursiveDefinition.getDefinition();
+    let definitions = directlyLeftRecursiveDefinitions.reduce((definitions, directlyLeftRecursiveDefinition) => {
+      const definition = directlyLeftRecursiveDefinition.getDefinition(),
+            definitionsIncludesDefinition = definitions.includes(definition);
 
-      return definition;
-    });
+      if (!definitionsIncludesDefinition) {
+        definitions.push(definition);
+      }
+
+      return definitions;
+    }, []);
 
     const firstDefinition = first(definitions),
           definition = firstDefinition, ///

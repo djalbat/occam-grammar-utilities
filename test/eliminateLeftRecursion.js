@@ -998,11 +998,7 @@ A ::= "g"
     
            ;
     
-    A    ::= E A~E~
-    
-           | E A~E~
-    
-           ;
+    A    ::= E A~E~ ;
     
     E    ::= E_ E~* ;
     
@@ -1080,39 +1076,6 @@ A ::= "g"
     });
   });
 
-  xdescribe("an indirectly left recursive definition with two sibling left recursive definitions", () => {
-    const bnf = `
-  
-    A ::= B "f"
-    
-        | B "g"
-    
-        | "e"
-    
-        ;
-    
-    B ::= A "h"
-    
-        | "d"
-
-        ;
-
-`;
-
-    it("is rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF,``));
-    });
-
-    it("results in the requisite parse tree" , () => {
-      const content = "cdd",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
-
-      assert.isTrue(compare(parseTreeString, ``));
-    });
-  });
-
   describe("an indirectly left recursive definition with a unary direct directly repeated rule", () => {
     const bnf = `
     
@@ -1179,6 +1142,87 @@ A ::= "g"
          |                       |                   
     n[operator]             m[operator]              
     
+      `));
+    });
+  });
+
+  describe("an indirectly left recursive definition with two sibling left recursive definitions", () => {
+    const bnf = `
+
+    A ::= B "f"
+    
+        | B "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "h"
+    
+        | "d"
+
+        ;
+        
+`;
+
+    it("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF,`
+      
+    A    ::= A_ A~* ;
+    
+    B    ::= "d"
+    
+           | A B~A~
+    
+           ;
+    
+    B__  ::= "d" ;
+    
+    B~A~ ::= "h" ;
+    
+    A_   ::= "e"
+    
+           | B__ "f"
+    
+           | B__ "g"
+    
+           ;
+    
+    A~   ::= B~A~ "f"
+    
+           | B~A~ "g"
+    
+           ;
+       
+     `));
+    });
+
+    it("results in the requisite parse tree" , () => {
+      const content = "dfhg",
+            florence = true,
+            startRuleName = null,
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName, florence);
+
+      assert.isTrue(compare(parseTreeString, `
+      
+                                   A               
+                                   |               
+                        ----------------------     
+                        |                    |     
+                        B               g[operator]
+                        |                          
+               -------------------                 
+               |                 |                 
+               A            h[operator]            
+               |                                   
+         -------------                             
+         |           |                             
+         B      f[operator]                        
+         |                                         
+    d[operator]                                    
+      
       `));
     });
   });

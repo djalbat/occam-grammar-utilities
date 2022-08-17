@@ -24,20 +24,26 @@ export default class DirectlyReducedRule extends Rule {
 
     directlyLeftRecursiveDefinitions.forEach((directlyLeftRecursiveDefinition) => {
       const definition = directlyLeftRecursiveDefinition.getDefinition(),
-            index = definitions.indexOf(definition),
-            start = index,  ///
-            deleteCount = 1;
+            index = definitions.indexOf(definition);
 
-      definitions.splice(start, deleteCount);
+      if (index > -1) {
+        const start = index,  ///
+              deleteCount = 1;
+
+        definitions.splice(start, deleteCount);
+      }
     });
 
     indirectlyLeftRecursiveDefinitions.forEach((indirectlyLeftRecursiveDefinition) => {
       const definition = indirectlyLeftRecursiveDefinition.getDefinition(),
-            index = definitions.indexOf(definition),
-            start = index,  ///
-            deleteCount = 1;
+            index = definitions.indexOf(definition);
 
-      definitions.splice(start, deleteCount);
+      if (index > -1 ) {
+        const start = index,  ///
+              deleteCount = 1;
+
+        definitions.splice(start, deleteCount);
+      }
     });
 
     const definitionsLength = definitions.length;
