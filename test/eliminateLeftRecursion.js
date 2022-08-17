@@ -373,6 +373,8 @@ A ::= "g"
   describe("an indirectly left recursive definition", () => {
     const bnf = `
   
+    S ::= A... <END_OF_LINE> ;
+
     A ::= B "g"
     
         | "e"
@@ -392,11 +394,13 @@ A ::= "g"
 
       assert.isTrue(compare(adjustedBNF, `
           
+    S    ::= A... <END_OF_LINE> ;
+
     A    ::= A_ A~* ;
     
-    B    ::= A B~A~
+    B    ::= "d"
     
-           | "d"
+           | A B~A~
     
            ;
     
@@ -416,23 +420,29 @@ A ::= "g"
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "dgh",
-            startRuleName = "B",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
+      const content = `ehg
+`,
+            florence = true,
+            startRuleName = null,
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName, florence);
 
       assert.isTrue(compare(parseTreeString, `
             
-                     B           
-                     |           
-             ----------------    
-             |              |    
-             A          h[custom]
-             |                   
-        -----------              
-        |         |              
-        B     g[custom]          
-        |                        
-    d[custom]                    
+                                   S                 
+                                   |                 
+                        -----------------------      
+                        |                     |      
+                        A               <END_OF_LINE>
+                        |                            
+               -------------------                   
+               |                 |                   
+               B            g[operator]              
+               |                                     
+         -------------                               
+         |           |                               
+         A      h[operator]                          
+         |                                           
+    e[operator]                                      
              
       `));
     });
@@ -590,11 +600,11 @@ A ::= "g"
 
     A    ::= A_ A~* ;
     
-    B    ::= A B~A~
-    
-           | "b"
+    B    ::= "b"
     
            | "c"
+    
+           | A B~A~
     
            ;
     
@@ -683,15 +693,15 @@ A ::= "g"
       
     A    ::= A_ A~* ;
     
-    B    ::= A B~A~
+    B    ::= C__
     
-           | C__
+           | A B~A~
     
            ;
     
-    C    ::= A C~A~
+    C    ::= "d"
     
-           | "d"
+           | A C~A~
     
            ;
     
@@ -779,17 +789,17 @@ A ::= "g"
 
     A    ::= A_ A~* ;
     
-    B    ::= A B~A~
-    
-           | "e"
+    B    ::= "e"
     
            | C__
+           
+           | A B~A~
     
            ;
     
-    C    ::= A C~A~
+    C    ::= "b"
     
-           | "b"
+           | A C~A~
     
            ;
     
@@ -877,9 +887,9 @@ A ::= "g"
     
     A    ::= T A~T~ ;
     
-    E    ::= A E~A~
+    E    ::= T E~T~
     
-           | T E~T~
+           | A E~A~
     
            ;
            
@@ -1284,9 +1294,9 @@ A ::= "g"
     
     B    ::= "b"
     
-           | A B~A~
-    
            | "c"
+    
+           | A B~A~
     
            ;
     
@@ -1517,9 +1527,9 @@ A ::= "g"
     
     A    ::= A_ A~* ;
     
-    E    ::= A E~A~
+    E    ::= F__
     
-           | F__
+           | A E~A~
     
            ;
     
