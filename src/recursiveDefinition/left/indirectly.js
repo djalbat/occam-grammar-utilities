@@ -42,6 +42,26 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
     return greaterThanIndirectlyLeftRecursiveDefinition;
   }
 
+  isEqualTo(indirectlyLeftRecursiveDefinition) {
+    const definitions = this.getDefinitions(),
+          indirectlyLeftRecursiveDefinitionDefinitions = indirectlyLeftRecursiveDefinition.getDefinitions(),
+          equalTo = compareDefinitions(definitions, indirectlyLeftRecursiveDefinitionDefinitions);
+
+    return equalTo;
+  }
+
+  getDefinitions() {
+    const definitions = this.leftRecursiveDefinitions.map((leftRecursiveDefinitions) => {
+      const definition = leftRecursiveDefinitions.getDefinition();
+
+      return definition;
+    });
+
+    definitions.push(this.definition);
+
+    return definitions;
+  }
+
   getDepth() {
     const leftRecursiveDefinitionsLength = this.leftRecursiveDefinitions.length,
           depth = leftRecursiveDefinitionsLength - 1;  ///
@@ -241,4 +261,23 @@ function leftRecursiveDefinitionsFromRecursiveDefinitions(recursiveDefinitions) 
   }
 
   return leftRecursiveDefinitions;
+}
+
+function compareDefinitions(definitionsA, definitionsB) {
+  let equalTo = false;
+
+  const definitionsALength = definitionsA.length,
+        definitionsBLength = definitionsB.length;
+
+  if (definitionsALength === definitionsBLength) {
+    equalTo = definitionsA.every((definitionA, index) => {
+      const definitionB = definitionsB[index];
+
+      if (definitionA === definitionB) {
+        return true;
+      }
+    });
+  }
+
+  return equalTo;
 }

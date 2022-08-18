@@ -15,6 +15,13 @@ export default class LeftRecursiveDefinition extends RecursiveDefinition {
     return this.leftRecursiveRuleNames;
   }
 
+  idEqualTo(lLeftRecursiveDefinition) {
+    const definition = lLeftRecursiveDefinition.getDefinition(),
+          equalTo = (definition === this.definition);
+
+    return equalTo;
+  }
+
   static fromRuleAndDefinition(rule, definition) {
     let leftRecursiveDefinition = null;
 
