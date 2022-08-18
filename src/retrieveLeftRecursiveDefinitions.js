@@ -59,12 +59,12 @@ function retrieveLeftRecursiveDefinition(rule, definition, recursiveDefinitions,
     if (false) {
       ///
     } else if (recursiveDefinition instanceof IndirectlyLeftRecursiveDefinition) {
-      const indirectlyLeftRRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(definition, leftRecursiveDefinitions);
+      const indirectlyLeftRRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(leftRecursiveDefinitions);
 
       indirectlyLeftRRecursiveDefinitions.some((indirectlyLeftRRecursiveDefinition) => {
-        const indirectlyLeftRecursiveDefinitionEqualToRecursiveDefinition = indirectlyLeftRRecursiveDefinition.isEqualTo(recursiveDefinition);  ///
+        const indirectlyLeftRecursiveDefinitionEquivalentToRecursiveDefinition = indirectlyLeftRRecursiveDefinition.isEquivalentTo(recursiveDefinition);  ///
 
-        if (indirectlyLeftRecursiveDefinitionEqualToRecursiveDefinition) {
+        if (indirectlyLeftRecursiveDefinitionEquivalentToRecursiveDefinition) {
           recursiveDefinition = null;
 
           return true;
@@ -100,16 +100,12 @@ function findDirectlyLeftRecursiveDefinitions(definition, leftRecursiveDefinitio
   return directlyLeftRecursiveDefinitions;
 }
 
-function findIndirectlyLeftRecursiveDefinitions(definition, leftRecursiveDefinitions) {
+function findIndirectlyLeftRecursiveDefinitions(leftRecursiveDefinitions) {
   const indirectlyLeftRecursiveDefinitions = find(leftRecursiveDefinitions, (leftRecursiveDefinition) => {
-    const leftRecursiveDefinitionDefinition = leftRecursiveDefinition.getDefinition();
+    const leftRecursiveDefinitionDirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
 
-    if (leftRecursiveDefinitionDefinition === definition) {
-      const leftRecursiveDefinitionDirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
-
-      if (leftRecursiveDefinitionDirectlyLeftRecursiveDefinition) {
-        return true;
-      }
+    if (leftRecursiveDefinitionDirectlyLeftRecursiveDefinition) {
+      return true;
     }
   });
 

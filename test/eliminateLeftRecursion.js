@@ -939,6 +939,67 @@ A ::= "g"
     });
   });
 
+  describe("two indirectly left recursive definitions both of the same cycle", () => {
+    const bnf = `
+    
+    S ::=  "f" A
+  
+        |  E
+  
+        ;
+  
+    E  ::=  B "g" ;
+  
+    B  ::=  A ;
+  
+    A  ::=  E 
+    
+         | "h" 
+                                 
+         ;
+  
+`;
+
+    it.only("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+
+    S    ::= "f" A
+    
+           | E
+    
+           ;
+    
+    E    ::= A E~A~ ;
+    
+    B    ::= A B~A~ ;
+    
+    A    ::= A_ A~* ;
+    
+    B__  ::=  ;
+    
+    B~A~ ::= ε ;
+    
+    E__  ::=  ;
+    
+    E~A~ ::= B~A~ "g" ;
+    
+    A_   ::= "h" ;
+    
+    A~   ::= E~A~ ;
+
+      `));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = "",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, ``));
+    });
+  });
+
   describe("an indirectly left recursive definition that is referenced more than once", () => {
     const bnf = `
 
@@ -958,7 +1019,7 @@ A ::= "g"
 
 `;
 
-    it("are rewritten", () => {
+    it("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `

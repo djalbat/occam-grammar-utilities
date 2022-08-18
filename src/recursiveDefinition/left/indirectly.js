@@ -34,22 +34,6 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
     return leftRecursiveRuleName;
   }
 
-  isGreaterThan(indirectlyLeftRecursiveDefinition) {
-    const depth = this.getDepth(),
-          indirectlyLeftRecursiveDefinitionDepth = indirectlyLeftRecursiveDefinition.getDepth(),
-          greaterThanIndirectlyLeftRecursiveDefinition = (depth > indirectlyLeftRecursiveDefinitionDepth);
-
-    return greaterThanIndirectlyLeftRecursiveDefinition;
-  }
-
-  isEqualTo(indirectlyLeftRecursiveDefinition) {
-    const definitions = this.getDefinitions(),
-          indirectlyLeftRecursiveDefinitionDefinitions = indirectlyLeftRecursiveDefinition.getDefinitions(),
-          equalTo = compareDefinitions(definitions, indirectlyLeftRecursiveDefinitionDefinitions);
-
-    return equalTo;
-  }
-
   getDefinitions() {
     const definitions = this.leftRecursiveDefinitions.map((leftRecursiveDefinitions) => {
       const definition = leftRecursiveDefinitions.getDefinition();
@@ -74,6 +58,22 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
           least = (depth === 0);
 
     return least;
+  }
+
+  isGreaterThan(indirectlyLeftRecursiveDefinition) {
+    const depth = this.getDepth(),
+          indirectlyLeftRecursiveDefinitionDepth = indirectlyLeftRecursiveDefinition.getDepth(),
+          greaterThanIndirectlyLeftRecursiveDefinition = (depth > indirectlyLeftRecursiveDefinitionDepth);
+
+    return greaterThanIndirectlyLeftRecursiveDefinition;
+  }
+
+  isEquivalentTo(indirectlyLeftRecursiveDefinition) {
+    const definitions = this.getDefinitions(),
+          indirectlyLeftRecursiveDefinitionDefinitions = indirectlyLeftRecursiveDefinition.getDefinitions(),
+          equivalentTo = compareDefinitions(definitions, indirectlyLeftRecursiveDefinitionDefinitions); ///
+
+    return equivalentTo;
   }
 
   static fromRuleDefinitionAndRecursiveDefinitions(rule, definition, recursiveDefinitions) {
@@ -166,6 +166,34 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
 
     return indirectlyLeftRecursiveDefinition;
   }
+}
+
+function compareDefinitions(definitionsA, definitionsB) {
+  let equalTo = false;
+
+  const definitionsALength = definitionsA.length,
+        definitionsBLength = definitionsB.length;
+
+  if (definitionsALength === definitionsBLength) {
+    const firstDefinitionB = first(definitionsB),
+          offset = definitionsA.indexOf(firstDefinitionB);
+
+    if (offset > -1) {
+      const length = definitionsALength;  ///
+
+      equalTo = definitionsA.every((definitionA, index) => {
+        index = (length + index - offset) % length;
+
+        const definitionB = definitionsB[index];
+
+        if (definitionA === definitionB) {
+          return true;
+        }
+      });
+    }
+  }
+
+  return equalTo;
 }
 
 function findLeftRecursiveDefinition(leftRecursiveDefinitions) {
@@ -261,23 +289,4 @@ function leftRecursiveDefinitionsFromRecursiveDefinitions(recursiveDefinitions) 
   }
 
   return leftRecursiveDefinitions;
-}
-
-function compareDefinitions(definitionsA, definitionsB) {
-  let equalTo = false;
-
-  const definitionsALength = definitionsA.length,
-        definitionsBLength = definitionsB.length;
-
-  if (definitionsALength === definitionsBLength) {
-    equalTo = definitionsA.every((definitionA, index) => {
-      const definitionB = definitionsB[index];
-
-      if (definitionA === definitionB) {
-        return true;
-      }
-    });
-  }
-
-  return equalTo;
 }
