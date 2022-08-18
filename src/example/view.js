@@ -145,7 +145,7 @@ class View extends Element {
   static initialBNF = `
   S ::=  "f" A
 
-      |  E
+      |  E... <END_OF_LINE>
 
       ;
 
@@ -160,7 +160,8 @@ class View extends Element {
        ;
 `;
 
-  static initialContent = `dfhg`;
+  static initialContent = `hgg
+`;
 
   static initialStartRuleName = "";
 

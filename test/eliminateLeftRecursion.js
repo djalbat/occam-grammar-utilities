@@ -944,7 +944,7 @@ A ::= "g"
     
     S ::=  "f" A
   
-        |  E
+        |  E... <END_OF_LINE>
   
         ;
   
@@ -960,14 +960,14 @@ A ::= "g"
   
 `;
 
-    it.only("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
 
     S    ::= "f" A
     
-           | E
+           | E... <END_OF_LINE>
     
            ;
     
@@ -993,10 +993,35 @@ A ::= "g"
     });
 
     it("result in the requisite parse tree" , () => {
-      const content = "",
+      const content = `hgg
+`,
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
-      assert.isTrue(compare(parseTreeString, ``));
+      assert.isTrue(compare(parseTreeString, `
+
+                                        S                  
+                                        |                  
+                            -------------------------      
+                            |                       |      
+                            E                 <END_OF_LINE>
+                            |                              
+                 ----------------------                    
+                 |                    |                    
+                 B              g[unassigned]              
+                 |                                         
+                 A                                         
+                 |                                         
+                 E                                         
+                 |                                         
+          ---------------                                  
+          |             |                                  
+          B       g[unassigned]                            
+          |                                                
+          A                                                
+          |                                                
+    h[unassigned]                                          
+      
+      `));
     });
   });
 
