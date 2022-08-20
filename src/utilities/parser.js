@@ -13,8 +13,11 @@ const bnfLexer = BNFLexer.fromNothing(),
       bnfParser = BNFParser.fromNothing();
 
 export function rulesFromBNF(bnf) {
-  const tokens = bnfLexer.tokensFromBNF(bnf),
-        rules = bnfParser.rulesFromTokens(tokens);
+  const tokens = bnfLexer.tokensFromBNF(bnf);
+
+  let rules = bnfParser.rulesFromTokens(tokens);
+
+  rules = eliminateLeftRecursion(rules);
 
   return rules;
 }

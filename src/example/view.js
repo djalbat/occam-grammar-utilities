@@ -19,7 +19,6 @@ import StartRuleNameInput from "./input/startRuleName";
 import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RewriteNodesCheckbox from "./checkbox/rewriteNodes"
-import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
 import { rulesFromBNF } from "../utilities/parser";
 
@@ -40,11 +39,8 @@ class View extends Element {
           startRuleName = this.getStartRuleName(),
           lexicalPattern = this.getLexicalPattern();
 
-    let rules = rulesFromBNF(bnf);
-
-    rules = eliminateLeftRecursion(rules);
-
-    const multiLine = true,
+    const rules = rulesFromBNF(bnf),
+          multiLine = true,
           rulesString = rulesAsString(rules, multiLine),
           adjustedBNF = rulesString;  ///
 
