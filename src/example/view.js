@@ -10,8 +10,8 @@ import SubHeading from "./subHeading";
 import SizeableDiv from "./div/sizeable";
 import BNFTextarea from "./textarea/bnf";
 import rewriteNodes from "../rewriteNodes";
-import ExampleLexer from "../example/lexer";
-import ExampleParser from "../example/parser";
+import ExampleLexer from "../lexer/example";
+import ExampleParser from "../parser/example";
 import rulesUtilities from "../utilities/rules";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
@@ -143,27 +143,28 @@ class View extends Element {
   }
 
   static initialBNF = `
-  S ::=  "f" A
-
-      |  E... <END_OF_LINE>
-
-      ;
-
-  E  ::=  B "g" ;
-
-  B  ::=  A ;
-
+  S  ::=  A ;
+  
   A  ::=  E 
   
-       | "h" 
-                               
+       |  T 
+                                         
+       ;
+  
+  E  ::=  F ;
+  
+  T  ::=  "n" ;
+  
+  F  ::=  "(" A ")"
+                         
+       |  A "+" A
+  
        ;
 `;
 
-  static initialContent = `hgg
-`;
+  static initialContent = `(n+n)`;
 
-  static initialStartRuleName = "";
+  static initialStartRuleName = "F";
 
   static initialLexicalPattern = ".";
 
