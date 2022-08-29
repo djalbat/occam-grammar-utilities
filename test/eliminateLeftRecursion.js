@@ -1798,7 +1798,7 @@ function stripWhitespace(string) {
 function adjustedBNFFromBNF(bnf) {
   let rules = rulesFromBNF(bnf);
 
-  rules = eliminateLeftRecursion(rules);
+  rules = eliminateLeftRecursion(rules);  ///
 
   const multiLine = true,
         rulesString = rulesAsString(rules, multiLine),
@@ -1822,7 +1822,7 @@ function exampleLexerFromNothing() {
 function parseTreeStringFromBNFAndContent(bnf, content, startRuleName = null) {
   let rules = rulesFromBNF(bnf);
 
-  rules = eliminateLeftRecursion(rules);
+  rules = eliminateLeftRecursion(rules);  ///
 
   const exampleLexer = exampleLexerFromNothing(),
         exampleParser = exampleParserFromRulesAndStartRuleName(rules, startRuleName),

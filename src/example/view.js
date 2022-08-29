@@ -18,7 +18,8 @@ import ParseTreeTextarea from "./textarea/parseTree";
 import StartRuleNameInput from "./input/startRuleName";
 import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
-import RewriteNodesCheckbox from "./checkbox/rewriteNodes"
+import RewriteNodesCheckbox from "./checkbox/rewriteNodes";
+import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
 import { rulesFromBNF } from "../utilities/parser";
 
@@ -39,8 +40,11 @@ class View extends Element {
           startRuleName = this.getStartRuleName(),
           lexicalPattern = this.getLexicalPattern();
 
-    const rules = rulesFromBNF(bnf),
-          multiLine = true,
+    let rules = rulesFromBNF(bnf);
+
+    rules = eliminateLeftRecursion(rules);  ///
+
+    const multiLine = true,
           rulesString = rulesAsString(rules, multiLine),
           adjustedBNF = rulesString;  ///
 
