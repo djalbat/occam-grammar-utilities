@@ -2,7 +2,7 @@
 
 const { assert } = require("chai");
 
-import { rulesUtilities, parserUtilities } from "occam-parsers";
+const { rulesUtilities, parserUtilities } = require("occam-parsers");
 
 const { rewriteNodes, ExampleLexer, ExampleParser, eliminateLeftRecursion } = require("../lib/index.js");
 
