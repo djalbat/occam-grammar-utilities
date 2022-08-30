@@ -1,6 +1,7 @@
 "use strict";
 
-import rulesUtilities from "./utilities/rules";
+import { rulesUtilities } from "occam-parsers";
+
 import eliminateDirectLeftRecursion from "./eliminateDirectLeftRecursion";
 import eliminateIndirectLeftRecursion from "./eliminateIndirectLeftRecursion";
 import retrieveLeftRecursiveDefinitions from "./retrieveLeftRecursiveDefinitions";

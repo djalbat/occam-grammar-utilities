@@ -2,7 +2,9 @@
 
 const { assert } = require("chai");
 
-const { rewriteNodes, rulesUtilities, parserUtilities, eliminateLeftRecursion, ExampleLexer, ExampleParser } = require("../lib/index.js");
+import { rulesUtilities, parserUtilities } from "occam-parsers";
+
+const { rewriteNodes, ExampleLexer, ExampleParser, eliminateLeftRecursion } = require("../lib/index.js");
 
 const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;

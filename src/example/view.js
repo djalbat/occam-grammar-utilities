@@ -3,6 +3,7 @@
 import withStyle from "easy-with-style";  ///
 
 import { Element } from "easy";
+import { rulesUtilities, parserUtilities } from "occam-parsers";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 
 import Paragraph from "./paragraph";
@@ -12,7 +13,6 @@ import BNFTextarea from "./textarea/bnf";
 import rewriteNodes from "../rewriteNodes";
 import ExampleLexer from "../lexer/example";
 import ExampleParser from "../parser/example";
-import rulesUtilities from "../utilities/rules";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
 import StartRuleNameInput from "./input/startRuleName";
@@ -21,9 +21,8 @@ import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RewriteNodesCheckbox from "./checkbox/rewriteNodes";
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
-import { rulesFromBNF } from "../utilities/parser";
-
-const { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
+const { rulesFromBNF } = parserUtilities,
+      { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 class View extends Element {
   keyUpHandler = (event, element) => {
