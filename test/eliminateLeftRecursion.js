@@ -1782,6 +1782,180 @@ A ::= "g"
       `));
     });
   });
+
+  describe("two indirectly left recursive definitions and their left recursive definitions with the same underlying definitions", () => {
+    const bnf = `
+    
+    T ::= B
+    
+        | C
+    
+        | V
+    
+        ;
+    
+    A ::= T ;
+    
+    B::= "-" A
+    
+       | C
+    
+       | V
+    
+       ;
+                          
+    C ::= A "+" A
+    
+        | V
+    
+        ;
+    
+    V::= . ;
+     
+`;
+
+    it.only("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, ``));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = `n+n
+`,
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, ``));
+    });
+  });
+
+  xdescribe("not all indirect", () => {
+    const bnf = `
+
+T    ::= T_ T~* ;
+
+A    ::= T A~T~ ;
+
+C    ::= T C~T~
+
+       ;
+
+B    ::= "-" A
+
+       | C__
+
+       | T B~T~
+
+       ;
+
+A__  ::=  ;
+
+A~T~ ::= ε ;
+
+C__  ::= V ;
+
+C~T~ ::= A~T~ "+" A
+
+       | A~T~ "+" A
+
+       ;
+
+B__  ::= "-" A
+
+       | V
+
+       | C__
+
+       ;
+
+B~T~ ::= A~T~ "+" A
+
+       | C~T~
+
+       ;
+
+T_   ::= C
+
+       | V
+
+       | B__
+
+       ;
+
+T~   ::= B~T~ ;`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, ``));
+    });
+  });
+
+  xdescribe("1", () => {
+    const bnf = `
+    
+A ::= T ;
+
+T ::= B
+
+    | C
+
+    | V
+
+    ;
+
+C ::= A "+" A
+
+    | V
+
+    ;
+
+B::= A "+" A
+
+   | "-" A
+
+   | C
+
+   | V
+
+   ;
+                      
+V::= . ;
+     
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, ``));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = "n+n",
+            startRuleName = "T",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                        T                    
+                        |                    
+                        B                    
+                        |                    
+          -----------------------------      
+          |             |             |      
+          A       +[unassigned]       A      
+          |                           |      
+          T                           T      
+          |                           |      
+          C                           C      
+          |                           |      
+          V                           V      
+          |                           |      
+    n[unassigned]               n[unassigned]
+
+      `));
+    });
+  });
 });
 
 function compare(stringA, stringB) {
