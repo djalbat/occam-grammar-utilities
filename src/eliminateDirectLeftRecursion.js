@@ -4,7 +4,7 @@ import DirectlyReducedRule from "./rule/reduced/directly";
 import DirectlyRepeatedRule from "./rule/repeated/directly";
 import ReplacementDefinition from "./replacementDefinition";
 
-import { leftDifference } from "./utilities/array";
+import { first, leftDifference } from "./utilities/array";
 
 export default function eliminateDirectLeftRecursion(context) {
   let directlyLeftRecursiveDefinition = findDirectlyLeftRecursiveDefinition(context);
@@ -27,8 +27,7 @@ function directlyReduceRule(rule, context) {
 
 function directlyRepeatRule(rule, context) {
   const { ruleMap, directlyLeftRecursiveDefinitions } = context,
-        leftRecursiveDefinitions = directlyLeftRecursiveDefinitions,  ///
-        directlyRepeatedRule = DirectlyRepeatedRule.fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions),
+        directlyRepeatedRule = DirectlyRepeatedRule.fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions),
         directlyRepeatedRuleName = directlyRepeatedRule.getName();
 
   ruleMap[directlyRepeatedRuleName] = directlyRepeatedRule;
@@ -49,8 +48,16 @@ function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, context) {
 }
 
 function findDirectlyLeftRecursiveDefinition(context) {
+  let directlyLeftRecursiveDefinition = null;
+
   const { directlyLeftRecursiveDefinitions } = context,
-        directlyLeftRecursiveDefinition = directlyLeftRecursiveDefinitions.pop() || null;
+        directlyLeftRecursiveDefinitionsLength = directlyLeftRecursiveDefinitions.length;
+
+  if (directlyLeftRecursiveDefinitionsLength > 0) {
+    const firstDirectlyLeftRecursiveDefinition = first(directlyLeftRecursiveDefinitions);
+
+    directlyLeftRecursiveDefinition = firstDirectlyLeftRecursiveDefinition; ///
+  }
 
   return directlyLeftRecursiveDefinition;
 }

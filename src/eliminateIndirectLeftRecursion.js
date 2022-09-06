@@ -49,13 +49,9 @@ function directlyReduceRule(directlyLeftRecursiveDefinition, context) {
 }
 
 function directlyRepeatRule(directlyLeftRecursiveDefinition, context) {
-  const { ruleMap, directlyLeftRecursiveDefinitions, indirectlyLeftRecursiveDefinitions } = context,
+  const { ruleMap, directlyLeftRecursiveDefinitions } = context,
         rule = directlyLeftRecursiveDefinition.getRule(),
-        leftRecursiveDefinitions = [
-          ...directlyLeftRecursiveDefinitions,
-          ...indirectlyLeftRecursiveDefinitions
-        ],
-        directlyRepeatedRule = DirectlyRepeatedRule.fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions),
+        directlyRepeatedRule = DirectlyRepeatedRule.fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions),
         directlyRepeatedRuleName = directlyRepeatedRule.getName();
 
   ruleMap[directlyRepeatedRuleName] = directlyRepeatedRule;
@@ -64,7 +60,7 @@ function directlyRepeatRule(directlyLeftRecursiveDefinition, context) {
 }
 
 function indirectlyReduceRule(indirectlyLeftRecursiveDefinition, context) {
-  const { ruleMap, directlyLeftRecursiveDefinitions, indirectlyLeftRecursiveDefinitions } = context,
+  const { ruleMap, indirectlyLeftRecursiveDefinitions } = context,
         rule = indirectlyLeftRecursiveDefinition.getRule(),
         ruleName = rule.getName(),
         indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName);
@@ -72,12 +68,7 @@ function indirectlyReduceRule(indirectlyLeftRecursiveDefinition, context) {
   let indirectlyReducedRule = ruleMap[indirectlyReducedRuleName] || null;
 
   if (indirectlyReducedRule === null) {
-    const leftRecursiveDefinitions = [
-      ...directlyLeftRecursiveDefinitions,
-      ...indirectlyLeftRecursiveDefinitions
-    ];
-
-    indirectlyReducedRule = IndirectlyReducedRule.fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions);
+    indirectlyReducedRule = IndirectlyReducedRule.fromRuleAndIndirectlyLeftRecursiveDefinitions(rule, indirectlyLeftRecursiveDefinitions);
 
     ruleMap[indirectlyReducedRuleName] = indirectlyReducedRule;
   }
@@ -95,7 +86,7 @@ function indirectlyReduceRule(indirectlyLeftRecursiveDefinition, context) {
 }
 
 function indirectlyRepeatRule(indirectlyLeftRecursiveDefinition, context) {
-  const { ruleMap, leftRecursiveDefinitions } = context,
+  const { ruleMap, indirectlyLeftRecursiveDefinitions } = context,
         rule = indirectlyLeftRecursiveDefinition.getRule(),
         ruleName = rule.getName(),
         leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
@@ -104,7 +95,7 @@ function indirectlyRepeatRule(indirectlyLeftRecursiveDefinition, context) {
   let indirectlyRepeatedRule = ruleMap[indirectlyRepeatedRuleName] || null;
 
   if (indirectlyRepeatedRule === null) {
-    indirectlyRepeatedRule = IndirectlyRepeatedRule.fromRuleLeftRecursiveRuleNameAndLeftRecursiveDefinitions(rule, leftRecursiveRuleName, leftRecursiveDefinitions);
+    indirectlyRepeatedRule = IndirectlyRepeatedRule.fromRuleLeftRecursiveRuleNameAndIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveRuleName, indirectlyLeftRecursiveDefinitions);
 
     ruleMap[indirectlyRepeatedRuleName] = indirectlyRepeatedRule;
 
@@ -121,22 +112,26 @@ function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyL
   const directlyReducedRule = directlyReduceRule(directlyLeftRecursiveDefinition, context),
         directlyRepeatedRule = directlyRepeatRule(directlyLeftRecursiveDefinition, context);
 
-  let indirectlyLeftRecursiveDefinitions;
+  let directlyLeftRecursiveDefinitions,
+        indirectlyLeftRecursiveDefinitions;
 
   const rule = directlyLeftRecursiveDefinition.getRule(),
         definition = null,
-        leftRecursiveRuleName = null,
-        directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinition, context);
+        leftRecursiveRuleName = null;
+
+  directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinition, context);
 
   indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, definition, leftRecursiveRuleName, context);
 
-  removeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions)
+  removeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, context)
+
+  directlyLeftRecursiveDefinitions = rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition, directlyRepeatedRule, directlyReducedRule, context);
 
   removeIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions, context);
 
-  rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition, directlyRepeatedRule, directlyReducedRule, context);
-
   indirectlyLeftRecursiveDefinitions = rewriteIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions, directlyRepeatedRule);
+
+  addDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, context);
 
   addIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions, context);
 }
@@ -214,6 +209,16 @@ function findDirectlyLeftRecursiveDefinition(rule, context) {
         }) || null;
 
   return directlyLeftRecursiveDefinition;
+}
+
+function addDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, context) {
+  const directlyLeftRecursiveDefinitionsB = directlyLeftRecursiveDefinitions; ///
+
+  ({directlyLeftRecursiveDefinitions} = context);
+
+  const directlyLeftRecursiveDefinitionsA = directlyLeftRecursiveDefinitions; ///
+
+  push(directlyLeftRecursiveDefinitionsA, directlyLeftRecursiveDefinitionsB);
 }
 
 function addIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, context) {

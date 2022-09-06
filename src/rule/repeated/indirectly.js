@@ -3,19 +3,29 @@
 import { Rule, Parts, Definition } from "occam-parsers";
 
 import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
-import IndirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/indirectly";
 
 import { matchParts } from "../../utilities/part";
 import { cloneParts } from "../../utilities/parts";
-import { first, tail, find } from "../../utilities/array";
+import { first, tail } from "../../utilities/array";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 
 const { EpsilonPart } = Parts;
 
 export default class IndirectlyRepeatedRule extends Rule {
-  static fromRuleLeftRecursiveRuleNameAndLeftRecursiveDefinitions(rule, leftRecursiveRuleName, leftRecursiveDefinitions) {
-    const indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveRuleName, leftRecursiveDefinitions),
-          firstIndirectlyLeftRecursiveDefinition = first(indirectlyLeftRecursiveDefinitions),
+  static fromRuleLeftRecursiveRuleNameAndIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveRuleName, indirectlyLeftRecursiveDefinitions) {
+    indirectlyLeftRecursiveDefinitions = indirectlyLeftRecursiveDefinitions.filter((indirectlyLeftRecursiveDefinition) => { ///
+      const indirectlyLeftRecursiveDefinitionRule = indirectlyLeftRecursiveDefinition.getRule();
+
+      if (indirectlyLeftRecursiveDefinitionRule === rule) {
+        const indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName();
+
+        if (indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName === leftRecursiveRuleName) {
+          return true;
+        }
+      }
+    });
+
+    const firstIndirectlyLeftRecursiveDefinition = first(indirectlyLeftRecursiveDefinitions),
           indirectlyLeftRecursiveDefinition = firstIndirectlyLeftRecursiveDefinition; ///
 
     let definitions = indirectlyLeftRecursiveDefinitions.reduce((definitions, indirectlyLeftRecursiveDefinition) => {
@@ -86,25 +96,4 @@ export default class IndirectlyRepeatedRule extends Rule {
 
     return indirectlyRepeatedRule;
   }
-}
-
-function findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveRuleName, leftRecursiveDefinitions) {
-  const indirectlyLeftRecursiveDefinitions = find(leftRecursiveDefinitions, (leftRecursiveDefinition) => {
-    const leftRecursiveDefinitionRule = leftRecursiveDefinition.getRule();
-
-    if (leftRecursiveDefinitionRule === rule) {
-      const leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
-
-      if (leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition) {
-        const indirectlyLeftRecursiveDefinition = leftRecursiveDefinition,  ///
-              indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName();
-
-        if (indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName === leftRecursiveRuleName) {
-          return true;
-        }
-      }
-    }
-  });
-
-  return indirectlyLeftRecursiveDefinitions;
 }

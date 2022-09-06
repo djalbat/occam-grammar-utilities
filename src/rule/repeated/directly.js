@@ -3,18 +3,24 @@
 import { Rule, Definition } from "occam-parsers";
 
 import DirectlyRepeatedNode from "../../node/repeated/directly";
-import DirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/directly";
 
 import { matchParts } from "../../utilities/part";
 import { cloneParts } from "../../utilities/parts";
-import { first, find, tail } from "../../utilities/array";
+import { first, tail } from "../../utilities/array";
 import { isDefinitionUnary } from "../../utilities/definition";
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyRepeatedRule extends Rule {
-  static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
-    const ruleName = rule.getName(),
-          directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions);
+  static fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions) {
+    const ruleName = rule.getName();
+
+    directlyLeftRecursiveDefinitions = directlyLeftRecursiveDefinitions.filter((directlyLeftRecursiveDefinition) => { ///
+      const directlyLeftRecursiveDefinitionRule = directlyLeftRecursiveDefinition.getRule();
+
+      if (directlyLeftRecursiveDefinitionRule === rule) {
+        return true;
+      }
+    });
 
     let definitions = directlyLeftRecursiveDefinitions.reduce((definitions, directlyLeftRecursiveDefinition) => {
       const definition = directlyLeftRecursiveDefinition.getDefinition(),
@@ -71,20 +77,4 @@ export default class DirectlyRepeatedRule extends Rule {
 
     return directlyRepeatedRule;
   }
-}
-
-function findDirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
-  const directlyLeftRecursiveDefinitions = find(leftRecursiveDefinitions, (leftRecursiveDefinition) => {
-    const leftRecursiveDefinitionRule = leftRecursiveDefinition.getRule();
-
-    if (leftRecursiveDefinitionRule === rule) {
-      const leftRecursiveDefinitionDirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof DirectlyLeftRecursiveDefinition);
-
-      if (leftRecursiveDefinitionDirectlyLeftRecursiveDefinition) {
-        return true;
-      }
-    }
-  });
-
-  return directlyLeftRecursiveDefinitions;
 }

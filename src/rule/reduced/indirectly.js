@@ -3,9 +3,7 @@
 import { Rule } from "occam-parsers";
 
 import IndirectlyReducedNode from "../../node/reduced/indirectly";
-import IndirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/indirectly";
 
-import { find } from "../../utilities/array";
 import { indirectlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class IndirectlyReducedRule extends Rule {
@@ -16,8 +14,14 @@ export default class IndirectlyReducedRule extends Rule {
     return vacuous;
   }
 
-  static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
-    const indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions);
+  static fromRuleAndIndirectlyLeftRecursiveDefinitions(rule, indirectlyLeftRecursiveDefinitions) {
+    indirectlyLeftRecursiveDefinitions = indirectlyLeftRecursiveDefinitions.filter((indirectlyLeftRecursiveDefinition) => { ///
+      const indirectlyLeftRecursiveDefinitionRule = indirectlyLeftRecursiveDefinition.getRule();
+
+      if (indirectlyLeftRecursiveDefinitionRule === rule) {
+        return true;
+      }
+    });
 
     let definitions = rule.getDefinitions();
 
@@ -44,20 +48,4 @@ export default class IndirectlyReducedRule extends Rule {
 
     return indirectlyReducedRule;
   }
-}
-
-function findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
-  const indirectlyLeftRecursiveDefinitions = find(leftRecursiveDefinitions, (leftRecursiveDefinition) => {
-    const leftRecursiveDefinitionRule = leftRecursiveDefinition.getRule();
-
-    if (leftRecursiveDefinitionRule === rule) {
-      const leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
-
-      if (leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition) {
-        return true;
-      }
-    }
-  });
-
-  return indirectlyLeftRecursiveDefinitions;
 }
