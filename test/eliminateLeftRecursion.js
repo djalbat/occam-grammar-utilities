@@ -1783,7 +1783,7 @@ A ::= "g"
     });
   });
 
-  describe("two indirectly left recursive definitions and their left recursive definitions with the same underlying definitions", () => {
+  xdescribe("two indirectly left recursive definitions and their left recursive definitions with the same underlying definitions", () => {
     const bnf = `
     
     T ::= B
@@ -1814,7 +1814,7 @@ A ::= "g"
      
 `;
 
-    it.only("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, ``));

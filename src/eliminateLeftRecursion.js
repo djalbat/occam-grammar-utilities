@@ -13,13 +13,17 @@ export default function eliminateLeftRecursion(rules) {
         ruleMap = ruleMapFromRules(rules),
         rule = startRule, ///
         recursiveDefinitions = [],
-        leftRecursiveDefinitions = [];
+        leftRecursiveDefinitions = [],
+        context = {
+          leftRecursiveDefinitions,
+          ruleMap
+        };
 
-  retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, leftRecursiveDefinitions, ruleMap);
+  retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, context);
 
-  eliminateIndirectLeftRecursion(leftRecursiveDefinitions, ruleMap);
+  eliminateIndirectLeftRecursion(context);
 
-  eliminateDirectLeftRecursion(leftRecursiveDefinitions, ruleMap);
+  eliminateDirectLeftRecursion(context);
 
   rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap); ///
 
