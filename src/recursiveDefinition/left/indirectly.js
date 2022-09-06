@@ -1,12 +1,9 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
-
 import LeftRecursiveDefinition from "../../recursiveDefinition/left";
 
+import { last, front, first, backwardsFind, backwardsEvery } from "../../utilities/array";
 import { isDefinitionUnary, isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
-
-const { last, front, first, backwardsFind, backwardsEvery } = arrayUtilities;
 
 export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   constructor(rule, definition, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinitions) {

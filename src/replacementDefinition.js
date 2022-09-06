@@ -1,14 +1,13 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
 import { Parts, Definition } from "occam-parsers";
 
 import { cloneParts } from "./utilities/parts";
+import { first, head, tail } from "./utilities/array";
 import { ruleNamePartFromRuleName, directlyReducedPartFromPart } from "./utilities/part";
 import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "./utilities/ruleName";
 
-const { first, head, tail } = arrayUtilities,
-      { ZeroOrMorePartsPart } = Parts;
+const { ZeroOrMorePartsPart } = Parts;
 
 export default class ReplacementDefinition extends Definition {
   static fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {

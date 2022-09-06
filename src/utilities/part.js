@@ -1,12 +1,11 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
 import { Parts, partTypes } from "occam-parsers";
 
+import { first } from "../utilities/array";
 import { directlyReducedRuleNameFromRuleName } from "../utilities/ruleName";
 
-const { first } = arrayUtilities,
-      { RuleNamePart, OptionalPartPart, OneOrMorePartsPart, ZeroOrMorePartsPart } = Parts,
+const { RuleNamePart, OptionalPartPart, OneOrMorePartsPart, ZeroOrMorePartsPart } = Parts,
       { RuleNamePartType,
         OptionalPartPartType,
         ChoiceOfPartsPartType,

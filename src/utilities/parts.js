@@ -1,11 +1,11 @@
 "use strict";
 
 import { Parts } from "occam-parsers";
-import { arrayUtilities } from "necessary";
+
+import { first } from "../utilities/array";
 import { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "./part";
 
-const { first } = arrayUtilities,
-      { SequenceOfPartsPart, ZeroOrMorePartsPart } = Parts;
+const { SequenceOfPartsPart, ZeroOrMorePartsPart } = Parts;
 
 export function cloneParts(parts) {
   parts = parts.map((part) => part.clone());  ///

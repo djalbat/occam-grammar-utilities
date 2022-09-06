@@ -1,14 +1,12 @@
 "use strict";
 
 import { Rule } from "occam-parsers";
-import { arrayUtilities } from "necessary";
 
 import IndirectlyReducedNode from "../../node/reduced/indirectly";
 import IndirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/indirectly";
 
+import { find } from "../../utilities/array";
 import { indirectlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
-
-const { find } = arrayUtilities;
 
 export default class IndirectlyReducedRule extends Rule {
   isVacuous() {

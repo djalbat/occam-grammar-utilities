@@ -1,12 +1,9 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
-
 import LeftRecursiveDefinition from "../../recursiveDefinition/left";
 
+import { first } from "../../utilities/array";
 import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
-
-const { first } = arrayUtilities;
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   getLeftRecursiveRuleName() {

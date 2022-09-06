@@ -1,7 +1,6 @@
 "use strict";
 
 import { EpsilonNode } from "occam-parsers";
-import { arrayUtilities } from "necessary";
 
 import RewrittenNode from "./node/rewritten";
 import DirectlyReducedNode from "./node/reduced/directly";
@@ -9,7 +8,7 @@ import DirectlyRepeatedNode from "./node/repeated/directly";
 import IndirectlyReducedNode from "./node/reduced/indirectly";
 import IndirectlyRepeatedNode from "./node/repeated/indirectly";
 
-const { last, first, filter, unshift, backwardsSome } = arrayUtilities;
+import { first, last, filter, unshift, backwardsSome } from "./utilities/array";
 
 export default function rewriteNodes(node) {  ///
   const nonTerminalNode = node; ///

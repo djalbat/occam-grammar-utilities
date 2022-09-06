@@ -1,6 +1,5 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
 import { Rule, Definition } from "occam-parsers";
 
 import DirectlyRepeatedNode from "../../node/repeated/directly";
@@ -8,10 +7,9 @@ import DirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/dire
 
 import { matchParts } from "../../utilities/part";
 import { cloneParts } from "../../utilities/parts";
+import { first, find, tail } from "../../utilities/array";
 import { isDefinitionUnary } from "../../utilities/definition";
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
-
-const { first, find, tail } = arrayUtilities;
 
 export default class DirectlyRepeatedRule extends Rule {
   static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {

@@ -1,44 +1,37 @@
 "use strict";
 
 import { Rule } from "occam-parsers";
-import { arrayUtilities } from "necessary";
 
 import DirectlyReducedNode from "../../node/reduced/directly";
-import DirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/directly";
-import IndirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/indirectly";
 
 import { directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
-const { find } = arrayUtilities;
-
 export default class DirectlyReducedRule extends Rule {
-  static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions, disallowIsolated = true) {
+  static fromRuleDirectlyLeftRecursiveDefinitionsAndIndirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions, indirectlyLeftRecursiveDefinitions, disallowIsolated = true) {
     let directlyReducedRule = null;
 
-    const directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions),
-          indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions);
+    let leftRecursiveDefinitions = [
+      ...directlyLeftRecursiveDefinitions,
+      ...indirectlyLeftRecursiveDefinitions
+    ];
+
+    leftRecursiveDefinitions = leftRecursiveDefinitions.filter((leftRecursiveDefinition) => { ///
+      const leftRecursiveDefinitionRule = leftRecursiveDefinition.getRule();
+
+      if (leftRecursiveDefinitionRule === rule) {
+        return true;
+      }
+    });
 
     let definitions = rule.getDefinitions();
 
     definitions = definitions.slice(0);  ///
 
-    directlyLeftRecursiveDefinitions.forEach((directlyLeftRecursiveDefinition) => {
-      const definition = directlyLeftRecursiveDefinition.getDefinition(),
+    leftRecursiveDefinitions.forEach((leftRecursiveDefinition) => {
+      const definition = leftRecursiveDefinition.getDefinition(),
             index = definitions.indexOf(definition);
 
       if (index > -1) {
-        const start = index,  ///
-              deleteCount = 1;
-
-        definitions.splice(start, deleteCount);
-      }
-    });
-
-    indirectlyLeftRecursiveDefinitions.forEach((indirectlyLeftRecursiveDefinition) => {
-      const definition = indirectlyLeftRecursiveDefinition.getDefinition(),
-            index = definitions.indexOf(definition);
-
-      if (index > -1 ) {
         const start = index,  ///
               deleteCount = 1;
 
@@ -68,36 +61,4 @@ export default class DirectlyReducedRule extends Rule {
 
     return directlyReducedRule;
   }
-}
-
-function findDirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
-  const directlyLeftRecursiveDefinitions = find(leftRecursiveDefinitions, (leftRecursiveDefinition) => {
-    const leftRecursiveDefinitionRule = leftRecursiveDefinition.getRule();
-
-    if (leftRecursiveDefinitionRule === rule) {
-      const leftRecursiveDefinitionDirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof DirectlyLeftRecursiveDefinition);
-
-      if (leftRecursiveDefinitionDirectlyLeftRecursiveDefinition) {
-        return true;
-      }
-    }
-  });
-
-  return directlyLeftRecursiveDefinitions;
-}
-
-function findIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveDefinitions) {
-  const indirectlyLeftRecursiveDefinitions = find(leftRecursiveDefinitions, (leftRecursiveDefinition) => {
-    const leftRecursiveDefinitionRule = leftRecursiveDefinition.getRule();
-
-    if (leftRecursiveDefinitionRule === rule) {
-      const leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
-
-      if (leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition) {
-        return true;
-      }
-    }
-  });
-
-  return indirectlyLeftRecursiveDefinitions;
 }

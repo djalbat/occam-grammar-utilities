@@ -1,11 +1,8 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
-
+import { first } from "../utilities/array";
 import { isPartUnary, isPartComplex } from "../utilities/part";
 import { arePartsRecursive, arePartsLeftRecursive, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../utilities/parts";
-
-const { first } = arrayUtilities;
 
 export function isDefinitionUnary(definition) {
   let definitionUnary = false;
