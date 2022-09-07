@@ -14,7 +14,7 @@ export default class DirectlyReduceRuleOperation extends Operation {
   }
 
   apply(context) {
-    const { ruleMap} = context,
+    const { ruleMap } = context,
           rule = this.getRule(),
           leftRecursiveDefinitions = findLeftRecursiveDefinitions(rule, context),
           directlyReducedRule = DirectlyReducedRule.fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions, this.disallowIsolated);
