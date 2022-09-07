@@ -12,14 +12,16 @@ export default function eliminateLeftRecursion(rules) {
   const startRule = startRuleFromRules(rules),
         ruleMap = ruleMapFromRules(rules),
         rule = startRule, ///
-        indirectlyLeftRecursiveDefinitions = [],
+        ruleOperations = [],
+        definitionOperations = [],
         directlyLeftRecursiveDefinitions = [],
-        previousOperations = [],
+        indirectlyLeftRecursiveDefinitions = [],
         context = {
-          indirectlyLeftRecursiveDefinitions,
+          ruleMap,
+          ruleOperations,
+          definitionOperations,
           directlyLeftRecursiveDefinitions,
-          previousOperations,
-          ruleMap
+          indirectlyLeftRecursiveDefinitions
         };
 
   retrieveLeftRecursiveDefinitions(rule, context);

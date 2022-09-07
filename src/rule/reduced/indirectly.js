@@ -7,14 +7,9 @@ import IndirectlyReducedNode from "../../node/reduced/indirectly";
 import { indirectlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class IndirectlyReducedRule extends Rule {
-  isVacuous() {
-    const definitionsLength = this.definitions.length,
-          vacuous = (definitionsLength === 0);
-
-    return vacuous;
-  }
-
   static fromRuleAndIndirectlyLeftRecursiveDefinitions(rule, indirectlyLeftRecursiveDefinitions) {
+    let indirectlyReducedRule = null;
+
     indirectlyLeftRecursiveDefinitions = indirectlyLeftRecursiveDefinitions.filter((indirectlyLeftRecursiveDefinition) => { ///
       const indirectlyLeftRecursiveDefinitionRule = indirectlyLeftRecursiveDefinition.getRule();
 
@@ -39,12 +34,17 @@ export default class IndirectlyReducedRule extends Rule {
       }
     });
 
-    const ruleName = rule.getName(),
-          indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName),
-          name = indirectlyReducedRuleName, ///
-          ambiguous = false,
-          NonTerminalNode = IndirectlyReducedNode,  ///
-          indirectlyReducedRule = new IndirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
+    const definitionsLength = definitions.length;
+
+    if (definitionsLength > 0) {
+      const ruleName = rule.getName(),
+            indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName),
+            name = indirectlyReducedRuleName, ///
+            ambiguous = false,
+            NonTerminalNode = IndirectlyReducedNode;  ///
+
+      indirectlyReducedRule = new IndirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
+    }
 
     return indirectlyReducedRule;
   }
