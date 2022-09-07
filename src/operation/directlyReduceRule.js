@@ -1,11 +1,12 @@
 "use strict";
 
-import RuleOperation from "../ruleOperation";
+import Operation from "../operation";
 import DirectlyReducedRule from "../rule/reduced/directly";
 
+import { findLeftRecursiveDefinitions } from "../utilities/context";
 import { directlyReducedRuleNameFromRuleName } from "../utilities/ruleName";
 
-export default class DirectlyReduceRuleOperation extends RuleOperation {
+export default class DirectlyReduceRuleOperation extends Operation {
   constructor(rule, disallowIsolated) {
     super(rule);
 
@@ -13,12 +14,10 @@ export default class DirectlyReduceRuleOperation extends RuleOperation {
   }
 
   apply(context) {
-    const { ruleMap, directlyLeftRecursiveDefinitions, indirectlyLeftRecursiveDefinitions } = context,
-          leftRecursiveDefinitions = [
-            ...directlyLeftRecursiveDefinitions,
-            ...indirectlyLeftRecursiveDefinitions
-          ],
-          directlyReducedRule = DirectlyReducedRule.fromRuleDisallowIsolatedAndLeftRecursiveDefinitions(this.rule, this.disallowIsolated, leftRecursiveDefinitions);
+    const { ruleMap} = context,
+          rule = this.getRule(),
+          leftRecursiveDefinitions = findLeftRecursiveDefinitions(rule, context),
+          directlyReducedRule = DirectlyReducedRule.fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions, this.disallowIsolated);
 
     if (directlyReducedRule !== null) {
       const directlyReducedRuleName = directlyReducedRule.getName();

@@ -7,16 +7,8 @@ import DirectlyReducedNode from "../../node/reduced/directly";
 import { directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyReducedRule extends Rule {
-  static fromRuleDisallowIsolatedAndLeftRecursiveDefinitions(rule, disallowIsolated, leftRecursiveDefinitions) {
+  static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions, disallowIsolated) {
     let directlyReducedRule = null;
-
-    leftRecursiveDefinitions = leftRecursiveDefinitions.filter((leftRecursiveDefinition) => { ///
-      const leftRecursiveDefinitionRule = leftRecursiveDefinition.getRule();
-
-      if (leftRecursiveDefinitionRule === rule) {
-        return true;
-      }
-    });
 
     let definitions = rule.getDefinitions();
 

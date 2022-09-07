@@ -1,14 +1,21 @@
 "use strict";
 
-import RuleOperation from "../ruleOperation";
+import Operation from "../operation";
 import IndirectlyReducedRule from "../rule/reduced/indirectly";
 
 import { indirectlyReducedRuleNameFromRuleName } from "../utilities/ruleName";
+import { findIndirectlyLeftRecursiveDefinitions } from "../utilities/context";
 
-export default class IndirectlyReduceRuleOperation extends RuleOperation {
+export default class IndirectlyReduceRuleOperation extends Operation {
   apply(context) {
-    const { ruleMap, indirectlyLeftRecursiveDefinitions } = context,
-          indirectlyReducedRule = IndirectlyReducedRule.fromRuleAndIndirectlyLeftRecursiveDefinitions(this.rule, indirectlyLeftRecursiveDefinitions);
+    const { ruleMap } = context,
+          rule = this.getRule(),
+          indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, (indirectlyLeftRecursiveDefinition) => {
+            ///
+
+            return true;
+          }, context),
+          indirectlyReducedRule = IndirectlyReducedRule.fromRuleAndIndirectlyLeftRecursiveDefinitions(rule, indirectlyLeftRecursiveDefinitions);
 
     if (indirectlyReducedRule !== null) {
       const indirectlyReducedRuleName = indirectlyReducedRule.getName();

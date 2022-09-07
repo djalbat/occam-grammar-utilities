@@ -1089,7 +1089,7 @@ A ::= "g"
     });
   });
 
-  describe("two indirectly left recursive definitions with the same underlying definition", () => {
+  xdescribe("two indirectly left recursive definitions with the same underlying definition", () => {
     const bnf = `
     
     S ::= E... <END_OF_LINE> ;
@@ -1282,7 +1282,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition with two sibling left recursive definitions", () => {
+  xdescribe("an indirectly left recursive definition with two sibling left recursive definitions", () => {
     const bnf = `
 
     A ::= B "f"

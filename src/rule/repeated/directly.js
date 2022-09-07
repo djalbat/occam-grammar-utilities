@@ -14,14 +14,6 @@ export default class DirectlyRepeatedRule extends Rule {
   static fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions) {
     const ruleName = rule.getName();
 
-    directlyLeftRecursiveDefinitions = directlyLeftRecursiveDefinitions.filter((directlyLeftRecursiveDefinition) => { ///
-      const directlyLeftRecursiveDefinitionRule = directlyLeftRecursiveDefinition.getRule();
-
-      if (directlyLeftRecursiveDefinitionRule === rule) {
-        return true;
-      }
-    });
-
     let definitions = directlyLeftRecursiveDefinitions.reduce((definitions, directlyLeftRecursiveDefinition) => {
       const definition = directlyLeftRecursiveDefinition.getDefinition(),
             definitionsIncludesDefinition = definitions.includes(definition);

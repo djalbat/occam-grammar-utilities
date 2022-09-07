@@ -1,8 +1,8 @@
 "use strict";
 
 import ReplacementDefinition from "./replacementDefinition";
-import DirectlyRepeatRuleOperation from "./ruleOperation/directlyRepeat";
-import DirectlyReduceRuleOperation from "./ruleOperation/directlyReduce";
+import DirectlyRepeatRuleOperation from "./operation/directlyRepeatRule";
+import DirectlyReduceRuleOperation from "./operation/directlyReduceRule";
 
 import { findDirectlyLeftRecursiveDefinition,
          findDirectlyLeftRecursiveDefinitions,
@@ -18,33 +18,20 @@ export default function eliminateDirectLeftRecursion(context) {
   }
 }
 
-function directlyReduceRule(directlyLeftRecursiveDefinition, context) {
+function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, context) {
   const disallowIsolated = true;
 
   DirectlyReduceRuleOperation.execute(directlyLeftRecursiveDefinition, disallowIsolated, context);
-}
 
-function directlyRepeatRule(directlyLeftRecursiveDefinition, context) {
   DirectlyRepeatRuleOperation.execute(directlyLeftRecursiveDefinition, context);
-}
-
-function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, context) {
-  directlyReduceRule(directlyLeftRecursiveDefinition, context);
-
-  directlyRepeatRule(directlyLeftRecursiveDefinition, context);
 
   const rule = directlyLeftRecursiveDefinition.getRule();
 
   const directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, context);
 
-  rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition);
-
-  removeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, context);
-}
-
-function rewriteDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {
-  const rule = directlyLeftRecursiveDefinition.getRule(),
-        replacementDefinition = ReplacementDefinition.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition);
+  const replacementDefinition = ReplacementDefinition.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition);
 
   rule.replaceAllDefinitions(replacementDefinition);
+
+  removeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, context);
 }

@@ -1,14 +1,17 @@
 "use strict";
 
-import RuleOperation from "../ruleOperation";
+import Operation from "../operation";
 import DirectlyRepeatedRule from "../rule/repeated/directly";
 
+import { findDirectlyLeftRecursiveDefinitions } from "../utilities/context";
 import { directlyRepeatedRuleNameFromRuleName } from "../utilities/ruleName";
 
-export default class DirectlyRepeatRuleOperation extends RuleOperation {
+export default class DirectlyRepeatRuleOperation extends Operation {
   apply(context) {
-    const { ruleMap, directlyLeftRecursiveDefinitions } = context,
-          directlyRepeatedRule = DirectlyRepeatedRule.fromRuleAndDirectlyLeftRecursiveDefinitions(this.rule, directlyLeftRecursiveDefinitions);
+    const { ruleMap } = context,
+          rule = this.getRule(),
+          directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, context),
+          directlyRepeatedRule = DirectlyRepeatedRule.fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions);
 
     if (directlyRepeatedRule !== null) {
       const directlyRepeatedRuleName = directlyRepeatedRule.getName();

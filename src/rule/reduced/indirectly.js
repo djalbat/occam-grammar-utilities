@@ -10,14 +10,6 @@ export default class IndirectlyReducedRule extends Rule {
   static fromRuleAndIndirectlyLeftRecursiveDefinitions(rule, indirectlyLeftRecursiveDefinitions) {
     let indirectlyReducedRule = null;
 
-    indirectlyLeftRecursiveDefinitions = indirectlyLeftRecursiveDefinitions.filter((indirectlyLeftRecursiveDefinition) => { ///
-      const indirectlyLeftRecursiveDefinitionRule = indirectlyLeftRecursiveDefinition.getRule();
-
-      if (indirectlyLeftRecursiveDefinitionRule === rule) {
-        return true;
-      }
-    });
-
     let definitions = rule.getDefinitions();
 
     definitions = definitions.slice(0);  ///

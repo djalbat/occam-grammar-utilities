@@ -13,18 +13,6 @@ const { EpsilonPart } = Parts;
 
 export default class IndirectlyRepeatedRule extends Rule {
   static fromRuleLeftRecursiveRuleNameAndIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveRuleName, indirectlyLeftRecursiveDefinitions) {
-    indirectlyLeftRecursiveDefinitions = indirectlyLeftRecursiveDefinitions.filter((indirectlyLeftRecursiveDefinition) => { ///
-      const indirectlyLeftRecursiveDefinitionRule = indirectlyLeftRecursiveDefinition.getRule();
-
-      if (indirectlyLeftRecursiveDefinitionRule === rule) {
-        const indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName();
-
-        if (indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName === leftRecursiveRuleName) {
-          return true;
-        }
-      }
-    });
-
     const firstIndirectlyLeftRecursiveDefinition = first(indirectlyLeftRecursiveDefinitions),
           indirectlyLeftRecursiveDefinition = firstIndirectlyLeftRecursiveDefinition; ///
 
