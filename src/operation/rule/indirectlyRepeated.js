@@ -1,12 +1,12 @@
 "use strict";
 
-import Operation from "../operation";
-import IndirectlyRepeatedRule from "../rule/repeated/indirectly";
+import RuleOperation from "../../operation/rule";
+import IndirectlyRepeatedRule from "../../rule/repeated/indirectly";
 
-import { findIndirectlyLeftRecursiveDefinitions } from "../utilities/context";
-import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../utilities/ruleName";
+import { findIndirectlyLeftRecursiveDefinitions } from "../../utilities/context";
+import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 
-export default class IndirectlyRepeatRuleOperation extends Operation {
+export default class IndirectlyRepeatedRuleOperation extends RuleOperation {
   constructor(rule, leftRecursiveRuleName) {
     super(rule);
 
@@ -34,6 +34,8 @@ export default class IndirectlyRepeatRuleOperation extends Operation {
 
       ruleMap[indirectlyRepeatedRuleName] = indirectlyRepeatedRule;
     }
+
+    return indirectlyRepeatedRule;
   }
 
   retrieve(context) {
@@ -46,11 +48,11 @@ export default class IndirectlyRepeatRuleOperation extends Operation {
     return indirectlyRepeatedRule;
   }
 
-  compare(indirectlyRepeatRuleOperation) {
+  compare(indirectlyRepeatedRuleOperation) {
     const rule = this.getRule(),
-          indirectlyRepeatRuleOperationRule = indirectlyRepeatRuleOperation.getRule(),
-          indirectlyRepeatRuleOperationLeftRecursiveRuleName = indirectlyRepeatRuleOperation.getLeftRecursiveRuleName(),
-          comparesTo = ((rule === indirectlyRepeatRuleOperationRule) && (this.leftRecursiveRuleName === indirectlyRepeatRuleOperationLeftRecursiveRuleName));
+          indirectlyRepeatedRuleOperationRule = indirectlyRepeatedRuleOperation.getRule(),
+          indirectlyRepeatedRuleOperationLeftRecursiveRuleName = indirectlyRepeatedRuleOperation.getLeftRecursiveRuleName(),
+          comparesTo = ((rule === indirectlyRepeatedRuleOperationRule) && (this.leftRecursiveRuleName === indirectlyRepeatedRuleOperationLeftRecursiveRuleName));
 
     return comparesTo;
   }
@@ -58,8 +60,8 @@ export default class IndirectlyRepeatRuleOperation extends Operation {
   static execute(indirectlyLeftRecursiveDefinition, context) {
     const rule = indirectlyLeftRecursiveDefinition.getRule(),
           leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
-          indirectlyRepeatRuleOperation = new IndirectlyRepeatRuleOperation(rule, leftRecursiveRuleName, ),
-          indirectlyRepeatedRule = indirectlyRepeatRuleOperation.execute(context);
+          indirectlyRepeatedRuleOperation = new IndirectlyRepeatedRuleOperation(rule, leftRecursiveRuleName, ),
+          indirectlyRepeatedRule = indirectlyRepeatedRuleOperation.execute(context);
 
     return indirectlyRepeatedRule;
   }

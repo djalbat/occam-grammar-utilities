@@ -5,40 +5,16 @@ import IndirectlyLeftRecursiveDefinition from "../recursiveDefinition/left/indir
 
 import { push, leftDifference } from "../utilities/array";
 
-export function addLeftRecursiveDefinition(leftRecursiveDefinition, context) {
+export function addLeftRecursiveDefinition(addedLeftRecursiveDefinition, context) {
   const { leftRecursiveDefinitions } = context;
 
-  leftRecursiveDefinitions.push(leftRecursiveDefinition);
+  leftRecursiveDefinitions.push(addedLeftRecursiveDefinition);
 }
 
-export function addDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition, context) {
-  const { leftRecursiveDefinitions } = context,
-        leftRecursiveDefinition = directlyLeftRecursiveDefinition;  ///
+export function addLeftRecursiveDefinitions(addedLeftRecursiveDefinitions, context) {
+  const { leftRecursiveDefinitions } = context;
 
-  leftRecursiveDefinitions.push(leftRecursiveDefinition);
-}
-
-export function addDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, context) {
-  const { leftRecursiveDefinitions } = context,
-        leftRecursiveDefinitionsA = leftRecursiveDefinitions, ///
-        leftRecursiveDefinitionsB = directlyLeftRecursiveDefinitions; ///
-
-  push(leftRecursiveDefinitionsA, leftRecursiveDefinitionsB);
-}
-
-export function addIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, context) {
-  const { leftRecursiveDefinitions } = context,
-        leftRecursiveDefinition = indirectlyLeftRecursiveDefinition;  ///
-
-  leftRecursiveDefinitions.push(leftRecursiveDefinition);
-}
-
-export function addIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions, context) {
-  const { leftRecursiveDefinitions } = context,
-        leftRecursiveDefinitionsA = leftRecursiveDefinitions, ///
-        leftRecursiveDefinitionsB = indirectlyLeftRecursiveDefinitions; ///
-
-  push(leftRecursiveDefinitionsA, leftRecursiveDefinitionsB);
+  push(leftRecursiveDefinitions, addedLeftRecursiveDefinitions);
 }
 
 export function findLeftRecursiveDefinitions(rule, context) {
@@ -57,6 +33,12 @@ export function findLeftRecursiveDefinitions(rule, context) {
   });
 
   return leftRecursiveDefinitions;
+}
+
+export function removeLeftRecursiveDefinitions(removedLeftRecursiveDefinitions, context) {
+  const { leftRecursiveDefinitions } = context;
+
+  leftDifference(leftRecursiveDefinitions, removedLeftRecursiveDefinitions);
 }
 
 export function findDirectlyLeftRecursiveDefinition(rule, context) {
@@ -86,25 +68,30 @@ export function findDirectlyLeftRecursiveDefinition(rule, context) {
 
 export function findDirectlyLeftRecursiveDefinitions(rule, context) {
   const { leftRecursiveDefinitions } = context,
-        directlyLeftRecursiveDefinitions = leftRecursiveDefinitions.filter((leftRecursiveDefinition) => {
-          if (leftRecursiveDefinition instanceof DirectlyLeftRecursiveDefinition) {
-            if (rule === null) {
-              return true;
-            }
-
-            const directlyLeftRecursiveDefinition = leftRecursiveDefinition,  ///
-                  directlyLeftRecursiveDefinitionsRule = directlyLeftRecursiveDefinition.getRule();
-
-            if (directlyLeftRecursiveDefinitionsRule === rule) {
-              return true;
-            }
+      directlyLeftRecursiveDefinitions = leftRecursiveDefinitions.filter((leftRecursiveDefinition) => {
+        if (leftRecursiveDefinition instanceof DirectlyLeftRecursiveDefinition) {
+          if (rule === null) {
+            return true;
           }
-        });
+
+          const directlyLeftRecursiveDefinition = leftRecursiveDefinition,  ///
+              directlyLeftRecursiveDefinitionsRule = directlyLeftRecursiveDefinition.getRule();
+
+          if (directlyLeftRecursiveDefinitionsRule === rule) {
+            return true;
+          }
+        }
+      });
 
   return directlyLeftRecursiveDefinitions;
 }
 
 export function findIndirectlyLeftRecursiveDefinitions(rule, callback, context) {
+  if (context === undefined) {
+    context = callback;
+    callback = (indirectlyLeftRecursiveDefinition) => true
+  }
+
   const { leftRecursiveDefinitions } = context,
         indirectlyLeftRecursiveDefinitions = leftRecursiveDefinitions.filter((leftRecursiveDefinition) => {
           if (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition) {
@@ -126,22 +113,6 @@ export function findIndirectlyLeftRecursiveDefinitions(rule, callback, context) 
         });
 
   return indirectlyLeftRecursiveDefinitions;
-}
-
-export function removeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, context) {
-  const { leftRecursiveDefinitions } = context,
-        leftRecursiveDefinitionsA = leftRecursiveDefinitions, ///
-        leftRecursiveDefinitionsB = directlyLeftRecursiveDefinitions; ///
-
-  leftDifference(leftRecursiveDefinitionsA, leftRecursiveDefinitionsB);
-}
-
-export function removeIndirectlyLeftRecursiveDefinitions(indirectlyLeftRecursiveDefinitions, context) {
-  const { leftRecursiveDefinitions } = context,
-        leftRecursiveDefinitionsA = leftRecursiveDefinitions, ///
-        leftRecursiveDefinitionsB = indirectlyLeftRecursiveDefinitions; ///
-
-  leftDifference(leftRecursiveDefinitionsA, leftRecursiveDefinitionsB);
 }
 
 export function retrieveGreatestIndirectlyLeftRecursiveDefinition(context) {

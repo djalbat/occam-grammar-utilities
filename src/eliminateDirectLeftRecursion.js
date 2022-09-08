@@ -1,12 +1,12 @@
 "use strict";
 
-import ReplacementDefinition from "./replacementDefinition";
-import DirectlyRepeatRuleOperation from "./operation/directlyRepeatRule";
-import DirectlyReduceRuleOperation from "./operation/directlyReduceRule";
+import DirectlyReducedRuleOperation from "./operation/rule/directlyReduced";
+import DirectlyRepeatedRuleOperation from "./operation/rule/directlyRepeated";
+import DirectlyLeftRecursiveDefinitionOperation from "./operation/definition/directlyLeftRecursive";
 
-import { findDirectlyLeftRecursiveDefinition,
-         findDirectlyLeftRecursiveDefinitions,
-         removeDirectlyLeftRecursiveDefinitions } from "./utilities/context";
+import { removeLeftRecursiveDefinitions,
+         findDirectlyLeftRecursiveDefinition,
+         findDirectlyLeftRecursiveDefinitions } from "./utilities/context";
 
 export default function eliminateDirectLeftRecursion(context) {
   let directlyLeftRecursiveDefinition = findDirectlyLeftRecursiveDefinition(context);
@@ -19,19 +19,15 @@ export default function eliminateDirectLeftRecursion(context) {
 }
 
 function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, context) {
-  const disallowIsolated = true;
+  const allowIsolated = false,
+        directlyReducedRule = DirectlyReducedRuleOperation.execute(directlyLeftRecursiveDefinition, allowIsolated, context),
+        directlyRepeatedRule = DirectlyRepeatedRuleOperation.execute(directlyLeftRecursiveDefinition, context);
 
-  DirectlyReduceRuleOperation.execute(directlyLeftRecursiveDefinition, disallowIsolated, context);
+  DirectlyLeftRecursiveDefinitionOperation.execute(directlyLeftRecursiveDefinition, directlyRepeatedRule, directlyReducedRule, context);
 
-  DirectlyRepeatRuleOperation.execute(directlyLeftRecursiveDefinition, context);
+  const rule = directlyLeftRecursiveDefinition.getRule(),
+        directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, context),
+        removedLeftRecursiveDefinitions = directlyLeftRecursiveDefinitions; ///
 
-  const rule = directlyLeftRecursiveDefinition.getRule();
-
-  const directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, context);
-
-  const replacementDefinition = ReplacementDefinition.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition);
-
-  rule.replaceAllDefinitions(replacementDefinition);
-
-  removeDirectlyLeftRecursiveDefinitions(directlyLeftRecursiveDefinitions, context);
+  removeLeftRecursiveDefinitions(removedLeftRecursiveDefinitions, context);
 }

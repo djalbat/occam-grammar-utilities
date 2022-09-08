@@ -1,14 +1,6 @@
 "use strict";
 
 export default class Operation {
-  constructor(rule) {
-    this.rule = rule;
-  }
-
-  getRule() {
-    return this.rule;
-  }
-
   isEqualTo(operation) {
     let equalTo = false;
 
@@ -24,6 +16,8 @@ export default class Operation {
   }
 
   execute(context) {
+    let result;
+
     const { operations } = context;
 
     let operation = this.find(context);
@@ -33,10 +27,10 @@ export default class Operation {
 
       operations.push(operation);
 
-      operation.apply(context);
+      result = operation.apply(context);
+    } else {
+      result = operation.retrieve(context);
     }
-
-    const result = operation.retrieve(context);
 
     return result;
   }

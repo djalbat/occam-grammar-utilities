@@ -7,7 +7,7 @@ import DirectlyReducedNode from "../../node/reduced/directly";
 import { directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyReducedRule extends Rule {
-  static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions, disallowIsolated) {
+  static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions, allowIsolated) {
     let directlyReducedRule = null;
 
     let definitions = rule.getDefinitions();
@@ -29,7 +29,7 @@ export default class DirectlyReducedRule extends Rule {
     const definitionsLength = definitions.length;
 
     if (definitionsLength === 0) {
-      if (disallowIsolated) {
+      if (!allowIsolated) {
         const ruleName = rule.getName();
 
         throw new Error(`The directly left recursive definitions of the '${ruleName}' rule are isolated and therefore cannot be rewritten.`);

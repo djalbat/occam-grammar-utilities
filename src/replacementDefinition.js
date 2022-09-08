@@ -10,6 +10,30 @@ import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRul
 const { ZeroOrMorePartsPart } = Parts;
 
 export default class ReplacementDefinition extends Definition {
+  static fromRuleAndDefinition(rule, definition) {
+    const ruleName = rule.getName()
+
+    let parts = definition.getParts();
+
+    const firstPart = first(parts),
+          part = firstPart, ///
+          directlyReducedPart = directlyReducedPartFromPart(part),
+          directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
+          directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName),
+          zeroOrMoreDirectlyRepeatedRuleNamePartPart = new ZeroOrMorePartsPart(directlyRepeatedRuleNamePart);
+
+    parts = [
+      directlyReducedPart,
+      zeroOrMoreDirectlyRepeatedRuleNamePartPart
+    ];
+
+    parts = cloneParts(parts);  ///
+
+    const replacementDefinition = new ReplacementDefinition(parts);
+
+    return replacementDefinition;
+  }
+
   static fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {
     const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
           directlyLeftRecursiveDefinitionParts = directlyLeftRecursiveDefinition.getParts(),
@@ -43,25 +67,6 @@ export default class ReplacementDefinition extends Definition {
     let parts = [
       leftRecursiveRuleNamePart,
       indirectlyRepeatedRuleNamePart
-    ];
-
-    parts = cloneParts(parts);  ///
-
-    const replacementDefinition = new ReplacementDefinition(parts);
-
-    return replacementDefinition;
-  }
-
-  static fromDirectlyReducedRuleAndDirectlyRepeatedRule(directlyReducedRule, directlyRepeatedRule) {
-    const directlyReducedRuleName = directlyReducedRule.getName(),
-          directlyRepeatedRuleName = directlyRepeatedRule.getName(),
-          directlyReducedRuleNamePart = ruleNamePartFromRuleName(directlyReducedRuleName),
-          directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName),
-          zeroOrMoreDirectlyRecursiveRuleNamePartsPart = new ZeroOrMorePartsPart(directlyRepeatedRuleNamePart);
-
-    let parts = [
-      directlyReducedRuleNamePart,
-      zeroOrMoreDirectlyRecursiveRuleNamePartsPart
     ];
 
     parts = cloneParts(parts);  ///

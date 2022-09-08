@@ -1,12 +1,12 @@
 "use strict";
 
-import Operation from "../operation";
-import DirectlyRepeatedRule from "../rule/repeated/directly";
+import RuleOperation from "../../operation/rule";
+import DirectlyRepeatedRule from "../../rule/repeated/directly";
 
-import { findDirectlyLeftRecursiveDefinitions } from "../utilities/context";
-import { directlyRepeatedRuleNameFromRuleName } from "../utilities/ruleName";
+import { findDirectlyLeftRecursiveDefinitions } from "../../utilities/context";
+import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
-export default class DirectlyRepeatRuleOperation extends Operation {
+export default class DirectlyRepeatedRuleOperation extends RuleOperation {
   apply(context) {
     const { ruleMap } = context,
           rule = this.getRule(),
@@ -18,6 +18,8 @@ export default class DirectlyRepeatRuleOperation extends Operation {
 
       ruleMap[directlyRepeatedRuleName] = directlyRepeatedRule;
     }
+
+    return directlyRepeatedRule;
   }
 
   retrieve(context) {
@@ -30,18 +32,10 @@ export default class DirectlyRepeatRuleOperation extends Operation {
     return directlyRepeatedRule;
   }
 
-  compare(directlyRepeatRuleOperation) {
-    const rule = this.getRule(),
-          directlyRepeatRuleOperationRule = directlyRepeatRuleOperation.getRule(),
-          comparesTo = (rule === directlyRepeatRuleOperationRule);
-
-    return comparesTo;
-  }
-
   static execute(directlyLeftRecursiveDefinition, context) {
     const rule = directlyLeftRecursiveDefinition.getRule(),
-          directlyRepeatRuleOperation = new DirectlyRepeatRuleOperation(rule),
-          directlyRepeatedRule = directlyRepeatRuleOperation.execute(context);
+          directlyRepeatedRuleOperation = new DirectlyRepeatedRuleOperation(rule),
+          directlyRepeatedRule = directlyRepeatedRuleOperation.execute(context);
 
     return directlyRepeatedRule;
   }
