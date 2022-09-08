@@ -5,7 +5,7 @@ import ReplacementDefinition from "../../replacementDefinition";
 
 import IndirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/indirectly";
 
-import { findDirectlyLeftRecursiveDefinitions, findIndirectlyLeftRecursiveDefinitions } from "../../utilities/context";
+import { findIndirectlyLeftRecursiveDefinitions } from "../../utilities/context";
 
 export default class DirectlyLeftRecursiveDefinitionOperation extends DefinitionOperation {
   constructor(rule, definition, directlyReducedRule, directlyRepeatedRule) {

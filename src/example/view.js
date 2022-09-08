@@ -142,19 +142,19 @@ class View extends Element {
   }
 
   static initialBNF = `
-    T  ::= A "g"
-    
-         | "f"
-    
-         ;
+  S ::= A... <END_OF_LINE> ;
 
-    A ::= E "h" ;
-    
-    E ::= A "c"
-    
-        | T "d"
-    
-        ;
+  A ::= B "g"
+  
+      | "e"
+  
+      ;
+  
+  B ::= A "h"
+  
+      | "d"
+
+      ;
   `;
 
   static _initialBNF = `
