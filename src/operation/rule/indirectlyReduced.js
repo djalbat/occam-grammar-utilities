@@ -7,9 +7,9 @@ import { indirectlyReducedRuleNameFromRuleName } from "../../utilities/ruleName"
 import { findIndirectlyLeftRecursiveDefinitions } from "../../utilities/context";
 
 export default class IndirectlyReducedRuleOperation extends RuleOperation {
-  apply(context) {
+  apply(indirectlyLeftRecursiveDefinition, context) {
     const { ruleMap } = context,
-          rule = this.getRule(),
+          rule = indirectlyLeftRecursiveDefinition.getRule(),
           indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, context),
           indirectlyReducedRule = IndirectlyReducedRule.fromRuleAndIndirectlyLeftRecursiveDefinitions(rule, indirectlyLeftRecursiveDefinitions);
 
@@ -22,9 +22,9 @@ export default class IndirectlyReducedRuleOperation extends RuleOperation {
     return indirectlyReducedRule;
   }
 
-  retrieve(context) {
+  retrieve(indirectlyLeftRecursiveDefinition, context) {
     const { ruleMap } = context,
-          rule = this.getRule(),
+          rule = indirectlyLeftRecursiveDefinition.getRule(),
           ruleName = rule.getName(),
           indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName),
           indirectlyReducedRule = ruleMap[indirectlyReducedRuleName] || null;
@@ -35,7 +35,7 @@ export default class IndirectlyReducedRuleOperation extends RuleOperation {
   static execute(indirectlyLeftRecursiveDefinition, context) {
     const rule = indirectlyLeftRecursiveDefinition.getRule(),
           indirectlyReducedRuleOperation = new IndirectlyReducedRuleOperation(rule),
-          indirectlyReducedRule = indirectlyReducedRuleOperation.execute(context);
+          indirectlyReducedRule = indirectlyReducedRuleOperation.execute(indirectlyLeftRecursiveDefinition, context);
 
     return indirectlyReducedRule;
   }

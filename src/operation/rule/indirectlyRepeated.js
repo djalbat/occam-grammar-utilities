@@ -17,17 +17,18 @@ export default class IndirectlyRepeatedRuleOperation extends RuleOperation {
     return this.leftRecursiveRuleName;
   }
 
-  apply(context) {
+  apply(indirectlyLeftRecursiveDefinition, context) {
     const { ruleMap } = context,
-          rule = this.getRule(),
+          rule = indirectlyLeftRecursiveDefinition.getRule(),
+          leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
           indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, (indirectlyLeftRecursiveDefinition) => {
             const indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName();
 
-            if (indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName === this.leftRecursiveRuleName) {
+            if (indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName === leftRecursiveRuleName) {
               return true;
             }
           }, context),
-          indirectlyRepeatedRule = IndirectlyRepeatedRule.fromRuleLeftRecursiveRuleNameAndIndirectlyLeftRecursiveDefinitions(rule, this.leftRecursiveRuleName, indirectlyLeftRecursiveDefinitions);
+          indirectlyRepeatedRule = IndirectlyRepeatedRule.fromRuleLeftRecursiveRuleNameAndIndirectlyLeftRecursiveDefinitions(rule, leftRecursiveRuleName, indirectlyLeftRecursiveDefinitions);
 
     if (indirectlyRepeatedRule !== null) {
       const indirectlyRepeatedRuleName = indirectlyRepeatedRule.getName();
@@ -38,11 +39,12 @@ export default class IndirectlyRepeatedRuleOperation extends RuleOperation {
     return indirectlyRepeatedRule;
   }
 
-  retrieve(context) {
+  retrieve(indirectlyLeftRecursiveDefinition, context) {
     const { ruleMap } = context,
-          rule = this.getRule(),
+          rule = indirectlyLeftRecursiveDefinition.getRule(),
           ruleName = rule.getName(),
-          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, this.leftRecursiveRuleName),
+          leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
+          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
           indirectlyRepeatedRule = ruleMap[indirectlyRepeatedRuleName] || null;
 
     return indirectlyRepeatedRule;
@@ -60,8 +62,8 @@ export default class IndirectlyRepeatedRuleOperation extends RuleOperation {
   static execute(indirectlyLeftRecursiveDefinition, context) {
     const rule = indirectlyLeftRecursiveDefinition.getRule(),
           leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
-          indirectlyRepeatedRuleOperation = new IndirectlyRepeatedRuleOperation(rule, leftRecursiveRuleName, ),
-          indirectlyRepeatedRule = indirectlyRepeatedRuleOperation.execute(context);
+          indirectlyRepeatedRuleOperation = new IndirectlyRepeatedRuleOperation(rule, leftRecursiveRuleName),
+          indirectlyRepeatedRule = indirectlyRepeatedRuleOperation.execute(indirectlyLeftRecursiveDefinition, context);
 
     return indirectlyRepeatedRule;
   }

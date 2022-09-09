@@ -7,9 +7,9 @@ import { findDirectlyLeftRecursiveDefinitions } from "../../utilities/context";
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyRepeatedRuleOperation extends RuleOperation {
-  apply(context) {
+  apply(directlyLeftRecursiveDefinition, context) {
     const { ruleMap } = context,
-          rule = this.getRule(),
+          rule = directlyLeftRecursiveDefinition.getRule(),
           directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, context),
           directlyRepeatedRule = DirectlyRepeatedRule.fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions);
 
@@ -22,9 +22,9 @@ export default class DirectlyRepeatedRuleOperation extends RuleOperation {
     return directlyRepeatedRule;
   }
 
-  retrieve(context) {
+  retrieve(directlyLeftRecursiveDefinition, context) {
     const { ruleMap } = context,
-          rule = this.getRule(),
+          rule = directlyLeftRecursiveDefinition.getRule(),
           ruleName = rule.getName(),
           directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
           directlyRepeatedRule = ruleMap[directlyRepeatedRuleName] || null;
@@ -35,7 +35,7 @@ export default class DirectlyRepeatedRuleOperation extends RuleOperation {
   static execute(directlyLeftRecursiveDefinition, context) {
     const rule = directlyLeftRecursiveDefinition.getRule(),
           directlyRepeatedRuleOperation = new DirectlyRepeatedRuleOperation(rule),
-          directlyRepeatedRule = directlyRepeatedRuleOperation.execute(context);
+          directlyRepeatedRule = directlyRepeatedRuleOperation.execute(directlyLeftRecursiveDefinition, context);
 
     return directlyRepeatedRule;
   }

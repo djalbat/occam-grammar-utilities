@@ -15,7 +15,9 @@ export default class Operation {
     return equalTo;
   }
 
-  execute(context) {
+  execute(...remainingArguments) {
+    const context = remainingArguments.pop();
+
     let result;
 
     const { operations } = context;
@@ -27,9 +29,9 @@ export default class Operation {
 
       operations.push(operation);
 
-      result = operation.apply(context);
+      result = operation.apply(...remainingArguments, context);
     } else {
-      result = operation.retrieve(context);
+      result = operation.retrieve(...remainingArguments, context);
     }
 
     return result;

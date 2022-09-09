@@ -141,25 +141,25 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
     return indirectlyLeftRecursiveDefinition;
   }
 
-  static fromIndirectlyLeftRecursiveDefinitionAndDefinition(indirectlyLeftRecursiveDefinition, definition, directly = false) {
-    let rule,
-        leftRecursiveDefinitions = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinitions();
+  static fromDefinitionAndLeftRecursiveDefinitions(definition, leftRecursiveDefinitions) {
+    const lastLeftRecursiveDefinition = last(leftRecursiveDefinitions),
+          leftRecursiveDefinitionsFront = front(leftRecursiveDefinitions);
 
-    if (directly) {
-      rule = indirectlyLeftRecursiveDefinition.getRule();
-    } else {
-      const lastLeftRecursiveDefinition = last(leftRecursiveDefinitions),
-            leftRecursiveDefinitionsFront = front(leftRecursiveDefinitions);
+    const rule = lastLeftRecursiveDefinition.getRule();
 
-      rule = lastLeftRecursiveDefinition.getRule();
-
-      leftRecursiveDefinitions = leftRecursiveDefinitionsFront;  ///
-    }
+    leftRecursiveDefinitions = leftRecursiveDefinitionsFront;  ///
 
     const recursiveRuleNames = recursiveRuleNamesFromDefinition(definition),
-          leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition);
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
+          indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(rule, definition, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinitions);  ///
 
-    indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(rule, definition, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinitions);  ///
+    return indirectlyLeftRecursiveDefinition;
+  }
+
+  static fromRuleDefinitionAndLeftRecursiveDefinitions(rule, definition, leftRecursiveDefinitions) {
+    const recursiveRuleNames = recursiveRuleNamesFromDefinition(definition),
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
+          indirectlyLeftRecursiveDefinition = new IndirectlyLeftRecursiveDefinition(rule, definition, recursiveRuleNames, leftRecursiveRuleNames, leftRecursiveDefinitions);  ///
 
     return indirectlyLeftRecursiveDefinition;
   }

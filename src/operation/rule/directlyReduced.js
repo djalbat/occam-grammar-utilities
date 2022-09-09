@@ -7,17 +7,11 @@ import { findLeftRecursiveDefinitions } from "../../utilities/context";
 import { directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyReducedRuleOperation extends RuleOperation {
-  constructor(rule, allowIsolated) {
-    super(rule);
-
-    this.allowIsolated = allowIsolated;
-  }
-
-  apply(context) {
+  apply(directlyLeftRecursiveDefinition, allowIsolated, context) {
     const { ruleMap } = context,
-          rule = this.getRule(),
+          rule = directlyLeftRecursiveDefinition.getRule(),
           leftRecursiveDefinitions = findLeftRecursiveDefinitions(rule, context),
-          directlyReducedRule = DirectlyReducedRule.fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions, this.allowIsolated);
+          directlyReducedRule = DirectlyReducedRule.fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions, allowIsolated);
 
     if (directlyReducedRule !== null) {
       const directlyReducedRuleName = directlyReducedRule.getName();
@@ -28,9 +22,9 @@ export default class DirectlyReducedRuleOperation extends RuleOperation {
     return directlyReducedRule;
   }
 
-  retrieve(context) {
+  retrieve(directlyLeftRecursiveDefinition, allowIsolated, context) {
     const { ruleMap } = context,
-          rule = this.getRule(),
+          rule = directlyLeftRecursiveDefinition.getRule(),
           ruleName = rule.getName(),
           directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
           directlyReducedRule = ruleMap[directlyReducedRuleName] || null;
@@ -40,8 +34,8 @@ export default class DirectlyReducedRuleOperation extends RuleOperation {
 
   static execute(directlyLeftRecursiveDefinition, allowIsolated, context) {
     const rule = directlyLeftRecursiveDefinition.getRule(),
-          directlyReducedRuleOperation = new DirectlyReducedRuleOperation(rule, allowIsolated),
-          directlyReducedRule = directlyReducedRuleOperation.execute(context);
+          directlyReducedRuleOperation = new DirectlyReducedRuleOperation(rule),
+          directlyReducedRule = directlyReducedRuleOperation.execute(directlyLeftRecursiveDefinition, allowIsolated, context);
 
     return directlyReducedRule;
   }

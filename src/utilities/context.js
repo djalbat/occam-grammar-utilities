@@ -49,7 +49,9 @@ export function findDirectlyLeftRecursiveDefinition(rule, context) {
 
   const { leftRecursiveDefinitions } = context,
         directlyLeftRecursiveDefinition = leftRecursiveDefinitions.find((leftRecursiveDefinition) => {
-          if (leftRecursiveDefinition instanceof DirectlyLeftRecursiveDefinition) {
+          const leftRecursiveDefinitionDirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof DirectlyLeftRecursiveDefinition);
+
+          if (leftRecursiveDefinitionDirectlyLeftRecursiveDefinition) {
             if (rule === null) {
               return true;
             }
@@ -69,7 +71,9 @@ export function findDirectlyLeftRecursiveDefinition(rule, context) {
 export function findDirectlyLeftRecursiveDefinitions(rule, context) {
   const { leftRecursiveDefinitions } = context,
       directlyLeftRecursiveDefinitions = leftRecursiveDefinitions.filter((leftRecursiveDefinition) => {
-        if (leftRecursiveDefinition instanceof DirectlyLeftRecursiveDefinition) {
+        const leftRecursiveDefinitionDirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof DirectlyLeftRecursiveDefinition);
+
+        if (leftRecursiveDefinitionDirectlyLeftRecursiveDefinition) {
           if (rule === null) {
             return true;
           }
@@ -94,7 +98,9 @@ export function findIndirectlyLeftRecursiveDefinitions(rule, callback, context) 
 
   const { leftRecursiveDefinitions } = context,
         indirectlyLeftRecursiveDefinitions = leftRecursiveDefinitions.filter((leftRecursiveDefinition) => {
-          if (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition) {
+          const leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
+
+          if (leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition) {
             if (rule === null) {
               return true;
             }
@@ -121,7 +127,9 @@ export function retrieveGreatestIndirectlyLeftRecursiveDefinition(context) {
   const { leftRecursiveDefinitions } = context;
 
   leftRecursiveDefinitions.forEach((leftRecursiveDefinition) => {
-    if (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition) {
+    const leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
+
+    if (leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition) {
       const indirectlyLeftRecursiveDefinition = leftRecursiveDefinition;  ///
 
       if (greatestIndirectlyLeftRecursiveDefinition === null) {

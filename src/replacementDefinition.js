@@ -10,30 +10,6 @@ import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRul
 const { ZeroOrMorePartsPart } = Parts;
 
 export default class ReplacementDefinition extends Definition {
-  static fromRuleAndDefinition(rule, definition) {
-    const ruleName = rule.getName()
-
-    let parts = definition.getParts();
-
-    const firstPart = first(parts),
-          part = firstPart, ///
-          directlyReducedPart = directlyReducedPartFromPart(part),
-          directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
-          directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName),
-          zeroOrMoreDirectlyRepeatedRuleNamePartPart = new ZeroOrMorePartsPart(directlyRepeatedRuleNamePart);
-
-    parts = [
-      directlyReducedPart,
-      zeroOrMoreDirectlyRepeatedRuleNamePartPart
-    ];
-
-    parts = cloneParts(parts);  ///
-
-    const replacementDefinition = new ReplacementDefinition(parts);
-
-    return replacementDefinition;
-  }
-
   static fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {
     const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
           directlyLeftRecursiveDefinitionParts = directlyLeftRecursiveDefinition.getParts(),

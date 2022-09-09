@@ -60,11 +60,23 @@ function rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyL
 
 function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, context) {
   const indirectlyReducedRule = IndirectlyReducedRuleOperation.execute(indirectlyLeftRecursiveDefinition, context),
-        indirectlyRepeatedRule = IndirectlyRepeatedRuleOperation.execute(indirectlyLeftRecursiveDefinition, context),
-        leftRecursiveDefinition = LeftRecursiveDefinitionOperation.execute(indirectlyLeftRecursiveDefinition, indirectlyRepeatedRule, indirectlyReducedRule, context),
-        indirectlyLeftRecursiveDefinitions = IndirectlyLeftRecursiveDefinitionOperation.execute(indirectlyLeftRecursiveDefinition, context),
-        removedLeftRecursiveDefinitions = indirectlyLeftRecursiveDefinitions, ///
-        addedLeftRecursiveDefinition = leftRecursiveDefinition; ///
+        indirectlyRepeatedRule = IndirectlyRepeatedRuleOperation.execute(indirectlyLeftRecursiveDefinition, context);
+
+  const rule = indirectlyLeftRecursiveDefinition.getRule(),
+        leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
+        indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, (indirectlyLeftRecursiveDefinition) => {
+          const indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName();
+
+          if (indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName === leftRecursiveRuleName) {
+            return true;
+          }
+        }, context);
+
+  IndirectlyLeftRecursiveDefinitionOperation.execute(indirectlyLeftRecursiveDefinition, context);
+
+  const leftRecursiveDefinition = LeftRecursiveDefinitionOperation.execute(indirectlyLeftRecursiveDefinition, indirectlyRepeatedRule, indirectlyReducedRule, context),
+        addedLeftRecursiveDefinition = leftRecursiveDefinition, ///
+        removedLeftRecursiveDefinitions = indirectlyLeftRecursiveDefinitions; ///
 
   removeLeftRecursiveDefinitions(removedLeftRecursiveDefinitions, context);
 
