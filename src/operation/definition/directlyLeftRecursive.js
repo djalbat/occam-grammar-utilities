@@ -8,16 +8,6 @@ import IndirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/in
 import { findIndirectlyLeftRecursiveDefinitions } from "../../utilities/context";
 
 export default class DirectlyLeftRecursiveDefinitionOperation extends DefinitionOperation {
-  constructor(definition, leftRecursiveRuleName) {
-    super(definition);
-
-    this.leftRecursiveRuleName = leftRecursiveRuleName;
-  }
-
-  getLeftRecursiveRuleName() {
-    return this.leftRecursiveRuleName;
-  }
-
   apply(directlyLeftRecursiveDefinition, directlyRepeatedRule, directlyReducedRule, context) {
     const rule = directlyLeftRecursiveDefinition.getRule();
 
@@ -52,8 +42,9 @@ export default class DirectlyLeftRecursiveDefinitionOperation extends Definition
   }
 
   static execute(directlyLeftRecursiveDefinition, directlyRepeatedRule, directlyReducedRule, context) {
-    const definition = directlyLeftRecursiveDefinition.getDefinition(),
-          directlyLeftRecursiveDefinitionOperation = new DirectlyLeftRecursiveDefinitionOperation(definition),
+    const rule = directlyLeftRecursiveDefinition.getRule(),
+          definition = directlyLeftRecursiveDefinition.getDefinition(),
+          directlyLeftRecursiveDefinitionOperation = new DirectlyLeftRecursiveDefinitionOperation(rule, definition),
           indirectlyLeftRecursiveDefinitions = directlyLeftRecursiveDefinitionOperation.execute(directlyLeftRecursiveDefinition, directlyRepeatedRule, directlyReducedRule, context);
 
     return indirectlyLeftRecursiveDefinitions;

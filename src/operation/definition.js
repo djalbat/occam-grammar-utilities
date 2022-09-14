@@ -3,10 +3,15 @@
 import Operation from "../operation";
 
 export default class DefinitionOperation extends Operation {
-  constructor(definition) {
+  constructor(rule, definition) {
     super();
 
+    this.rule = rule;
     this.definition = definition;
+  }
+
+  getRule() {
+    return this.rule;
   }
 
   getDefinition() {

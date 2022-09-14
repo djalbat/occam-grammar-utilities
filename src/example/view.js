@@ -49,30 +49,30 @@ class View extends Element {
 
     this.setAdjustedBNF(adjustedBNF);
 
-    // try {
-    //   const exampleLexer = exampleLexerFromLexicalPattern(lexicalPattern),
-    //         exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName),
-    //         tokens = exampleLexer.tokenise(content),
-    //         node = exampleParser.parse(tokens);
-    //
-    //   let parseTree = null;
-    //
-    //   if (node !== null) {
-    //     const rewriteNodesCheckboxChecked = this.isRewriteNodesCheckboxChecked();
-    //
-    //     if (rewriteNodesCheckboxChecked) {
-    //       rewriteNodes(node);
-    //     }
-    //
-    //     const abridged = true;
-    //
-    //     parseTree = node.asParseTree(tokens, abridged);
-    //   }
-    //
-    //   this.setParseTree(parseTree);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      const exampleLexer = exampleLexerFromLexicalPattern(lexicalPattern),
+            exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName),
+            tokens = exampleLexer.tokenise(content),
+            node = exampleParser.parse(tokens);
+
+      let parseTree = null;
+
+      if (node !== null) {
+        const rewriteNodesCheckboxChecked = this.isRewriteNodesCheckboxChecked();
+
+        if (rewriteNodesCheckboxChecked) {
+          rewriteNodes(node);
+        }
+
+        const abridged = true;
+
+        parseTree = node.asParseTree(tokens, abridged);
+      }
+
+      this.setParseTree(parseTree);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   childElements() {
@@ -142,42 +142,24 @@ class View extends Element {
   }
 
   static initialBNF = `
-  S ::= A... <END_OF_LINE> ;
-
-  A ::= B "g"
+  T  ::= A "g"
   
-      | "e"
+       | "f"
   
-      ;
-  
-  B ::= A "h"
-  
-      | "d"
-
-      ;
-  `;
-
-  static _initialBNF = `
-  A  ::=  B "h" 
-    
-       |  "g" 
-
        ;
 
-  B  ::=  B "e" "f"
+  A ::= E "h" ;
   
-       |  A "d" 
+  E ::= A "c"
   
-       |  "c" 
-
-       ;
-       
+      | T "d"
+  
+      ;
 `;
 
-  static initialContent = `n+n
-`;
+  static initialContent = `fdhchg`;
 
-  static initialStartRuleName = "A";
+  static initialStartRuleName = "";
 
   static initialLexicalPattern = ".";
 

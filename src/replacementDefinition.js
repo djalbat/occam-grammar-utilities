@@ -10,6 +10,27 @@ import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRul
 const { ZeroOrMorePartsPart } = Parts;
 
 export default class ReplacementDefinition extends Definition {
+  isPresent(rule) {
+    const string = this.asString(),
+          definitions = rule.getDefinitions(),
+          replacementDefinitions = definitions.filter((definition) => {
+            const definitionReplacementDefinition = (definition instanceof ReplacementDefinition);
+
+            if (definitionReplacementDefinition) {
+              return true;
+            }
+          }),
+          present = replacementDefinitions.some((replacementDefinition) => {
+            const replacementDefinitionString = replacementDefinition.asString();
+
+            if (replacementDefinitionString === string) {
+              return true;
+            }
+          });
+
+    return present;
+  }
+
   static fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {
     const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
           directlyLeftRecursiveDefinitionParts = directlyLeftRecursiveDefinition.getParts(),
@@ -52,6 +73,25 @@ export default class ReplacementDefinition extends Definition {
     return replacementDefinition;
   }
 
+  static fromLeftRecursiveDefinitionAndIndirectlyReducedRule(leftRecursiveDefinition, indirectlyReducedRule) {
+    const indirectlyReducedRuleName = indirectlyReducedRule.getName(),
+          leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
+          leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
+          reducedRuleName = indirectlyReducedRuleName,  ///
+          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
+
+    let parts = [
+      reducedRuleNamePart,
+      ...leftRecursiveDefinitionPartsTail
+    ];
+
+    parts = cloneParts(parts);  ///
+
+    const replacementDefinition = new ReplacementDefinition(parts);
+
+    return replacementDefinition;
+  }
+
   static fromIndirectlyLeftRecursiveDefinitionAndDirectlyRepeatedRule(indirectlyLeftRecursiveDefinition, directlyRepeatedRule) {
     let parts;
 
@@ -65,26 +105,6 @@ export default class ReplacementDefinition extends Definition {
     parts = [ ///
       ...parts,
       zeroOrMoreDirectlyRepeatedRuleNamePartsPart
-    ];
-
-    parts = cloneParts(parts);  ///
-
-    const replacementDefinition = new ReplacementDefinition(parts);
-
-    return replacementDefinition;
-  }
-
-  static fromIndirectlyLeftRecursiveDefinitionAndIndirectlyReducedRule(indirectlyLeftRecursiveDefinition, indirectlyReducedRule) {
-    const leftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinition(),
-          indirectlyReducedRuleName = indirectlyReducedRule.getName(),
-          leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
-          leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
-          reducedRuleName = indirectlyReducedRuleName,  ///
-          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
-
-    let parts = [
-      reducedRuleNamePart,
-      ...leftRecursiveDefinitionPartsTail
     ];
 
     parts = cloneParts(parts);  ///

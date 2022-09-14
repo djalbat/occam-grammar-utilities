@@ -6,39 +6,49 @@ import ReplacementDefinition from "../../replacementDefinition";
 import { findIndirectlyLeftRecursiveDefinitions } from "../../utilities/context";
 
 export default class IndirectlyLeftRecursiveDefinitionOperation extends DefinitionOperation {
-  constructor(definition, leftRecursiveRuleName) {
-    super(definition);
+  constructor(rule, definition, leftRecursiveRuleName, leftRecursiveDefinition) {
+    super(rule, definition);
 
     this.leftRecursiveRuleName = leftRecursiveRuleName;
+    this.leftRecursiveDefinition = leftRecursiveDefinition;
   }
 
   getLeftRecursiveRuleName() {
     return this.leftRecursiveRuleName;
   }
 
+  getLeftRecursiveDefinition() {
+    return this.leftRecursiveDefinition;
+  }
+
   apply(indirectlyLeftRecursiveDefinition, context) {
     const rule = indirectlyLeftRecursiveDefinition.getRule(),
           leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
-          replacementDefinition = ReplacementDefinition.fromIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition, leftRecursiveRuleName),
+          leftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinition(),
           indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, (indirectlyLeftRecursiveDefinition) => {
-            const indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName();
+            const indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
+                  indirectlyLeftRecursiveDefinitionLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinition();
 
-            if (indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName === leftRecursiveRuleName) {
+            if ((leftRecursiveDefinition === indirectlyLeftRecursiveDefinitionLeftRecursiveDefinition) && (leftRecursiveRuleName === indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName)) {
               return true;
             }
           }, context),
-          definition = replacementDefinition, ///
-          definitions = indirectlyLeftRecursiveDefinitions.map((removedLeftRecursiveDefinition) => {
-            const definition = removedLeftRecursiveDefinition.getDefinition();
+          definitions = indirectlyLeftRecursiveDefinitions.map((indirectlyLeftRecursiveDefinition) => {
+            const definition = indirectlyLeftRecursiveDefinition.getDefinition();
 
             return definition;
-          }); ///
-
-    rule.addDefinition(definition);
+          });
 
     rule.removeDefinitions(definitions);
 
-    return indirectlyLeftRecursiveDefinitions;
+    const replacementDefinition = ReplacementDefinition.fromIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition),
+          replacementDefinitionPresent = replacementDefinition.isPresent(rule);
+
+    if (!replacementDefinitionPresent) {
+      const definition = replacementDefinition; ///
+
+      rule.addDefinition(definition);
+    }
   }
 
   retrieve(indirectlyLeftRecursiveDefinition, context) {
@@ -46,20 +56,24 @@ export default class IndirectlyLeftRecursiveDefinitionOperation extends Definiti
   }
 
   compare(indirectlyLeftRecursiveDefinitionOperation) {
-    const definition = this.getDefinition(),
-          indirectlyLeftRecursiveDefinitionOperationDefinition = indirectlyLeftRecursiveDefinitionOperation.getDefinition(),
+    const rule = this.getRule(),
+          indirectlyLeftRecursiveDefinitionOperationRule = indirectlyLeftRecursiveDefinitionOperation.getRule(),
           indirectlyLeftRecursiveDefinitionOperationLeftRecursiveRuleName = indirectlyLeftRecursiveDefinitionOperation.getLeftRecursiveRuleName(),
-          comparesTo = ((definition === indirectlyLeftRecursiveDefinitionOperationDefinition) && (this.leftRecursiveRuleName === indirectlyLeftRecursiveDefinitionOperationLeftRecursiveRuleName));
+          indirectlyLeftRecursiveDefinitionOperationLeftRecursiveDefinition = indirectlyLeftRecursiveDefinitionOperation.getLeftRecursiveDefinition(),
+          comparesTo = ((rule === indirectlyLeftRecursiveDefinitionOperationRule) &&
+                        (this.leftRecursiveRuleName === indirectlyLeftRecursiveDefinitionOperationLeftRecursiveRuleName)&&
+                        (this.leftRecursiveDefinition === indirectlyLeftRecursiveDefinitionOperationLeftRecursiveDefinition));
 
     return comparesTo;
   }
 
   static execute(indirectlyLeftRecursiveDefinition, context) {
-    const definition = indirectlyLeftRecursiveDefinition.getDefinition(),
+    const rule = indirectlyLeftRecursiveDefinition.getRule(),
+          definition = indirectlyLeftRecursiveDefinition.getDefinition(),
           leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
-          indirectlyLeftRecursiveDefinitionOperation = new IndirectlyLeftRecursiveDefinitionOperation(definition, leftRecursiveRuleName),
-          indirectlyLeftRecursiveDefinitions = indirectlyLeftRecursiveDefinitionOperation.execute(indirectlyLeftRecursiveDefinition, context);
+          leftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinition(),
+          indirectlyLeftRecursiveDefinitionOperation = new IndirectlyLeftRecursiveDefinitionOperation(rule, definition, leftRecursiveRuleName, leftRecursiveDefinition);
 
-    return indirectlyLeftRecursiveDefinitions;
+    indirectlyLeftRecursiveDefinitionOperation.execute(indirectlyLeftRecursiveDefinition, context);
   }
 }

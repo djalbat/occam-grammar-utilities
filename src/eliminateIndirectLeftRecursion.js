@@ -62,20 +62,25 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, context
   const indirectlyReducedRule = IndirectlyReducedRuleOperation.execute(indirectlyLeftRecursiveDefinition, context),
         indirectlyRepeatedRule = IndirectlyRepeatedRuleOperation.execute(indirectlyLeftRecursiveDefinition, context);
 
-  const rule = indirectlyLeftRecursiveDefinition.getRule(),
-        leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
-        indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, (indirectlyLeftRecursiveDefinition) => {
-          const indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName();
+  IndirectlyLeftRecursiveDefinitionOperation.execute(indirectlyLeftRecursiveDefinition, context);
 
-          if (indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName === leftRecursiveRuleName) {
+  const rule = indirectlyLeftRecursiveDefinition.getRule();
+
+  let leftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinition();
+
+  const leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
+        indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, (indirectlyLeftRecursiveDefinition) => {
+          const indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
+                indirectlyLeftRecursiveDefinitionLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinition();
+
+          if ((leftRecursiveDefinition === indirectlyLeftRecursiveDefinitionLeftRecursiveDefinition) && (leftRecursiveRuleName === indirectlyLeftRecursiveDefinitionLeftRecursiveRuleName)) {
             return true;
           }
         }, context);
 
-  IndirectlyLeftRecursiveDefinitionOperation.execute(indirectlyLeftRecursiveDefinition, context);
+  leftRecursiveDefinition = LeftRecursiveDefinitionOperation.execute(indirectlyLeftRecursiveDefinition, indirectlyRepeatedRule, indirectlyReducedRule, context);
 
-  const leftRecursiveDefinition = LeftRecursiveDefinitionOperation.execute(indirectlyLeftRecursiveDefinition, indirectlyRepeatedRule, indirectlyReducedRule, context),
-        addedLeftRecursiveDefinition = leftRecursiveDefinition, ///
+  const addedLeftRecursiveDefinition = leftRecursiveDefinition, ///
         removedLeftRecursiveDefinitions = indirectlyLeftRecursiveDefinitions; ///
 
   removeLeftRecursiveDefinitions(removedLeftRecursiveDefinitions, context);
