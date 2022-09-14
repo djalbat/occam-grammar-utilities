@@ -1,7 +1,7 @@
 "use strict";
 
 import DefinitionOperation from "../../operation/definition";
-import ReplacementDefinition from "../../replacementDefinition";
+import ReplacementDefinition from "../../definition/replacement";
 
 import { findIndirectlyLeftRecursiveDefinitions } from "../../utilities/context";
 
@@ -41,10 +41,9 @@ export default class IndirectlyLeftRecursiveDefinitionOperation extends Definiti
 
     rule.removeDefinitions(definitions);
 
-    const replacementDefinition = ReplacementDefinition.fromIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition),
-          replacementDefinitionPresent = replacementDefinition.isPresent(rule);
+    const replacementDefinition = ReplacementDefinition.fromIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition);
 
-    if (!replacementDefinitionPresent) {
+    if (replacementDefinition !== null) {
       const definition = replacementDefinition; ///
 
       rule.addDefinition(definition);

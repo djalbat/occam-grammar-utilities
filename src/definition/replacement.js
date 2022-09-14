@@ -2,10 +2,10 @@
 
 import { Parts, Definition } from "occam-parsers";
 
-import { cloneParts } from "./utilities/parts";
-import { first, head, tail } from "./utilities/array";
-import { ruleNamePartFromRuleName, directlyReducedPartFromPart } from "./utilities/part";
-import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "./utilities/ruleName";
+import { cloneParts } from "../utilities/parts";
+import { first, head, tail } from "../utilities/array";
+import { ruleNamePartFromRuleName, directlyReducedPartFromPart } from "../utilities/part";
+import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../utilities/ruleName";
 
 const { ZeroOrMorePartsPart } = Parts;
 
@@ -31,28 +31,6 @@ export default class ReplacementDefinition extends Definition {
     return present;
   }
 
-  static fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition) {
-    const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
-          directlyLeftRecursiveDefinitionParts = directlyLeftRecursiveDefinition.getParts(),
-          firstDirectlyLeftRecursiveDefinitionParts = first(directlyLeftRecursiveDefinitionParts),
-          part = firstDirectlyLeftRecursiveDefinitionParts, ///
-          directlyReducedPart = directlyReducedPartFromPart(part),
-          directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
-          directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName),
-          zeroOrMoreDirectlyRepeatedRuleNamePartPart = new ZeroOrMorePartsPart(directlyRepeatedRuleNamePart);
-
-    let parts = [
-      directlyReducedPart,
-      zeroOrMoreDirectlyRepeatedRuleNamePartPart
-    ];
-
-    parts = cloneParts(parts);  ///
-
-    const replacementDefinition = new ReplacementDefinition(parts);
-
-    return replacementDefinition;
-  }
-
   static fromIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition) {
     const rule = indirectlyLeftRecursiveDefinition.getRule(),
           leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
@@ -68,26 +46,62 @@ export default class ReplacementDefinition extends Definition {
 
     parts = cloneParts(parts);  ///
 
-    const replacementDefinition = new ReplacementDefinition(parts);
+    let replacementDefinition = new ReplacementDefinition(parts);
+
+    const present = replacementDefinition.isPresent(rule);
+
+    if (present) {
+      replacementDefinition = null;
+    }
 
     return replacementDefinition;
   }
 
   static fromLeftRecursiveDefinitionAndIndirectlyReducedRule(leftRecursiveDefinition, indirectlyReducedRule) {
-    const indirectlyReducedRuleName = indirectlyReducedRule.getName(),
-          leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
-          leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
-          reducedRuleName = indirectlyReducedRuleName,  ///
-          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
+    let replacementDefinition = null;
 
-    let parts = [
-      reducedRuleNamePart,
-      ...leftRecursiveDefinitionPartsTail
-    ];
+    if (indirectlyReducedRule !== null) {
+      const indirectlyReducedRuleName = indirectlyReducedRule.getName(),
+            leftRecursiveDefinitionParts = leftRecursiveDefinition.getParts(),
+            leftRecursiveDefinitionPartsTail = tail(leftRecursiveDefinitionParts),
+            reducedRuleName = indirectlyReducedRuleName,  ///
+            reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
 
-    parts = cloneParts(parts);  ///
+      let parts = [
+        reducedRuleNamePart,
+        ...leftRecursiveDefinitionPartsTail
+      ];
 
-    const replacementDefinition = new ReplacementDefinition(parts);
+      parts = cloneParts(parts);  ///
+
+      replacementDefinition = new ReplacementDefinition(parts);
+    }
+
+    return replacementDefinition;
+  }
+
+  static fromDirectlyLeftRecursiveDefinitionAndDirectlyReducedRule(directlyLeftRecursiveDefinition, directlyReducedRule) {
+    let replacementDefinition = null;
+
+    if (directlyReducedRule !== null) {
+      const ruleName = directlyLeftRecursiveDefinition.getRuleName(),
+            directlyLeftRecursiveDefinitionParts = directlyLeftRecursiveDefinition.getParts(),
+            firstDirectlyLeftRecursiveDefinitionParts = first(directlyLeftRecursiveDefinitionParts),
+            part = firstDirectlyLeftRecursiveDefinitionParts, ///
+            directlyReducedPart = directlyReducedPartFromPart(part),
+            directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
+            directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName),
+            zeroOrMoreDirectlyRepeatedRuleNamePartPart = new ZeroOrMorePartsPart(directlyRepeatedRuleNamePart);
+
+      let parts = [
+        directlyReducedPart,
+        zeroOrMoreDirectlyRepeatedRuleNamePartPart
+      ];
+
+      parts = cloneParts(parts);  ///
+
+      replacementDefinition = new ReplacementDefinition(parts);
+    }
 
     return replacementDefinition;
   }

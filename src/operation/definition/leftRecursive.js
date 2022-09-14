@@ -1,7 +1,7 @@
 "use strict";
 
 import DefinitionOperation from "../../operation/definition";
-import ReplacementDefinition from "../../replacementDefinition";
+import ReplacementDefinition from "../../definition/replacement";
 
 import DirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/directly";
 import IndirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/indirectly";
@@ -27,9 +27,10 @@ export default class LeftRecursiveDefinitionOperation extends DefinitionOperatio
 
     const rule = leftRecursiveDefinition.getRule();
 
-    if (indirectlyReducedRule !== null) {
-      const replacementDefinition = ReplacementDefinition.fromLeftRecursiveDefinitionAndIndirectlyReducedRule(leftRecursiveDefinition, indirectlyReducedRule),
-            definition = replacementDefinition; ///
+    let replacementDefinition = ReplacementDefinition.fromLeftRecursiveDefinitionAndIndirectlyReducedRule(leftRecursiveDefinition, indirectlyReducedRule);
+
+    if (replacementDefinition !== null) {
+      const definition = replacementDefinition; ///
 
       rule.addDefinition(definition);
     }
@@ -37,9 +38,11 @@ export default class LeftRecursiveDefinitionOperation extends DefinitionOperatio
     let definition = leftRecursiveDefinition.getDefinition();
 
     const definitions = rule.getDefinitions(),
-          definitionsIncludesDefinition = definitions.includes(definition),
-          replacementDefinition = ReplacementDefinition.fromIndirectlyLeftRecursiveDefinitionAndIndirectlyRepeatedRule(indirectlyLeftRecursiveDefinition, indirectlyRepeatedRule),
-          replacedDefinition = definition;  ///
+          definitionsIncludesDefinition = definitions.includes(definition);
+
+    replacementDefinition = ReplacementDefinition.fromIndirectlyLeftRecursiveDefinitionAndIndirectlyRepeatedRule(indirectlyLeftRecursiveDefinition, indirectlyRepeatedRule);
+
+    const replacedDefinition = definition;  ///
 
     definition = replacementDefinition; ///
 

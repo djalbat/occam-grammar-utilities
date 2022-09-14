@@ -1,7 +1,7 @@
 "use strict";
 
 import DefinitionOperation from "../../operation/definition";
-import ReplacementDefinition from "../../replacementDefinition";
+import ReplacementDefinition from "../../definition/replacement";
 
 import IndirectlyLeftRecursiveDefinition from "../../recursiveDefinition/left/indirectly";
 
@@ -15,9 +15,10 @@ export default class DirectlyLeftRecursiveDefinitionOperation extends Definition
 
     rule.removeAllDefinitions();
 
-    if (directlyReducedRule !== null) {
-      const replacementDefinition = ReplacementDefinition.fromDirectlyLeftRecursiveDefinition(directlyLeftRecursiveDefinition),
-            definition = replacementDefinition; ///
+    const replacementDefinition = ReplacementDefinition.fromDirectlyLeftRecursiveDefinitionAndDirectlyReducedRule(directlyLeftRecursiveDefinition, directlyReducedRule);
+
+    if (replacementDefinition !== null) {
+      const definition = replacementDefinition; ///
 
       rule.addDefinition(definition);
     }
