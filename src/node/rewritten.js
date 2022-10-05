@@ -5,6 +5,8 @@ import { NonTerminalNode } from "occam-parsers";
 import { ruleNameFromReducedRuleName, ruleNameFromRepeatedRuleName } from "../utilities/ruleName";
 
 export default class RewrittenNode extends NonTerminalNode {
+  clone() { return super.clone(RewrittenNode); }
+
   static fromReducedNode(reducedNode) {
     const reducedNodeRuleName = reducedNode.getRuleName(),
           reducedRuleName = reducedNodeRuleName,  ///
