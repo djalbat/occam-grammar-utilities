@@ -1,10 +1,8 @@
 "use strict";
 
-import withStyle from "easy-with-style";  ///
+import Input from "../input";
 
-import { Input } from "easy";
-
-class StartRuleNameInput extends Input {
+export default class StartRuleNameInput extends Input {
   getStartRuleName() {
     const value = this.getValue(),
           startRuleName = value; ///
@@ -33,12 +31,3 @@ class StartRuleNameInput extends Input {
     spellCheck: "false"
   };
 }
-
-export default withStyle(StartRuleNameInput)`
-
-  border: 1px solid darkgrey;
-  padding: 0.25rem;
-  font-size: 1.2rem;
-  font-family: monospace;
-  
-`;

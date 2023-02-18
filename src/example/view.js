@@ -16,10 +16,10 @@ import ExampleParser from "../parser/example";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
 import StartRuleNameInput from "./input/startRuleName";
-import LexicalPatternInput from "./input/lexicalPattern";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RewriteNodesCheckbox from "./checkbox/rewriteNodes";
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
+import LexicalEntriesTextarea from "./textarea/lexicalEntries";
 
 const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
@@ -37,7 +37,7 @@ class View extends Element {
     const bnf = this.getBNF(),
           content = this.getContent(),
           startRuleName = this.getStartRuleName(),
-          lexicalPattern = this.getLexicalPattern();
+          lexicalEntries = this.getLexicalEntries();
 
     let rules = rulesFromBNF(bnf);
 
@@ -50,7 +50,7 @@ class View extends Element {
     this.setAdjustedBNF(adjustedBNF);
 
     try {
-      const exampleLexer = exampleLexerFromLexicalPattern(lexicalPattern),
+      const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
             exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName),
             tokens = exampleLexer.tokenise(content),
             node = exampleParser.parse(tokens);
@@ -82,9 +82,9 @@ class View extends Element {
         <SizeableDiv>
           <RowsDiv>
             <SubHeading>
-              Lexical pattern
+              Lexical entries
             </SubHeading>
-            <LexicalPatternInput onKeyUp={this.keyUpHandler} />
+            <LexicalEntriesTextarea onKeyUp={this.keyUpHandler} />
             <SubHeading>
               BNF
             </SubHeading>
@@ -124,11 +124,11 @@ class View extends Element {
   initialise() {
     this.assignContext();
 
-    const { initialBNF, initialContent, initialStartRuleName, initialLexicalPattern } = this.constructor,
+    const { initialBNF, initialContent, initialStartRuleName, initialLexicalEntries } = this.constructor,
           bnf = initialBNF, ///
           content = initialContent, ///
           startRuleName = initialStartRuleName, ///
-          lexicalPattern = initialLexicalPattern; ///
+          lexicalEntries = initialLexicalEntries; ///
 
     this.setBNF(bnf);
 
@@ -136,32 +136,53 @@ class View extends Element {
 
     this.setStartRuleName(startRuleName);
 
-    this.setLexicalPattern(lexicalPattern);
+    this.setLexicalEntries(lexicalEntries);
 
     this.keyUpHandler();
   }
 
-  static initialBNF = `
-  T  ::= A "g"
+  static initialBNF = ` 
+      
+    document                             ::=   axiom ;
   
-       | "f"
-  
-       ;
+    axiom                                ::=   "Axiom" "(" label ")" <END_OF_LINE> consequence ;
+    
+    consequence                          ::=   unqualifiedStatement ;
+    
+    unqualifiedStatement!                ::=   statement... <END_OF_LINE> ;
+    
+    argument                             ::=   term | type ;
+    
+    label                                ::=   [name] ;
+    
+    statement!                           ::=   argument "=" argument
+    
+                                           |   statement ( inclusion | substitution )?
+                                                      
+                                           ;
+       
+  `;
 
-  A ::= E "h" ;
-  
-  E ::= A "c"
-  
-      | T "d"
-  
-      ;
-`;
-
-  static initialContent = `fdhchg`;
+  static initialContent = `Axiom (PredecessorsOfSuccessorsOfNaturalNumbers)
+  n = predecessor(successor(n))
+  `;
 
   static initialStartRuleName = "";
 
-  static initialLexicalPattern = ".";
+  static initialLexicalEntries = [
+    {
+      "special": "^(?:,|::|:|\\|-|\\|=|\\(|\\)|\\[|\\]|\\.\\.\\.)"
+    },
+    {
+      "primary-keyword": "^(?:Axiom)\\b"
+    },
+    {
+      "name": "^[A-Za-zΑ-Ωα-ω_0-9]+"
+    },
+    {
+      "unassigned": "^[^\\s]+"
+    }
+  ];
 
   static tagName = "div";
 
@@ -176,13 +197,8 @@ export default withStyle(View)`
   
 `;
 
-function exampleLexerFromLexicalPattern(lexicalPattern) {
-  const unassigned = lexicalPattern,  ///
-        entries = [
-          {
-            unassigned
-          }
-        ],
+function exampleLexerFromLexicalEntries(lexicalEntries) {
+  const entries = lexicalEntries, ///
         exampleLexer = ExampleLexer.fromEntries(entries);
 
   return exampleLexer;

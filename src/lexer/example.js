@@ -1,11 +1,11 @@
 "use strict";
 
-import { CommonLexer, EndOfLineSignificantToken } from "occam-lexers";
+import { CommonLexer, WhitespaceToken, EndOfLineSignificantToken } from "occam-lexers";
 
 export default class ExampleLexer extends CommonLexer {
   static EndOfLineToken = EndOfLineSignificantToken; ///
 
-  static WhitespaceToken = null;
+  static WhitespaceToken = WhitespaceToken;
 
   static RegularExpressionToken = null;
 
