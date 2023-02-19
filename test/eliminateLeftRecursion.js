@@ -98,6 +98,46 @@ A ::= "g"
     });
   });
 
+  describe("an effectively unary directly left recursive definition", () => {
+    const bnf = `
+  
+  S ::= S X
+  
+      | V
+                 
+      ;
+      
+  X ::= Y? ;
+    
+  Y ::= "y" ;
+
+`;
+
+    it("does throw an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  describe("an irretrievably recursive directly left recursive definition", () => {
+    const bnf = `
+  
+  S ::= S X
+  
+      | V?
+                 
+      ;
+      
+  X ::= Y? S ;
+    
+  Y ::= "y" ;
+
+`;
+
+    it("does throw an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
   describe("an isolated directly left recursive definition", () => {
     const bnf = `
   
@@ -193,6 +233,28 @@ A ::= "g"
 
     it("does not throw an exception", () => {
       assert.doesNotThrow(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  describe("an effectively unary indirectly left recursive definition a unary intermediate definition", () => {
+    const bnf = `
+  
+    A ::= B
+        
+        | "e"
+        
+        ;
+    
+    B ::= A X?
+        
+        | "c"
+        
+        ;
+
+`;
+
+    it("does throw an exception", () => {
+      assert.throws(() => adjustedBNFFromBNF(bnf));
     });
   });
 

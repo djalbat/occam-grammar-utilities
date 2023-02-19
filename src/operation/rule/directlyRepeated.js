@@ -11,7 +11,7 @@ export default class DirectlyRepeatedRuleOperation extends RuleOperation {
     const { ruleMap } = context,
           rule = directlyLeftRecursiveDefinition.getRule(),
           directlyLeftRecursiveDefinitions = findDirectlyLeftRecursiveDefinitions(rule, context),
-          directlyRepeatedRule = DirectlyRepeatedRule.fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions);
+          directlyRepeatedRule = DirectlyRepeatedRule.fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions, context);
 
     if (directlyRepeatedRule !== null) {
       const directlyRepeatedRuleName = directlyRepeatedRule.getName();

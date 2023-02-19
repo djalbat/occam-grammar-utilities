@@ -1,10 +1,10 @@
 "use strict";
 
-import { first } from "../utilities/array";
+import { tail, first } from "../utilities/array";
 import { isPartUnary, isPartComplex } from "../utilities/part";
-import { arePartsRecursive, arePartsLeftRecursive, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../utilities/parts";
+import { arePartsRecursive, arePartsLeftRecursive, arePartsEffectivelyOptional, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../utilities/parts";
 
-export function isDefinitionUnary(definition) {
+export function isDefinitionUnary(definition, context) {
   let definitionUnary = false;
 
   const parts = definition.getParts(),
@@ -16,6 +16,12 @@ export function isDefinitionUnary(definition) {
           partUnary = isPartUnary(part);
 
     definitionUnary = partUnary;  ///
+  } else {
+    const partsTail = tail(parts),
+          ruleNames = [],
+          partsTailEffectivelyOptional = arePartsEffectivelyOptional(partsTail, ruleNames, context);
+
+    definitionUnary = partsTailEffectivelyOptional;
   }
 
   return definitionUnary;

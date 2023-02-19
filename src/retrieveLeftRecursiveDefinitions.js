@@ -44,7 +44,7 @@ function retrieveLeftRecursiveDefinition(rule, definition, context, recursiveDef
   let recursiveDefinition = null;
 
   if (recursiveDefinition === null) {
-    let indirectlyLeftRecursiveDefinition = IndirectlyLeftRecursiveDefinition.fromRuleDefinitionAndRecursiveDefinitions(rule, definition, recursiveDefinitions);
+    let indirectlyLeftRecursiveDefinition = IndirectlyLeftRecursiveDefinition.fromRuleDefinitionAndRecursiveDefinitions(rule, definition, recursiveDefinitions, context);
 
     if (indirectlyLeftRecursiveDefinition !== null) {
       const { leftRecursiveDefinitions } = context;

@@ -143,44 +143,30 @@ class View extends Element {
 
   static initialBNF = ` 
       
-    document                             ::=   axiom ;
+  U ::= S... <END_OF_LINE> ;
+
+  S ::= V
   
-    axiom                                ::=   "Axiom" "(" label ")" <END_OF_LINE> consequence ;
-    
-    consequence                          ::=   unqualifiedStatement ;
-    
-    unqualifiedStatement!                ::=   statement... <END_OF_LINE> ;
-    
-    argument                             ::=   term | type ;
-    
-    label                                ::=   [name] ;
-    
-    statement!                           ::=   argument "=" argument
-    
-                                           |   statement ( inclusion | substitution )?
-                                                      
-                                           ;
+      | T
+  
+      | S X?
+                 
+      ;
+  
+  T ::= S A ;
+  
+  V ::= [unassigned] ;
        
   `;
 
-  static initialContent = `Axiom (PredecessorsOfSuccessorsOfNaturalNumbers)
-  n = predecessor(successor(n))
+  static initialContent = `n = p(s(n))
   `;
 
   static initialStartRuleName = "";
 
   static initialLexicalEntries = [
     {
-      "special": "^(?:,|::|:|\\|-|\\|=|\\(|\\)|\\[|\\]|\\.\\.\\.)"
-    },
-    {
-      "primary-keyword": "^(?:Axiom)\\b"
-    },
-    {
-      "name": "^[A-Za-zΑ-Ωα-ω_0-9]+"
-    },
-    {
-      "unassigned": "^[^\\s]+"
+      "unassigned": "."
     }
   ];
 

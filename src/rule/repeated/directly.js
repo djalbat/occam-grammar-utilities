@@ -11,7 +11,7 @@ import { isDefinitionUnary } from "../../utilities/definition";
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyRepeatedRule extends Rule {
-  static fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions) {
+  static fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions, context) {
     const ruleName = rule.getName();
 
     let definitions = directlyLeftRecursiveDefinitions.reduce((definitions, directlyLeftRecursiveDefinition) => {
@@ -38,7 +38,7 @@ export default class DirectlyRepeatedRule extends Rule {
             partsTail = tail(parts);
 
       const matches = matchParts(firstPart, previousFirstPart),
-            definitionUnary = isDefinitionUnary(definition);
+            definitionUnary = isDefinitionUnary(definition, context);
 
       if (!matches) {
         const definitionString = definition.asString();

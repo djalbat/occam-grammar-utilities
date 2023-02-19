@@ -73,7 +73,7 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
     return equivalentTo;
   }
 
-  static fromRuleDefinitionAndRecursiveDefinitions(rule, definition, recursiveDefinitions) {
+  static fromRuleDefinitionAndRecursiveDefinitions(rule, definition, recursiveDefinitions, context) {
     let indirectlyLeftRecursiveDefinition = null;
 
     const ruleName = rule.getName(),
@@ -93,15 +93,15 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
         const leftRecursiveDefinitions = findLeftRecursiveDefinitions(recursiveDefinitions);
 
         if (leftRecursiveDefinitions !== null) {
-          const definitionUnary = isDefinitionUnary(definition),
+          const definitionUnary = isDefinitionUnary(definition, context),
                 definitionComplex = isDefinitionComplex(definition);
 
           if (definitionUnary) {
             const leftRecursiveDefinitionsUnary = leftRecursiveDefinitions.every((leftRecursiveDefinition) => {
               const definition = leftRecursiveDefinition.getDefinition(),
-                    definitionUnary1 = isDefinitionUnary(definition);
+                    definitionUnary = isDefinitionUnary(definition, context);
 
-              if (definitionUnary1) {
+              if (definitionUnary) {
                 return true;
               }
             });

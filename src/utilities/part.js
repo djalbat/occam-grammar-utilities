@@ -63,11 +63,26 @@ export function isPartUnary(part) {
         break;
       }
 
-      case ChoiceOfPartsPartType:
-      case SequenceOfPartsPartType:
+      case SequenceOfPartsPartType: {
         partUnary = false;
 
         break;
+      }
+
+      case ChoiceOfPartsPartType: {
+        const choiceOfPartsPart = nonTerminalPart,  ///
+              parts = choiceOfPartsPart.getParts();
+
+        partUnary = parts.every((part) => {
+          const partUnary = isPartUnary(part);
+
+          if (partUnary) {
+            return true;
+          }
+        });
+
+        break;
+      }
     }
   }
 
@@ -84,10 +99,11 @@ export function isPartComplex(part) {
           type = nonTerminalPart.getType();
 
     switch (type) {
-      case RuleNamePartType:
+      case RuleNamePartType: {
         partComplex = false;
 
         break;
+      }
 
       case OptionalPartPartType: {
         const optionalPartPart = nonTerminalPart, ///
@@ -116,11 +132,12 @@ export function isPartComplex(part) {
         break;
       }
 
-      case ChoiceOfPartsPartType:
       case SequenceOfPartsPartType:
+      case ChoiceOfPartsPartType: {
         partComplex = true;
 
         break;
+      }
     }
   }
 
@@ -182,18 +199,18 @@ export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
         break;
       }
 
-      case ChoiceOfPartsPartType: {
-        const choiceOfPartsPart = nonTerminalPart, ///
-              parts = choiceOfPartsPart.getParts();
+      case SequenceOfPartsPartType: {
+        const sequenceOfPartsPart = nonTerminalPart,  ///
+              parts = sequenceOfPartsPart.getParts();
 
         parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
 
         break;
       }
 
-      case SequenceOfPartsPartType: {
-        const sequenceOfPartsPart = nonTerminalPart,  ///
-              parts = sequenceOfPartsPart.getParts();
+      case ChoiceOfPartsPartType: {
+        const choiceOfPartsPart = nonTerminalPart, ///
+              parts = choiceOfPartsPart.getParts();
 
         parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
 
@@ -314,15 +331,6 @@ export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
         break;
       }
 
-      case ChoiceOfPartsPartType: {
-        const choiceOfPartsPart = nonTerminalPart, ///
-              parts = choiceOfPartsPart.getParts();
-
-        parts.forEach((part) => leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames));
-
-        break;
-      }
-
       case SequenceOfPartsPartType: {
         const sequenceOfPartsPart = nonTerminalPart,  ///
               parts = sequenceOfPartsPart.getParts(),
@@ -330,6 +338,15 @@ export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
               part = firstPart; ///
 
         leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
+
+        break;
+      }
+
+      case ChoiceOfPartsPartType: {
+        const choiceOfPartsPart = nonTerminalPart, ///
+              parts = choiceOfPartsPart.getParts();
+
+        parts.forEach((part) => leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames));
 
         break;
       }
