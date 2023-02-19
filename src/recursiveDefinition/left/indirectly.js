@@ -109,7 +109,7 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
             if (leftRecursiveDefinitionsUnary) {
               const definitionString = definition.asString();
 
-              throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule and all of its intermediate definitions are unary and therefore it cannot be rewritten.`);
+              throw new Error(`The '${definitionString}' indirectly left recursive definition of the '${ruleName}' rule and all of its intermediate definitions are effectively unary and therefore it cannot be rewritten.`);
             }
           }
 

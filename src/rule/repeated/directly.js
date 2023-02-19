@@ -49,7 +49,7 @@ export default class DirectlyRepeatedRule extends Rule {
       if (definitionUnary) {
         const definitionString = definition.asString();
 
-        throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is unary and therefore cannot be rewritten.`);
+        throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is effectively unary and therefore cannot be rewritten.`);
       }
 
       parts = partsTail;  ///
