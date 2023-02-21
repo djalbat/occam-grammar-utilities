@@ -382,13 +382,13 @@ A ::= "g"
     });
   });
 
-  describe("a directly left recursive definition", () => {
+  describe("a directly left recursive definition and sibling non-left recursive definition each with one part", () => {
     const bnf = `
  
     A ::= A "f"
     
         | "g"
-
+    
         ;
     
 `;
@@ -425,6 +425,233 @@ A ::= "g"
         |                                  
   g[unassigned]                            
 
+      `));
+    });
+  });
+
+  describe("a directly left recursive definition with two parts and a sibling non-left recursive definition with one part", () => {
+    const bnf = `
+ 
+    A ::= A "f" "g"
+    
+        | "h"
+    
+        ;
+    
+`;
+
+    it("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+        
+    A  ::= A_ A~* ;
+    
+    A_ ::= "h" ;
+    
+    A~ ::= "f" "g" ;
+         
+     `));
+    });
+
+    it("results in the requisite parse tree", () => {
+      const content = "hfg",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                      A                    
+                      |                    
+        -----------------------------      
+        |             |             |      
+        A       f[unassigned] g[unassigned]
+        |                                  
+  h[unassigned]                            
+
+      `));
+    });
+  });
+
+  describe("a directly left recursive definition with two parts and two sibling non-left recursive definitions", () => {
+    const bnf = `
+ 
+    A ::= A "f" "g"
+    
+        | "h"
+    
+        | "k"
+
+        ; 
+
+`;
+
+    it("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+        
+    A  ::= A_ A~* ;
+    
+    A_ ::= "h"
+    
+         | "k"
+    
+         ;
+    
+    A~ ::= "f" "g" ;    
+
+     `));
+    });
+
+    it("results in the requisite parse tree", () => {
+      const content = "kfg",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                      A                    
+                      |                    
+        -----------------------------      
+        |             |             |      
+        A       f[unassigned] g[unassigned]
+        |                                  
+  k[unassigned]                            
+
+      `));
+    });
+  });
+
+  describe("two sibling directly left recursive definitions and two sibling non-left recursive definitions", () => {
+    const bnf = `
+ 
+    A ::= A "f" "g"
+    
+        | A "h"
+    
+        | "k"
+    
+        | "j"
+
+        ; 
+
+`;
+
+    it("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+        
+    A  ::= A_ A~* ;
+    
+    A_ ::= "k"
+    
+         | "j"
+    
+         ;
+    
+    A~ ::= "f" "g"
+    
+         | "h"
+    
+         ;
+                  
+     `));
+    });
+
+    it("results in the requisite parse tree", () => {
+      const content = "jfgh",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                                    A                    
+                                    |                    
+                      -----------------------------      
+                      |                           |      
+                      A                     h[unassigned]
+                      |                                  
+        -----------------------------                    
+        |             |             |                    
+        A       f[unassigned] g[unassigned]              
+        |                                                
+  j[unassigned]                                          
+  
+      `));
+    });
+  });
+
+  describe("an indirectly left recursive definition", () => {
+    const bnf = `
+  
+    S ::= A... <END_OF_LINE> ;
+
+    A ::= B "g"
+    
+        | "e"
+    
+        ;
+    
+    B ::= A "h"
+    
+        | "d"
+
+        ;
+
+`;
+
+    it("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+          
+    S    ::= A... <END_OF_LINE> ;
+
+    A    ::= A_ A~* ;
+    
+    B    ::= "d"
+    
+           | A B~A~
+    
+           ;
+    
+    B__  ::= "d" ;
+    
+    B~A~ ::= "h" ;
+    
+    A_   ::= "e"
+    
+           | B__ "g"
+    
+           ;
+    
+    A~   ::= B~A~ "g" ;
+    
+      `));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = `ehg
+`,
+        parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+            
+                                        S                  
+                                        |                  
+                            -------------------------      
+                            |                       |      
+                            A                 <END_OF_LINE>
+                            |                              
+                 ----------------------                    
+                 |                    |                    
+                 B              g[unassigned]              
+                 |                                         
+          ---------------                                  
+          |             |                                  
+          A       h[unassigned]                            
+          |                                                
+    e[unassigned]                                          
+             
       `));
     });
   });
