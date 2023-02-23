@@ -5,11 +5,11 @@ import LeftRecursiveDefinition from "./recursiveDefinition/left";
 import DirectlyLeftRecursiveDefinition from "./recursiveDefinition/left/directly";
 import IndirectlyLeftRecursiveDefinition from "./recursiveDefinition/left/indirectly";
 
-export default function retrieveLeftRecursiveDefinitions(rule, context, recursiveDefinitions = []) {
+export default function retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, context) {
   const definitions = rule.getDefinitions();
 
   definitions.forEach((definition) => {
-    const recursiveDefinition = retrieveLeftRecursiveDefinition(rule, definition, context, recursiveDefinitions);
+    const recursiveDefinition = retrieveRecursiveDefinition(rule, definition, recursiveDefinitions, context);
 
     if (recursiveDefinition !== null) {
       const previousRecursiveDefinitions = [ ...recursiveDefinitions, recursiveDefinition ],
@@ -32,7 +32,7 @@ export default function retrieveLeftRecursiveDefinitions(rule, context, recursiv
           if (rule !== null) {
             const recursiveDefinitions = previousRecursiveDefinitions;  ///
 
-            retrieveLeftRecursiveDefinitions(rule, context, recursiveDefinitions);
+            retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, context);
           }
         }
       });
@@ -40,7 +40,7 @@ export default function retrieveLeftRecursiveDefinitions(rule, context, recursiv
   });
 }
 
-function retrieveLeftRecursiveDefinition(rule, definition, context, recursiveDefinitions) {
+function retrieveRecursiveDefinition(rule, definition, recursiveDefinitions, context) {
   let recursiveDefinition = null;
 
   if (recursiveDefinition === null) {

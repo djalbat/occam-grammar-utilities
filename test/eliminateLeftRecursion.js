@@ -312,7 +312,7 @@ A ::= "g"
     });
   });
 
-  describe.only("two sibling directly left recursive definitions that do not match", () => {
+  describe("two sibling directly left recursive definitions that do not match", () => {
     const bnf = `
    
     A ::= "c"
@@ -331,6 +331,69 @@ A ::= "g"
 
     it("do throw an exception", () => {
       assert.throws(() => adjustedBNFFromBNF(bnf));
+    });
+  });
+
+  describe("two sibling directly left recursive definitions", () => {
+    const bnf = `
+   
+    A ::= "c"
+
+        | A... "f" "g"
+    
+        | "d"
+
+        | A... "h"
+    
+        | "e"
+    
+        ;
+
+`;
+
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+    
+    A  ::= A_... A~* ;
+    
+    A_ ::= "c"
+    
+         | "d"
+    
+         | "e"
+    
+         ;
+    
+    A~ ::= "f" "g"
+    
+         | "h"
+    
+         ;
+     
+      `));
+    });
+
+    it("result in the requisite parse tree", () => {
+      const content = "cfgh",
+        parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                                      A                    
+                                      |                    
+                        -----------------------------      
+                        |                           |      
+                        A                     h[unassigned]
+                        |                                  
+          -----------------------------                    
+          |             |             |                    
+          A       f[unassigned] g[unassigned]              
+          |                                                
+    c[unassigned]                                          
+             
+      `));
     });
   });
 
@@ -798,69 +861,6 @@ A ::= "g"
           A                                  
           |                                  
     c[unassigned]                            
-             
-      `));
-    });
-  });
-
-  describe("two sibling directly left recursive definitions", () => {
-    const bnf = `
-   
-    A ::= "c"
-
-        | A... "f" "g"
-    
-        | "d"
-
-        | A... "h"
-    
-        | "e"
-    
-        ;
-
-`;
-
-    it("are rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF, `
-    
-    A  ::= A_... A~* ;
-    
-    A_ ::= "c"
-    
-         | "d"
-    
-         | "e"
-    
-         ;
-    
-    A~ ::= "f" "g"
-    
-         | "h"
-    
-         ;
-     
-      `));
-    });
-
-    it("result in the requisite parse tree", () => {
-      const content = "cfgh",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
-
-      assert.isTrue(compare(parseTreeString, `
-          
-                                      A                    
-                                      |                    
-                        -----------------------------      
-                        |                           |      
-                        A                     h[unassigned]
-                        |                                  
-          -----------------------------                    
-          |             |             |                    
-          A       f[unassigned] g[unassigned]              
-          |                                                
-    c[unassigned]                                          
              
       `));
     });

@@ -11,16 +11,17 @@ const { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = r
 export default function eliminateLeftRecursion(rules) {
   const startRule = startRuleFromRules(rules),
         ruleMap = ruleMapFromRules(rules),
-        rule = startRule, ///
         operations = [],
         leftRecursiveDefinitions = [],
+        rule = startRule, ///
+        recursiveDefinitions = [],
         context = {
           ruleMap,
           operations,
           leftRecursiveDefinitions
         };
 
-  retrieveLeftRecursiveDefinitions(rule, context);
+  retrieveLeftRecursiveDefinitions(rule, recursiveDefinitions, context);
 
   eliminateIndirectLeftRecursion(context);
 
