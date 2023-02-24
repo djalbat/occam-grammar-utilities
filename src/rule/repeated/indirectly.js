@@ -25,12 +25,17 @@ export default class IndirectlyRepeatedRule extends Rule {
       }
 
       return definitions;
-    }, []);
+    }, []),
+        definition,
+        parts;
 
-    const firstDefinition = first(definitions),
-          definition = firstDefinition, ///
-          parts = definition.getParts(),
-          firstPart = first(parts),
+    const firstDefinition = first(definitions);
+
+    definition = firstDefinition; ///
+
+    parts = definition.getParts();
+
+    const firstPart = first(parts),
           previousFirstPart = firstPart;  ///
 
     definitions = definitions.reduce((definitions, definition) => {
@@ -63,17 +68,15 @@ export default class IndirectlyRepeatedRule extends Rule {
       return definitions;
     }, []);
 
-    const definitionsLength = definitions.length;
+    const epsilonPart = new EpsilonPart();
 
-    if (definitionsLength === 0) {
-      const epsilonPart = new EpsilonPart(),
-            parts = [
-              epsilonPart
-            ],
-            definition = new Definition(parts);
+    parts = [
+      epsilonPart
+    ];
 
-      definitions.push(definition);
-    }
+    definition = new Definition(parts);
+
+    definitions.push(definition);
 
     const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),

@@ -8,13 +8,13 @@ import { findIndirectlyLeftRecursiveDefinitions } from "../../utilities/context"
 
 export default class IndirectlyReducedRuleOperation extends RuleOperation {
   apply(indirectlyLeftRecursiveDefinition, context) {
-    const { ruleMap } = context,
-          rule = indirectlyLeftRecursiveDefinition.getRule(),
+    const rule = indirectlyLeftRecursiveDefinition.getRule(),
           indirectlyLeftRecursiveDefinitions = findIndirectlyLeftRecursiveDefinitions(rule, context),
           indirectlyReducedRule = IndirectlyReducedRule.fromRuleAndIndirectlyLeftRecursiveDefinitions(rule, indirectlyLeftRecursiveDefinitions);
 
     if (indirectlyReducedRule !== null) {
-      const indirectlyReducedRuleName = indirectlyReducedRule.getName();
+      const { ruleMap } = context,
+            indirectlyReducedRuleName = indirectlyReducedRule.getName();
 
       ruleMap[indirectlyReducedRuleName] = indirectlyReducedRule;
     }

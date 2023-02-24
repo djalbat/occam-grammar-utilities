@@ -8,13 +8,13 @@ import { directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyReducedRuleOperation extends RuleOperation {
   apply(directlyLeftRecursiveDefinition, allowIsolated, context) {
-    const { ruleMap } = context,
-          rule = directlyLeftRecursiveDefinition.getRule(),
+    const rule = directlyLeftRecursiveDefinition.getRule(),
           leftRecursiveDefinitions = findLeftRecursiveDefinitions(rule, context),
           directlyReducedRule = DirectlyReducedRule.fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions, allowIsolated);
 
     if (directlyReducedRule !== null) {
-      const directlyReducedRuleName = directlyReducedRule.getName();
+      const { ruleMap } = context,
+            directlyReducedRuleName = directlyReducedRule.getName();
 
       ruleMap[directlyReducedRuleName] = directlyReducedRule;
     }
