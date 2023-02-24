@@ -74,7 +74,7 @@ function retrieveRecursiveDefinition(rule, definition, recursiveDefinitions, con
   }
 
   if (recursiveDefinition === null) {
-    const directlyLeftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromRuleAndDefinition(rule, definition);
+    const directlyLeftRecursiveDefinition = DirectlyLeftRecursiveDefinition.fromRuleAndDefinition(rule, definition, context);
 
     if (directlyLeftRecursiveDefinition !== null) {
       const { leftRecursiveDefinitions } = context,

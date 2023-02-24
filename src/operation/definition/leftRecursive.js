@@ -50,7 +50,7 @@ export default class LeftRecursiveDefinitionOperation extends DefinitionOperatio
           leftRecursiveDefinitions = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinitions();
 
     leftRecursiveDefinition = least ? ///
-                                DirectlyLeftRecursiveDefinition.fromRuleAndDefinition(rule, definition) :
+                                DirectlyLeftRecursiveDefinition.fromRuleAndDefinition(rule, definition, context) :
                                   IndirectlyLeftRecursiveDefinition.fromDefinitionAndLeftRecursiveDefinitions(definition, leftRecursiveDefinitions);
 
     definitionsIncludesDefinition ?

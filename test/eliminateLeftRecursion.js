@@ -10,6 +10,168 @@ const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
+  describe("a complex indirectly left recursive definition", () => {
+    const bnf = `
+  
+      A ::= "d"
+      
+          | B "g"
+      
+          | "e"
+      
+          ;
+      
+      B ::= "c" 
+      
+          | ( A | C ) "h"
+      
+          | "c"
+  
+          ;
+  
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
+  describe("a complex implicitly left recursive definition", () => {
+    const bnf = `
+  
+      A ::= "d"
+      
+          | ( B | C ) "g"
+      
+          | "e"
+      
+          ;
+      
+      B ::= "d"
+      
+          | A "h"
+      
+          | "c"
+    
+          ;
+    
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
+  describe("an effectively unary indirectly left recursive definition and an effectively unary implicitly left recursive definition", () => {
+    const bnf = `
+  
+      A ::= "d" 
+      
+          | B C
+          
+          | "e"
+          
+          ;
+      
+      B ::= "b"
+      
+          | A ( "x" | "y" )?
+          
+          | "c"
+          
+          ;
+      
+      C ::= "c"* ;
+  
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
+  describe("an effectively unary indirectly left recursive definition and a non-effectively unary implicitly left recursive definition", () => {
+    const bnf = `
+  
+      A ::= "d"
+      
+          | B "g"
+      
+          | "e"
+      
+          ;
+      
+      B ::= "b"
+      
+          | A
+      
+          | "c"
+  
+          ;
+  
+    `;
+
+    it("does not throw an exception", () => {
+      assert.doesNotThrow(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
+  describe("a complex directly left recursive definition", () => {
+    const bnf = `
+  
+      A ::= "f"
+      
+          | ( A | B ) "g"
+      
+          | "h"
+      
+          ;
+      
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
+  describe("an effectively unary directly left recursive definition", () => {
+    const bnf = `
+  
+      S ::= S X
+      
+          | V
+                     
+          ;
+          
+      X ::= Y* ;
+        
+      Y ::= "y" ;
+    
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
+
+
+
+
+
+
   describe("a directly left recursive definition and sibling non-left recursive definition each with one part", () => {
     const bnf = `
  
@@ -208,82 +370,6 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-  describe("a complex directly left recursive definition", () => {
-    const bnf = `
-  
-A ::= "f"
-
-    | ( A | B ) "g"
-
-    | "h"
-
-    ;
-
-`;
-
-    it("does throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
-    });
-  });
-
-  describe("a unary directly left recursive definition", () => {
-    const bnf = `
-  
-A ::= "g"
-
-    | A
-
-    | "f"
-
-    ;
-
-`;
-
-    it("does throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
-    });
-  });
-
-  describe("an effectively unary directly left recursive definition", () => {
-    const bnf = `
-  
-  S ::= S X
-  
-      | V
-                 
-      ;
-      
-  X ::= Y* ;
-    
-  Y ::= "y" ;
-
-`;
-
-    it("does throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
-    });
-  });
-
-  describe("an irretrievably recursive directly left recursive definition", () => {
-    const bnf = `
-  
-  S ::= S X
-  
-      | V?
-                 
-      ;
-      
-  X ::= Y? S ;
-    
-  Y ::= "y" ;
-
-`;
-
-    it("does throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
-    });
-  });
-
   describe("an isolated directly left recursive definition", () => {
     const bnf = `
   
@@ -292,7 +378,9 @@ A ::= "g"
 `;
 
     it("does throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
     });
   });
 
@@ -308,7 +396,9 @@ A ::= "g"
 `;
 
     it("do throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
     });
   });
 
@@ -330,7 +420,9 @@ A ::= "g"
 `;
 
     it("do throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
     });
   });
 
@@ -397,71 +489,121 @@ A ::= "g"
     });
   });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  describe("a complex indirectly left recursive definition", () => {
+  describe.only("an indirectly left recursive definition of depth three", () => {
     const bnf = `
-  
-    A ::= "d"
     
-        | B "g"
-    
-        | "e"
-    
-        ;
-    
-    B ::= "c" 
-    
-        | ( A | C ) "h"
-    
-        | "c"
+    A  ::=  B "h" 
+      
+         |  "g" 
+ 
+         ;
 
-        ;
+    B  ::=  C 
+    
+         |  "e"
+         
+         ;
+
+    C  ::=  A "d" 
+    
+         |  A "c" 
+    
+         |  "b"
+         
+         ;
 
 `;
 
-    it("does throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
+    it("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+
+    A    ::= A_ A~* ;
+    
+    B    ::= "e"
+    
+           | C__
+           
+           | A B~A~
+    
+           ;
+    
+    C    ::= "b"
+    
+           | A C~A~
+    
+           ;
+    
+    C__  ::= "b" ;
+    
+    C~A~ ::= "d"
+    
+           | "c"
+    
+           ;
+    
+    B__  ::= "e"
+    
+           | C__
+    
+           ;
+    
+    B~A~ ::= C~A~ ;
+    
+    A_   ::= "g"
+    
+           | B__ "h"
+    
+           ;
+    
+    A~   ::= B~A~ "h" ;
+    
+      `));
+    });
+
+    it("result in the requisite parse tree" , () => {
+      const content = "gchd",
+            startRuleName = "C",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                                        C                  
+                                        |                  
+                            -------------------------      
+                            |                       |      
+                            A                 d[unassigned]
+                            |                              
+                 ----------------------                    
+                 |                    |                    
+                 B              h[unassigned]              
+                 |                                         
+                 C                                         
+                 |                                         
+          ---------------                                  
+          |             |                                  
+          A       c[unassigned]                            
+          |                                                
+    g[unassigned]                                          
+    
+      `));
     });
   });
 
-  describe("a complex implicitly left recursive definition", () => {
-    const bnf = `
-  
-    A ::= "d"
-    
-        | ( B | C ) "g"
-    
-        | "e"
-    
-        ;
-    
-    B ::= "d"
-    
-        | A "h"
-    
-        | "c"
 
-        ;
 
-`;
 
-    it("does throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
-    });
-  });
+
+
+
+
+
+
+
+
+
+
 
   describe("an isolated indirectly left recursive definition", () => {
     const bnf = `
@@ -477,81 +619,9 @@ A ::= "g"
 `;
 
     it("does not throw an exception", () => {
-      assert.doesNotThrow(() => adjustedBNFFromBNF(bnf));
-    });
-  });
-
-  describe("a unary indirectly left recursive definition a unary intermediate definition", () => {
-    const bnf = `
-  
-    A ::= "d" 
-    
-        | B
-        
-        | "e"
-        
-        ;
-    
-    B ::= "b"
-    
-        | A
-        
-        | "c"
-        
-        ;
-
-`;
-
-    it("does throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
-    });
-  });
-
-  describe("a unary indirectly left recursive definition and a non-unary intermediate definition", () => {
-    const bnf = `
-  
-    A ::= "d"
-    
-        | B "g"
-    
-        | "e"
-    
-        ;
-    
-    B ::= "b"
-    
-        | A
-    
-        | "c"
-
-        ;
-
-`;
-
-    it("does not throw an exception", () => {
-      assert.doesNotThrow(() => adjustedBNFFromBNF(bnf));
-    });
-  });
-
-  describe("an effectively unary indirectly left recursive definition a unary intermediate definition", () => {
-    const bnf = `
-  
-    A ::= B
-        
-        | "e"
-        
-        ;
-    
-    B ::= A X?
-        
-        | "c"
-        
-        ;
-
-`;
-
-    it("does throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
+      assert.doesNotThrow(() => {
+        adjustedBNFFromBNF(bnf);
+      });
     });
   });
 
@@ -573,7 +643,9 @@ A ::= "g"
 `;
 
     it("do not throw an exception", () => {
-      assert.doesNotThrow(() => adjustedBNFFromBNF(bnf));
+      assert.doesNotThrow(() => {
+        adjustedBNFFromBNF(bnf)
+      });
     });
   });
 
@@ -593,7 +665,9 @@ A ::= "g"
 `;
 
     it("do not throw an exception", () => {
-      assert.doesNotThrow(() => adjustedBNFFromBNF(bnf));
+      assert.doesNotThrow(() => {
+        adjustedBNFFromBNF(bnf);
+      });
     });
   });
 
@@ -607,7 +681,9 @@ A ::= "g"
 `;
 
     it("do throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
     });
   });
 
@@ -625,7 +701,9 @@ A ::= "g"
 `;
 
     it("do throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
     });
   });
 
@@ -653,7 +731,9 @@ A ::= "g"
 `;
 
     it("do throw an exception", () => {
-      assert.throws(() => adjustedBNFFromBNF(bnf));
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
     });
   });
 
@@ -809,7 +889,7 @@ A ::= "g"
     });
   });
 
-  describe("a unary indirectly left recursive definition", () => {
+  describe("an effectively unary indirectly left recursive definition", () => {
     const bnf = `
   
     A ::= B "d"
@@ -1049,108 +1129,6 @@ A ::= "g"
           |                                                
     g[unassigned]                                          
   
-      `));
-    });
-  });
-
-  describe("an indirectly left recursive definition of length three", () => {
-    const bnf = `
-    
-    A  ::=  B "h" 
-      
-         |  "g" 
- 
-         ;
-
-    B  ::=  C 
-    
-         |  "e"
-         
-         ;
-
-    C  ::=  A "d" 
-    
-         |  A "c" 
-    
-         |  "b"
-         
-         ;
-
-`;
-
-    it("are rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF, `
-
-    A    ::= A_ A~* ;
-    
-    B    ::= "e"
-    
-           | C__
-           
-           | A B~A~
-    
-           ;
-    
-    C    ::= "b"
-    
-           | A C~A~
-    
-           ;
-    
-    C__  ::= "b" ;
-    
-    C~A~ ::= "d"
-    
-           | "c"
-    
-           ;
-    
-    B__  ::= "e"
-    
-           | C__
-    
-           ;
-    
-    B~A~ ::= C~A~ ;
-    
-    A_   ::= "g"
-    
-           | B__ "h"
-    
-           ;
-    
-    A~   ::= B~A~ "h" ;
-    
-      `));
-    });
-
-    it("result in the requisite parse tree" , () => {
-      const content = "gchd",
-            startRuleName = "C",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
-
-      assert.isTrue(compare(parseTreeString, `
-          
-                                        C                  
-                                        |                  
-                            -------------------------      
-                            |                       |      
-                            A                 d[unassigned]
-                            |                              
-                 ----------------------                    
-                 |                    |                    
-                 B              h[unassigned]              
-                 |                                         
-                 C                                         
-                 |                                         
-          ---------------                                  
-          |             |                                  
-          A       c[unassigned]                            
-          |                                                
-    g[unassigned]                                          
-    
       `));
     });
   });
@@ -1602,7 +1580,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition with a unary direct directly repeated rule", () => {
+  describe("an indirectly left recursive definition with an effectively unary direct directly repeated rule", () => {
     const bnf = `
     
     S ::=  E... <END_OF_LINE> ;
@@ -1908,7 +1886,7 @@ A ::= "g"
     });
   });
 
-  describe("a unary indirectly left recursive definition and a sibling directly left recursive definition", () => {
+  describe("an effectively unary indirectly left recursive definition and a sibling directly left recursive definition", () => {
     const bnf = `
  
     A  ::=  B "h" 
@@ -2050,7 +2028,7 @@ A ::= "g"
     });
   });
 
-  describe("an indirectly left recursive definition of length two and a unary intermediate left recursive definition", () => {
+  describe("an indirectly left recursive definition of depth two and an effectively unary intermediate left recursive definition", () => {
     const bnf = `
     
     S  ::=  A ;

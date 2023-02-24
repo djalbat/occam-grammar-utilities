@@ -7,11 +7,10 @@ import DirectlyRepeatedNode from "../../node/repeated/directly";
 import { matchParts } from "../../utilities/part";
 import { cloneParts } from "../../utilities/parts";
 import { first, tail } from "../../utilities/array";
-import { isDefinitionEffectivelyUnary } from "../../utilities/definition";
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyRepeatedRule extends Rule {
-  static fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions, context) {
+  static fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions) {
     const ruleName = rule.getName();
 
     let definitions = directlyLeftRecursiveDefinitions.reduce((definitions, directlyLeftRecursiveDefinition) => {
@@ -42,14 +41,6 @@ export default class DirectlyRepeatedRule extends Rule {
         const definitionString = definition.asString();
 
         throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule does not match one of its sibling directly left recursive definitions and therefore the rule cannot be rewritten.`);
-      }
-
-      const definitionEffectivelyUnary = isDefinitionEffectivelyUnary(definition, context);
-
-      if (definitionEffectivelyUnary) {
-        const definitionString = definition.asString();
-
-        throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is effectively unary and therefore cannot be rewritten.`);
       }
 
       parts = partsTail;  ///

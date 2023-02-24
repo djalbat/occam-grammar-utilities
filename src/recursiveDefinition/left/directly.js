@@ -3,7 +3,11 @@
 import LeftRecursiveDefinition from "../../recursiveDefinition/left";
 
 import { first } from "../../utilities/array";
-import { isDefinitionComplex, isDefinitionLeftRecursive, recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+import { isDefinitionComplex,
+         isDefinitionLeftRecursive,
+         isDefinitionEffectivelyUnary,
+         recursiveRuleNamesFromDefinition,
+         leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefinition {
   getLeftRecursiveRuleName() {
@@ -14,7 +18,7 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
     return leftRecursiveRuleName;
   }
 
-  static fromRuleAndDefinition(rule, definition) {
+  static fromRuleAndDefinition(rule, definition, context) {
     let directlyLeftRecursiveDefinition = null;
 
     const ruleName = rule.getName(),
@@ -32,6 +36,14 @@ export default class DirectlyLeftRecursiveDefinition extends LeftRecursiveDefini
           const definitionString = definition.asString();
 
           throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is complex and therefore cannot be rewritten.`);
+        }
+
+        const definitionEffectivelyUnary = isDefinitionEffectivelyUnary(definition, context);
+
+        if (definitionEffectivelyUnary) {
+          const definitionString = definition.asString();
+
+          throw new Error(`The '${definitionString}' directly left recursive definition of the '${ruleName}' rule is effectively unary and therefore cannot be rewritten.`);
         }
 
         const recursiveRuleNames = recursiveRuleNamesFromDefinition(definition);

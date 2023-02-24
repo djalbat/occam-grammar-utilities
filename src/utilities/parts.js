@@ -164,28 +164,29 @@ function isPartEffectivelyOptional(part, ruleNames, context) {
 }
 
 function isRuleEffectivelyOptional(rule, ruleNames, context) {
+  let ruleEffectivelyOptional = false;
+
   const ruleName = rule.getName(),
         ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
 
-  if (ruleNamesIncludesRuleName) {
-    throw new Error(`The '${ruleName}' rule has been encountered recursively whilst checking if a certain definition is effectively unary.`);
+  if (!ruleNamesIncludesRuleName) {
+    ruleNames = [ ///
+      ...ruleNames,
+      ruleName
+    ];
+
+    const definitions = rule.getDefinitions();
+
+    ruleEffectivelyOptional = definitions.every((definition) => {
+      const definitionEffectivelyOptional = isDefinitionEffectivelyOptional(definition, ruleNames, context);
+
+      if (definitionEffectivelyOptional) {
+        return true;
+      }
+    });
   }
 
-  ruleNames = [ ///
-    ...ruleNames,
-    ruleName
-  ];
-
-  const definitions = rule.getDefinitions(),
-        definitionsEffectivelyOptional = definitions.every((definition) => {
-          const definitionEffectivelyOptional = isDefinitionEffectivelyOptional(definition, ruleNames, context);
-
-          if (definitionEffectivelyOptional) {
-            return true;
-          }
-        });
-
-  return definitionsEffectivelyOptional;
+  return ruleEffectivelyOptional;
 }
 
 function isDefinitionEffectivelyOptional(definition, ruleNames, context) {
