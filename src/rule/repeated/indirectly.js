@@ -68,15 +68,17 @@ export default class IndirectlyRepeatedRule extends Rule {
       return definitions;
     }, []);
 
-    const epsilonPart = new EpsilonPart();
+    const definitionsLength = definitions.length;
 
-    parts = [
-      epsilonPart
-    ];
+    if (definitionsLength === 0) {
+      const epsilonPart = new EpsilonPart(),
+            parts = [
+              epsilonPart
+            ],
+            definition = new Definition(parts);
 
-    definition = new Definition(parts);
-
-    definitions.push(definition);
+      definitions.push(definition);
+    }
 
     const ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),

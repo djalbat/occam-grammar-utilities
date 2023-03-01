@@ -197,11 +197,7 @@ describe("src/eliminateLeftRecursion", () => {
         
         B__  ::= "d" ;
         
-        B~A~ ::= "h" 
-
-               | ε
-        
-               ;
+        B~A~ ::= "h" ;
         
         A_   ::= "e"
         
@@ -372,9 +368,7 @@ describe("src/eliminateLeftRecursion", () => {
     
     C~A~ ::= "d"
     
-           | "c" 
-
-           | ε
+           | "c"
 
            ;
     
@@ -384,11 +378,7 @@ describe("src/eliminateLeftRecursion", () => {
     
            ;
     
-    B~A~ ::= C~A~  
-
-           | ε
-        
-           ;
+    B~A~ ::= C~A~ ;
     
     A_   ::= "g"
     
@@ -920,11 +910,7 @@ describe("src/eliminateLeftRecursion", () => {
     
     B__  ::= "d" ;
     
-    B~A~ ::= "h" 
-
-           | ε
-
-           ;
+    B~A~ ::= "h" ;
     
     A_   ::= "e"
     
@@ -1012,8 +998,6 @@ describe("src/eliminateLeftRecursion", () => {
     
            | "f"
 
-           | ε   
-    
            ;
     
     A_   ::= "d"
@@ -1103,19 +1087,13 @@ describe("src/eliminateLeftRecursion", () => {
     
     C__  ::= "d" ;
     
-    C~A~ ::= "e" 
-
-           | ε
-
-           ;
+    C~A~ ::= "e" ;
     
     B__  ::= C__ ;
     
     B~A~ ::= "f"
     
            | C~A~
-
-           | ε
 
            ;
     
@@ -1193,25 +1171,13 @@ describe("src/eliminateLeftRecursion", () => {
     
            ;
     
-    E~T~ ::= "d" 
-
-           | ε
-
-           ;
+    E~T~ ::= "d" ;
     
-    E~A~ ::= "c" 
-
-           | ε
-
-           ;
+    E~A~ ::= "c" ;
     
     A~   ::= E~A~ "h" ;
     
-    A~T~ ::= E~T~ "h" A~* 
-
-           | ε
-
-           ;
+    A~T~ ::= E~T~ "h" A~* ;
     
     T_   ::= "f" ;
     
@@ -1294,11 +1260,7 @@ describe("src/eliminateLeftRecursion", () => {
     
     B~A~ ::= ε ;
     
-    E~A~ ::= B~A~ "g" 
-
-           | ε
-
-           ;
+    E~A~ ::= B~A~ "g" ;
     
     A_   ::= "h" ;
     
@@ -1446,11 +1408,7 @@ describe("src/eliminateLeftRecursion", () => {
     
     B__  ::= "d" ;
     
-    B~A~ ::= "h" 
-
-           | ε
-
-           ;
+    B~A~ ::= "h" ;
     
     A_   ::= "e"
     
@@ -1536,67 +1494,57 @@ describe("src/eliminateLeftRecursion", () => {
       assert.isTrue(compare(adjustedBNF, `
 
     S    ::= E... <END_OF_LINE> ;
-
+    
     T    ::= V
-
+    
            | R__
-
+    
            | E T~E~
-
+    
            ;
-
+    
     R    ::= V
-
+    
            | E R~E~
-
+    
            ;
-
+    
     A    ::= E A~E~ ;
-
+    
     E    ::= E_ E~* ;
-
+    
     F    ::= T__
-
+    
            | E F~E~
-
+    
            ;
-
+    
     V    ::= . ;
-
+    
     A~E~ ::= ε ;
-
+    
     R__  ::= V ;
-
-    R~E~ ::= A~E~ "/" A
-
-           | ε
-
-           ;
-
+    
+    R~E~ ::= A~E~ "/" A ;
+    
     T__  ::= V
-
+    
            | R__
-
+    
            ;
-
-    T~E~ ::= R~E~
-
-           | ε
-
-           ;
-
+    
+    T~E~ ::= R~E~ ;
+    
     F__  ::= T__ ;
-
+    
     F~E~ ::= A~E~ "+" A
-
+    
            | T~E~
-
-           | ε
-
+    
            ;
-
+    
     E_   ::= F__ ;
-
+    
     E~   ::= F~E~ ;
 
      `));
@@ -1740,11 +1688,7 @@ describe("src/eliminateLeftRecursion", () => {
     
     B__  ::= B_ B~* ;
     
-    B~A~ ::= "d" B~* 
-
-           | ε
-
-           ;
+    B~A~ ::= "d" B~* ;
     
     A_   ::= "g"
     
@@ -1818,8 +1762,6 @@ describe("src/eliminateLeftRecursion", () => {
     
            | "f"
 
-           | ε     
-    
            ;
     
     A_   ::= "c" ;
@@ -1903,11 +1845,7 @@ describe("src/eliminateLeftRecursion", () => {
     
            ;
     
-    B~A~ ::= "f" 
-
-           | ε
-
-           ;
+    B~A~ ::= "f" ;
     
     A_   ::= "d"
     
@@ -1990,11 +1928,7 @@ describe("src/eliminateLeftRecursion", () => {
     
     B__  ::= B_ B~* ;
     
-    B~A~ ::= B~* 
-
-           | ε
-
-           ;
+    B~A~ ::= B~* ;
     
     A_   ::= "g"
     
@@ -2059,11 +1993,7 @@ describe("src/eliminateLeftRecursion", () => {
     
     B~   ::= "e" ;
     
-    B~A~ ::= "d" B~* 
-  
-           | ε
-
-           ; 
+    B~A~ ::= "d" B~* ; 
     
     A_   ::= "f" ;
     
@@ -2102,7 +2032,7 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-  xdescribe("an indirectly left recursive definition of depth two and an effectively unary intermediate left recursive definition", () => {
+  describe("an indirectly left recursive definition of depth two and an effectively unary intermediate left recursive definition", () => {
     const bnf = `
     
     S  ::=  A ;
@@ -2150,19 +2080,11 @@ describe("src/eliminateLeftRecursion", () => {
     
     F__  ::= "(" A ")" ;
     
-    F~A~ ::= "+" A 
-
-       | ε
-
-     ;
+    F~A~ ::= "+" A ;
     
     E__  ::= F__ ;
     
-    E~A~ ::= F~A~ 
-
-       | ε
-
-     ;
+    E~A~ ::= F~A~ ;
     
     A_   ::= T
     
@@ -2204,7 +2126,7 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-  xdescribe("two indirectly left recursive definitions and their left recursive definitions with the same underlying definitions", () => {
+  describe("two indirectly left recursive definitions and their left recursive definitions with the same underlying definitions", () => {
     const bnf = `
     
     T ::= B
@@ -2270,8 +2192,6 @@ describe("src/eliminateLeftRecursion", () => {
     
            | A~T~ "+" A
 
-           | ε   
-    
            ;
     
     B__  ::= "-" A
@@ -2282,11 +2202,7 @@ describe("src/eliminateLeftRecursion", () => {
     
            ;
     
-    B~T~ ::= C~T~ 
-
-           | ε
-    
-           ;
+    B~T~ ::= C~T~ ;
     
     T_   ::= V
     
