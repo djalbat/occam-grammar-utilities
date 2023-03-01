@@ -252,16 +252,40 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-  describe("an effectively unary indirectly left recursive definition", () => {
+  describe("an isolated implicitly left recursive definition", () => {
     const bnf = `
   
-    A ::= B "d"
+    A ::= B "g" ;
+
+    B ::= A "h"  
+     
+        | "c"
+        
+        ;
+
+`;
+
+    it("does not throw an exception", () => {
+      assert.doesNotThrow(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
+  describe("a unary implicitly left recursive definition", () => {
+    const bnf = `
+  
+    A ::= B
     
         | "c"
     
         ;
     
-    B ::= A ;
+    B ::= A "e" 
+    
+        | "d"
+    
+        ;
 
 `;
 
@@ -272,11 +296,94 @@ describe("src/eliminateLeftRecursion", () => {
       
     A    ::= A_ A~* ;
     
-    B    ::= A B~A~ ;
+    B    ::= "d"
+    
+           | A B~A~
+    
+           ;
+    
+    B__  ::= "d" ;
+    
+    B~A~ ::= "e" ;
+    
+    A_   ::= "c"
+    
+           | B__
+    
+           ;
+    
+    A~   ::= B~A~ ;
+
+      `));
+    });
+
+    it("results in the requisite parse tree" , () => {
+      const content = "dee",
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+            
+                            A                
+                            |                
+                            B                
+                            |                
+                 ----------------------      
+                 |                    |      
+                 A              e[unassigned]
+                 |                           
+                 B                           
+                 |                           
+          ---------------                    
+          |             |                    
+          A       e[unassigned]              
+          |                                  
+          B                                  
+          |                                  
+    d[unassigned]                            
+             
+      `));
+    });
+  });
+
+  describe("a unary indirectly left recursive definition", () => {
+    const bnf = `
+  
+    A ::= B "d"
+    
+        | "c"
+    
+        ;
+    
+    B ::= A 
+    
+        | "a"
+    
+        ;
+
+`;
+
+    it("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF,`
+      
+    A    ::= A_ A~* ;
+    
+    B    ::= "a"
+    
+           | A B~A~
+    
+           ;
+    
+    B__  ::= "a" ;
     
     B~A~ ::= ε ;
     
-    A_   ::= "c" ;
+    A_   ::= "c"
+    
+           | B__ "d"
+    
+           ;
     
     A~   ::= B~A~ "d" ;
 
@@ -284,30 +391,41 @@ describe("src/eliminateLeftRecursion", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const content = "cdd",
+      const content = "addd",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
             
-                            A                
-                            |                
-                 ----------------------      
-                 |                    |      
-                 B              d[unassigned]
-                 |                           
-                 A                           
-                 |                           
-          ---------------                    
-          |             |                    
-          B       d[unassigned]              
-          |                                  
-          A                                  
-          |                                  
-    c[unassigned]                            
+                                        A                  
+                                        |                  
+                            -------------------------      
+                            |                       |      
+                            B                 d[unassigned]
+                            |                              
+                            A                              
+                            |                              
+                 ----------------------                    
+                 |                    |                    
+                 B              d[unassigned]              
+                 |                                         
+                 A                                         
+                 |                                         
+          ---------------                                  
+          |             |                                  
+          B       d[unassigned]                            
+          |                                                
+    a[unassigned]                                          
              
       `));
     });
   });
+
+
+
+
+
+
+
 
 
 
