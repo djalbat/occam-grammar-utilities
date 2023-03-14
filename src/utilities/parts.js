@@ -39,7 +39,7 @@ export function arePartsEffectivelyOptional(parts, ruleNames, context) {
   return partsEffectivelyOptional;
 }
 
-export function arePartsDirectlyLeftRecursive(parts, ruleName) {
+export function arePartsDirectlyLeftRecursive(parts, leftRecursiveRuleName) {
   let partsDirectlyLeftRecursive = false;
 
   const leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
@@ -47,9 +47,9 @@ export function arePartsDirectlyLeftRecursive(parts, ruleName) {
 
   if (leftRecursiveRuleNamesLength > 0) {
     const firstLeftRecursiveRuleName = first(leftRecursiveRuleNames),
-          firstLeftRecursiveRuleNameRuleName = (firstLeftRecursiveRuleName === ruleName);
+          firstLeftRecursiveRuleNameLeftRecursiveRuleName = (firstLeftRecursiveRuleName === leftRecursiveRuleName);
 
-    partsDirectlyLeftRecursive = firstLeftRecursiveRuleNameRuleName;  ///
+    partsDirectlyLeftRecursive = firstLeftRecursiveRuleNameLeftRecursiveRuleName;  ///
   }
 
   return partsDirectlyLeftRecursive;

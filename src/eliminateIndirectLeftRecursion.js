@@ -31,7 +31,7 @@ export default function eliminateIndirectLeftRecursion(context) {
       rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyLeftRecursiveDefinition, context) :
         rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, context);
 
-    greatestIndirectlyLeftRecursiveDefinition = ++count > 0 ? null : retrieveGreatestIndirectlyLeftRecursiveDefinition(context);
+    greatestIndirectlyLeftRecursiveDefinition = ++count > 1 ? null : retrieveGreatestIndirectlyLeftRecursiveDefinition(context);
   }
 }
 
