@@ -39,6 +39,22 @@ export function arePartsEffectivelyOptional(parts, ruleNames, context) {
   return partsEffectivelyOptional;
 }
 
+export function arePartsDirectlyLeftRecursive(parts, ruleName) {
+  let partsDirectlyLeftRecursive = false;
+
+  const leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
+        leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length;
+
+  if (leftRecursiveRuleNamesLength > 0) {
+    const firstLeftRecursiveRuleName = first(leftRecursiveRuleNames),
+          firstLeftRecursiveRuleNameRuleName = (firstLeftRecursiveRuleName === ruleName);
+
+    partsDirectlyLeftRecursive = firstLeftRecursiveRuleNameRuleName;  ///
+  }
+
+  return partsDirectlyLeftRecursive;
+}
+
 export function singlePartFromParts(parts) {
   let singlePart;
 

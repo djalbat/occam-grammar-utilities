@@ -817,32 +817,32 @@ B ::= A "g"
     });
   });
 
-  xdescribe("two sibling implicitly left recursive definitions", () => {
+  describe("two sibling implicitly left recursive definitions", () => {
     const bnf = `
   
-    A  ::=  C "h" 
-      
-         |  "d" 
-    
-         ;
-    
-    B  ::=  C "k" 
-    
-         |  "f"
-         
-         ;
-    
-    C  ::=  A "g" 
-    
-         |  B "c" 
-    
-         |  "a"
-         
-         ;
-    
+    A  ::=  C "h"  
+                   
+         |  "d"    
+                   
+         ;         
+                   
+    B  ::=  C "k"  
+                   
+         |  "f"    
+                   
+         ;         
+                   
+    C  ::=  A "g"  
+                   
+         |  B "c"  
+                   
+         |  "a"    
+                   
+         ;         
+               
 `;
 
-    it("are rewritten", () => {
+    it.only("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `

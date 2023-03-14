@@ -2,6 +2,7 @@
 
 import DirectlyReducedRuleOperation from "./operation/rule/directlyReduced";
 import DirectlyRepeatedRuleOperation from "./operation/rule/directlyRepeated";
+import ImplicitlyReducedRuleOperation from "./operation/rule/implicitlyReduced";
 import IndirectlyReducedRuleOperation from "./operation/rule/indirectlyReduced";
 import IndirectlyRepeatedRuleOperation from "./operation/rule/indirectlyRepeated";
 import LeftRecursiveDefinitionOperation from "./operation/definition/leftRecursive";
@@ -30,7 +31,7 @@ export default function eliminateIndirectLeftRecursion(context) {
       rewriteDirectLeftRecursion(directlyLeftRecursiveDefinition, indirectlyLeftRecursiveDefinition, context) :
         rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, context);
 
-    greatestIndirectlyLeftRecursiveDefinition = ++count > Infinity ? null : retrieveGreatestIndirectlyLeftRecursiveDefinition(context);
+    greatestIndirectlyLeftRecursiveDefinition = ++count > 0 ? null : retrieveGreatestIndirectlyLeftRecursiveDefinition(context);
   }
 }
 
@@ -79,6 +80,8 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, context
         }, context);
 
   leftRecursiveDefinition = LeftRecursiveDefinitionOperation.execute(indirectlyLeftRecursiveDefinition, indirectlyRepeatedRule, indirectlyReducedRule, context);
+
+  ImplicitlyReducedRuleOperation.execute(leftRecursiveDefinition, rule, context);
 
   const addedLeftRecursiveDefinition = leftRecursiveDefinition, ///
         removedLeftRecursiveDefinitions = indirectlyLeftRecursiveDefinitions; ///

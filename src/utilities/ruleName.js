@@ -30,6 +30,12 @@ export function indirectlyReducedRuleNameFromRuleName(ruleName) {
   return indirectlyReducedRuleName;
 }
 
+export function implicitlyReducedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {
+  const implicitlyReducedRuleName = `${leftRecursiveRuleName}_${ruleName}_`;
+
+  return implicitlyReducedRuleName;
+}
+
 export function indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {
   const indirectlyRepeatedRuleName = `${ruleName}~${leftRecursiveRuleName}~`;
 

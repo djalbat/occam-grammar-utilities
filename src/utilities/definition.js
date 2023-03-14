@@ -1,8 +1,25 @@
 "use strict";
 
+import { Definition } from "occam-parsers";
+
 import { tail, first } from "../utilities/array";
 import { isPartUnary, isPartComplex } from "../utilities/part";
-import { arePartsRecursive, arePartsLeftRecursive, arePartsEffectivelyOptional, recursiveRuleNamesFromParts, leftRecursiveRuleNamesFromParts } from "../utilities/parts";
+import { arePartsRecursive,
+         arePartsLeftRecursive,
+         arePartsEffectivelyOptional,
+         recursiveRuleNamesFromParts,
+         arePartsDirectlyLeftRecursive,
+         leftRecursiveRuleNamesFromParts } from "../utilities/parts";
+
+export function cloneDefinition(definition) {
+  let parts = definitinon.getParts();
+
+  parts = cloenParts(parts);  ///
+
+  definition = new Definition(parts);
+
+  return definition;
+}
 
 export function isDefinitionComplex(definition) {
   const parts = definition.getParts(),
@@ -57,6 +74,14 @@ export function recursiveRuleNamesFromDefinition(definition) {
         recursiveRuleNames = recursiveRuleNamesFromParts(parts);
 
   return recursiveRuleNames;
+}
+
+export function isDefinitionDirectlyLeftRecursive(definition, ruleName) {
+  const parts = definition.getParts(),
+        partsDirectlyLeftRecursive = arePartsDirectlyLeftRecursive(parts, ruleName),
+        definitionDirectlyLeftRecursive = partsDirectlyLeftRecursive; ///
+
+  return definitionDirectlyLeftRecursive;
 }
 
 export function leftRecursiveRuleNamesFromDefinition(definition) {

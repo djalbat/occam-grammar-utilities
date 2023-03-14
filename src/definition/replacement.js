@@ -5,7 +5,9 @@ import { Parts, Definition } from "occam-parsers";
 import { cloneParts } from "../utilities/parts";
 import { first, head, tail } from "../utilities/array";
 import { ruleNamePartFromRuleName, directlyReducedPartFromPart } from "../utilities/part";
-import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../utilities/ruleName";
+import { directlyRepeatedRuleNameFromRuleName,
+         implicitlyReducedRuleNameFromRuleNameAndLeftRecursiveRuleName,
+         indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../utilities/ruleName";
 
 const { ZeroOrMorePartsPart } = Parts;
 
@@ -35,12 +37,13 @@ export default class ReplacementDefinition extends Definition {
     const rule = indirectlyLeftRecursiveDefinition.getRule(),
           leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
           ruleName = rule.getName(),
-          leftRecursiveRuleNamePart = ruleNamePartFromRuleName(leftRecursiveRuleName),
+          implicitlyReducedRuleName = implicitlyReducedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
+          implicitlyReducedRuleNamePart = ruleNamePartFromRuleName(implicitlyReducedRuleName),
           indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName);
 
     let parts = [
-      leftRecursiveRuleNamePart,
+      implicitlyReducedRuleNamePart,
       indirectlyRepeatedRuleNamePart
     ];
 
