@@ -5,6 +5,7 @@ import { EpsilonNode } from "occam-parsers";
 import RewrittenNode from "./node/rewritten";
 import DirectlyReducedNode from "./node/reduced/directly";
 import DirectlyRepeatedNode from "./node/repeated/directly";
+import ImplicitlyReducedNode from "./node/reduced/implicitly";
 import IndirectlyReducedNode from "./node/reduced/indirectly";
 import IndirectlyRepeatedNode from "./node/repeated/indirectly";
 
@@ -30,6 +31,8 @@ function rewrite(nonTerminalNode) {
   rewriteDirectReduction(nonTerminalNode);
 
   rewriteIndirectReduction(nonTerminalNode);
+
+  rewriteImplicitReduction(nonTerminalNode);
 
   childNodes.forEach((childNode) => {
     const childNodeNonTerminalNode = childNode.isNonTerminalNode();
@@ -124,7 +127,13 @@ function removeIntermediaries(nonTerminalNode) {
 
 function rewriteDirectReduction(nonTerminalNode) {
   const childNodes = nonTerminalNode.getChildNodes(),
-        directlyReducedNode = childNodes.find((childNode) => (childNode instanceof DirectlyReducedNode)) || null;
+        directlyReducedNode = childNodes.find((childNode) => {
+          const childNodeDirectlyReducedNode = (childNode instanceof DirectlyReducedNode);
+
+          if (childNodeDirectlyReducedNode) {
+            return true;
+          }
+        }) || null;
 
   if (directlyReducedNode !== null) {
     const index = childNodes.indexOf(directlyReducedNode),
@@ -140,7 +149,13 @@ function rewriteDirectReduction(nonTerminalNode) {
 function rewriteDirectRepetition(nonTerminalNode) {
   let childNodes = nonTerminalNode.getChildNodes();
 
-  const directlyRepeatedNodes = childNodes.filter((childNode) => (childNode instanceof DirectlyRepeatedNode)),
+  const directlyRepeatedNodes = childNodes.filter((childNode) => {
+          const childNodeDirectlyRepeatedNode = (childNode instanceof DirectlyRepeatedNode);
+
+          if (childNodeDirectlyRepeatedNode) {
+            return true;
+          }
+        }),
         directlyRepeatedNodesLength = directlyRepeatedNodes.length;
 
   if (directlyRepeatedNodesLength > 0) {
@@ -164,7 +179,13 @@ function rewriteDirectRepetition(nonTerminalNode) {
 
 function rewriteIndirectReduction(nonTerminalNode) {
   const childNodes = nonTerminalNode.getChildNodes(),
-        indirectlyReducedNode = childNodes.find((childNode) => (childNode instanceof IndirectlyReducedNode)) || null;
+        indirectlyReducedNode = childNodes.find((childNode) => {
+          const childNodeIndirectlyReducedNode = (childNode instanceof IndirectlyReducedNode);
+
+          if (childNodeIndirectlyReducedNode) {
+            return true;
+          }
+        }) || null;
 
   if (indirectlyReducedNode !== null) {
     const index = childNodes.indexOf(indirectlyReducedNode),
@@ -177,13 +198,45 @@ function rewriteIndirectReduction(nonTerminalNode) {
   }
 }
 
+function rewriteImplicitReduction(nonTerminalNode) {
+  const childNodes = nonTerminalNode.getChildNodes(),
+        implicitlyReducedNode = childNodes.find((childNode) => {
+          const childNodeImplicitlyReducedNode = (childNode instanceof ImplicitlyReducedNode);
+
+          if (childNodeImplicitlyReducedNode) {
+            return true;
+          }
+        }) || null;
+
+  if (implicitlyReducedNode !== null) {
+    const index = childNodes.indexOf(implicitlyReducedNode),
+          rewrittenNode = RewrittenNode.fromImplicitlyReducedNode(implicitlyReducedNode),
+          start = index,  ///
+          deleteCount = 1;
+
+    childNodes.splice(start, deleteCount, rewrittenNode);
+  }
+}
+
 function rewriteIndirectRepetition(nonTerminalNode) {
   const childNodes = nonTerminalNode.getChildNodes(),
-        indirectlyRepeatedNode = childNodes.find((childNode) => (childNode instanceof IndirectlyRepeatedNode)) || null;
+        indirectlyRepeatedNode = childNodes.find((childNode) => {
+          const childNodeIndirectlyRepeatedNode = (childNode instanceof IndirectlyRepeatedNode);
+
+          if (childNodeIndirectlyRepeatedNode) {
+            return true;
+          }
+        }) || null;
 
   if (indirectlyRepeatedNode !== null) {
     const indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes(),
-          directlyRepeatedNode = indirectlyRepeatedNodeChildNodes.find((indirectlyRepeatedNodeChildNode) => (indirectlyRepeatedNodeChildNode instanceof DirectlyRepeatedNode)) || null;
+          directlyRepeatedNode = indirectlyRepeatedNodeChildNodes.find((indirectlyRepeatedNodeChildNode) => {
+            const indirectlyRepeatedNodeChildNodeDirectlyRepeatedNode = (indirectlyRepeatedNodeChildNode instanceof DirectlyRepeatedNode);
+
+            if (indirectlyRepeatedNodeChildNodeDirectlyRepeatedNode) {
+              return true;
+            }
+          }) || null;
 
     if (directlyRepeatedNode !== null) {
       let index = indirectlyRepeatedNodeChildNodes.indexOf(directlyRepeatedNode),
