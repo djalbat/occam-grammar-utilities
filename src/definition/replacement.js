@@ -39,7 +39,8 @@ export default class ReplacementDefinition extends Definition {
           ruleName = rule.getName(),
           leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
-          indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName);
+          indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName),
+          zeroOrMoreIndirectlyRepeatedRuleNamePartsPart = new ZeroOrMorePartsPart(indirectlyRepeatedRuleNamePart);  ///
 
     let parts;
 
@@ -49,7 +50,7 @@ export default class ReplacementDefinition extends Definition {
 
       parts = [
         implicitlyReducedRuleNamePart,
-        indirectlyRepeatedRuleNamePart
+        zeroOrMoreIndirectlyRepeatedRuleNamePartsPart
       ];
     } else {
       const indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts(),
@@ -57,7 +58,7 @@ export default class ReplacementDefinition extends Definition {
 
       parts = [
         ...indirectlyLeftRecursiveDefinitionPartsHead,
-        indirectlyRepeatedRuleNamePart
+        zeroOrMoreIndirectlyRepeatedRuleNamePartsPart
       ];
 
       parts = cloneParts(parts);  ///
