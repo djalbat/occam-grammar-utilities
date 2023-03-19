@@ -49,14 +49,14 @@ export default class IndirectlyLeftRecursiveDefinition extends LeftRecursiveDefi
 
   getDepth() {
     const leftRecursiveDefinitionsLength = this.leftRecursiveDefinitions.length,
-          depth = leftRecursiveDefinitionsLength - 1;  ///
+          depth = leftRecursiveDefinitionsLength;  ///
 
     return depth;
   }
 
   isLeast() {
     const depth = this.getDepth(),
-          least = (depth === 0);
+          least = (depth === 1);
 
     return least;
   }

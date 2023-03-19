@@ -44,6 +44,7 @@ export function removeLeftRecursiveDefinitions(removedLeftRecursiveDefinitions, 
 export function findDirectlyLeftRecursiveDefinition(rule, context) {
   if (context === undefined) {
     context = rule; ///
+
     rule = null;
   }
 
@@ -92,7 +93,8 @@ export function findDirectlyLeftRecursiveDefinitions(rule, context) {
 
 export function findIndirectlyLeftRecursiveDefinitions(rule, callback, context) {
   if (context === undefined) {
-    context = callback;
+    context = callback; ///
+
     callback = (indirectlyLeftRecursiveDefinition) => true
   }
 

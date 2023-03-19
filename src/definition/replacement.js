@@ -35,19 +35,33 @@ export default class ReplacementDefinition extends Definition {
 
   static fromIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition) {
     const rule = indirectlyLeftRecursiveDefinition.getRule(),
-          leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
+          depth = indirectlyLeftRecursiveDefinition.getDepth(),
           ruleName = rule.getName(),
-          implicitlyReducedRuleName = implicitlyReducedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
+          leftRecursiveRuleName = indirectlyLeftRecursiveDefinition.getLeftRecursiveRuleName(),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
-          implicitlyReducedRuleNamePart = ruleNamePartFromRuleName(implicitlyReducedRuleName),
           indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName);
 
-    let parts = [
-      implicitlyReducedRuleNamePart,
-      indirectlyRepeatedRuleNamePart
-    ];
+    let parts;
 
-    parts = cloneParts(parts);  ///
+    if (depth === 1) {
+      const implicitlyReducedRuleName = implicitlyReducedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
+            implicitlyReducedRuleNamePart = ruleNamePartFromRuleName(implicitlyReducedRuleName);
+
+      parts = [
+        implicitlyReducedRuleNamePart,
+        indirectlyRepeatedRuleNamePart
+      ];
+    } else {
+      const indirectlyLeftRecursiveDefinitionParts = indirectlyLeftRecursiveDefinition.getParts(),
+            indirectlyLeftRecursiveDefinitionPartsHead = head(indirectlyLeftRecursiveDefinitionParts);
+
+      parts = [
+        ...indirectlyLeftRecursiveDefinitionPartsHead,
+        indirectlyRepeatedRuleNamePart
+      ];
+
+      parts = cloneParts(parts);  ///
+    }
 
     let replacementDefinition = new ReplacementDefinition(parts);
 
