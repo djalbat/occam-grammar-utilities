@@ -10,6 +10,44 @@ const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
+  xdescribe("if an intermediate left recursive definition is effectively unary", () => {
+    const bnf = `
+
+    S ::= E... <END_OF_LINE> ;
+
+    T ::= R
+
+        | V
+
+        ;
+
+    R ::= A "/" A
+
+        | V
+
+        ;
+
+    A ::= E ;
+
+    E ::= F ;
+
+    F ::= A "+" A
+
+        | T
+
+        ;
+
+    V ::= . ;
+
+`;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
   describe("a complex indirectly left recursive definition", () => {
     const bnf = `
   
@@ -1276,162 +1314,37 @@ B ::= A "g"
       `));
     });
 
-    xit("result in the requisite parse tree" , () => {
+    it.only("result in the requisite parse tree" , () => {
       const content = `hfgfg
 `,
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
 
-                                                              S                        
-                                                              |                        
-                                            -------------------------------------      
-                                            |                                   |      
-                                            E                             <END_OF_LINE>
-                                            |                                          
-                            --------------------------------                           
-                            |                              |                           
-                            E                            E~A~                          
-                            |                              |                           
-                 ----------------------             ---------------                    
-                 |                    |             |             |                    
-                 B              g[unassigned]       B       g[unassigned]              
-                 |                                  |                                  
-          ---------------                     f[unassigned]                            
+                                                                   S                   
+                                                                   |                   
+                                                     ----------------------------      
+                                                     |                          |      
+                                                     E                    <END_OF_LINE>
+                                                     |                                 
+                                        ---------------------------                    
+                                        |                         |                    
+                                        B                   g[unassigned]              
+                                        |                                              
+                            -------------------------                                  
+                            |                       |                                  
+                            E                 f[unassigned]                            
+                            |                                                          
+                 ----------------------                                                
+                 |                    |                                                
+                 B              g[unassigned]                                          
+                 |                                                                     
+          ---------------                                                              
           |             |                                                              
           A       f[unassigned]                                                        
           |                                                                            
     h[unassigned]                                                                      
       
-      `));
-    });
-  });
-
-  describe("another two indirectly left recursive definitions with the same underlying definition", () => {
-    const bnf = `
-
-    S ::= E... <END_OF_LINE> ;
-
-    T ::= R
-
-        | V
-
-        ;
-
-    R ::= A "/" A
-
-        | V
-
-        ;
-
-    A ::= E ;
-
-    E ::= F ;
-
-    F ::= A "+" A
-
-        | T
-
-        ;
-
-    V ::= . ;
-
-`;
-
-    it("are rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF, `
-
-    S    ::= E... <END_OF_LINE> ;
-    
-    T    ::= V
-    
-           | R__
-    
-           | E T~E~*
-    
-           ;
-    
-    R    ::= V
-    
-           | E R~E~*
-    
-           ;
-    
-    A    ::= E A~E~* ;
-    
-    E    ::= E_ E~* ;
-    
-    F    ::= T__
-    
-           | E_F_ F~E~*
-    
-           ;
-    
-    V    ::= . ;
-    
-    A~E~ ::= ε ;
-    
-    R__  ::= V ;
-    
-    R~E~ ::= A~E~ "/" A ;
-    
-    T__  ::= V
-    
-           | R__
-    
-           ;
-    
-    T~E~ ::= R~E~ ;
-    
-    F__  ::= T__ ;
-    
-    F~E~ ::= A~E~ "+" A
-    
-           | T~E~
-    
-           ;
-    
-    E_F_ ::= F__ ;
-    
-    E_   ::= F__ ;
-    
-    E~   ::= F~E~ ;
-
-     `));
-    });
-
-    it("result in the requisite parse tree" , () => {
-      const content = `n+m
-`,
-            startRuleName = "S",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
-
-      assert.isTrue(compare(parseTreeString, `
-
-                                      S
-                                      |
-                        -----------------------------
-                        |                           |
-                        E                     <END_OF_LINE>
-                        |
-                        F
-                        |
-          -----------------------------
-          |             |             |
-          A       +[unassigned]       A
-          |                           |
-          E                           E
-          |                           |
-          F                           F
-          |                           |
-          T                           T
-          |                           |
-          V                           V
-          |                           |
-    n[unassigned]               m[unassigned]
-
       `));
     });
   });

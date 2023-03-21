@@ -1,7 +1,6 @@
 "use strict";
 
 import { EpsilonNode } from "occam-parsers";
-
 import RewrittenNode from "./node/rewritten";
 import DirectlyReducedNode from "./node/reduced/directly";
 import DirectlyRepeatedNode from "./node/repeated/directly";
@@ -9,7 +8,7 @@ import ImplicitlyReducedNode from "./node/reduced/implicitly";
 import IndirectlyReducedNode from "./node/reduced/indirectly";
 import IndirectlyRepeatedNode from "./node/repeated/indirectly";
 
-import { first, last, filter, unshift, backwardsSome } from "./utilities/array";
+import { first, last, find, filter, unshift, backwardsSome } from "./utilities/array";
 
 export default function rewriteNodes(node) {  ///
   const nonTerminalNode = node; ///
@@ -220,7 +219,7 @@ function rewriteImplicitReduction(nonTerminalNode) {
 
 function rewriteIndirectRepetition(nonTerminalNode) {
   const childNodes = nonTerminalNode.getChildNodes(),
-        indirectlyRepeatedNode = childNodes.find((childNode) => {
+        indirectlyRepeatedNodes = find(childNodes, (childNode) => {
           const childNodeIndirectlyRepeatedNode = (childNode instanceof IndirectlyRepeatedNode);
 
           if (childNodeIndirectlyRepeatedNode) {
@@ -228,7 +227,11 @@ function rewriteIndirectRepetition(nonTerminalNode) {
           }
         }) || null;
 
-  if (indirectlyRepeatedNode !== null) {
+  indirectlyRepeatedNodes.forEach((indirectlyRepeatedNode, count) => {
+    if (count > 0) {
+      return;
+    }
+
     const indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes(),
           directlyRepeatedNode = indirectlyRepeatedNodeChildNodes.find((indirectlyRepeatedNodeChildNode) => {
             const indirectlyRepeatedNodeChildNodeDirectlyRepeatedNode = (indirectlyRepeatedNodeChildNode instanceof DirectlyRepeatedNode);
@@ -254,11 +257,10 @@ function rewriteIndirectRepetition(nonTerminalNode) {
       childNodes.splice(start, deleteCount, ...directlyRepeatedNodes);
     }
 
-    const repeatedNode = indirectlyRepeatedNode,  ///
-          rewrittenNode = RewrittenNode.fromRepeatedNode(repeatedNode);
+    const rewrittenNode = RewrittenNode.fromIndirectlyRepeatedNode(indirectlyRepeatedNode);
 
     let index = childNodes.indexOf(indirectlyRepeatedNode),
-        start = index,
+        start = index,  //
         deleteCount = 1;
 
     childNodes.splice(start, deleteCount, rewrittenNode);
@@ -271,5 +273,5 @@ function rewriteIndirectRepetition(nonTerminalNode) {
           rewrittenNodeChildNodes = rewrittenNode.getChildNodes();
 
     unshift(rewrittenNodeChildNodes, deleteChildNodes);
-  }
+  });
 }

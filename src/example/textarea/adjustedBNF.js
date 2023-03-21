@@ -1,8 +1,10 @@
 "use strict";
 
+import withStyle from "easy-with-style";  ///
+
 import Textarea from "../textarea";
 
-export default class AdjustedBNFTextarea extends Textarea {
+class AdjustedBNFTextarea extends Textarea {
   getAdjustedBNF() {
     const value = this.getValue(),
           adjustedBNF = value; ///
@@ -32,3 +34,9 @@ export default class AdjustedBNFTextarea extends Textarea {
     readOnly: false
   };
 }
+
+export default withStyle(AdjustedBNFTextarea)`
+
+  height: 56rem;
+  
+`;

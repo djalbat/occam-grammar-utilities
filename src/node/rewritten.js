@@ -2,11 +2,12 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
-import { ruleNameFromReducedRuleName, ruleNameFromRepeatedRuleName, ruleNameFromImplicitlyReducedRuleName } from "../utilities/ruleName";
+import { ruleNameFromReducedRuleName,
+         ruleNameFromRepeatedRuleName,
+         ruleNameFromImplicitlyReducedRuleName,
+         ruleNameFromIndirectlyRepeatedRuleName } from "../utilities/ruleName";
 
 export default class RewrittenNode extends NonTerminalNode {
-  clone() { return super.clone(RewrittenNode); }
-
   static fromReducedNode(reducedNode) {
     const reducedNodeRuleName = reducedNode.getRuleName(),
           reducedRuleName = reducedNodeRuleName,  ///
@@ -32,6 +33,16 @@ export default class RewrittenNode extends NonTerminalNode {
           implicitlyReducedRuleName = implicitlyReducedNodeRuleName,  ///
           ruleName = ruleNameFromImplicitlyReducedRuleName(implicitlyReducedRuleName),
           childNodes = implicitlyReducedNode.getChildNodes(),
+          rewrittenNode = new RewrittenNode(ruleName, childNodes);
+
+    return rewrittenNode;
+  }
+
+  static fromIndirectlyRepeatedNode(indirectlyRepeatedNode) {
+    const indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
+          indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,
+          ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName),
+          childNodes = indirectlyRepeatedNode.getChildNodes(),
           rewrittenNode = new RewrittenNode(ruleName, childNodes);
 
     return rewrittenNode;

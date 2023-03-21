@@ -19,7 +19,6 @@ import StartRuleNameInput from "./input/startRuleName";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RewriteNodesCheckbox from "./checkbox/rewriteNodes";
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
-import LexicalEntriesTextarea from "./textarea/lexicalEntries";
 
 const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
@@ -31,6 +30,13 @@ class View extends Element {
 
   changeHandler = (event, element) => {
     this.update();
+  }
+
+  getLexicalEntries() {
+    const { initialLexicalEntries } = this.constructor,
+          lexicalEntries = initialLexicalEntries; ///
+
+    return lexicalEntries;
   }
 
   update() {
@@ -82,10 +88,6 @@ class View extends Element {
         <SizeableDiv>
           <RowsDiv>
             <SubHeading>
-              Lexical entries
-            </SubHeading>
-            <LexicalEntriesTextarea onKeyUp={this.keyUpHandler} />
-            <SubHeading>
               BNF
             </SubHeading>
             <BNFTextarea onKeyUp={this.keyUpHandler} />
@@ -124,11 +126,10 @@ class View extends Element {
   initialise() {
     this.assignContext();
 
-    const { initialBNF, initialContent, initialStartRuleName, initialLexicalEntries } = this.constructor,
+    const { initialBNF, initialContent, initialStartRuleName } = this.constructor,
           bnf = initialBNF, ///
           content = initialContent, ///
-          startRuleName = initialStartRuleName, ///
-          lexicalEntries = initialLexicalEntries; ///
+          startRuleName = initialStartRuleName; ///
 
     this.setBNF(bnf);
 
@@ -136,47 +137,33 @@ class View extends Element {
 
     this.setStartRuleName(startRuleName);
 
-    this.setLexicalEntries(lexicalEntries);
-
     this.keyUpHandler();
   }
 
   static initialBNF = `
   
-    S ::= T... <END_OF_LINE> ;
+    S ::=  "f" A
   
-    T ::= B
-    
-        | C
-    
-        | V
-    
+        |  E... <END_OF_LINE>
+  
         ;
+  
+    E  ::=  B "g" ;
+  
+    B  ::=  A "f" ;
+  
+    A  ::=  E 
     
-    A ::= T ;
-    
-    B::= "-" A
-    
-       | C
-    
-       | V
-    
-       ;
-                          
-    C ::= A "+" A
-    
-        | V
-    
-        ;
-    
-    V ::= . ;
+         | "h" 
+                                 
+         ;
 
   `;
 
-  static initialContent = `n+n
+  static initialContent = `hfgfg
 `;
 
-  static initialStartRuleName = "";
+  static initialStartRuleName = "S";
 
   static initialLexicalEntries = [
     {

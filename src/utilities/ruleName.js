@@ -36,6 +36,12 @@ export function ruleNameFromImplicitlyReducedRuleName(implicitlyReducedRuleName)
   return ruleName;
 }
 
+export function ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName) {
+  const ruleName = indirectlyRepeatedRuleName.replace(/^([^~]+~)|~$/, "");
+
+  return ruleName;
+}
+
 export function implicitlyReducedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {
   const implicitlyReducedRuleName = `${leftRecursiveRuleName}_${ruleName}_`;
 

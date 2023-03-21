@@ -14,7 +14,13 @@ const { SequenceOfPartsPart, ZeroOrMorePartsPart } = Parts,
         ZeroOrMorePartsPartType } = partTypes;
 
 export function cloneParts(parts) {
-  parts = parts.map((part) => part.clone());  ///
+  parts = parts.map((part) => {
+    const clonedPart = part.clone();
+
+    part = clonedPart;  ///
+
+    return part;
+  });
 
   return parts;
 }
