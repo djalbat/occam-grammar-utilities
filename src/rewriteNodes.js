@@ -8,7 +8,7 @@ import ImplicitlyReducedNode from "./node/reduced/implicitly";
 import IndirectlyReducedNode from "./node/reduced/indirectly";
 import IndirectlyRepeatedNode from "./node/repeated/indirectly";
 
-import { first, last, find, filter, unshift, backwardsSome } from "./utilities/array";
+import { first, last, filter, unshift, backwardsSome } from "./utilities/array";
 
 export default function rewriteNodes(node) {  ///
   const nonTerminalNode = node; ///
@@ -219,49 +219,42 @@ function rewriteImplicitReduction(nonTerminalNode) {
 
 function rewriteIndirectRepetition(nonTerminalNode) {
   const childNodes = nonTerminalNode.getChildNodes(),
-        indirectlyRepeatedNodes = find(childNodes, (childNode) => {
-          const childNodeIndirectlyRepeatedNode = (childNode instanceof IndirectlyRepeatedNode);
+        lastChildNode = last(childNodes),
+        lastChildNodeIndirectlyRepeatedNode = (lastChildNode instanceof IndirectlyRepeatedNode);
 
-          if (childNodeIndirectlyRepeatedNode) {
-            return true;
-          }
-        }) || null;
+  if (lastChildNodeIndirectlyRepeatedNode) {
+    // const indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes(),
+    //       directlyRepeatedNode = indirectlyRepeatedNodeChildNodes.find((indirectlyRepeatedNodeChildNode) => {
+    //     const indirectlyRepeatedNodeChildNodeDirectlyRepeatedNode = (indirectlyRepeatedNodeChildNode instanceof DirectlyRepeatedNode);
+    //
+    //     if (indirectlyRepeatedNodeChildNodeDirectlyRepeatedNode) {
+    //       return true;
+    //     }
+    //   }) || null;
+    //
+    // if (directlyRepeatedNode !== null) {
+    //   let index = indirectlyRepeatedNodeChildNodes.indexOf(directlyRepeatedNode),
+    //       start = index,  ///
+    //       deleteCount = Infinity;
+    //
+    //   const directlyRepeatedNodes = indirectlyRepeatedNodeChildNodes.splice(start, deleteCount);
+    //
+    //   index = childNodes.indexOf(indirectlyRepeatedNode);
+    //
+    //   start = index + 1;
+    //
+    //   deleteCount = 0;
+    //
+    //   childNodes.splice(start, deleteCount, ...directlyRepeatedNodes);
+    // }
 
-  indirectlyRepeatedNodes.forEach((indirectlyRepeatedNode, count) => {
-    if (count > 0) {
-      return;
-    }
-
-    const indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes(),
-          directlyRepeatedNode = indirectlyRepeatedNodeChildNodes.find((indirectlyRepeatedNodeChildNode) => {
-            const indirectlyRepeatedNodeChildNodeDirectlyRepeatedNode = (indirectlyRepeatedNodeChildNode instanceof DirectlyRepeatedNode);
-
-            if (indirectlyRepeatedNodeChildNodeDirectlyRepeatedNode) {
-              return true;
-            }
-          }) || null;
-
-    if (directlyRepeatedNode !== null) {
-      let index = indirectlyRepeatedNodeChildNodes.indexOf(directlyRepeatedNode),
-          start = index,  ///
-          deleteCount = Infinity;
-
-      const directlyRepeatedNodes = indirectlyRepeatedNodeChildNodes.splice(start, deleteCount);
-
-      index = childNodes.indexOf(indirectlyRepeatedNode);
-
-      start = index + 1;
-
-      deleteCount = 0;
-
-      childNodes.splice(start, deleteCount, ...directlyRepeatedNodes);
-    }
-
-    const rewrittenNode = RewrittenNode.fromIndirectlyRepeatedNode(indirectlyRepeatedNode);
+    const indirectlyRepeatedNode = lastChildNode, ///
+          repeatedNode = indirectlyRepeatedNode,  ///
+          rewrittenNode = RewrittenNode.fromRepeatedNode(repeatedNode);
 
     let index = childNodes.indexOf(indirectlyRepeatedNode),
-        start = index,  //
-        deleteCount = 1;
+      start = index,  //
+      deleteCount = 1;
 
     childNodes.splice(start, deleteCount, rewrittenNode);
 
@@ -270,8 +263,8 @@ function rewriteIndirectRepetition(nonTerminalNode) {
     deleteCount = index;  ///
 
     const deleteChildNodes = childNodes.splice(start, deleteCount),
-          rewrittenNodeChildNodes = rewrittenNode.getChildNodes();
+      rewrittenNodeChildNodes = rewrittenNode.getChildNodes();
 
     unshift(rewrittenNodeChildNodes, deleteChildNodes);
-  });
+  }
 }

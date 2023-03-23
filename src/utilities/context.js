@@ -17,7 +17,13 @@ export function addLeftRecursiveDefinitions(addedLeftRecursiveDefinitions, conte
   push(leftRecursiveDefinitions, addedLeftRecursiveDefinitions);
 }
 
-export function findLeftRecursiveDefinitions(rule, context) {
+export function findLeftRecursiveDefinitions(rule, callback, context) {
+  if (context === undefined) {
+    context = callback; ///
+
+    callback = (leftRecursiveDefinition) => true
+  }
+
   let { leftRecursiveDefinitions } = context;
 
   leftRecursiveDefinitions = leftRecursiveDefinitions.filter((leftRecursiveDefinition) => {  ///
@@ -28,7 +34,11 @@ export function findLeftRecursiveDefinitions(rule, context) {
     const leftRecursiveDefinitionsRule = leftRecursiveDefinition.getRule();
 
     if (leftRecursiveDefinitionsRule === rule) {
-      return true;
+      const found = callback(leftRecursiveDefinition);
+
+      if (found) {
+        return true;
+      }
     }
   });
 

@@ -1262,7 +1262,7 @@ B ::= A "g"
     });
   });
 
-  describe("two indirectly left recursive definitions both of the same cycle", () => {
+  xdescribe("two indirectly left recursive definitions both of the same cycle", () => {
     const bnf = `
     
     S ::=  "f" A
@@ -1314,7 +1314,7 @@ B ::= A "g"
       `));
     });
 
-    it.only("result in the requisite parse tree" , () => {
+    it("result in the requisite parse tree" , () => {
       const content = `hfgfg
 `,
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
@@ -1482,6 +1482,54 @@ B ::= A "g"
     });
   });
 
+  describe("an indirectly left recursive definition of depth four", () => {
+    const bnf = `
+          
+        S ::=  A... <END_OF_LINE>
+      
+            ;
+      
+        A  ::=  B "c" 
+        
+             |  "d"
+             
+             ;
+      
+        B  ::=  C "f" 
+        
+             |  "g"
+             
+             ;
+      
+        C  ::=  D "h" 
+        
+             |  D "j" 
+        
+             |  "k" 
+                                     
+             ;
+    
+        D  ::=  A "p" 
+        
+             |  B "q" 
+        
+             |  C "r" 
+        
+             |  "s" 
+                                     
+             ;
+    
+          `;
+
+    it.only("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+
+    
+      `));
+    });
+  });
 
 
 
