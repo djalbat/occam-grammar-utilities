@@ -2,25 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
-export const { first, last, find, filter, front, head, tail, push, unshift, backwardsSome, backwardsFind, backwardsEvery } = arrayUtilities;
-
-export function flatten(arrays) {
-  const flattenedArray = [];
-
-  arrays.forEach((array) => {
-    const elements = array; ///
-
-    elements.forEach((element) => {
-      const flattenedArrayIncludesElement = flattenedArray.includes(element);
-
-      if (!flattenedArrayIncludesElement) {
-        flattenedArray.push(element);
-      }
-    })
-  })
-
-  return flattenedArray;
-}
+export const { first, last, find, filter, front, head, tail, push, unshift, firstLast, secondLast, backwardsSome, backwardsFind, backwardsEvery } = arrayUtilities;
 
 export function leftDifference(arrayA, arrayB) {
   filter(arrayA, (elementA) => {

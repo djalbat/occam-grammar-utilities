@@ -6,23 +6,22 @@ import DirectedGraph from "./directedGraph";
 import eliminateDirectLeftRecursion from "./eliminateDirectLeftRecursion";
 import eliminateIndirectLeftRecursion from "./eliminateIndirectLeftRecursion";
 
-import { edgesFromStartRuleAndRuleMap } from "./utilities/ruleMap";
+import { edgesFromStartRuleAndRuleMap } from "./utilities/directedGraph";
 
 const { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
 export default function eliminateLeftRecursion(rules) {
   const ruleMap = ruleMapFromRules(rules),
         startRule = startRuleFromRules(rules),
-        edges = edgesFromStartRuleAndRuleMap(startRule, ruleMap),
-        directedGraph = DirectedGraph.fromEdges(edges),
         startRuleName = startRule.getName(),
+        edges = edgesFromStartRuleAndRuleMap(startRule, ruleMap),
         startVertex = startRuleName,  ///
+        directedGraph = DirectedGraph.fromEdgesAndStartVertex(edges, startVertex),
+        cycles = directedGraph.getCycles(),
         context = {
-          ruleMap,
-          directedGraph
+          cycles,
+          ruleMap
         };
-
-  directedGraph.removeNonCyclicEdges(startVertex);
 
   eliminateIndirectLeftRecursion(context);
 

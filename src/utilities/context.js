@@ -132,29 +132,3 @@ export function findIndirectlyLeftRecursiveDefinitions(rule, callback, context) 
 
   return indirectlyLeftRecursiveDefinitions;
 }
-
-export function retrieveGreatestIndirectlyLeftRecursiveDefinition(context) {
-  let greatestIndirectlyLeftRecursiveDefinition = null;
-
-  const { leftRecursiveDefinitions } = context;
-
-  leftRecursiveDefinitions.forEach((leftRecursiveDefinition) => {
-    const leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition = (leftRecursiveDefinition instanceof IndirectlyLeftRecursiveDefinition);
-
-    if (leftRecursiveDefinitionIndirectlyLeftRecursiveDefinition) {
-      const indirectlyLeftRecursiveDefinition = leftRecursiveDefinition;  ///
-
-      if (greatestIndirectlyLeftRecursiveDefinition === null) {
-        greatestIndirectlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition; ///
-      } else {
-        const indirectlyLeftRecursiveDefinitionGreaterThanGreatestIndirectlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition.isGreaterThan(greatestIndirectlyLeftRecursiveDefinition);
-
-        if (indirectlyLeftRecursiveDefinitionGreaterThanGreatestIndirectlyLeftRecursiveDefinition) {
-          greatestIndirectlyLeftRecursiveDefinition = indirectlyLeftRecursiveDefinition; ///
-        }
-      }
-    }
-  });
-
-  return greatestIndirectlyLeftRecursiveDefinition;
-}

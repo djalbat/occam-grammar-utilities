@@ -3,40 +3,44 @@
 import Definition from "./definition";
 import IndirectlyRepeatedRule from "./rule/repeated/indirectly";
 
-import { first } from "./utilities/array";
-import { findLeftRecursiveDefinitions, retrieveGreatestIndirectlyLeftRecursiveDefinition } from "./utilities/context"
-
-let count = 0;
-
-const maxCount = 1;
+import { ruleNamesFromCycle } from "./utilities/directedGraph";
+import { first, firstLast, secondLast } from "./utilities/array";
+import { findLeftRecursiveDefinitions } from "./utilities/context"
 
 export default function eliminateIndirectLeftRecursion(context) {
-  let greatestIndirectlyLeftRecursiveDefinition = count++ >= maxCount ? null : retrieveGreatestIndirectlyLeftRecursiveDefinition(context);
+  const { cycles, ruleMap } = context;
 
-  while (greatestIndirectlyLeftRecursiveDefinition !== null) {
-    const indirectlyLeftRecursiveDefinition = greatestIndirectlyLeftRecursiveDefinition; ///
+  let greatestNonTrivialCycle = greatestNonTrivialCycleFromCycles(cycles);
 
-    rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, context);
+  while (greatestNonTrivialCycle !== null) {
+    const cycle = greatestNonTrivialCycle,  ///
+          ruleNames = ruleNamesFromCycle(cycle),
+          firstLastRuleName = firstLast(ruleNames),
+          secondLastRuleName = secondLast(ruleNames),
+          ruleName = firstLastRuleName, ///
+          leftRecursiveRuleName = secondLastRuleName, ///
+          rule = ruleMap[ruleName],
+          leftRecursiveRule = ruleMap[leftRecursiveRuleName];
 
-    greatestIndirectlyLeftRecursiveDefinition = count++ >= maxCount ? null : retrieveGreatestIndirectlyLeftRecursiveDefinition(context);
+    rewriteIndirectLeftRecursion(rule, leftRecursiveRule, context);
+
+    debugger
+
+    greatestNonTrivialCycle = greatestNonTrivialCycleFromCycles(cycles);
   }
 }
 
-function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, context) {
-  const rule = indirectlyLeftRecursiveDefinition.getRule(),
-        ruleName = indirectlyLeftRecursiveDefinition.getRuleName(),
-        leftRecursiveDefinition = indirectlyLeftRecursiveDefinition.getLeftRecursiveDefinition(),
-        leftRecursiveDefinitionRule = leftRecursiveDefinition.getRule(),
-        leftRecursiveDefinitionRuleName = leftRecursiveDefinitionRule.getName(),
-        leftRecursiveDefinitions = findLeftRecursiveDefinitions(leftRecursiveDefinitionRule, (leftRecursiveDefinition) => {
+function rewriteIndirectLeftRecursion(rule, leftRecursiveRule, context) {
+  const ruleName = rule.getName(),
+        leftRecursiveRuleName = leftRecursiveRule.getName(),
+        leftRecursiveDefinitions = findLeftRecursiveDefinitions(leftRecursiveRule, (leftRecursiveDefinition) => {
           const leftRecursiveDefinitionLeftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames(),
                 firstLeftRecursiveDefinitionLeftRecursiveRuleName = first(leftRecursiveDefinitionLeftRecursiveRuleNames);
 
           if (firstLeftRecursiveDefinitionLeftRecursiveRuleName === ruleName) {
             return true;
           }
-        }, context),
-        leftRecursiveRuleName = leftRecursiveDefinitionRuleName;  ///
+        }, context);
 
   const indirectlyRepeatedRule = IndirectlyRepeatedRule.fromRuleNameLeftRecursiveRuleNameAndLeftRecursiveDefinitions(ruleName, leftRecursiveRuleName, leftRecursiveDefinitions),
         indirectlyRepeatedRuleName = indirectlyRepeatedRule.getName();
@@ -54,11 +58,14 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, context
     return definition;
   });
 
-  leftRecursiveDefinitionRule.removeDefinitions(definitions);
+  leftRecursiveRule.removeDefinitions(definitions);
+
+  const firstLeftRecursiveDefinition = first(leftRecursiveDefinitions),
+        leftRecursiveDefinition = firstLeftRecursiveDefinition; ///
 
   definition = Definition.fromLeftRecursiveDefinition(leftRecursiveDefinition);
 
-  leftRecursiveDefinitionRule.addDefinition(definition);
+  leftRecursiveRule.addDefinition(definition);
 
   definitions = rule.getDefinitions();
 
@@ -68,5 +75,40 @@ function rewriteIndirectLeftRecursion(indirectlyLeftRecursiveDefinition, context
     return definition;
   });
 
-  leftRecursiveDefinitionRule.addDefinitions(definitions);
+  leftRecursiveRule.addDefinitions(definitions);
+}
+
+function greatestNonTrivialCycleFromCycles(cycles) {
+  let greatestNonTrivialCycle = null;
+
+  const greatestCycle = greatestCycleFromCycles(cycles);
+
+  if (greatestCycle !== null) {
+    const greatestCycleLength = greatestCycle.length;
+
+    if (greatestCycleLength > 1) {
+      greatestNonTrivialCycle = greatestCycle;  ///
+    }
+  }
+
+  return greatestNonTrivialCycle;
+}
+
+function greatestCycleFromCycles(cycles) {
+  const greatestCycle = cycles.reduce((greatestCycle, cycle) => {
+    if (greatestCycle === null) {
+      greatestCycle = cycle;  ///
+    } else {
+      const cycleLength = cycle.length,
+            greatestCycleLength = greatestCycle.length;
+
+      if (cycleLength > greatestCycleLength) {
+        greatestCycle = cycle;  ///
+      }
+    }
+
+    return greatestCycle;
+  }, null);
+
+  return greatestCycle;
 }

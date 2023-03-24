@@ -1,14 +1,39 @@
 "use strict";
 
-import { last, find, filter, flatten } from "./utilities/array";
+import { last, find } from "./utilities/array";
 
 export default class DirectedGraph {
-  constructor(edges) {
+  constructor(edges, startVertex) {
     this.edges = edges;
+    this.startVertex = startVertex;
   }
 
   getEdges() {
     return this.edges;
+  }
+
+  getStartVertex() {
+    return this.startVertex;
+  }
+
+  findSuccessorEdges(vertex) {
+    const sourceVertex = vertex,  ///
+          edges = this.findEdgesBySourceVertex(sourceVertex),
+          successorEdges = edges; ///
+
+    return successorEdges;
+  }
+
+  findEdgesBySourceVertex(sourceVertex) {
+    const edges = find(this.edges, (edge) => { ///
+      const edgeMatchesSourceVertex = edge.matchSourceVertex(sourceVertex);
+
+      if (edgeMatchesSourceVertex) {
+        return true;
+      }
+    });
+
+    return edges;
   }
 
   depthFirstSearch(vertex, edges, callback) {
@@ -34,29 +59,9 @@ export default class DirectedGraph {
     });
   }
 
-  findSuccessorEdges(vertex) {
-    const sourceVertex = vertex,  ///
-          edges = this.findEdgesBySourceVertex(sourceVertex),
-          successorEdges = edges; ///
-
-    return successorEdges;
-  }
-
-  findEdgesBySourceVertex(sourceVertex) {
-    const edges = find(this.edges, (edge) => { ///
-      const edgeMatchesSourceVertex = edge.matchSourceVertex(sourceVertex);
-
-      if (edgeMatchesSourceVertex) {
-        return true;
-      }
-    });
-
-    return edges;
-  }
-
-  findCycles(startVertex) {
+  findCycles() {
     const cycles = [],
-          vertex = startVertex, ///
+          vertex = this.startVertex, ///
           edges = [];
 
     this.depthFirstSearch(vertex, edges, (previousEdges) => {
@@ -68,27 +73,8 @@ export default class DirectedGraph {
     return cycles;
   }
 
-  findCyclicEdges(startVertex) {
-    const cycles = this.findCycles(startVertex),
-          cyclicEdges = flatten(cycles);
-
-    return cyclicEdges;
-  }
-
-  removeNonCyclicEdges(startVertex) {
-    const cyclicEdges = this.findCyclicEdges(startVertex);
-
-    filter(this.edges, (edge) => {
-      const cyclicEdgesIncludesEdge = cyclicEdges.includes(edge);
-
-      if (cyclicEdgesIncludesEdge) {
-        return true;
-      }
-    });
-  }
-
-  static fromEdges(edges) {
-    const directedGraph = new DirectedGraph(edges);
+  static fromEdgesAndStartVertex(edges, startVertex) {
+    const directedGraph = new DirectedGraph(edges, startVertex);
 
     return directedGraph;
   }
