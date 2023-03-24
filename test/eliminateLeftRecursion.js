@@ -1485,9 +1485,7 @@ B ::= A "g"
   describe("an indirectly left recursive definition of depth four", () => {
     const bnf = `
           
-        S ::=  A... <END_OF_LINE>
-      
-            ;
+        S ::=  A... <END_OF_LINE> ;
       
         A  ::=  B "c" 
         

@@ -2,20 +2,27 @@
 
 import { rulesUtilities } from "occam-parsers";
 
-import RuleNameGraph from "./ruleNameGraph";
+import DirectedGraph from "./directedGraph";
 import eliminateDirectLeftRecursion from "./eliminateDirectLeftRecursion";
 import eliminateIndirectLeftRecursion from "./eliminateIndirectLeftRecursion";
+
+import { edgesFromStartRuleAndRuleMap } from "./utilities/ruleMap";
 
 const { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
 export default function eliminateLeftRecursion(rules) {
   const ruleMap = ruleMapFromRules(rules),
         startRule = startRuleFromRules(rules),
-        ruleNameGraph = RuleNameGraph.fromRuleMapAndStartRule(ruleMap, startRule),
+        edges = edgesFromStartRuleAndRuleMap(startRule, ruleMap),
+        directedGraph = DirectedGraph.fromEdges(edges),
+        startRuleName = startRule.getName(),
+        startVertex = startRuleName,  ///
         context = {
           ruleMap,
-          ruleNameGraph
+          directedGraph
         };
+
+  directedGraph.removeNonCyclicEdges(startVertex);
 
   eliminateIndirectLeftRecursion(context);
 
