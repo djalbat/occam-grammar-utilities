@@ -57,9 +57,10 @@ export function isDefinitionEffectivelyUnary(definition, context) {
   return definitionEffectivelyUnary;
 }
 
-export function recursiveRuleNamesFromDefinition(definition) {
-  const parts = definition.getParts(),
-        recursiveRuleNames = recursiveRuleNamesFromParts(parts);
+export function recursiveRuleNamesFromDefinition(definition, recursiveRuleNames = []) {
+  const parts = definition.getParts();
+
+  recursiveRuleNamesFromParts(parts, recursiveRuleNames);
 
   return recursiveRuleNames;
 }
@@ -72,9 +73,10 @@ export function isDefinitionDirectlyLeftRecursive(definition, leftRecursiveRuleN
   return definitionDirectlyLeftRecursive;
 }
 
-export function leftRecursiveRuleNamesFromDefinition(definition) {
-  const parts = definition.getParts(),
-        leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts);
+export function leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveRuleNames = []) {
+  const parts = definition.getParts();
+
+  leftRecursiveRuleNamesFromParts(parts, leftRecursiveRuleNames);
 
   return leftRecursiveRuleNames;
 }

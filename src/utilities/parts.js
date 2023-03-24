@@ -96,17 +96,16 @@ export function repeatedPartFromParts(parts) {
   return repeatedPart;
 }
 
-export function recursiveRuleNamesFromParts(parts) {
-  const recursiveRuleNames = [];
-
-  parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
+export function recursiveRuleNamesFromParts(parts, recursiveRuleNames = []) {
+  parts.forEach((part) => {
+    recursiveRuleNamesFromPart(part, recursiveRuleNames);
+  });
 
   return recursiveRuleNames;
 }
 
-export function leftRecursiveRuleNamesFromParts(parts) {
-  const leftRecursiveRuleNames = [],
-        firstPart = first(parts),
+export function leftRecursiveRuleNamesFromParts(parts, leftRecursiveRuleNames = []) {
+  const firstPart = first(parts),
         part = firstPart; ///
 
   leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);

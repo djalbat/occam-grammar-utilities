@@ -33,33 +33,6 @@ export default class ReplacementDefinition extends Definition {
     return present;
   }
 
-  static fromLeftRecursiveDefinition(leftRecursiveDefinition) {
-    const definition = leftRecursiveDefinition.getDefinition();
-
-    let parts = definition.getParts();
-
-    let firstPart = first(parts);
-
-    firstPart = firstPart.clone(); ///
-
-    const rule = leftRecursiveDefinition.getRule(),
-          ruleName = rule.getName(),
-          leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames(),
-          firstLeftRecursiveRuleName = first(leftRecursiveRuleNames),
-          leftRecursiveRuleName = firstLeftRecursiveRuleName, ///
-          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
-          indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName);
-
-    parts = [
-      firstPart,
-      indirectlyRepeatedRuleNamePart
-    ];
-
-    const replacementDefinition = new ReplacementDefinition(parts);
-
-    return replacementDefinition;
-  }
-
   static fromIndirectlyLeftRecursiveDefinition(indirectlyLeftRecursiveDefinition) {
     const rule = indirectlyLeftRecursiveDefinition.getRule(),
           depth = indirectlyLeftRecursiveDefinition.getDepth(),

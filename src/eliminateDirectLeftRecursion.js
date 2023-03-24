@@ -9,6 +9,9 @@ import { removeLeftRecursiveDefinitions,
          findDirectlyLeftRecursiveDefinitions } from "./utilities/context";
 
 export default function eliminateDirectLeftRecursion(context) {
+  return;
+
+
   let directlyLeftRecursiveDefinition = findDirectlyLeftRecursiveDefinition(context);
 
   while (directlyLeftRecursiveDefinition !== null) {
