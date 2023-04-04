@@ -14,6 +14,12 @@ export default class Edge {
     return this.targetVertex;
   }
 
+  isTriviallyCyclic() {
+    const triviallyCyclic = (this.sourceVertex === this.targetVertex);
+
+    return triviallyCyclic;
+  }
+
   match(sourceVertex, targetVertex) {
     const matches = ((this.sourceVertex === sourceVertex) && (this.targetVertex === targetVertex));
 

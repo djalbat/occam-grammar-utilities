@@ -19,7 +19,25 @@ export default class DirectedGraph {
   }
 
   addEdge(edge) {
-    this.edges.push(edge);
+    const edgeA = edge, ///
+          matches = this.edges.some((edge) => {
+            const edgeB = edge, ///
+                  edgeAMatchesEdgeB = edgeA.match(edgeB);
+
+            if (edgeAMatchesEdgeB) {
+              return true;
+            }
+          });
+
+    if (!matches) {
+      this.edges.push(edge);
+    }
+  }
+
+  addEdges(edges) {
+    edges.forEach((edge) => {
+      this.addEdge(edge);
+    });
   }
 
   removeEdge(edge) {
@@ -30,10 +48,30 @@ export default class DirectedGraph {
     this.edges.splice(start, deleteCount);
   }
 
+  findNonTrivialCycles() {
+    const nonTrivialCycles = [],
+          vertex = this.startVertex, ///
+          edges = [];
+
+    this.depthFirstSearch(vertex, edges, (previousEdges) => {
+      const nonTrivialCycle = nonTrivialCycleFromPreviousEdges(previousEdges);
+
+      nonTrivialCycles.push(nonTrivialCycle);
+    });
+
+    return nonTrivialCycles;
+  }
+
   findSuccessorEdges(vertex) {
     const sourceVertex = vertex,  ///
           edges = this.findEdgesBySourceVertex(sourceVertex),
-          successorEdges = edges; ///
+          successorEdges = edges.filter((edge) => {
+            const targetVertex = edge.getTargetVertex();
+
+            if (targetVertex !== sourceVertex) {
+              return true;
+            }
+          });
 
     return successorEdges;
   }
@@ -97,20 +135,6 @@ export default class DirectedGraph {
     this.removeEdge(edge);
   }
 
-  findCycles() {
-    const cycles = [],
-          vertex = this.startVertex, ///
-          edges = [];
-
-    this.depthFirstSearch(vertex, edges, (previousEdges) => {
-      const cycle = cycleFromPreviousEdges(previousEdges);
-
-      cycles.push(cycle);
-    });
-
-    return cycles;
-  }
-
   static fromEdgesAndStartVertex(edges, startVertex) {
     const directedGraph = new DirectedGraph(edges, startVertex);
 
@@ -118,7 +142,7 @@ export default class DirectedGraph {
   }
 }
 
-function cycleFromPreviousEdges(previousEdges) {
+function nonTrivialCycleFromPreviousEdges(previousEdges) {
   let cycle;
 
   const lastPreviousEdge = last(previousEdges),

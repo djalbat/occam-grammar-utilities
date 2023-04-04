@@ -7,13 +7,10 @@ import IndirectlyRepeatedRule from "./rule/repeated/indirectly";
 import { ruleNamesFromCycle } from "./utilities/directedGraph";
 import { first, firstLast, secondLast } from "./utilities/array";
 import { findLeftRecursiveDefinitions } from "./utilities/context"
-import { leftRecursiveRuleNamesFromDefinition } from "./utilities/definition";
+import { isDefinitionDirectlyLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "./utilities/definition";
 
 export default function eliminateIndirectLeftRecursion(context) {
-  const { ruleMap, directedGraph } = context;
-
-  let cycles = directedGraph.findCycles(),
-      greatestNonTrivialCycle = greatestNonTrivialCycleFromCycles(cycles);
+  let greatestNonTrivialCycle = findGreatestNonTrivialCycle(context);
 
   while (greatestNonTrivialCycle !== null) {
     const cycle = greatestNonTrivialCycle,  ///
@@ -21,49 +18,83 @@ export default function eliminateIndirectLeftRecursion(context) {
           firstLastRuleName = firstLast(ruleNames),
           secondLastRuleName = secondLast(ruleNames),
           ruleName = firstLastRuleName, ///
-          leftRecursiveRuleName = secondLastRuleName, ///
-          rule = ruleMap[ruleName],
-          leftRecursiveRule = ruleMap[leftRecursiveRuleName];
+          leftRecursiveRuleName = secondLastRuleName; ///
 
-    rewriteIndirectLeftRecursion(rule, leftRecursiveRule, context);
+    rewriteIndirectLeftRecursion(ruleName, leftRecursiveRuleName, context);
 
-    let sourceVertex,
-        targetVertex;
+    rewriteDirectedGraph(ruleName, leftRecursiveRuleName, context);
 
-    sourceVertex = leftRecursiveRuleName; ///
+    greatestNonTrivialCycle = findGreatestNonTrivialCycle(context);
+  }
+}
 
-    targetVertex = ruleName;  ///
+function rewriteDirectedGraph(ruleName, leftRecursiveRuleName, context) {
+  const { directedGraph } = context;
 
-    directedGraph.removeEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex);
+  let sourceVertex,
+      targetVertex;
 
-    sourceVertex = ruleName;  ///
+  sourceVertex = leftRecursiveRuleName; ///
 
-    const edges = directedGraph.findEdgesBySourceVertex(sourceVertex);
+  targetVertex = ruleName;  ///
 
-    edges.forEach((edge) => {
+  directedGraph.removeEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex);
+
+  sourceVertex = ruleName;  ///
+
+  let edges = directedGraph.findEdgesBySourceVertex(sourceVertex);
+
+  edges = edges.reduce((edges, edge) => { ///
+    const edgeTriviallyCyclic = edge.isTriviallyCyclic();
+
+    if (!edgeTriviallyCyclic) {
       const sourceVertex = leftRecursiveRuleName, ///
             targetVertex = edge.getTargetVertex();
 
       edge = Edge.fromSourceVertexAndTargetVertex(sourceVertex, targetVertex);
 
-      directedGraph.addEdge(edge);
-    });
+      edges.push(edge);
+    }
 
-    targetVertex = sourceVertex;  ///
+    return edges;
+  }, []);
 
-    directedGraph.addEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex);
-
-    cycles = directedGraph.findCycles();
-
-    greatestNonTrivialCycle = greatestNonTrivialCycleFromCycles(cycles);
-  }
+  directedGraph.addEdges(edges);
 }
 
-function rewriteIndirectLeftRecursion(rule, leftRecursiveRule, context) {
+function greatestCycleFromCycles(cycles) {
+  const greatestCycle = cycles.reduce((greatestCycle, cycle) => {
+    if (greatestCycle === null) {
+      greatestCycle = cycle;  ///
+    } else {
+      const cycleLength = cycle.length,
+            greatestCycleLength = greatestCycle.length;
+
+      if (cycleLength > greatestCycleLength) {
+        greatestCycle = cycle;  ///
+      }
+    }
+
+    return greatestCycle;
+  }, null);
+
+  return greatestCycle;
+}
+
+function findGreatestNonTrivialCycle(context) {
+  const { directedGraph } = context;
+
+  let nonTrivialCycles = directedGraph.findNonTrivialCycles(),
+      greatestNonTrivialCycle = greatestCycleFromCycles(nonTrivialCycles);
+
+  return greatestNonTrivialCycle;
+}
+
+function rewriteIndirectLeftRecursion(ruleName, leftRecursiveRuleName, context) {
   const { ruleMap } = context;
 
-  const ruleName = rule.getName(),
-        leftRecursiveRuleName = leftRecursiveRule.getName(),
+  const rule = ruleMap[ruleName],
+        leftRecursiveRule = ruleMap[leftRecursiveRuleName],
         leftRecursiveDefinitions = findLeftRecursiveDefinitions(leftRecursiveRule, (leftRecursiveDefinition) => {
           const definition = leftRecursiveDefinition, ///
                 leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
@@ -87,46 +118,19 @@ function rewriteIndirectLeftRecursion(rule, leftRecursiveRule, context) {
 
   definitions = rule.getDefinitions();
 
-  definitions = definitions.map((definition) => { ///
-    definition = Definition.fromDefinitionAndIndirectlyRepeatedRuleName(definition, indirectlyRepeatedRuleName);  ///
+  definitions = definitions.reduce((definitions, definition) => { ///
+    const leftRecursiveRuleName = ruleName, ///
+          definitionDirectlyLeftRecursive = isDefinitionDirectlyLeftRecursive(definition, leftRecursiveRuleName);
 
-    return definition;
-  });
+    if (!definitionDirectlyLeftRecursive) {
+      definition = Definition.fromDefinitionAndIndirectlyRepeatedRuleName(definition, indirectlyRepeatedRuleName);  ///
+
+      definitions.push(definition);
+    }
+
+    return definitions;
+  }, []);
 
   leftRecursiveRule.addDefinitions(definitions);
 }
 
-function greatestNonTrivialCycleFromCycles(cycles) {
-  let greatestNonTrivialCycle = null;
-
-  const greatestCycle = greatestCycleFromCycles(cycles);
-
-  if (greatestCycle !== null) {
-    const greatestCycleLength = greatestCycle.length;
-
-    if (greatestCycleLength > 1) {
-      greatestNonTrivialCycle = greatestCycle;  ///
-    }
-  }
-
-  return greatestNonTrivialCycle;
-}
-
-function greatestCycleFromCycles(cycles) {
-  const greatestCycle = cycles.reduce((greatestCycle, cycle) => {
-    if (greatestCycle === null) {
-      greatestCycle = cycle;  ///
-    } else {
-      const cycleLength = cycle.length,
-            greatestCycleLength = greatestCycle.length;
-
-      if (cycleLength > greatestCycleLength) {
-        greatestCycle = cycle;  ///
-      }
-    }
-
-    return greatestCycle;
-  }, null);
-
-  return greatestCycle;
-}
