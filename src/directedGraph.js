@@ -2,6 +2,8 @@
 
 import { last, find } from "./utilities/array";
 
+import Edge from "./edge";
+
 export default class DirectedGraph {
   constructor(edges, startVertex) {
     this.edges = edges;
@@ -14,6 +16,18 @@ export default class DirectedGraph {
 
   getStartVertex() {
     return this.startVertex;
+  }
+
+  addEdge(edge) {
+    this.edges.push(edge);
+  }
+
+  removeEdge(edge) {
+    const index = this.edges.indexOf(edge),
+          start = index,  ///
+          deleteCount = 1;
+
+    this.edges.splice(start, deleteCount);
   }
 
   findSuccessorEdges(vertex) {
@@ -34,6 +48,18 @@ export default class DirectedGraph {
     });
 
     return edges;
+  }
+
+  findEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex) {
+    const edge = this.edges.find((edge) => {
+      const matches = edge.match(sourceVertex, targetVertex);
+
+      if (matches) {
+        return true;
+      }
+    }) || null;
+
+    return edge;
   }
 
   depthFirstSearch(vertex, edges, callback) {
@@ -57,6 +83,18 @@ export default class DirectedGraph {
         this.depthFirstSearch(vertex, edges, callback);
       }
     });
+  }
+
+  addEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex) {
+    const edge = Edge.fromSourceVertexAndTargetVertex(sourceVertex, targetVertex);
+
+    this.edges.push(edge);
+  }
+
+  removeEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex) {
+    const edge = this.findEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex);
+
+    this.removeEdge(edge);
   }
 
   findCycles() {
@@ -83,26 +121,20 @@ export default class DirectedGraph {
 function cycleFromPreviousEdges(previousEdges) {
   let cycle;
 
-  const previousEdgesLength = previousEdges.length;
+  const lastPreviousEdge = last(previousEdges),
+        targetVertex = lastPreviousEdge.getTargetVertex();
 
-  if (previousEdgesLength === 1) {
-    cycle = previousEdges;  ///
-  } else {
-    const lastPreviousEdge = last(previousEdges),
-          lastPreviousEdgeTargetVertex = lastPreviousEdge.getTargetVertex();
+  previousEdges.some((previousEdge, index) => {
+    const sourceVertex = previousEdge.getSourceVertex();
 
-    previousEdges.some((previousEdge, index) => {
-      const previousEdgeTargetVertex = previousEdge.getTargetVertex();
+    if (sourceVertex === targetVertex) {
+      const start = index;  ///
 
-      if (previousEdgeTargetVertex === lastPreviousEdgeTargetVertex) {
-        const start = index + 1;
+      cycle = previousEdges.slice(start);
 
-        cycle = previousEdges.slice(start);
-
-        return true;
-      }
-    });
-  }
+      return true;
+    }
+  });
 
   return cycle;
 }

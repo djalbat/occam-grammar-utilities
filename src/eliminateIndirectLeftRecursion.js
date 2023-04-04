@@ -1,5 +1,6 @@
 "use strict";
 
+import Edge from "./edge";
 import Definition from "./definition";
 import IndirectlyRepeatedRule from "./rule/repeated/indirectly";
 
@@ -9,9 +10,10 @@ import { findLeftRecursiveDefinitions } from "./utilities/context"
 import { leftRecursiveRuleNamesFromDefinition } from "./utilities/definition";
 
 export default function eliminateIndirectLeftRecursion(context) {
-  const { cycles, ruleMap } = context;
+  const { ruleMap, directedGraph } = context;
 
-  let greatestNonTrivialCycle = greatestNonTrivialCycleFromCycles(cycles);
+  let cycles = directedGraph.findCycles(),
+      greatestNonTrivialCycle = greatestNonTrivialCycleFromCycles(cycles);
 
   while (greatestNonTrivialCycle !== null) {
     const cycle = greatestNonTrivialCycle,  ///
@@ -25,7 +27,33 @@ export default function eliminateIndirectLeftRecursion(context) {
 
     rewriteIndirectLeftRecursion(rule, leftRecursiveRule, context);
 
-    debugger
+    let sourceVertex,
+        targetVertex;
+
+    sourceVertex = leftRecursiveRuleName; ///
+
+    targetVertex = ruleName;  ///
+
+    directedGraph.removeEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex);
+
+    sourceVertex = ruleName;  ///
+
+    const edges = directedGraph.findEdgesBySourceVertex(sourceVertex);
+
+    edges.forEach((edge) => {
+      const sourceVertex = leftRecursiveRuleName, ///
+            targetVertex = edge.getTargetVertex();
+
+      edge = Edge.fromSourceVertexAndTargetVertex(sourceVertex, targetVertex);
+
+      directedGraph.addEdge(edge);
+    });
+
+    targetVertex = sourceVertex;  ///
+
+    directedGraph.addEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex);
+
+    cycles = directedGraph.findCycles();
 
     greatestNonTrivialCycle = greatestNonTrivialCycleFromCycles(cycles);
   }

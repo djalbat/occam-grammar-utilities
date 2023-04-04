@@ -17,10 +17,9 @@ export default function eliminateLeftRecursion(rules) {
         edges = edgesFromStartRuleAndRuleMap(startRule, ruleMap),
         startVertex = startRuleName,  ///
         directedGraph = DirectedGraph.fromEdgesAndStartVertex(edges, startVertex),
-        cycles = directedGraph.findCycles(),
         context = {
-          cycles,
-          ruleMap
+          ruleMap,
+          directedGraph
         };
 
   eliminateIndirectLeftRecursion(context);
