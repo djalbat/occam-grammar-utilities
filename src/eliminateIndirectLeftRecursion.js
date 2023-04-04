@@ -6,6 +6,7 @@ import IndirectlyRepeatedRule from "./rule/repeated/indirectly";
 import { ruleNamesFromCycle } from "./utilities/directedGraph";
 import { first, firstLast, secondLast } from "./utilities/array";
 import { findLeftRecursiveDefinitions } from "./utilities/context"
+import { leftRecursiveRuleNamesFromDefinition } from "./utilities/definition";
 
 export default function eliminateIndirectLeftRecursion(context) {
   const { cycles, ruleMap } = context;
@@ -31,13 +32,16 @@ export default function eliminateIndirectLeftRecursion(context) {
 }
 
 function rewriteIndirectLeftRecursion(rule, leftRecursiveRule, context) {
+  const { ruleMap } = context;
+
   const ruleName = rule.getName(),
         leftRecursiveRuleName = leftRecursiveRule.getName(),
         leftRecursiveDefinitions = findLeftRecursiveDefinitions(leftRecursiveRule, (leftRecursiveDefinition) => {
-          const leftRecursiveDefinitionLeftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames(),
-                firstLeftRecursiveDefinitionLeftRecursiveRuleName = first(leftRecursiveDefinitionLeftRecursiveRuleNames);
+          const definition = leftRecursiveDefinition, ///
+                leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
+                firstLeftRecursiveRuleName = first(leftRecursiveRuleNames);
 
-          if (firstLeftRecursiveDefinitionLeftRecursiveRuleName === ruleName) {
+          if (firstLeftRecursiveRuleName === ruleName) {
             return true;
           }
         }, context);
@@ -45,32 +49,18 @@ function rewriteIndirectLeftRecursion(rule, leftRecursiveRule, context) {
   const indirectlyRepeatedRule = IndirectlyRepeatedRule.fromRuleNameLeftRecursiveRuleNameAndLeftRecursiveDefinitions(ruleName, leftRecursiveRuleName, leftRecursiveDefinitions),
         indirectlyRepeatedRuleName = indirectlyRepeatedRule.getName();
 
-  const { ruleMap } = context;
-
   ruleMap[indirectlyRepeatedRuleName] = indirectlyRepeatedRule;
 
-  let definition,
-      definitions;
+  let definitions;
 
-  definitions = leftRecursiveDefinitions.map((leftRecursiveDefinition) => {
-    const definition = leftRecursiveDefinition.getDefinition();
-
-    return definition;
-  });
+  definitions = leftRecursiveDefinitions; ///
 
   leftRecursiveRule.removeDefinitions(definitions);
 
-  const firstLeftRecursiveDefinition = first(leftRecursiveDefinitions),
-        leftRecursiveDefinition = firstLeftRecursiveDefinition; ///
-
-  definition = Definition.fromLeftRecursiveDefinition(leftRecursiveDefinition);
-
-  leftRecursiveRule.addDefinition(definition);
-
   definitions = rule.getDefinitions();
 
-  definitions = definitions.forEach((definition) => { ///
-    definition = Definition.fromDefinitionAndLeftRecursiveDefinition(definition, leftRecursiveDefinition);  ///
+  definitions = definitions.map((definition) => { ///
+    definition = Definition.fromDefinitionAndIndirectlyRepeatedRuleName(definition, indirectlyRepeatedRuleName);  ///
 
     return definition;
   });

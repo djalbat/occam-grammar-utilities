@@ -2,25 +2,20 @@
 
 import { Definition as DefinitionBase } from "occam-parsers";
 
-import { first } from "./utilities/array";
 import { cloneParts } from "./utilities/parts";
 import { ruleNamePartFromRuleName } from "./utilities/part";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "./utilities/ruleName";
 
 export default class Definition extends DefinitionBase {
-  static fromLeftRecursiveDefinition(leftRecursiveDefinition) {
-    let definition = leftRecursiveDefinition.getDefinition();
-
+  static fromDefinitionAndIndirectlyRepeatedRuleName(definition, indirectlyRepeatedRuleName) {
     let parts = definition.getParts();
 
-    let firstPart = first(parts);
+    parts = cloneParts(parts);
 
-    firstPart = firstPart.clone(); ///
+    const indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName);
 
-    const indirectlyRepeatedRuleNamePart = indirectlyRepeatedRuleNamePartFromLeftRecursiveDefinition(leftRecursiveDefinition);
-
-    parts = [
-      firstPart,
+    parts = [ ///
+      ...parts,
       indirectlyRepeatedRuleNamePart
     ];
 
@@ -47,14 +42,8 @@ export default class Definition extends DefinitionBase {
   }
 }
 
-function indirectlyRepeatedRuleNamePartFromLeftRecursiveDefinition(leftRecursiveDefinition) {
-  const leftRecursiveRuleNames = leftRecursiveDefinition.getLeftRecursiveRuleNames(),
-        leftRecursiveDefinitionRule = leftRecursiveDefinition.getRule(),
-        leftRecursiveDefinitionRuleName = leftRecursiveDefinitionRule.getName(),
-        firstLeftRecursiveRuleName = first(leftRecursiveRuleNames),
-        ruleName = firstLeftRecursiveRuleName,  ///
-        leftRecursiveRuleName = leftRecursiveDefinitionRuleName, ///
-        indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
+function indirectlyRepeatedRuleNamePartFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {
+  const indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
         indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName);
 
   return indirectlyRepeatedRuleNamePart;

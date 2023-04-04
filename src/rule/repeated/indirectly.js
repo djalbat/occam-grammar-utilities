@@ -15,18 +15,7 @@ export default class IndirectlyRepeatedRule extends Rule {
   static fromRuleNameLeftRecursiveRuleNameAndLeftRecursiveDefinitions(ruleName, leftRecursiveRuleName, leftRecursiveDefinitions) {
     let parts,
         definition,
-        definitions;
-
-    definitions = leftRecursiveDefinitions.reduce((definitions, leftRecursiveDefinition) => {
-      const definition = leftRecursiveDefinition.getDefinition(),
-            definitionsIncludesDefinition = definitions.includes(definition);
-
-      if (!definitionsIncludesDefinition) {
-        definitions.push(definition);
-      }
-
-      return definitions;
-    }, []);
+        definitions = leftRecursiveDefinitions; ///
 
     const firstDefinition = first(definitions);
 
