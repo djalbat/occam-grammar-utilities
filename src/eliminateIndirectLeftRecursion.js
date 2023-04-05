@@ -4,7 +4,6 @@ import Edge from "./edge";
 import Definition from "./definition";
 import IndirectlyRepeatedRule from "./rule/repeated/indirectly";
 
-import { ruleNamesFromCycle } from "./utilities/directedGraph";
 import { first, firstLast, secondLast } from "./utilities/array";
 import { findLeftRecursiveDefinitions } from "./utilities/context"
 import { isDefinitionDirectlyLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "./utilities/definition";
@@ -13,8 +12,7 @@ export default function eliminateIndirectLeftRecursion(context) {
   let greatestNonTrivialCycle = findGreatestNonTrivialCycle(context);
 
   while (greatestNonTrivialCycle !== null) {
-    const cycle = greatestNonTrivialCycle,  ///
-          ruleNames = ruleNamesFromCycle(cycle),
+    const ruleNames = greatestNonTrivialCycle,  ///
           firstLastRuleName = firstLast(ruleNames),
           secondLastRuleName = secondLast(ruleNames),
           ruleName = firstLastRuleName, ///

@@ -4,18 +4,6 @@ import Edge from "../edge";
 
 import { recursiveRuleNamesFromRule, leftRecursiveRuleNamesFromRule } from "./rule";
 
-export function ruleNamesFromCycle(cycle) {
-  const edges = cycle,  //
-        ruleNames = edges.map((edge) => {
-          const sourceVertex = edge.getSourceVertex(),
-                ruleName = sourceVertex;  ///
-
-          return ruleName;
-        });
-
-  return ruleNames;
-}
-
 export function edgesFromStartRuleAndRuleMap(startRule, ruleMap) {
   const rule = startRule, ///
         edges = [],

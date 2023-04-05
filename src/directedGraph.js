@@ -48,13 +48,49 @@ export default class DirectedGraph {
     this.edges.splice(start, deleteCount);
   }
 
+  depthFirstSearch(vertex, vertexes, callback) {
+    const previousVertexes = vertexes,  ///
+          successorVertexes = this.findSuccessorVertexes(vertex);
+
+    successorVertexes.forEach((successorVertex) => {
+      const previousVertexesIncludesSuccessorVertex = previousVertexes.includes(successorVertex),
+            vertexes = [
+              ...previousVertexes,
+              successorVertex
+            ],
+            vertex = successorVertex;  ///
+
+      if (previousVertexesIncludesSuccessorVertex) {
+        callback(vertexes);
+      } else {
+        this.depthFirstSearch(vertex, vertexes, callback);
+      }
+    });
+  }
+
+  findTrivialCycles() {
+    const triviallyCyclicEdges = this.findTriviallyCyclicEdges(),
+          trivialCycles = triviallyCyclicEdges.map((trivlallyCyclicEdge) => {
+            const sourceVertex = trivlallyCyclicEdge.getSourceVertex(),
+                  trivialCycle = [
+                    sourceVertex
+                  ];
+
+            return trivialCycle;
+          });
+
+    return trivialCycles;
+  }
+
   findNonTrivialCycles() {
     const nonTrivialCycles = [],
           vertex = this.startVertex, ///
-          edges = [];
+          vertexes = [
+            vertex
+          ];
 
-    this.depthFirstSearch(vertex, edges, (previousEdges) => {
-      const nonTrivialCycle = nonTrivialCycleFromPreviousEdges(previousEdges);
+    this.depthFirstSearch(vertex, vertexes, (vertexes) => {
+      const nonTrivialCycle = nonTrivialCycleFromVertexes(vertexes);
 
       nonTrivialCycles.push(nonTrivialCycle);
     });
@@ -62,7 +98,7 @@ export default class DirectedGraph {
     return nonTrivialCycles;
   }
 
-  findSuccessorEdges(vertex) {
+  findSuccessorVertexes(vertex) {
     const sourceVertex = vertex,  ///
           edges = this.findEdgesBySourceVertex(sourceVertex),
           successorEdges = edges.filter((edge) => {
@@ -71,9 +107,15 @@ export default class DirectedGraph {
             if (targetVertex !== sourceVertex) {
               return true;
             }
+          }),
+          successorVertexes = successorEdges.map((successorEdge) => {
+            const successorEdgeTargetVertex = successorEdge.getTargetVertex(),
+                  successorVertex = successorEdgeTargetVertex;  ///
+
+            return successorVertex;
           });
 
-    return successorEdges;
+    return successorVertexes;
   }
 
   findEdgesBySourceVertex(sourceVertex) {
@@ -88,6 +130,18 @@ export default class DirectedGraph {
     return edges;
   }
 
+  findTriviallyCyclicEdges() {
+    const triviallyCyclicEdges = this.find((edge) => {
+      const edgeTriviallyCyclic = edge.isTriviallyCyclic();
+
+      if (edgeTriviallyCyclic) {
+        return true;
+      }
+    });
+
+    return triviallyCyclicEdges;
+  }
+
   findEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex) {
     const edge = this.edges.find((edge) => {
       const matches = edge.match(sourceVertex, targetVertex);
@@ -98,29 +152,6 @@ export default class DirectedGraph {
     }) || null;
 
     return edge;
-  }
-
-  depthFirstSearch(vertex, edges, callback) {
-    const previousEdges = edges,  ///
-          successorEdges = this.findSuccessorEdges(vertex);
-
-    successorEdges.forEach((successorEdge) => {
-      const edge = successorEdge, ///
-            previousEdgesIncludesEdge = previousEdges.includes(edge);
-
-      if (previousEdgesIncludesEdge) {
-        callback(previousEdges);
-      } else {
-        const targetVertex = successorEdge.getTargetVertex(),
-              vertex = targetVertex,  ///
-              edges = [
-                ...previousEdges,
-                edge
-              ];
-
-        this.depthFirstSearch(vertex, edges, callback);
-      }
-    });
   }
 
   addEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex) {
@@ -142,23 +173,13 @@ export default class DirectedGraph {
   }
 }
 
-function nonTrivialCycleFromPreviousEdges(previousEdges) {
-  let cycle;
-
-  const lastPreviousEdge = last(previousEdges),
-        targetVertex = lastPreviousEdge.getTargetVertex();
-
-  previousEdges.some((previousEdge, index) => {
-    const sourceVertex = previousEdge.getSourceVertex();
-
-    if (sourceVertex === targetVertex) {
-      const start = index;  ///
-
-      cycle = previousEdges.slice(start);
-
-      return true;
-    }
-  });
+function nonTrivialCycleFromVertexes(vertexes) {
+  const lastVertex = last(vertexes),
+        index = vertexes.indexOf(lastVertex),
+        vertexesLength = vertexes.length,
+        start = index,
+        end = vertexesLength - 1,
+        cycle = vertexes.slice(start, end);
 
   return cycle;
 }
