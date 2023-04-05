@@ -4,47 +4,35 @@ import { Rule } from "occam-parsers";
 
 import DirectlyReducedNode from "../../node/reduced/directly";
 
+import { find } from "../../utilities/array";
 import { directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyReducedRule extends Rule {
-  static fromRuleAndLeftRecursiveDefinitions(rule, leftRecursiveDefinitions, allowIsolated) {
-    let directlyReducedRule = null;
-
+  static fromRuleAndDirectlyLeftRecursiveDefinitions(rule, directlyLeftRecursiveDefinitions) {
     let definitions = rule.getDefinitions();
 
-    definitions = definitions.slice(0);  ///
+    definitions = find(definitions, (definition) => { ///
+      const directlyLeftRecursiveDefinitionsIncludesDefinition = directlyLeftRecursiveDefinitions.includes(definition);
 
-    leftRecursiveDefinitions.forEach((leftRecursiveDefinition) => {
-      const definition = leftRecursiveDefinition.getDefinition(),
-            index = definitions.indexOf(definition);
-
-      if (index > -1) {
-        const start = index,  ///
-              deleteCount = 1;
-
-        definitions.splice(start, deleteCount);
+      if (!directlyLeftRecursiveDefinitionsIncludesDefinition) {
+        return true;
       }
     });
 
-    const definitionsLength = definitions.length;
+    // const definitionsLength = definitions.length;
+    //
+    // if (definitionsLength === 0) {
+    //   const ruleName = rule.getName();
+    //
+    //   throw new Error(`The directly left recursive definitions of the '${ruleName}' rule are isolated and therefore cannot be rewritten.`);
+    // }
 
-    if (definitionsLength === 0) {
-      if (!allowIsolated) {
-        const ruleName = rule.getName();
-
-        throw new Error(`The directly left recursive definitions of the '${ruleName}' rule are isolated and therefore cannot be rewritten.`);
-      }
-    }
-
-    if (definitionsLength > 0) {
-      const ruleName = rule.getName(),
-            directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
-            name = directlyReducedRuleName, ///
-            ambiguous = false,
-            NonTerminalNode = DirectlyReducedNode;  ///
-
-      directlyReducedRule = new DirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
-    }
+    const ruleName = rule.getName(),
+          directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
+          name = directlyReducedRuleName, ///
+          ambiguous = false,
+          NonTerminalNode = DirectlyReducedNode,  ///
+          directlyReducedRule = new DirectlyReducedRule(name, ambiguous, definitions, NonTerminalNode);
 
     return directlyReducedRule;
   }

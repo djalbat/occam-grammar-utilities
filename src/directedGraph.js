@@ -131,7 +131,7 @@ export default class DirectedGraph {
   }
 
   findTriviallyCyclicEdges() {
-    const triviallyCyclicEdges = this.find((edge) => {
+    const triviallyCyclicEdges = find(this.edges, (edge) => {
       const edgeTriviallyCyclic = edge.isTriviallyCyclic();
 
       if (edgeTriviallyCyclic) {

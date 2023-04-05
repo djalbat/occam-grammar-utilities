@@ -12,10 +12,10 @@ import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "
 const { EpsilonPart } = Parts;
 
 export default class IndirectlyRepeatedRule extends Rule {
-  static fromRuleNameLeftRecursiveRuleNameAndLeftRecursiveDefinitions(ruleName, leftRecursiveRuleName, leftRecursiveDefinitions) {
+  static fromRuleNameLeftRecursiveRuleNameAndIndirectlyLeftRecursiveDefinitions(ruleName, leftRecursiveRuleName, indirectlyLeftRecursiveDefinitions) {
     let parts,
         definition,
-        definitions = leftRecursiveDefinitions; ///
+        definitions = indirectlyLeftRecursiveDefinitions; ///
 
     const firstDefinition = first(definitions);
 
