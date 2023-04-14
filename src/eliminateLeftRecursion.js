@@ -24,7 +24,7 @@ export default function eliminateLeftRecursion(rules) {
 
   eliminateIndirectLeftRecursion(context);
 
-  eliminateDirectLeftRecursion(context);
+  // eliminateDirectLeftRecursion(context);
 
   rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap); ///
 

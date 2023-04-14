@@ -113,7 +113,7 @@ class View extends Element {
             </SubHeading>
             <ParseTreeTextarea />
             <Paragraph>
-              <RewriteNodesCheckbox onChange={this.changeHandler} checked />
+              <RewriteNodesCheckbox onChange={this.changeHandler} />
               Rewrite nodes
             </Paragraph>
           </RowsDiv>
@@ -158,27 +158,15 @@ class View extends Element {
          
          ;
   
-    C  ::=  D "h" 
-    
-         |  D "j" 
-    
-         |  "k" 
-                                 
-         ;
-
-    D  ::=  A "p" 
+    C  ::=  A "p" 
     
          |  B "q" 
     
-         |  C "r" 
-    
-         |  "s" 
-                                 
          ;
 
   `;
 
-  static initialContent = `dphfc
+  static initialContent = `gqfc
 `;
 
   static initialStartRuleName = "S";
