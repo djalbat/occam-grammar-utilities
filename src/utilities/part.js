@@ -220,6 +220,12 @@ export function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
   }
 }
 
+export function zeroOrMorePartsPartFromPart(part) {
+  const zeroOrMorePartsPart = new ZeroOrMorePartsPart(part);
+
+  return zeroOrMorePartsPart;
+}
+
 export function directlyReducedPartFromPart(part) {
   let directlyReducedPart;
 

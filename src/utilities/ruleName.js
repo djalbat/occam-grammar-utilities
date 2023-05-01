@@ -42,6 +42,12 @@ export function ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleNam
   return ruleName;
 }
 
+export function reducedRuleNameFromRuleName(ruleName) {
+  const reducedRuleName = `${ruleName}_`;
+
+  return reducedRuleName;
+}
+
 export function implicitlyReducedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {
   const implicitlyReducedRuleName = `${leftRecursiveRuleName}_${ruleName}_`;
 
@@ -49,7 +55,7 @@ export function implicitlyReducedRuleNameFromRuleNameAndLeftRecursiveRuleName(ru
 }
 
 export function indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {
-  const indirectlyRepeatedRuleName = `${leftRecursiveRuleName}~${ruleName}`;
+  const indirectlyRepeatedRuleName = `${ruleName}~${leftRecursiveRuleName}`;
 
   return indirectlyRepeatedRuleName;
 }

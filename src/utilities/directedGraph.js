@@ -33,6 +33,26 @@ export function greatestCycleFromCycles(cycles) {
   return greatestCycle;
 }
 
+export function ruleNamesFromCycles(cycles) {
+  const ruleNames = [];
+
+  cycles.forEach((cycle) => {
+    const cyclicRuleNames = cycle;  ///
+
+    cyclicRuleNames.forEach((cyclicRuleName) => {
+      const ruleNamesIncludesCyclicRuleName = ruleNames.includes(cyclicRuleName);
+
+      if (!ruleNamesIncludesCyclicRuleName) {
+        const ruleName = cyclicRuleName;  ///
+
+        ruleNames.push(ruleName);
+      }
+    });
+  });
+
+  return ruleNames;
+}
+
 function edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap) {
   const ruleName = rule.getName(),
         vertex = ruleName,  ///

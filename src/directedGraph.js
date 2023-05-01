@@ -2,8 +2,6 @@
 
 import { last, find } from "./utilities/array";
 
-import Edge from "./edge";
-
 export default class DirectedGraph {
   constructor(edges, startVertex) {
     this.edges = edges;
@@ -66,6 +64,17 @@ export default class DirectedGraph {
         this.depthFirstSearch(vertex, vertexes, callback);
       }
     });
+  }
+
+  findCycles() {
+    const trivialCycles = this.findTrivialCycles(),
+          nonTrivialCycles = this.findNonTrivialCycles(),
+          cycles = [
+            ...trivialCycles,
+            ...nonTrivialCycles
+          ];
+
+    return cycles;
   }
 
   findTrivialCycles() {
@@ -154,18 +163,6 @@ export default class DirectedGraph {
     return edge;
   }
 
-  addEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex) {
-    const edge = Edge.fromSourceVertexAndTargetVertex(sourceVertex, targetVertex);
-
-    this.edges.push(edge);
-  }
-
-  removeEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex) {
-    const edge = this.findEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex);
-
-    this.removeEdge(edge);
-  }
-
   static fromEdgesAndStartVertex(edges, startVertex) {
     const directedGraph = new DirectedGraph(edges, startVertex);
 
@@ -179,7 +176,7 @@ function nonTrivialCycleFromVertexes(vertexes) {
         vertexesLength = vertexes.length,
         start = index,
         end = vertexesLength - 1,
-        cycle = vertexes.slice(start, end);
+        cycle = vertexes.slice(start, end); ///
 
   return cycle;
 }
