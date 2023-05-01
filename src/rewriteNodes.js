@@ -253,8 +253,8 @@ function rewriteIndirectRepetition(nonTerminalNode) {
           rewrittenNode = RewrittenNode.fromRepeatedNode(repeatedNode);
 
     let index = childNodes.indexOf(indirectlyRepeatedNode),
-      start = index,  //
-      deleteCount = 1;
+        start = index,  //
+        deleteCount = 1;
 
     childNodes.splice(start, deleteCount, rewrittenNode);
 
@@ -263,7 +263,7 @@ function rewriteIndirectRepetition(nonTerminalNode) {
     deleteCount = index;  ///
 
     const deleteChildNodes = childNodes.splice(start, deleteCount),
-      rewrittenNodeChildNodes = rewrittenNode.getChildNodes();
+          rewrittenNodeChildNodes = rewrittenNode.getChildNodes();
 
     unshift(rewrittenNodeChildNodes, deleteChildNodes);
   }

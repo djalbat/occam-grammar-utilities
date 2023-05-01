@@ -23,8 +23,22 @@ export default class DirectlyRepeatedDefinition extends Definition {
   }
 }
 
+function permuteRuleNames(ruleNames) {
+  ruleNames = ruleNames.slice();
+
+  ruleNames.reverse();
+
+  const ruleName = ruleNames.pop();
+
+  ruleNames.unshift(ruleName);
+
+  return ruleNames;
+}
+
 function partsFromRuleNames(ruleNames) {
   const parts = [];
+
+  ruleNames = permuteRuleNames(ruleNames);
 
   forEachRuleNameAndLeftRecursiveRuleName(ruleNames, (ruleName, leftRecursiveRuleName) => {
     const tempRuleName = leftRecursiveRuleName; ///

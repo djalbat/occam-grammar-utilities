@@ -10,7 +10,7 @@ const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
-  describe("sibling directly and indirectly left recursive definitions", () => {
+  describe("cycles of length one and two", () => {
     const bnf = `
     
     S ::= A... <END_OF_LINE> ;
@@ -31,7 +31,7 @@ describe("src/eliminateLeftRecursion", () => {
     
     `;
 
-    it.only("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -63,6 +63,124 @@ describe("src/eliminateLeftRecursion", () => {
       `));
     });
   });
+
+  describe("cycles of length one, tow and three", () => {
+    const bnf = `
+    
+    S ::= A... <END_OF_LINE> ;
+
+    A ::= B "f"
+    
+        | A "k"
+    
+        | "g"
+    
+        ;
+
+    B ::= C "d"
+    
+        | A "h"
+    
+        | "e"
+    
+        ;
+    
+    C ::= D "l"
+    
+        | "h"
+    
+        ;
+    
+    D ::= B "r"
+    
+        | A "m"
+    
+        | "s"
+    
+        ;
+    
+    `;
+
+    it.only("are rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `
+      
+    S   ::= A... <END_OF_LINE> ;
+    
+    A   ::= A_ A~* ;
+    
+    B   ::= B_ B~* ;
+    
+    C   ::= C_ C~* ;
+    
+    D   ::= D_ D~* ;
+    
+    A_  ::= "g" ;
+    
+    B_  ::= "e" ;
+    
+    C_  ::= "h" ;
+    
+    D_  ::= "s" ;
+    
+    A~  ::= A~A
+    
+          | D~A D~* C~D C~* B~C B~* A~B
+    
+          | B~A B~* A~B
+    
+          ;
+    
+    B~  ::= D~B D~* C~D C~* B~C
+    
+          | D~A D~* C~D C~* B~C B~* A~B
+    
+          | B~A B~* A~B
+    
+          ;
+    
+    C~  ::= D~B D~* C~D C~* B~C
+    
+          | D~A D~* C~D C~* B~C B~* A~B
+    
+          ;
+    
+    D~  ::= D~B D~* C~D C~* B~C
+    
+          | D~A D~* C~D C~* B~C B~* A~B
+    
+          ;
+    
+    A~A ::= "k" ;
+    
+    B~C ::= "d" ;
+    
+    C~D ::= "l" ;
+    
+    D~B ::= "r" ;
+    
+    A~B ::= "f" ;
+    
+    D~A ::= "m" ;
+    
+    B~A ::= "h" ;
+
+      `));
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+
+
 
   xdescribe("if an intermediate left recursive definition is effectively unary", () => {
     const bnf = `

@@ -59,8 +59,8 @@ export default class IndirectlyRepeatedRule extends Rule {
 
         return definitions;
       }, []),
-      definition,
-      parts;
+        definition,
+        parts;
 
     const firstDefinition = first(definitions);
 

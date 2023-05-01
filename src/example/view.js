@@ -144,24 +144,40 @@ class View extends Element {
   
     S ::= A... <END_OF_LINE> ;
 
-    A ::= A "c"
+    A ::= B "f"
     
-        | B "d"
+        | A "k"
+    
+        | "g"
+    
+        ;
+
+    B ::= C "d"
+    
+        | A "h"
     
         | "e"
     
         ;
-
-    B ::= A "f"
     
-        | "g"
+    C ::= D "l"
+    
+        | "h"
+    
+        ;
+    
+    D ::= B "r"
+    
+        | A "m"
+    
+        | "s"
     
         ;
     
 
   `;
 
-  static initialContent = `ecfd
+  static initialContent = `gmldf
 `;
 
   static initialStartRuleName = "S";
