@@ -4,22 +4,22 @@ import withStyle from "easy-with-style";  ///
 
 import { Checkbox } from "easy";
 
-class RewriteNodesCheckbox extends Checkbox {
+class RewriteNodeCheckbox extends Checkbox {
   parentContext() {
-    const isRewriteNodesCheckboxChecked = this.isChecked.bind(this); ///
+    const isRewriteNodeCheckboxChecked = this.isChecked.bind(this); ///
 
     return ({
-      isRewriteNodesCheckboxChecked
+      isRewriteNodeCheckboxChecked
     });
   }
 
   static defaultProperties = {
-    className: "rewrite-nodes",
+    className: "rewrite-node",
     spellCheck: "false"
   };
 }
 
-export default withStyle(RewriteNodesCheckbox)`
+export default withStyle(RewriteNodeCheckbox)`
 
   zoom: 1.5;
   margin-right: 0.5rem;

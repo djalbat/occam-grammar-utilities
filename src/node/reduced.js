@@ -3,5 +3,5 @@
 import { NonTerminalNode } from "occam-parsers";
 
 export default class ReducedNode extends NonTerminalNode {
-  static fromRuleNameAndChildNodes(Class, ruleName, childNodes) { return NonTerminalNode.fromRuleNameAndChildNodes(Class, ruleName, childNodes); }
+  static fromRuleNameAndChildNodes(ruleName, childNodes) { return NonTerminalNode.fromRuleNameAndChildNodes(ReducedNode, ruleName, childNodes); }
 }

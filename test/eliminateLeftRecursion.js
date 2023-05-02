@@ -4,13 +4,13 @@ const { assert } = require("chai");
 
 const { rulesUtilities, parserUtilities } = require("occam-parsers");
 
-const { rewriteNodes, ExampleLexer, ExampleParser, eliminateLeftRecursion } = require("../lib/index.js");
+const { rewriteNode, ExampleLexer, ExampleParser, eliminateLeftRecursion } = require("../lib/index.js");
 
 const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
-  describe("cycles of length one and two", () => {
+  describe.only("cycles of length one and two", () => {
     const bnf = `
     
     S ::= A... <END_OF_LINE> ;
@@ -62,6 +62,32 @@ describe("src/eliminateLeftRecursion", () => {
 
       `));
     });
+
+    it("results in the requisite parse tree" , () => {
+      const content = `efd
+`,
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+          
+                                        S                  
+                                        |                  
+                            -------------------------      
+                            |                       |      
+                            A                 <END_OF_LINE>
+                            |                              
+                 ----------------------                    
+                 |                    |                    
+                 B              d[unassigned]              
+                 |                                         
+          ---------------                                  
+          |             |                                  
+          A       f[unassigned]                            
+          |                                                
+    e[unassigned]                                          
+
+      `));
+    });
   });
 
   describe("cycles of length one, tow and three", () => {
@@ -101,7 +127,7 @@ describe("src/eliminateLeftRecursion", () => {
     
     `;
 
-    it.only("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -426,7 +452,7 @@ describe("src/eliminateLeftRecursion", () => {
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "ehg",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -719,7 +745,7 @@ describe("src/eliminateLeftRecursion", () => {
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "efghg",
         parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -942,7 +968,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "bekfh",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -1057,7 +1083,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "bekfh",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -1173,7 +1199,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "akch",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -1279,7 +1305,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "gchd",
             startRuleName = "C",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
@@ -1379,7 +1405,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "gehe",
         startRuleName = "C",
         parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
@@ -1460,7 +1486,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = `hfgfg
 `,
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
@@ -1595,7 +1621,7 @@ B ::= A "g"
        `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = `n+n
 `,
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
@@ -1970,7 +1996,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree", () => {
+    it("results in the requisite parse tree", () => {
       const content = "cfgh",
         parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -2053,7 +2079,7 @@ B ::= A "g"
      `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "ehghf",
         parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -2136,7 +2162,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "fdhchg",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -2221,7 +2247,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "agf",
           startRuleName = "",
           parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
@@ -2285,7 +2311,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = `n+m
 `,
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
@@ -2369,7 +2395,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "gdefefh",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -2440,7 +2466,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "cfghg",
           parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -2541,7 +2567,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "dhfg",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -2624,7 +2650,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "gefh",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -2687,7 +2713,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "fdeeg",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
@@ -2794,7 +2820,7 @@ B ::= A "g"
       `));
     });
 
-    it("result in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = "(n+n)",
             startRuleName = "F",
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
@@ -2872,7 +2898,7 @@ function parseTreeStringFromBNFAndContent(bnf, content, startRuleName = null) {
         tokens = exampleLexer.tokenise(content),
         node = exampleParser.parse(tokens);
 
-  rewriteNodes(node);
+  rewriteNode(node);
 
   const abridged = true,
         parseTree = node.asParseTree(tokens, abridged);

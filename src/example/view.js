@@ -10,14 +10,14 @@ import Paragraph from "./paragraph";
 import SubHeading from "./subHeading";
 import SizeableDiv from "./div/sizeable";
 import BNFTextarea from "./textarea/bnf";
-import rewriteNodes from "../rewriteNodes";
+import rewriteNode from "../rewriteNode";
 import ExampleLexer from "../lexer/example";
 import ExampleParser from "../parser/example";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
 import StartRuleNameInput from "./input/startRuleName";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
-import RewriteNodesCheckbox from "./checkbox/rewriteNodes";
+import RewriteNodeCheckbox from "./checkbox/rewriteNode";
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
 const { rulesFromBNF } = parserUtilities,
@@ -64,10 +64,10 @@ class View extends Element {
       let parseTree = null;
 
       if (node !== null) {
-        const rewriteNodesCheckboxChecked = this.isRewriteNodesCheckboxChecked();
+        const rewriteNodeCheckboxChecked = this.isRewriteNodeCheckboxChecked();
 
-        if (rewriteNodesCheckboxChecked) {
-          rewriteNodes(node);
+        if (rewriteNodeCheckboxChecked) {
+          rewriteNode(node);
         }
 
         const abridged = true;
@@ -82,7 +82,7 @@ class View extends Element {
   }
 
   childElements() {
-    return ([
+    return (
 
       <ColumnsDiv>
         <SizeableDiv>
@@ -113,14 +113,14 @@ class View extends Element {
             </SubHeading>
             <ParseTreeTextarea />
             <Paragraph>
-              <RewriteNodesCheckbox onChange={this.changeHandler} />
-              Rewrite nodes
+              <RewriteNodeCheckbox onChange={this.changeHandler} />
+              Rewrite node
             </Paragraph>
           </RowsDiv>
         </ColumnDiv>
       </ColumnsDiv>
 
-    ]);
+    );
   }
 
   initialise() {
@@ -144,40 +144,23 @@ class View extends Element {
   
     S ::= A... <END_OF_LINE> ;
 
-    A ::= B "f"
+    A ::= A "c"
     
-        | A "k"
+        | B "d"
+    
+        | "e"
+    
+        ;
+
+    B ::= A "f"
     
         | "g"
     
         ;
 
-    B ::= C "d"
-    
-        | A "h"
-    
-        | "e"
-    
-        ;
-    
-    C ::= D "l"
-    
-        | "h"
-    
-        ;
-    
-    D ::= B "r"
-    
-        | A "m"
-    
-        | "s"
-    
-        ;
-    
-
   `;
 
-  static initialContent = `gmldf
+  static initialContent = `efd
 `;
 
   static initialStartRuleName = "S";
