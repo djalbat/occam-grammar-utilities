@@ -1,10 +1,9 @@
 "use strict";
 
-import { tail, first } from "../utilities/array";
-import { isPartUnary, isPartComplex } from "../utilities/part";
+import { first } from "../utilities/array";
+import { isPartComplex } from "../utilities/part";
 import { arePartsRecursive,
          arePartsLeftRecursive,
-         arePartsEffectivelyOptional,
          recursiveRuleNamesFromParts,
          arePartsDirectlyLeftRecursive,
          leftRecursiveRuleNamesFromParts } from "../utilities/parts";
@@ -32,29 +31,6 @@ export function isDefinitionLeftRecursive(definition) {
         definitionLeftRecursive = partsLeftRecursive; ///
 
   return definitionLeftRecursive;
-}
-
-export function isDefinitionEffectivelyUnary(definition, context) {
-  let definitionEffectivelyUnary = false;
-
-  const parts = definition.getParts(),
-        partsLength = parts.length;
-
-  if (partsLength === 1) {
-    const firstPart = first(parts),
-          part = firstPart, ///
-          partUnary = isPartUnary(part);
-
-    definitionEffectivelyUnary = partUnary;  ///
-  } else {
-    const partsTail = tail(parts),
-          ruleNames = [],
-          partsTailEffectivelyOptional = arePartsEffectivelyOptional(partsTail, ruleNames, context);
-
-    definitionEffectivelyUnary = partsTailEffectivelyOptional;
-  }
-
-  return definitionEffectivelyUnary;
 }
 
 export function recursiveRuleNamesFromDefinition(definition, recursiveRuleNames = []) {

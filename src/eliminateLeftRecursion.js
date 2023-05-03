@@ -19,9 +19,9 @@ export default function eliminateLeftRecursion(rules) {
 
   createReducedRules(ruleMap, directedGraph);
 
-  createDirectlyRepeatedRules(ruleMap, directedGraph);
-
   createIndirectlyRepeatedRules(ruleMap, directedGraph);
+
+  createDirectlyRepeatedRules(ruleMap, directedGraph);
 
   rewriteLeftRecursiveRules(ruleMap, directedGraph);
 

@@ -1,5 +1,6 @@
 "use strict";
 
+import { specialSymbols } from "occam-lexers";
 import { Parts, partTypes } from "occam-parsers";
 
 import { first } from "../utilities/array";
@@ -12,6 +13,8 @@ const { RuleNamePart, OptionalPartPart, OneOrMorePartsPart, ZeroOrMorePartsPart 
         OneOrMorePartsPartType,
         SequenceOfPartsPartType,
         ZeroOrMorePartsPartType } = partTypes;
+
+const { epsilon } = specialSymbols;
 
 export function matchParts(partA, partB) {
   const partAString = partA.asString(),
@@ -87,6 +90,14 @@ export function isPartUnary(part) {
   }
 
   return partUnary;
+}
+
+export function isPartEmpty(part) {
+  const partString = part.asString(),
+        partStringEpsilon = (partString === epsilon),
+        partEmpty = partStringEpsilon;  ///
+
+  return partEmpty;
 }
 
 export function isPartComplex(part) {

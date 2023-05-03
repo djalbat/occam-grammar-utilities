@@ -46,6 +46,12 @@ describe("src/eliminateLeftRecursion", () => {
     
     B_  ::= "g" ;
     
+    A~A ::= "c" ;
+    
+    A~B ::= "d" ;
+    
+    B~A ::= "f" ;
+
     A~  ::= A~A
     
           | B~A B~* A~B
@@ -54,12 +60,6 @@ describe("src/eliminateLeftRecursion", () => {
     
     B~  ::= B~A B~* A~B ;
     
-    A~A ::= "c" ;
-    
-    A~B ::= "d" ;
-    
-    B~A ::= "f" ;
-
       `));
     });
 
@@ -150,6 +150,20 @@ describe("src/eliminateLeftRecursion", () => {
     
     D_  ::= "s" ;
     
+    A~A ::= "k" ;
+    
+    B~C ::= "d" ;
+    
+    C~D ::= "l" ;
+    
+    D~B ::= "r" ;
+    
+    A~B ::= "f" ;
+    
+    D~A ::= "m" ;
+    
+    B~A ::= "h" ;
+
     A~  ::= A~A
     
           | D~A D~* C~D C~* B~C B~* A~B
@@ -178,20 +192,6 @@ describe("src/eliminateLeftRecursion", () => {
     
           ;
     
-    A~A ::= "k" ;
-    
-    B~C ::= "d" ;
-    
-    C~D ::= "l" ;
-    
-    D~B ::= "r" ;
-    
-    A~B ::= "f" ;
-    
-    D~A ::= "m" ;
-    
-    B~A ::= "h" ;
-
       `));
     });
 
@@ -249,13 +249,38 @@ describe("src/eliminateLeftRecursion", () => {
 
 `;
 
-    it.only("does throw an exception", () => {
+    it("does throw an exception", () => {
       assert.throws(() => {
         adjustedBNFFromBNF(bnf);
       });
     });
   });
 
+  describe("if a directly repeated rule is empty", () => {
+    const bnf = `
+
+    A ::= A "c"
+    
+        | B
+    
+        | "e"
+    
+        ;
+
+    B ::= A "f"?
+    
+        | "g"
+    
+        ;
+    
+`;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
 
 
 

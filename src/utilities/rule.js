@@ -1,11 +1,8 @@
 "use strict";
 
-import { specialSymbols } from "occam-lexers";
-
 import { first } from "../utilities/array";
+import { isPartEmpty } from "../utilities/part";
 import { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "./definition";
-
-const { epsilon } = specialSymbols;
 
 export function isRuleEmpty(rule) {
   let ruleEmpty = false;
@@ -14,7 +11,7 @@ export function isRuleEmpty(rule) {
         definitionsLength = definitions.length;
 
   if (definitionsLength === 1) {
-    const firstDefinition= first(definitions),
+    const firstDefinition = first(definitions),
           definition = firstDefinition, ///
           parts = definition.getParts(),
           partsLength = parts.length;
@@ -22,10 +19,9 @@ export function isRuleEmpty(rule) {
     if (partsLength === 1) {
       const firstPart = first(parts),
             part = firstPart, ///
-            partString = part.asString(),
-            partStringEpsilon = (partString === epsilon);
+            partEmpty = isPartEmpty(part);
 
-      if (partStringEpsilon) {
+      if (partEmpty) {
         ruleEmpty = true;
       }
     }

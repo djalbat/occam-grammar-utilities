@@ -29,11 +29,28 @@ export default class IndirectlyRepeatedRule extends Rule {
       }
     });
 
-    definitions.forEach((definition) => {
-      const parts = definition.getParts();
+    definitions = definitions.filter((definition) => {
+      const parts = definition.getParts(),
+            partsLength = parts.length;
 
-      parts.shift();
+      if (partsLength > 1) {
+        parts.shift();
+
+        return true;
+      }
     });
+
+    const definitionsLength = definitions.length;
+
+    if (definitionsLength === 0) {
+      const epsilonPart = new EpsilonPart(),
+            parts = [
+              epsilonPart
+            ],
+            definition = new Definition(parts);
+
+      definitions.push(definition);
+    }
 
     const ruleName = rule.getName(),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),

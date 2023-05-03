@@ -3,7 +3,7 @@
 import { Parts, partTypes } from "occam-parsers";
 
 import { first } from "../utilities/array";
-import { recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "../utilities/part";
+import { isPartEmpty, recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "../utilities/part";
 
 const { SequenceOfPartsPart, ZeroOrMorePartsPart } = Parts,
       { RuleNamePartType,
@@ -31,18 +31,6 @@ export function arePartsRecursive(parts) {
         partsRecursive = (recursiveRuleNamesLength > 0);
 
   return partsRecursive;
-}
-
-export function arePartsEffectivelyOptional(parts, ruleNames, context) {
-  const partsEffectivelyOptional = parts.every((part) => {
-    const partEffectivelyOptional = isPartEffectivelyOptional(part, ruleNames, context);
-
-    if (partEffectivelyOptional) {
-      return true;
-    }
-  });
-
-  return partsEffectivelyOptional;
 }
 
 export function arePartsDirectlyLeftRecursive(parts, leftRecursiveRuleName) {
@@ -113,79 +101,8 @@ export function leftRecursiveRuleNamesFromParts(parts, leftRecursiveRuleNames = 
   return leftRecursiveRuleNames;
 }
 
-function isPartEffectivelyOptional(part, ruleNames, context) {
-  let partEffectivelyOptional = false;
-
-  const partNonTerminalPart = part.isNonTerminalPart();
-
-  if (partNonTerminalPart) {
-    const nonTerminalPart = part, ///
-          type = nonTerminalPart.getType();
-
-    switch (type) {
-      case RuleNamePartType: {
-        const { ruleMap } = context,
-              ruleNamePart = part,  ///
-              ruleName = ruleNamePart.getRuleName(),
-              rule = ruleMap[ruleName] || null;
-
-        if (rule !== null) {
-          const ruleEffectivelyOptional = isRuleEffectivelyOptional(rule, ruleNames, context);
-
-          partEffectivelyOptional = ruleEffectivelyOptional;  ///
-        }
-
-        break;
-      }
-
-      case OptionalPartPartType: {
-        partEffectivelyOptional = true;
-
-        break;
-      }
-
-      case OneOrMorePartsPartType: {
-        const oneOrMorePartsPart = nonTerminalPart,  ///
-              part = oneOrMorePartsPart.getPart();
-
-        partEffectivelyOptional = isPartEffectivelyOptional(part, ruleNames, context);
-
-        break;
-      }
-
-      case ZeroOrMorePartsPartType: {
-        partEffectivelyOptional = true;
-
-        break;
-      }
-
-      case SequenceOfPartsPartType: {
-        const sequenceOfPartsPart = part, ///
-              parts = sequenceOfPartsPart.getParts(),
-              partsEffectivelyOptional = arePartsEffectivelyOptional(parts, ruleNames, context);
-
-        partEffectivelyOptional = partsEffectivelyOptional; ///
-
-        break;
-      }
-
-      case ChoiceOfPartsPartType: {
-        const choiceOfPartsPart = part, ///
-              parts = choiceOfPartsPart.getParts(),
-              partsEffectivelyOptional = arePartsEffectivelyOptional(parts, ruleNames, context);
-
-        partEffectivelyOptional = partsEffectivelyOptional; ///
-
-        break;
-      }
-    }
-  }
-
-  return partEffectivelyOptional;
-}
-
-function isRuleEffectivelyOptional(rule, ruleNames, context) {
-  let ruleEffectivelyOptional = false;
+export function isRuleEffectivelyEmpty(rule, ruleMap, ruleNames = []) { ///
+  let ruleEffectivelyEmpty = false;
 
   const ruleName = rule.getName(),
         ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
@@ -196,24 +113,136 @@ function isRuleEffectivelyOptional(rule, ruleNames, context) {
       ruleName
     ];
 
-    const definitions = rule.getDefinitions();
+    const definitions = rule.getDefinitions(),
+          definitionsEffectivelyEmpty = areDefinitionsEffectivelyEmpty(definitions, ruleMap, ruleNames);
 
-    ruleEffectivelyOptional = definitions.every((definition) => {
-      const definitionEffectivelyOptional = isDefinitionEffectivelyOptional(definition, ruleNames, context);
-
-      if (definitionEffectivelyOptional) {
-        return true;
-      }
-    });
+    ruleEffectivelyEmpty = definitionsEffectivelyEmpty; ///
   }
 
-  return ruleEffectivelyOptional;
+  return ruleEffectivelyEmpty;
 }
 
-function isDefinitionEffectivelyOptional(definition, ruleNames, context) {
-  const parts = definition.getParts(),
-        partsEffectivelyOptional = arePartsEffectivelyOptional(parts, ruleNames, context),
-        definitionEffectivelyOptional = partsEffectivelyOptional; ///
+function areDefinitionsEffectivelyEmpty(definitions, ruleMap, ruleNames) {
+  const definitionsEffectivelyEmpty = definitions.every((definition) => {
+    const definitionEffectivelyEmpty = isDefinitionEffectivelyEmpty(definition, ruleMap, ruleNames);
 
-  return definitionEffectivelyOptional;
+    if (definitionEffectivelyEmpty) {
+      return true;
+    }
+  });
+
+  return definitionsEffectivelyEmpty;
+}
+
+function isDefinitionEffectivelyEmpty(definition, ruleMap, ruleNames) {
+  const parts = definition.getParts(),
+        partsEffectivelyEmpty = arePartsEffectivelyEmpty(parts, ruleMap, ruleNames),
+        definitionEffectivelyEmpty = partsEffectivelyEmpty; ///
+
+  return definitionEffectivelyEmpty;
+}
+
+function arePartsEffectivelyEmpty(parts, ruleMap, ruleNames) {
+  const partsEffectivelyEmpty = parts.every((part) => {
+    const partEffectivelyEmpty = isPartEffectivelyEmpty(part, ruleMap, ruleNames);
+
+    if (partEffectivelyEmpty) {
+      return true;
+    }
+  });
+
+  return partsEffectivelyEmpty;
+}
+
+function isPartEffectivelyEmpty(part, ruleMap, ruleNames) {
+  let partEffectivelyEmpty;
+
+  const parTerminalPart = part.isTerminalPart();
+
+  if (parTerminalPart) {
+    const terminalPart = part,  ///
+          terminalPartEmpty = isTerminalPartEffectivelyEmpty(terminalPart);
+
+    partEffectivelyEmpty = terminalPartEmpty; ///
+  } else {
+    const nonTerminalNPart = part,  ///
+          nonTerminalPartEffectivelyEmpty = isNonTerminalPartEffectivelyEmpty(nonTerminalNPart, ruleMap, ruleNames);
+
+    partEffectivelyEmpty = nonTerminalPartEffectivelyEmpty; ///
+  }
+
+  return partEffectivelyEmpty;
+}
+
+function isTerminalPartEffectivelyEmpty(terminalPart) {
+  const part = terminalPart,  ///
+        partEmpty = isPartEmpty(part),
+        terminalPartEffectivelyEmpty = partEmpty; ///
+
+  return terminalPartEffectivelyEmpty;
+}
+
+function isNonTerminalPartEffectivelyEmpty(nonTerminalPart, ruleMap, ruleNames) {
+  let partEffectivelyEmpty = false;
+
+  const type = nonTerminalPart.getType();
+
+  switch (type) {
+    case RuleNamePartType: {
+      const ruleNamePart = nonTerminalPart,  ///
+            ruleName = ruleNamePart.getRuleName(),
+            rule = ruleMap[ruleName] || null;
+
+      if (rule !== null) {
+        const ruleEffectivelyEmpty = isRuleEffectivelyEmpty(rule, ruleMap, ruleNames);
+
+        partEffectivelyEmpty = ruleEffectivelyEmpty;  ///
+      }
+
+      break;
+    }
+
+    case OptionalPartPartType: {
+      partEffectivelyEmpty = true;
+
+      break;
+    }
+
+    case OneOrMorePartsPartType: {
+      const oneOrMorePartsPart = nonTerminalPart,  ///
+            part = oneOrMorePartsPart.getPart();
+
+      partEffectivelyEmpty = isPartEffectivelyEmpty(part, ruleMap, ruleNames);
+
+      break;
+    }
+
+    case ZeroOrMorePartsPartType: {
+      partEffectivelyEmpty = true;
+
+      break;
+    }
+
+    case SequenceOfPartsPartType: {
+      const sequenceOfPartsPart = nonTerminalPart, ///
+            parts = sequenceOfPartsPart.getParts(),
+            partsEffectivelyEmpty = arePartsEffectivelyEmpty(parts, ruleMap, ruleNames);
+
+      partEffectivelyEmpty = partsEffectivelyEmpty; ///
+
+      break;
+    }
+
+    case ChoiceOfPartsPartType: {
+      const choiceOfPartsPart = nonTerminalPart, ///
+            parts = choiceOfPartsPart.getParts(),
+            partsEffectivelyEmpty = arePartsEffectivelyEmpty(parts, ruleMap, ruleNames);
+
+      partEffectivelyEmpty = partsEffectivelyEmpty; ///
+
+      break;
+    }
+  }
+
+  return partEffectivelyEmpty;
 }
