@@ -8,7 +8,7 @@ import { matchParts } from "../../utilities/part";
 import { cloneParts } from "../../utilities/parts";
 import { first, tail } from "../../utilities/array";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
-import { isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+import { isDefinitionComplex, isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 const { EpsilonPart } = Parts;
 
@@ -20,6 +20,15 @@ export default class IndirectlyRepeatedRule extends Rule {
       const definitionLeftRecursive = isDefinitionLeftRecursive(definition);
 
       if (definitionLeftRecursive) {
+        const definitionComplex = isDefinitionComplex(definition);
+
+        if (definitionComplex) {
+          const ruleName = rule.getName(),
+                definitionString = definition.asString();
+
+          throw new Error(`The '${definitionString}' definition of the '${ruleName}' rule is complex.`);
+        }
+
         const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
               firstLeftRecursiveRuleName = first(leftRecursiveRuleNames);
 

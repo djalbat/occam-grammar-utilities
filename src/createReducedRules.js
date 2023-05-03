@@ -29,7 +29,7 @@ export default function createReducedRules(ruleMap, directedGraph) {
       const ruleNames = cycle,
             ruleNamesString = ruleNames.join(COMMAN_CHARACTER);
 
-      throw new Error(`All of the reduced rules in the ${ruleNamesString} cycle are empty.`);
+      throw new Error(`All of the reduced rules in the '${ruleNamesString}' cycle are empty.`);
     }
   });
 }

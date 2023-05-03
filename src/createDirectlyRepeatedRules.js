@@ -16,7 +16,7 @@ export default function createDirectlyRepeatedRules(ruleMap, directedGraph) {
           directlyRepeatedRuleEffectivelyEmpty = isRuleEffectivelyEmpty(directlyRepeatedRule, ruleMap);
 
     if (directlyRepeatedRuleEffectivelyEmpty) {
-      throw new Error(`The ${directlyRepeatedRuleName} directly repeated rule is effectively empty.`);
+      throw new Error(`The '${directlyRepeatedRuleName}' directly repeated rule is effectively empty.`);
     }
 
     ruleMap[directlyRepeatedRuleName] = directlyRepeatedRule;
