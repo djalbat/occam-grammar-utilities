@@ -25,6 +25,21 @@ export function cloneParts(parts) {
   return parts;
 }
 
+export function arePartsEqual(parts) {
+  const firstPart = first(parts),
+        firstPartString = firstPart.asString(),
+        partsEqual = parts.every((part) => {
+          const partString = part.asString(),
+                partStringFirstPartString = (partString === firstPartString);
+
+          if (partStringFirstPartString) {
+            return true;
+          }
+        });
+
+  return partsEqual;
+}
+
 export function arePartsRecursive(parts) {
   const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
         recursiveRuleNamesLength = recursiveRuleNames.length,

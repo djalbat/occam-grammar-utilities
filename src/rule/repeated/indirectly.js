@@ -5,8 +5,8 @@ import { Rule, Parts, Definition } from "occam-parsers";
 import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { matchParts } from "../../utilities/part";
-import { cloneParts } from "../../utilities/parts";
 import { first, tail } from "../../utilities/array";
+import { cloneParts, arePartsEqual } from "../../utilities/parts";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 import { isDefinitionComplex, isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
@@ -38,16 +38,27 @@ export default class IndirectlyRepeatedRule extends Rule {
       }
     });
 
+    const firstParts = [];
+
     definitions = definitions.filter((definition) => {
       const parts = definition.getParts(),
             partsLength = parts.length;
 
       if (partsLength > 1) {
-        parts.shift();
+        const firstPart = parts.shift();
+
+        firstParts.push(firstPart);
 
         return true;
       }
     });
+
+    const ruleName = rule.getName(),
+          firstPartsEqual = arePartsEqual(firstParts);
+
+    if (!firstPartsEqual) {
+      throw new Error(`The first parts of the '${leftRecursiveRuleName}' left recursive definitions in the '${ruleName}' rule are not equal.`);
+    }
 
     const definitionsLength = definitions.length;
 
@@ -61,8 +72,7 @@ export default class IndirectlyRepeatedRule extends Rule {
       definitions.push(definition);
     }
 
-    const ruleName = rule.getName(),
-          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
+    const indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
           name = indirectlyRepeatedRuleName,  ///
           ambiguous = false,
           NonTerminalNode = IndirectlyRepeatedNode,  ///

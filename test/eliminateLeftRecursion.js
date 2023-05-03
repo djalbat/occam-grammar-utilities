@@ -82,6 +82,32 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
+  describe("two left recursive definitions in a cycle are mismatched", () => {
+    const bnf = `
+   
+      A ::= B "h"
+      
+          | "d"
+      
+          ;
+      
+      B ::= A "g"
+      
+          | A+ "f"
+      
+          | "c"
+      
+          ;
+      
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
   describe("a cycle where some but not all of the reduced rules are empty", () => {
     const bnf = `
   
@@ -149,6 +175,45 @@ describe("src/eliminateLeftRecursion", () => {
       });
     });
   });
+
+
+
+
+
+
+
+
+
+
+  xdescribe("the first part of a left recursive definition in a cycle is qualified", () => {
+    const bnf = `
+   
+      A ::= B "h"
+      
+          | "d"
+      
+          ;
+      
+      B ::= A "g"
+      
+          | A+ "f"
+      
+          | "c"
+      
+          ;
+      
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
+
+
+
 
 
 
@@ -454,7 +519,7 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-  describe("a strictly unary implicitly left recursive definition", () => {
+  describe("a cycle with an empty indirectly repeated rule", () => {
     const bnf = `
   
       S ::= B... <END_OF_LINE> ;
@@ -547,295 +612,9 @@ describe("src/eliminateLeftRecursion", () => {
 
 
 
-  xdescribe("a strictly unary indirectly left recursive definition", () => {
-    const bnf = `
-  
-    A ::= B "d"
-    
-        | "c"
-    
-        ;
-    
-    B ::= A 
-    
-        | "a"
-    
-        ;
 
-`;
 
-    it("is rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
 
-      assert.isTrue(compare(adjustedBNF,`
-      
-    A    ::= A_ A~* ;
-    
-    B    ::= "a"
-    
-           | A_B_ B~A~
-    
-           ;
-    
-    B__  ::= "a" ;
-    
-    B~A~ ::= ε ;
-    
-    A_B_ ::= "c"
-    
-           | B__ "d"
-    
-           ;
-    
-    A_   ::= "c"
-    
-           | B__ "d"
-    
-           ;
-    
-    A~   ::= B~A~ "d" ;
-
-      `));
-    });
-
-    it("results in the requisite parse tree" , () => {
-      const content = "addd",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
-
-      assert.isTrue(compare(parseTreeString, `
-            
-                                        A                  
-                                        |                  
-                            -------------------------      
-                            |                       |      
-                            B                 d[unassigned]
-                            |                              
-                            A                              
-                            |                              
-                 ----------------------                    
-                 |                    |                    
-                 B              d[unassigned]              
-                 |                                         
-                 A                                         
-                 |                                         
-          ---------------                                  
-          |             |                                  
-          B       d[unassigned]                            
-          |                                                
-    a[unassigned]                                          
-             
-      `));
-    });
-  });
-
-  xdescribe("two sibling indirectly left recursive definitions", () => {
-    const bnf = `
-  
-    A ::= "d"
-    
-        | B "g"
-    
-        | "e"
-    
-        ;
-    
-    B ::= A "h"
-    
-        | "b"
-
-        | A "f"
-    
-        | "c"
-
-        ;
-
-`;
-
-    it("are rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF, `
-
-    A    ::= A_ A~* ;
-    
-    B    ::= "b"
-    
-           | "c"
-    
-           | A_B_ B~A~
-    
-           ;
-    
-    B__  ::= "b"
-    
-           | "c"
-    
-           ;
-    
-    B~A~ ::= "h"
-    
-           | "f"
-    
-           ;
-    
-    A_B_ ::= "d"
-    
-           | "e"
-    
-           | B__ "g"
-    
-           ;
-    
-    A_   ::= "d"
-    
-           | "e"
-    
-           | B__ "g"
-    
-           ;
-    
-    A~   ::= B~A~ "g" ;
-    
-      `));
-    });
-
-    it("results in the requisite parse tree" , () => {
-      const content = "efghg",
-        parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
-
-      assert.isTrue(compare(parseTreeString, `
-            
-                                                     A                   
-                                                     |                   
-                                        ---------------------------      
-                                        |                         |      
-                                        B                   g[unassigned]
-                                        |                                
-                            -------------------------                    
-                            |                       |                    
-                            A                 h[unassigned]              
-                            |                                            
-                 ----------------------                                  
-                 |                    |                                  
-                 B              g[unassigned]                            
-                 |                                                       
-          ---------------                                                
-          |             |                                                
-          A       f[unassigned]                                          
-          |                                                              
-    e[unassigned]                                                        
-             
-      `));
-    });
-  });
-
-  xdescribe("two isolated sibling indirectly left recursive definitions", () => {
-    const bnf = `
-  
-    A ::= B "g" 
-     
-        | "c"
-        
-        ;
-
-    B ::= A "h" 
-    
-        | A "f"
-        
-        ;
-
-`;
-
-    it("do not throw an exception", () => {
-      assert.doesNotThrow(() => {
-        adjustedBNFFromBNF(bnf)
-      });
-    });
-  });
-
-  xdescribe("an indirectly left recursive definition and an isolated left recursive definition", () => {
-    const bnf = `
-  
-    A ::= B "g" ;
-
-    B ::= "d" 
-     
-        | A "h" 
-     
-        | "c"
-        
-        ;
-
-`;
-
-    it("do not throw an exception", () => {
-      assert.doesNotThrow(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  xdescribe("an isolated indirectly left recursive definition and an isolated implicitly left recursive definition", () => {
-    const bnf = `
-  
-    A ::= B "g" ;
-
-    B ::= A "h" ;
-
-`;
-
-    it("do throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  xdescribe("two isolated indirectly left recursive definitions and an isolated implicitly left recursive definition", () => {
-    const bnf = `
-  
-    A ::= B "g" ;
-
-    B ::= A "h" 
-    
-        | A "f"
-        
-        ;
-
-`;
-
-    it("do throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  xdescribe("two mismatched sibling indirectly left recursive definitions", () => {
-    const bnf = `
-   
-A ::= B "h"
-
-    | "d"
-
-    ;
-
-B ::= A "g"
-
-    | A+ "f"
-
-    | "c"
-
-    ;
-
-`;
-
-    it("do throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
 
   xdescribe("two non-sibling indirectly left recursive definitions", () => {
     const bnf = `
@@ -1878,7 +1657,7 @@ B ::= A "g"
 
 `;
 
-    it("do throw an exception", () => {
+    it("does throw an exception", () => {
       assert.throws(() => {
         adjustedBNFFromBNF(bnf);
       });
@@ -1902,7 +1681,7 @@ B ::= A "g"
 
 `;
 
-    it("do throw an exception", () => {
+    it("does throw an exception", () => {
       assert.throws(() => {
         adjustedBNFFromBNF(bnf);
       });
