@@ -54,13 +54,7 @@ export default class IndirectlyRepeatedRule extends Rule {
     });
 
     const ruleName = rule.getName(),
-          firstPartsEqual = arePartsEqual(firstParts);
-
-    if (!firstPartsEqual) {
-      throw new Error(`The first parts of the '${leftRecursiveRuleName}' left recursive definitions in the '${ruleName}' rule are not equal.`);
-    }
-
-    const definitionsLength = definitions.length;
+          definitionsLength = definitions.length;
 
     if (definitionsLength === 0) {
       const epsilonPart = new EpsilonPart(),
@@ -70,6 +64,12 @@ export default class IndirectlyRepeatedRule extends Rule {
             definition = new Definition(parts);
 
       definitions.push(definition);
+    } else {
+      const firstPartsEqual = arePartsEqual(firstParts);
+
+      if (!firstPartsEqual) {
+        throw new Error(`The first parts of the '${leftRecursiveRuleName}' left recursive definitions in the '${ruleName}' rule are not equal.`);
+      }
     }
 
     const indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),

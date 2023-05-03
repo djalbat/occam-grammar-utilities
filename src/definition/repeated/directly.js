@@ -10,11 +10,11 @@ export default class DirectlyRepeatedDefinition extends Definition {
     let directlyRepeatedDefinition = null;
 
     const ruleName = rule.getName(),
-          ruleNames = cycle,  ///
-          ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
+          cycleIncludesRuleName = cycle.includes(ruleName);
 
-    if (ruleNamesIncludesRuleName) {
-      const parts = partsFromRuleNames(ruleNames);
+    if (cycleIncludesRuleName) {
+      const ruleNames = ruleNamesFromCycleAndRuleName(cycle, ruleName),
+            parts = partsFromRuleNames(ruleNames);
 
       directlyRepeatedDefinition = new DirectlyRepeatedDefinition(parts);
     }
@@ -31,6 +31,31 @@ function permuteRuleNames(ruleNames) {
   const ruleName = ruleNames.pop();
 
   ruleNames.unshift(ruleName);
+
+  return ruleNames;
+}
+
+function ruleNamesFromCycleAndRuleName(cycle, ruleName) {
+  let ruleNames = cycle,
+      start,
+      end;
+
+  const index = cycle.indexOf(ruleName);
+
+  start = 0;
+
+  end = index;
+
+  const leadingRuleNames = ruleNames.slice(start, end);
+
+  start = index;
+
+  const trailingRuleNames = ruleNames.slice(start);
+
+  ruleNames = [ ///
+    ...trailingRuleNames,
+    ...leadingRuleNames
+  ];
 
   return ruleNames;
 }

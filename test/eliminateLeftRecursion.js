@@ -185,32 +185,6 @@ describe("src/eliminateLeftRecursion", () => {
 
 
 
-  xdescribe("the first part of a left recursive definition in a cycle is qualified", () => {
-    const bnf = `
-   
-      A ::= B "h"
-      
-          | "d"
-      
-          ;
-      
-      B ::= A "g"
-      
-          | A+ "f"
-      
-          | "c"
-      
-          ;
-      
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
 
 
 
@@ -259,7 +233,7 @@ describe("src/eliminateLeftRecursion", () => {
         
         A~  ::= B~A B~* A~B ;
         
-        B~  ::= B~A B~* A~B ;
+        B~  ::= A~B A~* B~A ;
       
       `));
     });
@@ -339,7 +313,7 @@ describe("src/eliminateLeftRecursion", () => {
         
               ;
         
-        B~  ::= B~A B~* A~B ;
+        B~  ::= A~B A~* B~A ;
         
       `));
     });
@@ -412,7 +386,7 @@ describe("src/eliminateLeftRecursion", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-      
+              
         S   ::= A... <END_OF_LINE> ;
         
         A   ::= A_ A~* ;
@@ -444,7 +418,7 @@ describe("src/eliminateLeftRecursion", () => {
         D~A ::= "m" ;
         
         B~A ::= "h" ;
-    
+        
         A~  ::= A~A
         
               | D~A D~* C~D C~* B~C B~* A~B
@@ -455,24 +429,24 @@ describe("src/eliminateLeftRecursion", () => {
         
         B~  ::= D~B D~* C~D C~* B~C
         
-              | D~A D~* C~D C~* B~C B~* A~B
+              | A~B A~* D~A D~* C~D C~* B~C
         
-              | B~A B~* A~B
-        
-              ;
-        
-        C~  ::= D~B D~* C~D C~* B~C
-        
-              | D~A D~* C~D C~* B~C B~* A~B
+              | A~B A~* B~A
         
               ;
         
-        D~  ::= D~B D~* C~D C~* B~C
+        C~  ::= B~C B~* D~B D~* C~D
         
-              | D~A D~* C~D C~* B~C B~* A~B
+              | B~C B~* A~B A~* D~A D~* C~D
         
               ;
-    
+        
+        D~  ::= C~D C~* B~C B~* D~B
+        
+              | C~D C~* B~C B~* A~B A~* D~A
+        
+              ;
+                  
       `));
     });
 
@@ -559,7 +533,7 @@ describe("src/eliminateLeftRecursion", () => {
         
         B~  ::= A~B A~* B~A ;
         
-        A~  ::= A~B A~* B~A ;
+        A~  ::= B~A B~* A~B ;
               
       `));
     });
@@ -590,6 +564,59 @@ describe("src/eliminateLeftRecursion", () => {
           B                                                
           |                                                
     d[unassigned]                                          
+             
+      `));
+    });
+  });
+
+  xdescribe("the first part of a left recursive definition in a cycle is qualified", () => {
+    const bnf = `
+    
+      S ::= A... <END_OF_LINE> ;
+   
+      A ::= B+ "f"
+      
+          | "g"
+      
+          ;
+      
+      B ::= A "h" ;
+      
+    `;
+
+    it("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF,`
+              
+        S   ::= B... <END_OF_LINE> ;
+        
+        A   ::= A_ A~* ;
+        
+        B   ::= B_ B~* ;
+        
+        B_  ::= "d" ;
+        
+        A_  ::= "c" ;
+        
+        B~A ::= "e" ;
+        
+        A~B ::= ε ;
+        
+        B~  ::= A~B A~* B~A ;
+        
+        A~  ::= A~B A~* B~A ;
+              
+      `));
+    });
+
+    it("results in the requisite parse tree" , () => {
+      const content = `ghf
+`,
+        parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+            
              
       `));
     });
@@ -1424,7 +1451,7 @@ describe("src/eliminateLeftRecursion", () => {
     
           `;
 
-    it.only("is rewritten", () => {
+    it("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
