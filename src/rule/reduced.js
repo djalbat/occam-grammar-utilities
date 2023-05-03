@@ -1,11 +1,13 @@
 "use strict";
 
-import { Rule } from "occam-parsers";
+import { Rule, Definition, Parts } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
 
 import { isDefinitionLeftRecursive } from "../utilities/definition";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
+
+const { EpsilonPart } = Parts;
 
 export default class ReducedRule extends Rule {
   static fromRule(rule) {
@@ -18,6 +20,18 @@ export default class ReducedRule extends Rule {
         return true;
       }
     });
+
+    const definitionsLength = definitions.length;
+
+    if (definitionsLength === 0) {
+      const epsilonPart = new EpsilonPart(),
+            parts = [
+              epsilonPart
+            ],
+            definition = new Definition(parts);
+
+      definitions.push(definition);
+    }
 
     const ruleName = rule.getName(),
           reducedRuleName = reducedRuleNameFromRuleName(ruleName),

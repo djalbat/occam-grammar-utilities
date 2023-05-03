@@ -10,7 +10,7 @@ const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
-  describe.only("cycles of length one and two", () => {
+  describe("cycles of length one and two", () => {
     const bnf = `
     
     S ::= A... <END_OF_LINE> ;
@@ -238,55 +238,42 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-
-
-
-
-
-
-
-
-
-
-
-
-  xdescribe("if an intermediate left recursive definition is effectively unary", () => {
+  describe("if all the reduced rules in a cycle are empty", () => {
     const bnf = `
 
-    S ::= E... <END_OF_LINE> ;
+    A ::= B "f" ;
 
-    T ::= R
+    B ::= C "g" ;
 
-        | V
-
-        ;
-
-    R ::= A "/" A
-
-        | V
-
-        ;
-
-    A ::= E ;
-
-    E ::= F ;
-
-    F ::= A "+" A
-
-        | T
-
-        ;
-
-    V ::= . ;
+    C ::= A "h" ;
 
 `;
 
-    it("does throw an exception", () => {
+    it.only("does throw an exception", () => {
       assert.throws(() => {
         adjustedBNFFromBNF(bnf);
       });
     });
   });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   xdescribe("a complex indirectly left recursive definition", () => {
     const bnf = `
