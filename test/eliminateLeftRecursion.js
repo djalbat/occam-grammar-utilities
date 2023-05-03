@@ -194,6 +194,48 @@ describe("src/eliminateLeftRecursion", () => {
 
       `));
     });
+
+    it("results in the requisite parse tree" , () => {
+      const content = `gkhrldf
+`,
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+              
+                                                                                               S                   
+                                                                                               |                   
+                                                                                 ----------------------------      
+                                                                                 |                          |      
+                                                                                 A                    <END_OF_LINE>
+                                                                                 |                                 
+                                                                   ----------------------------                    
+                                                                   |                          |                    
+                                                                   B                    f[unassigned]              
+                                                                   |                                               
+                                                     ----------------------------                                  
+                                                     |                          |                                  
+                                                     C                    d[unassigned]                            
+                                                     |                                                             
+                                        ---------------------------                                                
+                                        |                         |                                                
+                                        D                   l[unassigned]                                          
+                                        |                                                                          
+                            -------------------------                                                              
+                            |                       |                                                              
+                            B                 r[unassigned]                                                        
+                            |                                                                                      
+                 ----------------------                                                                            
+                 |                    |                                                                            
+                 A              h[unassigned]                                                                      
+                 |                                                                                                 
+          ---------------                                                                                          
+          |             |                                                                                          
+          A       k[unassigned]                                                                                    
+          |                                                                                                        
+    g[unassigned]                                                                                                  
+
+      `));
+    });
   });
 
 

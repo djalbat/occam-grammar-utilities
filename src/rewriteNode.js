@@ -6,8 +6,8 @@ import ReducedNode from "./node/reduced";
 import DirectlyRepeatedNode from "./node/repeated/directly";
 import IndirectlyRepeatedNode from "./node/repeated/indirectly";
 
-import { last, front } from "./utilities/array";
 import { ruleNameFromIndirectlyRepeatedRuleName } from "./utilities/ruleName";
+import { front, first, last, tail, push, backwardsForEach } from "./utilities/array";
 
 export default function rewriteNode(node) {  ///
   replaceReducedNodesAndDirectlyRepeatedNodes(node);
@@ -26,14 +26,37 @@ function replaceReducedNodesAndDirectlyRepeatedNodes(node) {
 
   let childNodes = nonTerminalNode.getChildNodes();
 
+  const firstChildNode = first(childNodes);
+
+  if (firstChildNode instanceof ReducedNode) {
+    const parentNode = nonTerminalNode, ///
+          reducedNode = firstChildNode, ///
+          childNodesTail = tail(childNodes),
+          directlyRepeatedNodes = childNodesTail, ///
+          reducedNodeChildNodes = reducedNode.getChildNodes(),
+          replacementChildNodes = [
+            ...reducedNodeChildNodes
+          ];
+
+    backwardsForEach(directlyRepeatedNodes, (directlyRepeatedNode) => {
+      const directlyRepeatedNodeChildNodes = directlyRepeatedNode.getChildNodes();
+
+      push(replacementChildNodes, directlyRepeatedNodeChildNodes);
+    });
+
+    replaceAllChildNodes(parentNode, replacementChildNodes);
+  }
+
+  childNodes = nonTerminalNode.getChildNodes();
+
   let index = 0,
       childNode = childNodes[index] || null;
 
   while (childNode !== null) {
-    if ((childNode instanceof ReducedNode) || (childNode instanceof DirectlyRepeatedNode)) {
-      const childNodeChildNodes = childNode.getChildNodes(),
-            parentNode = nonTerminalNode, ///
+    if (childNode instanceof DirectlyRepeatedNode) {
+      const parentNode = nonTerminalNode, ///
             replacedChildNode = childNode,  ///
+            childNodeChildNodes = childNode.getChildNodes(),
             replacementChildNodes = childNodeChildNodes; ///
 
       replaceChildNode(parentNode, replacedChildNode, replacementChildNodes);
@@ -107,10 +130,10 @@ function replaceAllChildNodes(parentNode, replacementChildNodes) {
   childNodes.splice(start, deleteCount, ...replacementChildNodes);
 }
 
-function replaceChildNode(parentNode, replacedChildNode, replacementChildNodes) {
+function replaceChildNode(parentNode, childNode, replacementChildNodes) {
   const childNodes = parentNode.getChildNodes(),
-        index = childNodes.indexOf(replacedChildNode),
-        start = index,
+        index = childNodes.indexOf(childNode),
+        start = index,  ///
         deleteCount = 1;
 
   childNodes.splice(start, deleteCount, ...replacementChildNodes);
