@@ -454,114 +454,98 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-
-
-
-
-
-
-
-
-
-
-  xdescribe("an isolated implicitly left recursive definition", () => {
+  describe("a strictly unary implicitly left recursive definition", () => {
     const bnf = `
   
-    A ::= B "g" ;
-
-    B ::= A "h"  
-     
-        | "c"
+      S ::= B... <END_OF_LINE> ;
         
-        ;
-
-`;
-
-    it("does not throw an exception", () => {
-      assert.doesNotThrow(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  xdescribe("a strictly unary implicitly left recursive definition", () => {
-    const bnf = `
+      A ::= B
+      
+          | "c"
+      
+          ;
+      
+      B ::= A "e" 
+      
+          | "d"
+      
+          ;
   
-    A ::= B
-    
-        | "c"
-    
-        ;
-    
-    B ::= A "e" 
-    
-        | "d"
-    
-        ;
-
-`;
+    `;
 
     it("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF,`
-      
-    A    ::= A_ A~* ;
-    
-    B    ::= "d"
-    
-           | A_B_ B~A~
-    
-           ;
-    
-    B__  ::= "d" ;
-    
-    B~A~ ::= "e" ;
-    
-    A_B_ ::= "c"
-    
-           | B__
-    
-           ;
-    
-    A_   ::= "c"
-    
-           | B__
-    
-           ;
-    
-    A~   ::= B~A~ ;
-
+              
+        S   ::= B... <END_OF_LINE> ;
+        
+        A   ::= A_ A~* ;
+        
+        B   ::= B_ B~* ;
+        
+        B_  ::= "d" ;
+        
+        A_  ::= "c" ;
+        
+        B~A ::= "e" ;
+        
+        A~B ::= ε ;
+        
+        B~  ::= A~B A~* B~A ;
+        
+        A~  ::= A~B A~* B~A ;
+              
       `));
     });
 
     it("results in the requisite parse tree" , () => {
-      const content = "dee",
+      const content = `dee
+`,
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
             
-                            A                
-                            |                
-                            B                
-                            |                
-                 ----------------------      
-                 |                    |      
-                 A              e[unassigned]
-                 |                           
-                 B                           
-                 |                           
-          ---------------                    
-          |             |                    
-          A       e[unassigned]              
-          |                                  
-          B                                  
-          |                                  
-    d[unassigned]                            
+                                        S                  
+                                        |                  
+                            -------------------------      
+                            |                       |      
+                            B                 <END_OF_LINE>
+                            |                              
+                 ----------------------                    
+                 |                    |                    
+                 A              e[unassigned]              
+                 |                                         
+                 B                                         
+                 |                                         
+          ---------------                                  
+          |             |                                  
+          A       e[unassigned]                            
+          |                                                
+          B                                                
+          |                                                
+    d[unassigned]                                          
              
       `));
     });
   });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   xdescribe("a strictly unary indirectly left recursive definition", () => {
     const bnf = `

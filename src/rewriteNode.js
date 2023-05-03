@@ -1,6 +1,6 @@
 "use strict";
 
-import { NonTerminalNode } from "occam-parsers";
+import { EpsilonNode, NonTerminalNode } from "occam-parsers";
 
 import ReducedNode from "./node/reduced";
 import DirectlyRepeatedNode from "./node/repeated/directly";
@@ -13,6 +13,8 @@ export default function rewriteNode(node) {  ///
   replaceReducedNodesAndDirectlyRepeatedNodes(node);
 
   rearrangeIndirectlyRepeatedNodes(node);
+
+  removeEpsilonNodes(node);
 }
 
 function replaceReducedNodesAndDirectlyRepeatedNodes(node) {
@@ -122,6 +124,41 @@ function rearrangeIndirectlyRepeatedNodes(node) {
   });
 }
 
+function removeEpsilonNodes(node) {
+  const nodeNonTerminalNode = node.isNonTerminalNode();
+
+  if (!nodeNonTerminalNode) {
+    return;
+  }
+
+  let nonTerminalNode = node, ///
+      childNodes = nonTerminalNode.getChildNodes();
+
+  let index = 0,
+      childNode = childNodes[index] || null;
+
+  while (childNode !== null) {
+    if (childNode instanceof EpsilonNode) {
+      const parentNode = nonTerminalNode, ///
+            removedChildNode = childNode;
+
+      removeChildNode(parentNode, removedChildNode);
+    } else {
+      index++;
+    }
+
+    childNode = childNodes[index] || null;
+  }
+
+  childNodes = nonTerminalNode.getChildNodes();
+
+  childNodes.forEach((childNode) => {
+    const node = childNode; ///
+
+    removeEpsilonNodes(node);
+  });
+}
+
 function replaceAllChildNodes(parentNode, replacementChildNodes) {
   const childNodes = parentNode.getChildNodes(),
         start = 0,
@@ -137,4 +174,13 @@ function replaceChildNode(parentNode, childNode, replacementChildNodes) {
         deleteCount = 1;
 
   childNodes.splice(start, deleteCount, ...replacementChildNodes);
+}
+
+function removeChildNode(parentNode, removedChildNode) {
+  const childNodes = parentNode.getChildNodes(),
+        index = childNodes.indexOf(removedChildNode),
+        start = index,  ///
+        deleteCount = 1;
+
+  childNodes.splice(start, deleteCount);
 }
