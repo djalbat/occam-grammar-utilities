@@ -1,18 +1,17 @@
 "use strict";
 
+import { partTypes } from "occam-parsers";
 import { arrayUtilities } from "necessary";
-import { Parts, partTypes } from "occam-parsers";
 
 import { isPartEmpty, recursiveRuleNamesFromPart, leftRecursiveRuleNamesFromPart } from "../utilities/part";
 
 const { first } = arrayUtilities,
-      { SequenceOfPartsPart, ZeroOrMorePartsPart } = Parts,
       { RuleNamePartType,
         OptionalPartPartType,
         ChoiceOfPartsPartType,
         OneOrMorePartsPartType,
-        SequenceOfPartsPartType,
-        ZeroOrMorePartsPartType } = partTypes;
+        ZeroOrMorePartsPartType,
+        SequenceOfPartsPartType } = partTypes;
 
 export function arePartsEqual(parts) {
   const firstPart = first(parts),
@@ -29,63 +28,12 @@ export function arePartsEqual(parts) {
   return partsEqual;
 }
 
-export function arePartsRecursive(parts) {
-  const recursiveRuleNames = recursiveRuleNamesFromParts(parts),
-        recursiveRuleNamesLength = recursiveRuleNames.length,
-        partsRecursive = (recursiveRuleNamesLength > 0);
-
-  return partsRecursive;
-}
-
-export function arePartsDirectlyLeftRecursive(parts, leftRecursiveRuleName) {
-  let partsDirectlyLeftRecursive = false;
-
-  const leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
-        leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length;
-
-  if (leftRecursiveRuleNamesLength > 0) {
-    const firstLeftRecursiveRuleName = first(leftRecursiveRuleNames),
-          firstLeftRecursiveRuleNameLeftRecursiveRuleName = (firstLeftRecursiveRuleName === leftRecursiveRuleName);
-
-    partsDirectlyLeftRecursive = firstLeftRecursiveRuleNameLeftRecursiveRuleName;  ///
-  }
-
-  return partsDirectlyLeftRecursive;
-}
-
-export function singlePartFromParts(parts) {
-  let singlePart;
-
-  const partsLength = parts.length;
-
-  if (partsLength === 1) {
-    const firstPart = first(parts);
-
-    singlePart = firstPart; ///
-  } else {
-    const sequenceOfPartsPart = new SequenceOfPartsPart(parts);
-
-    singlePart = sequenceOfPartsPart; ///
-  }
-
-  return singlePart;
-}
-
 export function arePartsLeftRecursive(parts) {
   const leftRecursiveRuleNames = leftRecursiveRuleNamesFromParts(parts),
         leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length,
         partsLeftRecursive = (leftRecursiveRuleNamesLength > 0);
 
   return partsLeftRecursive;
-}
-
-export function repeatedPartFromParts(parts) {
-  const singlePart = singlePartFromParts(parts),
-        part = singlePart,
-        zeroOrMorePartsPart = new ZeroOrMorePartsPart(part),
-        repeatedPart = zeroOrMorePartsPart;  ///
-
-  return repeatedPart;
 }
 
 export function recursiveRuleNamesFromParts(parts, recursiveRuleNames = []) {

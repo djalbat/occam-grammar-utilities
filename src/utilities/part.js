@@ -17,14 +17,6 @@ const { RuleNamePart, OptionalPartPart, OneOrMorePartsPart, ZeroOrMorePartsPart 
 const { first } = arrayUtilities,
       { epsilon } = specialSymbols;
 
-export function matchParts(partA, partB) {
-  const partAString = partA.asString(),
-        partBString = partB.asString(),
-        matches = (partAString === partBString);
-
-  return matches;
-}
-
 export function isPartEmpty(part) {
   const partString = part.asString(),
         partStringEpsilon = (partString === epsilon),
