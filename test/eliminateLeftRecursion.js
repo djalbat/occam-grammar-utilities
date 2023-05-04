@@ -843,140 +843,47 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  xdescribe("two indirectly left recursive definitions and their left recursive definitions with the same underlying definitions", () => {
+  describe("two indirectly left recursive definitions and their left recursive definitions with the same underlying definitions", () => {
     const bnf = `
     
-    S ::= T... <END_OF_LINE> ;
+      S ::= T... <END_OF_LINE> ;
+  
+      T ::= B
+      
+          | C
+      
+          | V
+      
+          ;
+      
+      A ::= T ;
+      
+      B::= "-" A
+      
+         | C
+      
+         | V
+      
+         ;
+                            
+      C ::= A "+" A
+      
+          | V
+      
+          ;
+      
+      V::= . ;
+       
+    `;
 
-    T ::= B
-    
-        | C
-    
-        | V
-    
-        ;
-    
-    A ::= T ;
-    
-    B::= "-" A
-    
-       | C
-    
-       | V
-    
-       ;
-                          
-    C ::= A "+" A
-    
-        | V
-    
-        ;
-    
-    V::= . ;
-     
-`;
-
-    it("are rewritten", () => {
+    it.only("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
       
-    S    ::= T... <END_OF_LINE> ;
-    
-    T    ::= T_ T~* ;
-    
-    A    ::= T A~T~* ;
-    
-    B    ::= "-" A
-    
-           | V
-    
-           | C__
-    
-           | T_B_ B~T~*
-    
-           ;
-    
-    C    ::= V
-    
-           | T C~T~*
-    
-           ;
-    
-    V    ::= . ;
-    
-    A~T~ ::= ε ;
-    
-    C__  ::= V ;
-    
-    C~T~ ::= A~T~ "+" A ;
-    
-    B__  ::= "-" A
-    
-           | V
-    
-           | C__
-    
-           ;
-    
-    B~T~ ::= C~T~ ;
-    
-    T_B_ ::= C
-    
-           | V
-    
-           | B__
-    
-           ;
-    
-    T_   ::= C
-    
-           | V
-    
-           | B__
-    
-           ;
-    
-    T~   ::= B~T~ ;
     
            
-       `));
+     `));
     });
 
     it("results in the requisite parse tree" , () => {
@@ -1011,6 +918,29 @@ describe("src/eliminateLeftRecursion", () => {
       `));
     });
   });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   xdescribe("an indirectly left recursive definition of depth four", () => {
     const bnf = `
