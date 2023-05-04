@@ -1,7 +1,7 @@
 "use strict";
 
+import { EpsilonNode } from "occam-parsers";
 import { arrayUtilities } from "necessary";
-import { EpsilonNode, NonTerminalNode } from "occam-parsers";
 
 import ReducedNode from "./node/reduced";
 import RewrittenNode from "./node/rewritten";
@@ -13,11 +13,96 @@ import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName } f
 const { front, first, last, push } = arrayUtilities;
 
 export default function rewriteNode(node) {  ///
+  rewriteDirectlyRepeatedNodes(node);
+
+  rewriteIndirectlyRepeatedNodes(node);
+
   rewriteReducedNodes(node);
 
-  // rearrangeIndirectlyRepeatedNodes(node);
+  removeEpsilonNodes(node);
+}
 
-  // removeEpsilonNodes(node);
+function rewriteIndirectlyRepeatedNodes(node) {
+  const nodeNonTerminalNode = node.isNonTerminalNode();
+
+  if (!nodeNonTerminalNode) {
+    return;
+  }
+
+  const nonTerminalNode = node; ///
+
+  let childNodes = nonTerminalNode.getChildNodes();
+
+  const lastChildNode = last(childNodes);
+
+  if (lastChildNode instanceof IndirectlyRepeatedNode) {
+    const parentNode = nonTerminalNode, ///
+          frontChildNodes = front(childNodes),
+          indirectlyRepeatedNode = lastChildNode, ///
+          indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
+          indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
+          ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);  ///
+
+    childNodes = frontChildNodes; ///
+
+    const rewrittenNode = RewrittenNode.fromRuleNameAndChildNodes(ruleName, childNodes);
+
+    childNodes = indirectlyRepeatedNode.getChildNodes();
+
+    const childNode = rewrittenNode,  ///
+          replacementChildNodes = [
+            childNode,
+            ...childNodes
+          ];
+
+    replaceAllChildNodes(parentNode, replacementChildNodes);
+  }
+
+  childNodes = nonTerminalNode.getChildNodes();
+
+  childNodes.forEach((childNode) => {
+    const node = childNode; ///
+
+    rewriteIndirectlyRepeatedNodes(node);
+  });
+}
+
+function rewriteDirectlyRepeatedNodes(node) {
+  const nodeNonTerminalNode = node.isNonTerminalNode();
+
+  if (!nodeNonTerminalNode) {
+    return;
+  }
+
+  const nonTerminalNode = node; ///
+
+  let childNodes = nonTerminalNode.getChildNodes();
+
+  let index = 0,
+      childNode = childNodes[index] || null;
+
+  while (childNode !== null) {
+    if (childNode instanceof DirectlyRepeatedNode) {
+      const parentNode = nonTerminalNode, ///
+            replacedChildNode = childNode,  ///
+            childNodeChildNodes = childNode.getChildNodes(),
+            replacementChildNodes = childNodeChildNodes; ///
+
+      replaceChildNode(parentNode, replacedChildNode, replacementChildNodes);
+    }
+
+    index++;
+
+    childNode = childNodes[index] || null;
+  }
+
+  childNodes = nonTerminalNode.getChildNodes();
+
+  childNodes.forEach((childNode) => {
+    const node = childNode; ///
+
+    rewriteDirectlyRepeatedNodes(node);
+  });
 }
 
 function rewriteReducedNodes(node) {
@@ -59,76 +144,10 @@ function rewriteReducedNodes(node) {
 
   childNodes = nonTerminalNode.getChildNodes();
 
-  let index = 0,
-      childNode = childNodes[index] || null;
-
-  while (childNode !== null) {
-    if (childNode instanceof DirectlyRepeatedNode) {
-      const parentNode = nonTerminalNode, ///
-        replacedChildNode = childNode,  ///
-        childNodeChildNodes = childNode.getChildNodes(),
-        replacementChildNodes = childNodeChildNodes; ///
-
-      replaceChildNode(parentNode, replacedChildNode, replacementChildNodes);
-    }
-
-    index++;
-
-    childNode = childNodes[index] || null;
-  }
-
-  childNodes = nonTerminalNode.getChildNodes();
-
   childNodes.forEach((childNode) => {
     const node = childNode; ///
 
     rewriteReducedNodes(node);
-  });
-}
-
-function rearrangeIndirectlyRepeatedNodes(node) {
-  const nodeNonTerminalNode = node.isNonTerminalNode();
-
-  if (!nodeNonTerminalNode) {
-    return;
-  }
-
-  let nonTerminalNode = node, ///
-      childNodes = nonTerminalNode.getChildNodes();
-
-  const lastChildNode = last(childNodes);
-
-  if (lastChildNode instanceof IndirectlyRepeatedNode) {
-    const parentNode = nonTerminalNode, ///
-          frontChildNodes = front(childNodes),
-          indirectlyRepeatedNode = lastChildNode, ///
-          indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
-          indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
-          ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);  ///
-
-    childNodes = frontChildNodes; ///
-
-    nonTerminalNode = new NonTerminalNode(ruleName, childNodes);
-
-    childNodes = indirectlyRepeatedNode.getChildNodes();
-
-    const childNode = nonTerminalNode,  ///
-          replacementChildNodes = [
-            childNode,
-            ...childNodes
-          ];
-
-    replaceAllChildNodes(parentNode, replacementChildNodes);
-  }
-
-  nonTerminalNode = node; ///
-
-  childNodes = nonTerminalNode.getChildNodes();
-
-  childNodes.forEach((childNode) => {
-    const node = childNode; ///
-
-    rearrangeIndirectlyRepeatedNodes(node);
   });
 }
 
