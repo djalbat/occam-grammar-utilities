@@ -18,6 +18,18 @@ export default class RewrittenDefinition extends Definition {
 
     return rewrittenDefinition;
   }
+
+  static fromRuleName(ruleName) {
+    const reducedRuleNamePart = reducedRuleNamePartFromRuleName(ruleName),
+          directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName),
+          parts = [
+            reducedRuleNamePart,
+            directlyRepeatedPart
+          ],
+          rewrittenDefinition = new RewrittenDefinition(parts);
+
+    return rewrittenDefinition;
+  }
 }
 
 function partsFromPath(path) {
@@ -31,33 +43,25 @@ function partsFromPath(path) {
 
   const pathLength = path.length;
 
-  if (pathLength === 1) {
-    const firstRuleName = first(ruleNames),
-          ruleName = firstRuleName, ///
-          directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName);
+  const lastIndex = pathLength - 1;
 
-    parts.push(directlyRepeatedPart);
-  } else {
-    const lastIndex = pathLength - 1;
+  forEachRuleNameAndLeftRecursiveRuleName(ruleNames, (ruleName, leftRecursiveRuleName, index) => {
+    if (index !== lastIndex) {
+      const directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName);
 
-    forEachRuleNameAndLeftRecursiveRuleName(ruleNames, (ruleName, leftRecursiveRuleName, index) => {
-      if (index !== lastIndex) {
-        const directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName);
+      parts.push(directlyRepeatedPart);
 
-        parts.push(directlyRepeatedPart);
+      const temporaryRuleName = leftRecursiveRuleName; ///
 
-        const temporaryRuleName = leftRecursiveRuleName; ///
+      leftRecursiveRuleName = ruleName; ///
 
-        leftRecursiveRuleName = ruleName; ///
+      ruleName = temporaryRuleName;  ///
 
-        ruleName = temporaryRuleName;  ///
+      const indirectlyRepeatedPart = indirectlyRepeatedPartFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName);
 
-        const indirectlyRepeatedPart = indirectlyRepeatedPartFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName);
-
-        parts.push(indirectlyRepeatedPart);
-      }
-    });
-  }
+      parts.push(indirectlyRepeatedPart);
+    }
+  });
 
   return parts;
 }

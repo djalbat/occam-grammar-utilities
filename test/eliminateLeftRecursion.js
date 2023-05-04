@@ -212,7 +212,7 @@ describe("src/eliminateLeftRecursion", () => {
 
     `;
 
-    it.only("is rewritten", () => {
+    it("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -301,9 +301,17 @@ describe("src/eliminateLeftRecursion", () => {
       
         S   ::= A... <END_OF_LINE> ;
         
-        A   ::= A_ A~* ;
+        A   ::= A_ A~*
         
-        B   ::= B_ B~* ;
+              | B_ B~* A~B
+        
+              ;
+        
+        B   ::= B_ B~*
+        
+              | A_ A~* B~A
+        
+              ;
         
         A_  ::= "e" ;
         
@@ -314,7 +322,7 @@ describe("src/eliminateLeftRecursion", () => {
         A~B ::= "d" ;
         
         B~A ::= "f" ;
-    
+        
         A~  ::= A~A
         
               | B~A B~* A~B
@@ -394,16 +402,56 @@ describe("src/eliminateLeftRecursion", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-              
+                      
         S   ::= A... <END_OF_LINE> ;
         
-        A   ::= A_ A~* ;
+        A   ::= A_ A~*
         
-        B   ::= B_ B~* ;
+              | B_ B~* A~B
         
-        C   ::= C_ C~* ;
+              | C_ C~* B~C B~* A~B
         
-        D   ::= D_ D~* ;
+              | D_ D~* C~D C~* B~C B~* A~B
+        
+              ;
+        
+        B   ::= B_ B~*
+        
+              | A_ A~* B~A
+        
+              | C_ C~* B~C
+        
+              | D_ D~* C~D C~* B~C
+        
+              | A_ A~* D~A D~* C~D C~* B~C
+        
+              ;
+        
+        C   ::= C_ C~*
+        
+              | D_ D~* C~D
+        
+              | A_ A~* D~A D~* C~D
+        
+              | B_ B~* A~B A~* D~A D~* C~D
+        
+              | B_ B~* D~B D~* C~D
+        
+              ;
+        
+        D   ::= D_ D~*
+        
+              | A_ A~* D~A
+        
+              | B_ B~* A~B A~* D~A
+        
+              | C_ C~* B~C B~* A~B A~* D~A
+        
+              | B_ B~* D~B
+        
+              | C_ C~* B~C B~* D~B
+        
+              ;
         
         A_  ::= "g" ;
         
@@ -454,7 +502,7 @@ describe("src/eliminateLeftRecursion", () => {
               | C~D C~* B~C B~* A~B A~* D~A
         
               ;
-                  
+                                
       `));
     });
 
@@ -527,9 +575,17 @@ describe("src/eliminateLeftRecursion", () => {
               
         S   ::= B... <END_OF_LINE> ;
         
-        A   ::= A_ A~* ;
+        A   ::= A_ A~*
         
-        B   ::= B_ B~* ;
+              | B_ B~* A~B
+        
+              ;
+        
+        B   ::= B_ B~*
+        
+              | A_ A~* B~A
+        
+              ;
         
         B_  ::= "d" ;
         
@@ -608,14 +664,28 @@ describe("src/eliminateLeftRecursion", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-              
+                      
         S   ::= A... <END_OF_LINE> ;
         
-        A   ::= A_ A~* ;
+        A   ::= A_ A~*
         
-        B   ::= B_ B~* ;
+              | C_ C~* A~C
         
-        C   ::= C_ C~* ;
+              | B_ B~* A~B
+        
+              ;
+        
+        B   ::= B_ B~*
+        
+              | A_ A~* B~A
+        
+              ;
+        
+        C   ::= C_ C~*
+        
+              | A_ A~* C~A
+        
+              ;
         
         A_  ::= "b" ;
         
@@ -2465,7 +2535,7 @@ describe("src/eliminateLeftRecursion", () => {
       
     `;
 
-    it.only("is rewritten", () => {
+    it("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF,`
@@ -2502,7 +2572,6 @@ describe("src/eliminateLeftRecursion", () => {
       `));
     });
   });
-
 });
 
 function compare(stringA, stringB) {

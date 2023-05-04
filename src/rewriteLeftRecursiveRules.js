@@ -21,7 +21,11 @@ function rewriteRecursiveRule(rule, cycles) {
 
   rule.removeAllDefinitions();
 
-  const paths = pathsFromRuleNameAndCycles(ruleName, cycles);
+  const paths = pathsFromRuleNameAndCycles(ruleName, cycles),
+        rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName),
+        definition = rewrittenDefinition; ///
+
+  rule.addDefinition(definition);
 
   paths.forEach((path) => {
     const rewrittenDefinition = RewrittenDefinition.fromPath(path),

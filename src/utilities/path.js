@@ -6,12 +6,22 @@ export function pathsFromRuleNameAndCycles(ruleName, cycles) {
   const paths = [];
 
   cycles.forEach((cycle) => {
-    const cycleLength = cycle.length;
+    const cycleIncludesRuleName = cycle.includes(ruleName);
 
-    for (let length = 1; length <= cycleLength; length++) {
-      const path = pathFromRuleNameAndCycle(ruleName, cycle, length);
+    if (cycleIncludesRuleName) {
+      let path = pathFromRuleNameAndCycle(ruleName, cycle);
 
-      paths.push(path);
+      let length = path.length;
+
+      while (length > 1) {
+        paths.unshift(path);
+
+        path = path.slice();  ///
+
+        path.pop();
+
+        length = path.length;
+      }
     }
   });
 
@@ -26,9 +36,7 @@ export function pathsFromRuleNameAndCycles(ruleName, cycles) {
   return paths;
 }
 
-export function pathFromRuleNameAndCycle(ruleName, cycle, length = Infinity) {
-  let path;
-
+export function pathFromRuleNameAndCycle(ruleName, cycle) {
   let ruleNames = cycle,
       start,
       end;
@@ -43,18 +51,11 @@ export function pathFromRuleNameAndCycle(ruleName, cycle, length = Infinity) {
 
   start = index;  ///
 
-  const trailingRuleNames = ruleNames.slice(start);
-
-  path = [
-    ...trailingRuleNames,
-    ...leadingRuleNames
-  ];
-
-  start = 0;
-
-  end = length; ///
-
-  path = path.slice(start, end);
+  const trailingRuleNames = ruleNames.slice(start),
+        path = [
+          ...trailingRuleNames,
+          ...leadingRuleNames
+        ];
 
   return path;
 }
@@ -69,7 +70,7 @@ function arePathsEqual(pathA, pathB) {
     const ruleNamesA = pathA, ///
           ruleNamesB = pathB; ///
 
-    pathsEqual = ruleNamesA.forEach((ruleNameA, index) => {
+    pathsEqual = ruleNamesA.every((ruleNameA, index) => {
       const ruleNameB = ruleNamesB[index];
 
       if (ruleNameA === ruleNameB) {
