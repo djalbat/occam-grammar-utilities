@@ -4,11 +4,10 @@ import ReducedRule from "./rule/reduced";
 
 import { characters } from "necessary";
 
-import { isRuleEmpty } from "./utilities/rule";
 import { ruleNamesFromCycles } from "./utilities/ruleNames";
 import { reducedRuleNameFromRuleName } from "./utilities/ruleName";
 
-const { COMMAN_CHARACTER } = characters;
+const { COMMA_CHARACTER } = characters;
 
 export default function createReducedRules(ruleMap, directedGraph) {
   const cycles = directedGraph.findCycles(),
@@ -16,10 +15,13 @@ export default function createReducedRules(ruleMap, directedGraph) {
 
   ruleNames.forEach((ruleName) => {
     const rule = ruleMap[ruleName],
-          reducedRule = ReducedRule.fromRule(rule),
-          reducedRuleName = reducedRule.getName();
+          reducedRule = ReducedRule.fromRule(rule);
 
-    ruleMap[reducedRuleName] = reducedRule;
+    if (reducedRule !== null) {
+      const reducedRuleName = reducedRule.getName();
+
+      ruleMap[reducedRuleName] = reducedRule;
+    }
   });
 
   cycles.forEach((cycle) => {
@@ -27,7 +29,7 @@ export default function createReducedRules(ruleMap, directedGraph) {
 
     if (cycleEmpty) {
       const ruleNames = cycle,
-            ruleNamesString = ruleNames.join(COMMAN_CHARACTER);
+            ruleNamesString = ruleNames.join(COMMA_CHARACTER);
 
       throw new Error(`All of the reduced rules in the '${ruleNamesString}' cycle are empty.`);
     }
@@ -36,20 +38,18 @@ export default function createReducedRules(ruleMap, directedGraph) {
 
 function isCycleEmpty(cycle, ruleMap) {
   const ruleNames = cycle,  ///
-        reducedRules = ruleNames.map((ruleName) => {
+        reducedRules = ruleNames.reduce((reducedRules, ruleName) => {
           const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-                reducedRule = ruleMap[reducedRuleName];
+                reducedRule = ruleMap[reducedRuleName] || null;
 
-          return reducedRule;
-        }),
-        reducedRulesEmpty = reducedRules.every((reducedRule) => {
-          const reducedRuleEmpty = isRuleEmpty(reducedRule);
-
-          if (reducedRuleEmpty) {
-            return true;
+          if (reducedRule !== null) {
+            reducedRules.push(reducedRule);
           }
-        }),
-        cycleEmpty = reducedRulesEmpty; ///
+
+          return reducedRules;
+        }, []),
+        reducedRulesLength = reducedRules.length,
+        cycleEmpty = (reducedRulesLength === 0); ///
 
   return cycleEmpty;
 }
