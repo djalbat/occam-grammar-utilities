@@ -3,11 +3,12 @@
 import { EpsilonNode, NonTerminalNode } from "occam-parsers";
 
 import ReducedNode from "./node/reduced";
+import RewrittenNode from "./node/rewritten";
 import DirectlyRepeatedNode from "./node/repeated/directly";
 import IndirectlyRepeatedNode from "./node/repeated/indirectly";
 
-import { ruleNameFromIndirectlyRepeatedRuleName } from "./utilities/ruleName";
 import { front, first, last, tail, push, backwardsForEach } from "./utilities/array";
+import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName } from "./utilities/ruleName";
 
 export default function rewriteNode(node) {  ///
   replaceReducedNodesAndDirectlyRepeatedNodes(node);
@@ -31,14 +32,27 @@ function replaceReducedNodesAndDirectlyRepeatedNodes(node) {
   const firstChildNode = first(childNodes);
 
   if (firstChildNode instanceof ReducedNode) {
-    const parentNode = nonTerminalNode, ///
-          reducedNode = firstChildNode, ///
-          childNodesTail = tail(childNodes),
-          directlyRepeatedNodes = childNodesTail, ///
-          reducedNodeChildNodes = reducedNode.getChildNodes(),
-          replacementChildNodes = [
-            ...reducedNodeChildNodes
-          ];
+    const reducedNode = firstChildNode, ///
+          parentNode = nonTerminalNode, ///
+          reducedNodeRuleName = reducedNode.getRuleName(),
+          parentNodeRuleName = parentNode.getRuleName(),
+          reducedRuleName = reducedNodeRuleName,  ///
+          parentRuleName = parentNodeRuleName,  ///
+          ruleName = ruleNameFromReducedRuleName(reducedRuleName),
+          replacementChildNodes = []; ///
+
+    if (ruleName === parentRuleName) {
+      const reducedNodeChildNodes = reducedNode.getChildNodes();
+
+      push(replacementChildNodes, reducedNodeChildNodes);
+    } else {
+      const rewrittenNode = RewrittenNode.fromReducedNode(reducedNode);
+
+      replacementChildNodes.push(rewrittenNode);
+    }
+
+    const childNodesTail = tail(childNodes),
+          directlyRepeatedNodes = childNodesTail; ///
 
     backwardsForEach(directlyRepeatedNodes, (directlyRepeatedNode) => {
       const directlyRepeatedNodeChildNodes = directlyRepeatedNode.getChildNodes();
@@ -57,9 +71,9 @@ function replaceReducedNodesAndDirectlyRepeatedNodes(node) {
   while (childNode !== null) {
     if (childNode instanceof DirectlyRepeatedNode) {
       const parentNode = nonTerminalNode, ///
-            replacedChildNode = childNode,  ///
-            childNodeChildNodes = childNode.getChildNodes(),
-            replacementChildNodes = childNodeChildNodes; ///
+        replacedChildNode = childNode,  ///
+        childNodeChildNodes = childNode.getChildNodes(),
+        replacementChildNodes = childNodeChildNodes; ///
 
       replaceChildNode(parentNode, replacedChildNode, replacementChildNodes);
     }
