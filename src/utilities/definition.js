@@ -1,12 +1,15 @@
 "use strict";
 
-import { first } from "../utilities/array";
+import { arrayUtilities } from "necessary";
+
 import { isPartComplex } from "../utilities/part";
 import { arePartsRecursive,
          arePartsLeftRecursive,
          recursiveRuleNamesFromParts,
          arePartsDirectlyLeftRecursive,
          leftRecursiveRuleNamesFromParts } from "../utilities/parts";
+
+const { first } = arrayUtilities;
 
 export function isDefinitionComplex(definition) {
   const parts = definition.getParts(),

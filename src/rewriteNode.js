@@ -1,5 +1,6 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
 import { EpsilonNode, NonTerminalNode } from "occam-parsers";
 
 import ReducedNode from "./node/reduced";
@@ -7,18 +8,19 @@ import RewrittenNode from "./node/rewritten";
 import DirectlyRepeatedNode from "./node/repeated/directly";
 import IndirectlyRepeatedNode from "./node/repeated/indirectly";
 
-import { front, first, last, tail, push, backwardsForEach } from "./utilities/array";
 import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName } from "./utilities/ruleName";
 
+const { front, first, last, push } = arrayUtilities;
+
 export default function rewriteNode(node) {  ///
-  replaceReducedNodesAndDirectlyRepeatedNodes(node);
+  rewriteReducedNodes(node);
 
-  rearrangeIndirectlyRepeatedNodes(node);
+  // rearrangeIndirectlyRepeatedNodes(node);
 
-  removeEpsilonNodes(node);
+  // removeEpsilonNodes(node);
 }
 
-function replaceReducedNodesAndDirectlyRepeatedNodes(node) {
+function rewriteReducedNodes(node) {
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (!nodeNonTerminalNode) {
@@ -32,8 +34,9 @@ function replaceReducedNodesAndDirectlyRepeatedNodes(node) {
   const firstChildNode = first(childNodes);
 
   if (firstChildNode instanceof ReducedNode) {
-    const reducedNode = firstChildNode, ///
-          parentNode = nonTerminalNode, ///
+    const parentNode = nonTerminalNode, ///
+          childNode = firstChildNode, ///
+          reducedNode = childNode, ///
           reducedNodeRuleName = reducedNode.getRuleName(),
           parentNodeRuleName = parentNode.getRuleName(),
           reducedRuleName = reducedNodeRuleName,  ///
@@ -51,16 +54,7 @@ function replaceReducedNodesAndDirectlyRepeatedNodes(node) {
       replacementChildNodes.push(rewrittenNode);
     }
 
-    const childNodesTail = tail(childNodes),
-          directlyRepeatedNodes = childNodesTail; ///
-
-    backwardsForEach(directlyRepeatedNodes, (directlyRepeatedNode) => {
-      const directlyRepeatedNodeChildNodes = directlyRepeatedNode.getChildNodes();
-
-      push(replacementChildNodes, directlyRepeatedNodeChildNodes);
-    });
-
-    replaceAllChildNodes(parentNode, replacementChildNodes);
+    replaceChildNode(parentNode, childNode, replacementChildNodes);
   }
 
   childNodes = nonTerminalNode.getChildNodes();
@@ -88,7 +82,7 @@ function replaceReducedNodesAndDirectlyRepeatedNodes(node) {
   childNodes.forEach((childNode) => {
     const node = childNode; ///
 
-    replaceReducedNodesAndDirectlyRepeatedNodes(node);
+    rewriteReducedNodes(node);
   });
 }
 

@@ -1,6 +1,8 @@
 "use strict";
 
-import { compress } from "../utilities/array";
+import { arrayUtilities } from "necessary";
+
+const { compress } = arrayUtilities;
 
 export function pathsFromRuleNameAndCycles(ruleName, cycles) {
   const paths = [];

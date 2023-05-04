@@ -1,15 +1,13 @@
 "use strict";
 
 import { Definition } from "occam-parsers";
+import { arrayUtilities } from "necessary";
 
-import { first } from "../utilities/array";
 import { forEachRuleNameAndLeftRecursiveRuleName } from "../utilities/ruleNames";
 import { ruleNamePartFromRuleName, zeroOrMorePartsPartFromPart } from "../utilities/part";
-import {
-  reducedRuleNameFromRuleName,
-  directlyRepeatedRuleNameFromRuleName,
-  indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName
-} from "../utilities/ruleName";
+import { reducedRuleNameFromRuleName, directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../utilities/ruleName";
+
+const { first } = arrayUtilities;
 
 export default class RewrittenDefinition extends Definition {
   static fromPath(path) {

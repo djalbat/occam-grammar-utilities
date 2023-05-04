@@ -1,9 +1,9 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
 import { specialSymbols } from "occam-lexers";
 import { Parts, partTypes } from "occam-parsers";
 
-import { first } from "../utilities/array";
 import { directlyReducedRuleNameFromRuleName } from "../utilities/ruleName";
 
 const { RuleNamePart, OptionalPartPart, OneOrMorePartsPart, ZeroOrMorePartsPart } = Parts,
@@ -14,7 +14,8 @@ const { RuleNamePart, OptionalPartPart, OneOrMorePartsPart, ZeroOrMorePartsPart 
         SequenceOfPartsPartType,
         ZeroOrMorePartsPartType } = partTypes;
 
-const { epsilon } = specialSymbols;
+const { first } = arrayUtilities,
+      { epsilon } = specialSymbols;
 
 export function matchParts(partA, partB) {
   const partAString = partA.asString(),

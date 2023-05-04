@@ -1,6 +1,8 @@
 "use strict";
 
-import { last, find } from "./utilities/array";
+import { arrayUtilities } from "necessary";
+
+const { last, find } = arrayUtilities;
 
 export default class DirectedGraph {
   constructor(edges, startVertex) {

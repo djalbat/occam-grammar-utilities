@@ -1,8 +1,11 @@
 "use strict";
 
-import { first } from "../utilities/array";
+import { arrayUtilities } from "necessary";
+
 import { isPartEmpty } from "../utilities/part";
 import { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "./definition";
+
+const { first } = arrayUtilities;
 
 export function isRuleEmpty(rule) {
   let ruleEmpty = false;
