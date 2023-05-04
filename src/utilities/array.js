@@ -2,7 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
-export const { first, last, find, filter, front, head, tail, push, unshift, firstLast, secondLast, backwardsSome, backwardsFind, backwardsEvery, backwardsForEach } = arrayUtilities;
+export const { first, last, find, filter, front, head, tail, push, compress, unshift, firstLast, secondLast, backwardsSome, backwardsFind, backwardsEvery, backwardsForEach } = arrayUtilities;
 
 export function leftDifference(arrayA, arrayB) {
   filter(arrayA, (elementA) => {

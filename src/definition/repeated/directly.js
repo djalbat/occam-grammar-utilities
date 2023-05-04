@@ -1,6 +1,7 @@
 "use strict";
 
 import { Definition } from "occam-parsers";
+import { pathFromRuleNameAndCycle } from "../../utilities/path";
 import { forEachRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleNames";
 import { ruleNamePartFromRuleName, zeroOrMorePartsPartFromPart } from "../../utilities/part";
 import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
@@ -13,8 +14,8 @@ export default class DirectlyRepeatedDefinition extends Definition {
           cycleIncludesRuleName = cycle.includes(ruleName);
 
     if (cycleIncludesRuleName) {
-      const ruleNames = ruleNamesFromCycleAndRuleName(cycle, ruleName),
-            parts = partsFromRuleNames(ruleNames);
+      const path = pathFromRuleNameAndCycle(ruleName, cycle),
+            parts = partsFromPath(path);
 
       directlyRepeatedDefinition = new DirectlyRepeatedDefinition(parts);
     }
@@ -23,54 +24,31 @@ export default class DirectlyRepeatedDefinition extends Definition {
   }
 }
 
-function permuteRuleNames(ruleNames) {
-  ruleNames = ruleNames.slice();
+function permutePath(path) {
+  path = path.slice();
 
-  ruleNames.reverse();
+  path.reverse();
 
-  const ruleName = ruleNames.pop();
+  const ruleName = path.pop();
 
-  ruleNames.unshift(ruleName);
+  path.unshift(ruleName);
 
-  return ruleNames;
+  return path;
 }
 
-function ruleNamesFromCycleAndRuleName(cycle, ruleName) {
-  let ruleNames = cycle,
-      start,
-      end;
-
-  const index = cycle.indexOf(ruleName);
-
-  start = 0;
-
-  end = index;
-
-  const leadingRuleNames = ruleNames.slice(start, end);
-
-  start = index;
-
-  const trailingRuleNames = ruleNames.slice(start);
-
-  ruleNames = [ ///
-    ...trailingRuleNames,
-    ...leadingRuleNames
-  ];
-
-  return ruleNames;
-}
-
-function partsFromRuleNames(ruleNames) {
+function partsFromPath(path) {
   const parts = [];
 
-  ruleNames = permuteRuleNames(ruleNames);
+  path = permutePath(path);
+
+  const ruleNames = path.slice(); ///
 
   forEachRuleNameAndLeftRecursiveRuleName(ruleNames, (ruleName, leftRecursiveRuleName) => {
-    const tempRuleName = leftRecursiveRuleName; ///
+    const temporaryRuleName = leftRecursiveRuleName; ///
 
     leftRecursiveRuleName = ruleName; ///
 
-    ruleName = tempRuleName;  ///
+    ruleName = temporaryRuleName;  ///
 
     const indirectlyRepeatedPart = indirectlyRepeatedPartFromRuleNameAndLeftReucrsiveRuleName(ruleName, leftRecursiveRuleName),
           directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName);

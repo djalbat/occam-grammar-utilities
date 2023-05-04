@@ -10,6 +10,6 @@ export function forEachRuleNameAndLeftRecursiveRuleName(ruleNames, callback) {
                           index + 1,
           leftRecursiveRuleName = ruleNames[nextIndex];
 
-    callback(ruleName, leftRecursiveRuleName);
+    callback(ruleName, leftRecursiveRuleName, index);
   });
 }

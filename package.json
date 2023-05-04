@@ -10,7 +10,7 @@
     "url": "https://github.com/djalbat/occam-grammar-utilities"
   },
   "dependencies": {
-    "necessary": "^11.1.6",
+    "necessary": "^11.3.1",
     "occam-lexers": "^16.0.96",
     "occam-parsers": "^16.0.160"
   },
