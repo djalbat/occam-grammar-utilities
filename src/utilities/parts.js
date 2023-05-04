@@ -14,18 +14,6 @@ const { first } = arrayUtilities,
         SequenceOfPartsPartType,
         ZeroOrMorePartsPartType } = partTypes;
 
-export function cloneParts(parts) {
-  parts = parts.map((part) => {
-    const clonedPart = part.clone();
-
-    part = clonedPart;  ///
-
-    return part;
-  });
-
-  return parts;
-}
-
 export function arePartsEqual(parts) {
   const firstPart = first(parts),
         firstPartString = firstPart.asString(),

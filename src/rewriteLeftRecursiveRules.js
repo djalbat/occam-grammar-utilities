@@ -2,7 +2,7 @@
 
 import RewrittenDefinition from "./definition/rewritten";
 
-import { ruleNamesFromCycles } from "./utilities/directedGraph";
+import { ruleNamesFromCycles } from "./utilities/ruleNames";
 import { pathsFromRuleNameAndCycles } from "./utilities/path";
 
 export default function rewriteLeftRecursiveRules(ruleMap, directedGraph) {

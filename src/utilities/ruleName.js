@@ -6,10 +6,10 @@ export function ruleNameFromReducedRuleName(reducedRuleName) {
   return ruleName;
 }
 
-export function ruleNameFromRepeatedRuleName(repeatedRuleName) {
-  const ruleName = repeatedRuleName.replace(/~[^~]+~|~$/, "");
+export function reducedRuleNameFromRuleName(ruleName) {
+  const reducedRuleName = `${ruleName}_`;
 
-  return ruleName;
+  return reducedRuleName;
 }
 
 export function directlyReducedRuleNameFromRuleName(ruleName) {
@@ -24,34 +24,10 @@ export function directlyRepeatedRuleNameFromRuleName(ruleName) {
   return directlyRepeatedRuleName;
 }
 
-export function indirectlyReducedRuleNameFromRuleName(ruleName) {
-  const indirectlyReducedRuleName = `${ruleName}__`;
-
-  return indirectlyReducedRuleName;
-}
-
-export function ruleNameFromImplicitlyReducedRuleName(implicitlyReducedRuleName) {
-  const ruleName = implicitlyReducedRuleName.replace(/_.+/, "");
-
-  return ruleName;
-}
-
 export function ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName) {
   const ruleName = indirectlyRepeatedRuleName.replace(/^[^~]+~|~$/g, "");
 
   return ruleName;
-}
-
-export function reducedRuleNameFromRuleName(ruleName) {
-  const reducedRuleName = `${ruleName}_`;
-
-  return reducedRuleName;
-}
-
-export function implicitlyReducedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {
-  const implicitlyReducedRuleName = `${leftRecursiveRuleName}_${ruleName}_`;
-
-  return implicitlyReducedRuleName;
 }
 
 export function indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {

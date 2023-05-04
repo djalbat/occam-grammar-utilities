@@ -5,7 +5,7 @@ import ReducedRule from "./rule/reduced";
 import { characters } from "necessary";
 
 import { isRuleEmpty } from "./utilities/rule";
-import { ruleNamesFromCycles } from "./utilities/directedGraph";
+import { ruleNamesFromCycles } from "./utilities/ruleNames";
 import { reducedRuleNameFromRuleName } from "./utilities/ruleName";
 
 const { COMMAN_CHARACTER } = characters;

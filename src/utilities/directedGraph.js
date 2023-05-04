@@ -14,45 +14,6 @@ export function edgesFromStartRuleAndRuleMap(startRule, ruleMap) {
   return edges;
 }
 
-export function greatestCycleFromCycles(cycles) {
-  const greatestCycle = cycles.reduce((greatestCycle, cycle) => {
-    if (greatestCycle === null) {
-      greatestCycle = cycle;  ///
-    } else {
-      const cycleLength = cycle.length,
-        greatestCycleLength = greatestCycle.length;
-
-      if (cycleLength > greatestCycleLength) {
-        greatestCycle = cycle;  ///
-      }
-    }
-
-    return greatestCycle;
-  }, null);
-
-  return greatestCycle;
-}
-
-export function ruleNamesFromCycles(cycles) {
-  const ruleNames = [];
-
-  cycles.forEach((cycle) => {
-    const cyclicRuleNames = cycle;  ///
-
-    cyclicRuleNames.forEach((cyclicRuleName) => {
-      const ruleNamesIncludesCyclicRuleName = ruleNames.includes(cyclicRuleName);
-
-      if (!ruleNamesIncludesCyclicRuleName) {
-        const ruleName = cyclicRuleName;  ///
-
-        ruleNames.push(ruleName);
-      }
-    });
-  });
-
-  return ruleNames;
-}
-
 function edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap) {
   const ruleName = rule.getName(),
         vertex = ruleName,  ///

@@ -2,7 +2,7 @@
 
 import DirectlyRepeatedRule from "./rule/repeated/directly";
 
-import { ruleNamesFromCycles } from "./utilities/directedGraph";
+import { ruleNamesFromCycles } from "./utilities/ruleNames";
 import { isRuleEffectivelyEmpty } from "./utilities/parts";  ///
 
 export default function createDirectlyRepeatedRules(ruleMap, directedGraph) {
