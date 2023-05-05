@@ -3,13 +3,13 @@
 import Edge from "../edge";
 
 import { edgesMatchEdge } from "../directedGraph";
-import { recursiveRuleNamesFromRule, leftRecursiveRuleNamesFromRule } from "./rule";
+import { RECURSIVE_LABEL, LEFT_RECURSIVE_LABEL } from "../labels";
+import { recursiveRuleNamesFromRule, leftRecursiveRuleNamesFromRule } from "../utilities/rule";
 
 export function edgesFromRuleNames(ruleNames) {
   const length = ruleNames.length,
         edges = ruleNames.map((ruleName, index) => {
-          const sourceVertex = ruleName,  ///
-                nextIndex = (index + 1) % length,
+          const nextIndex = (index + 1) % length,
                 nextRuleName = ruleNames[nextIndex],
                 leftRecursiveRuleName = nextRuleName, ///
                 edge = edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName);
@@ -31,9 +31,10 @@ export function edgesFromStartRuleAndRuleMap(startRule, ruleMap) {
 }
 
 export function edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {
-  const sourceVertex = ruleName,  ///
+  const label = LEFT_RECURSIVE_LABEL,
+        sourceVertex = ruleName,  ///
         targetVertex = leftRecursiveRuleName, ///
-        edge = Edge.fromSourceVertexAndTargetVertex(sourceVertex, targetVertex);
+        edge = Edge.fromLabelSourceVertexAndTargetVertex(label, sourceVertex, targetVertex);
 
   return edge;
 }
@@ -56,18 +57,18 @@ function edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap) {
         leftRecursiveRuleNames = leftRecursiveRuleNamesFromRule(rule);
 
   recursiveRuleNames.forEach((recursiveRuleName) => {
-    const leftRecursiveRuleNamesIncludesRecursiveRuleName = leftRecursiveRuleNames.includes(recursiveRuleName);
+    const leftRecursiveRuleNamesIncludesRecursiveRuleName = leftRecursiveRuleNames.includes(recursiveRuleName),
+          leftRecursiveRuleName = recursiveRuleName,  ///
+          label = leftRecursiveRuleNamesIncludesRecursiveRuleName ?
+                    LEFT_RECURSIVE_LABEL :
+                      RECURSIVE_LABEL,
+          sourceVertex = ruleName,  ///
+          targetVertex = leftRecursiveRuleName, ///
+          edge = Edge.fromLabelSourceVertexAndTargetVertex(label, sourceVertex, targetVertex),
+          matches = edgesMatchEdge(edges, edge);
 
-    if (leftRecursiveRuleNamesIncludesRecursiveRuleName) {
-      const leftRecursiveRuleName = recursiveRuleName,  ///
-            sourceVertex = ruleName,  ///
-            targetVertex = leftRecursiveRuleName, ///
-            edge = Edge.fromSourceVertexAndTargetVertex(sourceVertex, targetVertex),
-            matches = edgesMatchEdge(edges, edge);
-
-      if (!matches) {
-        edges.push(edge);
-      }
+    if (!matches) {
+      edges.push(edge);
     }
 
     const recursiveRule = ruleMap[recursiveRuleName] || null;

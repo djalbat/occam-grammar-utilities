@@ -2,14 +2,12 @@
 
 import IndirectlyRepeatedRule from "./rule/repeated/indirectly";
 
-import { forEachRuleNameAndLeftRecursiveRuleName } from "./utilities/ruleNames";
+import { ruleNamesFromCycle, forEachRuleNameAndLeftRecursiveRuleName } from "./utilities/ruleNames";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "./utilities/ruleName";
 
-export default function createIndirectlyRepeatedRules(ruleMap, directedGraph) {
-  const cycles = directedGraph.findCycles();
-
+export default function createIndirectlyRepeatedRules(cycles, ruleMap) {
   cycles.forEach((cycle) => {
-    const ruleNames = cycle;  ///
+    const ruleNames = ruleNamesFromCycle(cycle);
 
     forEachRuleNameAndLeftRecursiveRuleName(ruleNames, (ruleName, leftRecursiveRuleName) => {
       const indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName);

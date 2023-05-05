@@ -5,9 +5,8 @@ import DirectlyRepeatedRule from "./rule/repeated/directly";
 import { ruleNamesFromCycles } from "./utilities/ruleNames";
 import { isRuleEffectivelyEmpty } from "./utilities/parts";  ///
 
-export default function createDirectlyRepeatedRules(ruleMap, directedGraph) {
-  const cycles = directedGraph.findCycles(),
-        ruleNames = ruleNamesFromCycles(cycles);
+export default function createDirectlyRepeatedRules(cycles, ruleMap) {
+  const ruleNames = ruleNamesFromCycles(cycles);
 
   ruleNames.forEach((ruleName) => {
     const rule = ruleMap[ruleName],

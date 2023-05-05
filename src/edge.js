@@ -1,9 +1,14 @@
 "use strict";
 
 export default class Edge {
-  constructor(sourceVertex, targetVertex) {
+  constructor(label,sourceVertex, targetVertex) {
+    this.label = label;
     this.sourceVertex = sourceVertex;
     this.targetVertex = targetVertex;
+  }
+
+  getLabel() {
+    return this.label;
   }
 
   getSourceVertex() {
@@ -21,9 +26,10 @@ export default class Edge {
   }
 
   match(edge) {
-    const sourceVertex = edge.getSourceVertex(),
+    const label = this.getLabel(),
+          sourceVertex = edge.getSourceVertex(),
           targetVertex = edge.getTargetVertex(),
-          matches = this.matchSourceVertexAndTargetVertex(sourceVertex, targetVertex);
+          matches = this.matchLabelSourceVertexAndTargetVertex(label, sourceVertex, targetVertex);
 
     return matches;
   }
@@ -46,8 +52,14 @@ export default class Edge {
     return matches;
   }
 
-  static fromSourceVertexAndTargetVertex(sourceVertex, targetVertex) {
-    const edge = new Edge(sourceVertex, targetVertex);
+  matchLabelSourceVertexAndTargetVertex(label, sourceVertex, targetVertex) {
+    const matches = ((this.label === label) && (this.sourceVertex === sourceVertex) && (this.targetVertex === targetVertex));
+
+    return matches;
+  }
+
+  static fromLabelSourceVertexAndTargetVertex(label, sourceVertex, targetVertex) {
+    const edge = new Edge(label, sourceVertex, targetVertex);
 
     return edge;
   }

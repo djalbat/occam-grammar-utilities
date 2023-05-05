@@ -2,6 +2,8 @@
 
 import { arrayUtilities } from "necessary";
 
+import Cycle from "./cycle";
+
 const { last, find, compress } = arrayUtilities;
 
 export default class DirectedGraph {
@@ -81,11 +83,10 @@ export default class DirectedGraph {
 
   findTrivialCycles() {
     const triviallyCyclicEdges = this.findTriviallyCyclicEdges(),
-          trivialCycles = triviallyCyclicEdges.map((trivlallyCyclicEdge) => {
-            const sourceVertex = trivlallyCyclicEdge.getSourceVertex(),
-                  trivialCycle = [
-                    sourceVertex
-                  ];
+          trivialCycles = triviallyCyclicEdges.map((triviallyCyclicEdge) => {
+            const edge = triviallyCyclicEdge,  ///
+                  cycle = Cycle.fromEdge(edge),
+                  trivialCycle = cycle; ///
 
             return trivialCycle;
           });
@@ -95,13 +96,14 @@ export default class DirectedGraph {
 
   findNonTrivialCycles() {
     const nonTrivialCycles = [],
+          directedGraph = this, ///
           vertex = this.startVertex, ///
           vertexes = [
             vertex
           ];
 
     this.depthFirstSearch(vertex, vertexes, (vertexes) => {
-      const nonTrivialCycle = nonTrivialCycleFromVertexes(vertexes);
+      const nonTrivialCycle = nonTrivialCycleFromVertexes(vertexes, directedGraph);
 
       nonTrivialCycles.push(nonTrivialCycle);
     });
@@ -109,7 +111,7 @@ export default class DirectedGraph {
     return nonTrivialCycles;
   }
 
-  findSuccessorVertexes(vertex) {
+  findSuccessorEdges(vertex) {
     const sourceVertex = vertex,  ///
           edges = this.findEdgesBySourceVertex(sourceVertex),
           successorEdges = edges.filter((edge) => {
@@ -118,7 +120,13 @@ export default class DirectedGraph {
             if (targetVertex !== sourceVertex) {
               return true;
             }
-          }),
+          });
+
+    return successorEdges;
+  }
+
+  findSuccessorVertexes(vertex) {
+    const successorEdges = this.findSuccessorEdges(vertex),
           successorVertexes = successorEdges.map((successorEdge) => {
             const successorEdgeTargetVertex = successorEdge.getTargetVertex(),
                   successorVertex = successorEdgeTargetVertex;  ///
@@ -186,13 +194,26 @@ export function edgesMatchEdge(edges, edge) {
   return matches;
 }
 
-function nonTrivialCycleFromVertexes(vertexes) {
+function nonTrivialCycleFromVertexes(vertexes, directedGraph) {
   const lastVertex = last(vertexes),
         index = vertexes.indexOf(lastVertex),
-        vertexesLength = vertexes.length,
-        start = index,
-        end = vertexesLength - 1,
-        cycle = vertexes.slice(start, end); ///
+        start = index;  ///
+
+  vertexes = vertexes.slice(start); ///
+
+  vertexes.pop();
+
+  const length = vertexes.length,
+        edges = vertexes.map((vertex, index) => {
+          const nextIndex = (index + 1) % length,
+                nextVertex = vertexes[nextIndex],
+                sourceVertex = vertex,  ///
+                targetVertex = nextVertex, ///
+                edge = directedGraph.findEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex);
+
+          return edge;
+        }),
+        cycle = Cycle.fromEdges(edges);
 
   return cycle;
 }
@@ -209,7 +230,7 @@ function someCyclePermutation(cycle, callback) {
       break;
     }
 
-    cycle = permuteCycle(cycle);
+    cycle = cycle.permuted();
   }
 
   return result;
@@ -223,38 +244,13 @@ function areCyclesCoincident(cycleA, cycleB) {
 
   if (cycleALength === cycleBLength) {
     cyclesCoincident = someCyclePermutation(cycleA, (cycleA) => {
-      const cyclesEqual = areCyclesEqual(cycleA, cycleB);
+      const cycleAEqualTo = cycleA.isEqualTo(cycleB);
 
-      if (cyclesEqual) {
+      if (cycleAEqualTo) {
         return true;
       }
     });
   }
 
   return cyclesCoincident;
-}
-
-function areCyclesEqual(cycleA, cycleB) {
-  const vertexesA = cycleA, ///
-        vertexesB = cycleB, ///
-        cyclesEqual = vertexesA.every((vertexA, index) => {
-          const vertexB = vertexesB[index];
-
-          if (vertexA === vertexB) {
-            return true;
-          }
-        });
-
-  return cyclesEqual;
-}
-
-function permuteCycle(cycle) {
-  const vertexes = cycle.slice(), ///
-        vertex = vertexes.pop();
-
-  vertexes.unshift(vertex);
-
-  cycle = vertexes; ///
-
-  return cycle;
 }

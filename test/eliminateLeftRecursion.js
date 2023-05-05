@@ -143,7 +143,7 @@ describe("src/eliminateLeftRecursion", () => {
 
     `;
 
-    it.only("does throw an exception", () => {
+    it("does throw an exception", () => {
       assert.throws(() => {
         adjustedBNFFromBNF(bnf);
       });
@@ -1047,286 +1047,28 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  xdescribe("two sibling directly left recursive definitions", () => {
+  describe("an indirectly left recursive definition that is referenced more than once", () => {
     const bnf = `
-   
-    A ::= "c"
 
-        | A... "f" "g"
-    
-        | "d"
-
-        | A... "h"
-    
-        | "e"
-    
-        ;
-
-`;
-
-    it("are rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF, `
-    
-    A  ::= A_... A~* ;
-    
-    A_ ::= "c"
-    
-         | "d"
-    
-         | "e"
-    
-         ;
-    
-    A~ ::= "f" "g"
-    
-         | "h"
-    
-         ;
-     
-      `));
-    });
-
-    it("results in the requisite parse tree", () => {
-      const content = "cfgh",
-        parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
-
-      assert.isTrue(compare(parseTreeString, `
+      S ::= T... <END_OF_LINE> ;
+      
+      T ::= "a" E
+  
+          | "b" E
+  
+          ;
+  
+      E ::= A "f" ;
+  
+      A ::= E 
+      
+          | "g" 
           
-                                      A                    
-                                      |                    
-                        -----------------------------      
-                        |                           |      
-                        A                     h[unassigned]
-                        |                                  
-          -----------------------------                    
-          |             |             |                    
-          A       f[unassigned] g[unassigned]              
-          |                                                
-    c[unassigned]                                          
-             
-      `));
-    });
-  });
-
-  xdescribe("two indirectly left recursive definitions with the same underlying definition", () => {
-    const bnf = `
-
-    A ::= B "f"
-    
-        | B "g"
-    
-        | "e"
-    
-        ;
-    
-    B ::= A "h"
-    
-        | "d"
-
-        ;
-        
-`;
-
-    it("are rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF,`
-                  
-    A    ::= A_ A~* ;
-    
-    B    ::= "d"
-    
-           | A_B_ B~A~
-    
-           ;
-    
-    B__  ::= "d" ;
-    
-    B~A~ ::= "h" ;
-    
-    A_B_ ::= "e"
-    
-           | B__ "f"
-    
-           | B__ "g"
-    
-           ;
-    
-    A_   ::= "e"
-    
-           | B__ "f"
-    
-           | B__ "g"
-    
-           ;
-    
-    A~   ::= B~A~ "f"
-    
-           | B~A~ "g"
-    
-           ;
-                      
-     `));
-    });
-
-    it("results in the requisite parse tree" , () => {
-      const content = "ehghf",
-        parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
-
-      assert.isTrue(compare(parseTreeString, `
-      
-                                                     A                   
-                                                     |                   
-                                        ---------------------------      
-                                        |                         |      
-                                        B                   f[unassigned]
-                                        |                                
-                            -------------------------                    
-                            |                       |                    
-                            A                 h[unassigned]              
-                            |                                            
-                 ----------------------                                  
-                 |                    |                                  
-                 B              g[unassigned]                            
-                 |                                                       
-          ---------------                                                
-          |             |                                                
-          A       h[unassigned]                                          
-          |                                                              
-    e[unassigned]                                                        
-      
-      `));
-    });
-  });
-
-  xdescribe("two sibling but unrelated indirectly left recursive definitions", () => {
-    const bnf = `
-    
-    T  ::= A "g"
-    
-         | "f"
-    
-         ;
-
-    A ::= E "h" ;
-    
-    E ::= A "c"
-    
-        | T "d"
-    
-        ;
+          ;
     
     `;
 
-    it("are rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compare(adjustedBNF, `
-      
-    T    ::= T_ T~* ;
-    
-    A    ::= T_A_ A~T~ ;
-    
-    E    ::= T_E_ E~T~
-    
-           | A_E_ E~A~
-    
-           ;
-    
-    E~T~ ::= "d" ;
-    
-    A_E_ ::= T E~T~ "h" ;
-    
-    E~A~ ::= "c" ;
-    
-    A~   ::= E~A~ "h" ;
-    
-    A~T~ ::= E~T~ "h" A~* ;
-    
-    T_A_ ::= "f" ;
-    
-    T_   ::= "f" ;
-    
-    T~   ::= A~T~ "g" ;
-      
-      `));
-    });
-
-    it("results in the requisite parse tree" , () => {
-      const content = "fdhchg",
-            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
-
-      assert.isTrue(compare(parseTreeString, `
-      
-                                                                   T                   
-                                                                   |                   
-                                                     ----------------------------      
-                                                     |                          |      
-                                                     A                    g[unassigned]
-                                                     |                                 
-                                        ---------------------------                    
-                                        |                         |                    
-                                        E                   h[unassigned]              
-                                        |                                              
-                            -------------------------                                  
-                            |                       |                                  
-                            A                 c[unassigned]                            
-                            |                                                          
-                 ----------------------                                                
-                 |                    |                                                
-                 E              h[unassigned]                                          
-                 |                                                                     
-          ---------------                                                              
-          |             |                                                              
-          T       d[unassigned]                                                        
-          |                                                                            
-    f[unassigned]                                                                      
-      
-      `));
-    });
-  });
-
-  xdescribe("an indirectly left recursive definition that is referenced more than once", () => {
-    const bnf = `
-
-    S ::=  "a" E
-
-        |  "b" E
-
-        ;
-
-    E ::=  A "f" ;
-
-    A ::=  E 
-    
-        |  "g" 
-        
-        ;
-
-`;
-
-    it("is rewritten", () => {
+    it.only("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -1359,9 +1101,9 @@ describe("src/eliminateLeftRecursion", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const content = "agf",
-          startRuleName = "",
-          parseTreeString = parseTreeStringFromBNFAndContent(bnf, content, startRuleName);
+      const content = `agf
+`,
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
       
@@ -1380,6 +1122,26 @@ describe("src/eliminateLeftRecursion", () => {
       `));
     });
   });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   xdescribe("an indirectly left recursive definition with an effectively unary direct directly repeated rule", () => {
     const bnf = `

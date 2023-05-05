@@ -2,16 +2,11 @@
 
 import ReducedRule from "./rule/reduced";
 
-import { characters } from "necessary";
-
-import { ruleNamesFromCycles } from "./utilities/ruleNames";
 import { reducedRuleNameFromRuleName } from "./utilities/ruleName";
+import { ruleNamesFromCycle, ruleNamesFromCycles } from "./utilities/ruleNames";
 
-const { COMMA_CHARACTER } = characters;
-
-export default function createReducedRules(ruleMap, directedGraph) {
-  const cycles = directedGraph.findCycles(),
-        ruleNames = ruleNamesFromCycles(cycles);
+export default function createReducedRules(cycles, ruleMap) {
+  const ruleNames = ruleNamesFromCycles(cycles);
 
   ruleNames.forEach((ruleName) => {
     const rule = ruleMap[ruleName],
@@ -28,16 +23,15 @@ export default function createReducedRules(ruleMap, directedGraph) {
     const reducedRulesMissing = areReducedRulesMissing(cycle, ruleMap);
 
     if (reducedRulesMissing) {
-      const ruleNames = cycle,
-            ruleNamesString = ruleNames.join(COMMA_CHARACTER);
+      const cycleString =- cycle.asString();
 
-      throw new Error(`All of the reduced rules in the '${ruleNamesString}' cycle are missing.`);
+      throw new Error(`All of the reduced rules in the '${cycleString}' cycle are missing.`);
     }
   });
 }
 
 function areReducedRulesMissing(cycle, ruleMap) {
-  const ruleNames = cycle,  ///
+  const ruleNames = ruleNamesFromCycle(cycle),
         reducedRules = ruleNames.reduce((reducedRules, ruleName) => {
           const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
                 reducedRule = ruleMap[reducedRuleName] || null;

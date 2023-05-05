@@ -1,5 +1,6 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
 import { rulesUtilities } from "occam-parsers";
 
 import DirectedGraph from "./directedGraph";
@@ -8,26 +9,43 @@ import rewriteLeftRecursiveRules from "./rewriteLeftRecursiveRules";
 import createDirectlyRepeatedRules from "./createDirectlyRepeatedRules";
 import createIndirectlyRepeatedRules from "./createIndirectlyRepeatedRules";
 
+import { LEFT_RECURSIVE_LABEL } from "./labels";
 import { edgesFromStartRuleAndRuleMap } from "./utilities/directedGraph";
 
-const { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
+const { filter } = arrayUtilities,
+      { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
 export default function eliminateLeftRecursion(rules) {
   const ruleMap = ruleMapFromRules(rules),
         startRule = startRuleFromRules(rules),
-        directedGraph = directedGraphFromRuleMapAndStartRule(ruleMap, startRule);
+        cycles = cyclesFromRuleMapAndStartRule(ruleMap, startRule);
 
-  createReducedRules(ruleMap, directedGraph);
+  createReducedRules(cycles, ruleMap);
 
-  createIndirectlyRepeatedRules(ruleMap, directedGraph);
+  createIndirectlyRepeatedRules(cycles, ruleMap);
 
-  createDirectlyRepeatedRules(ruleMap, directedGraph);
+  createDirectlyRepeatedRules(cycles, ruleMap);
 
-  rewriteLeftRecursiveRules(ruleMap, directedGraph);
+  rewriteLeftRecursiveRules(cycles, ruleMap);
 
   rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap); ///
 
   return rules;
+}
+
+function cyclesFromRuleMapAndStartRule(ruleMap, startRule) {
+  const directedGraph = directedGraphFromRuleMapAndStartRule(ruleMap, startRule),
+        cycles = directedGraph.findCycles();
+
+  filter(cycles, (cycle) => {
+    const cycleLeftRecursive = isCycleLeftRecursive(cycle);
+
+    if (cycleLeftRecursive) {
+      return true;
+    }
+  });
+
+  return cycles;
 }
 
 function directedGraphFromRuleMapAndStartRule(ruleMap, startRule) {
@@ -37,4 +55,18 @@ function directedGraphFromRuleMapAndStartRule(ruleMap, startRule) {
         directedGraph = DirectedGraph.fromEdgesAndStartVertex(edges, startVertex);
 
   return directedGraph;
+}
+
+function isCycleLeftRecursive(cycle) {
+  const cycleLeftRecursive = cycle.everyEdge((edge) => {
+    const label = edge.getLabel(),
+          labelLeftRecursiveLabel = (label === LEFT_RECURSIVE_LABEL),
+          edgeLeftRecursive = labelLeftRecursiveLabel;  ///
+
+    if (edgeLeftRecursive) {
+      return true;
+    }
+  });
+
+  return cycleLeftRecursive;
 }

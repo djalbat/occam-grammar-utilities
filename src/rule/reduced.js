@@ -5,6 +5,7 @@ import { Rule } from "occam-parsers";
 import ReducedNode from "../node/reduced";
 
 import { edgesMatchEdge } from "../directedGraph";
+import { ruleNamesFromCycle } from "../utilities/ruleNames";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 import { leftRecursiveRuleNamesFromDefinition } from "../utilities/definition";
 import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/directedGraph";
@@ -60,7 +61,7 @@ function isDefinitionReducible(definition, ruleName, cycles) {
 }
 
 function doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName) {
-  const ruleNames = cycle,  ///
+  const ruleNames = ruleNamesFromCycle(cycle),
         edge = edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
         edges = edgesFromRuleNames(ruleNames),
         matches = edgesMatchEdge(edges, edge),

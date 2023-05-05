@@ -2,15 +2,18 @@
 
 import { arrayUtilities } from "necessary";
 
+import { ruleNamesFromCycle } from "../utilities/ruleNames";
+
 const { compress } = arrayUtilities;
 
 export function pathsFromRuleNameAndCycles(ruleName, cycles) {
   const paths = [];
 
   cycles.forEach((cycle) => {
-    const cycleIncludesRuleName = cycle.includes(ruleName);
+    const ruleNames = ruleNamesFromCycle(cycle),
+          ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
 
-    if (cycleIncludesRuleName) {
+    if (ruleNamesIncludesRuleName) {
       let path = pathFromRuleNameAndCycle(ruleName, cycle);
 
       let length = path.length;
@@ -39,11 +42,11 @@ export function pathsFromRuleNameAndCycles(ruleName, cycles) {
 }
 
 export function pathFromRuleNameAndCycle(ruleName, cycle) {
-  let ruleNames = cycle,
+  let ruleNames = ruleNamesFromCycle(cycle),
       start,
       end;
 
-  const index = cycle.indexOf(ruleName);
+  const index = ruleNames.indexOf(ruleName);
 
   start = 0;
 

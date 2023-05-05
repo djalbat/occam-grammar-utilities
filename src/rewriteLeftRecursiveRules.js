@@ -5,9 +5,8 @@ import RewrittenDefinition from "./definition/rewritten";
 import { ruleNamesFromCycles } from "./utilities/ruleNames";
 import { pathsFromRuleNameAndCycles } from "./utilities/path";
 
-export default function rewriteLeftRecursiveRules(ruleMap, directedGraph) {
-  const cycles = directedGraph.findCycles(),
-        ruleNames = ruleNamesFromCycles(cycles);
+export default function rewriteLeftRecursiveRules(cycles, ruleMap) {
+  const ruleNames = ruleNamesFromCycles(cycles);
 
   ruleNames.forEach((ruleName) => {
     const rule = ruleMap[ruleName];
