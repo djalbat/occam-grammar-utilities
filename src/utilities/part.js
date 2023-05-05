@@ -80,6 +80,44 @@ export function isPartComplex(part) {
   return partComplex;
 }
 
+export function isPartLookAhead(part) {
+  let partLookAhead = false;
+
+  const partNonTerminalPart = part.isNonTerminalPart();
+
+  if (partNonTerminalPart) {
+    const nonTerminalPart = part, ///
+          lookAhead = nonTerminalPart.isLookAhead();
+
+    partLookAhead = lookAhead;  ///
+  }
+
+  return partLookAhead;
+}
+
+export function isPartQualified(part) {
+  let partQualified = false;
+
+  const partNonTerminalPart = part.isNonTerminalPart();
+
+  if (partNonTerminalPart) {
+    const nonTerminalPart = part, ///
+          type = nonTerminalPart.getType();
+
+    switch (type) {
+      case OptionalPartPartType:
+      case OneOrMorePartsPartType:
+      case ZeroOrMorePartsPartType: {
+        partQualified = true;
+
+        break;
+      }
+    }
+  }
+
+  return partQualified;
+}
+
 export function ruleNamePartFromRuleName(ruleName) {
   const ruleNamePart = new RuleNamePart(ruleName);
 

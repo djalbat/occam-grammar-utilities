@@ -108,6 +108,48 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
+  describe("the first part of a left recursive definition is qualified", () => {
+    const bnf = `
+   
+      A ::= "c"
+  
+          | A "f" "g"
+      
+          | "d"
+  
+          | A+ "h"
+      
+          | "e"
+      
+          ;
+
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
+  describe("the first part of a left recursive definition is look-ahead", () => {
+    const bnf = `
+   
+      A ::= A... "h"
+      
+          | "e"
+      
+          ;
+
+    `;
+
+    it.only("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
   describe("a cycle where some but not all of the reduced rules are missing", () => {
     const bnf = `
   
@@ -1013,31 +1055,6 @@ describe("src/eliminateLeftRecursion", () => {
 
 
 
-
-
-  xdescribe("two sibling directly left recursive definitions that do not match", () => {
-    const bnf = `
-   
-      A ::= "c"
-  
-          | A* "f" "g"
-      
-          | "d"
-  
-          | A+ "h"
-      
-          | "e"
-      
-          ;
-
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
 
 
 

@@ -7,7 +7,7 @@ import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { arePartsEqual } from "../../utilities/parts";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
-import { isDefinitionComplex, isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+import { isDefinitionComplex, isDefinitionLookAhead, isDefinitionQualified, isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
 const { first } = arrayUtilities,
       { EpsilonPart } = Parts;
@@ -27,6 +27,24 @@ export default class IndirectlyRepeatedRule extends Rule {
                 definitionString = definition.asString();
 
           throw new Error(`The '${definitionString}' definition of the '${ruleName}' rule is complex.`);
+        }
+
+        const definitionLookAhead = isDefinitionLookAhead(definition);
+
+        if (definitionLookAhead) {
+          const ruleName = rule.getName(),
+                definitionString = definition.asString();
+
+          throw new Error(`The first part of the '${definitionString}' definition of the '${ruleName}' rule is look-ahead.`);
+        }
+
+        const definitionQualified = isDefinitionQualified(definition);
+
+        if (definitionQualified) {
+          const ruleName = rule.getName(),
+                definitionString = definition.asString();
+
+          throw new Error(`The first part of the '${definitionString}' definition of the '${ruleName}' rule is qualified.`);
         }
 
         const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
