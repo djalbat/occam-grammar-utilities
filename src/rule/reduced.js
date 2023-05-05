@@ -4,8 +4,10 @@ import { Rule } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
 
-import { isDefinitionLeftRecursive } from "../utilities/definition";
+import { edgesMatchEdge } from "../directedGraph";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
+import { leftRecursiveRuleNamesFromDefinition } from "../utilities/definition";
+import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/directedGraph";
 
 export default class ReducedRule extends Rule {
   static fromRuleAndCycles(rule, cycles) {
@@ -39,13 +41,30 @@ export default class ReducedRule extends Rule {
 }
 
 function isDefinitionReducible(definition, ruleName, cycles) {
-  let definitionReducible = true;
+  const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
+        definitionReducible = leftRecursiveRuleNames.every((leftRecursiveRuleName) => {
+          const cyclesIncludeRuleNameAndLeftRecursiveRuleName = cycles.some((cycle) => {
+            const cycleIncludesRuleNameAndLeftRecursiveRuleName = doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName);
 
-  const definitionLeftRecursive = isDefinitionLeftRecursive(definition);
+            if (cycleIncludesRuleNameAndLeftRecursiveRuleName) {
+              return true;
+            }
+          });
 
-  if (definitionLeftRecursive) {
-    definitionReducible = false;
-  }
+          if (!cyclesIncludeRuleNameAndLeftRecursiveRuleName) {
+            return true;
+          }
+        });
 
   return definitionReducible;
+}
+
+function doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName) {
+  const ruleNames = cycle,  ///
+        edge = edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
+        edges = edgesFromRuleNames(ruleNames),
+        matches = edgesMatchEdge(edges, edge),
+        cycleIncludesRuleNameAndLeftRecursiveRuleName = matches;  ///
+
+  return cycleIncludesRuleNameAndLeftRecursiveRuleName;
 }

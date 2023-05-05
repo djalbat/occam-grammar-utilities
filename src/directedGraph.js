@@ -19,15 +19,7 @@ export default class DirectedGraph {
   }
 
   addEdge(edge) {
-    const edgeA = edge, ///
-          matches = this.edges.some((edge) => {
-            const edgeB = edge, ///
-                  edgeAMatchesEdgeB = edgeA.match(edgeB);
-
-            if (edgeAMatchesEdgeB) {
-              return true;
-            }
-          });
+    const matches = edgesMatchEdge(this.edges, edge);
 
     if (!matches) {
       this.edges.push(edge);
@@ -178,6 +170,20 @@ export default class DirectedGraph {
 
     return directedGraph;
   }
+}
+
+export function edgesMatchEdge(edges, edge) {
+  const edgeA = edge, ///
+        matches = edges.some((edge) => {
+          const edgeB = edge, ///
+                edgeAMatchesEdgeB = edgeA.match(edgeB);
+
+          if (edgeAMatchesEdgeB) {
+            return true;
+          }
+        });
+
+  return matches;
 }
 
 function nonTrivialCycleFromVertexes(vertexes) {

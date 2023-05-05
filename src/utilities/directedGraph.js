@@ -2,7 +2,23 @@
 
 import Edge from "../edge";
 
+import { edgesMatchEdge } from "../directedGraph";
 import { recursiveRuleNamesFromRule, leftRecursiveRuleNamesFromRule } from "./rule";
+
+export function edgesFromRuleNames(ruleNames) {
+  const length = ruleNames.length,
+        edges = ruleNames.map((ruleName, index) => {
+          const sourceVertex = ruleName,  ///
+                nextIndex = (index + 1) % length,
+                nextRuleName = ruleNames[nextIndex],
+                leftRecursiveRuleName = nextRuleName, ///
+                edge = edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName);
+
+          return edge;
+        });
+
+  return edges;
+}
 
 export function edgesFromStartRuleAndRuleMap(startRule, ruleMap) {
   const rule = startRule, ///
@@ -12,6 +28,14 @@ export function edgesFromStartRuleAndRuleMap(startRule, ruleMap) {
   edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap);
 
   return edges;
+}
+
+export function edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {
+  const sourceVertex = ruleName,  ///
+        targetVertex = leftRecursiveRuleName, ///
+        edge = Edge.fromSourceVertexAndTargetVertex(sourceVertex, targetVertex);
+
+  return edge;
 }
 
 function edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap) {
@@ -39,17 +63,9 @@ function edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap) {
             sourceVertex = ruleName,  ///
             targetVertex = leftRecursiveRuleName, ///
             edge = Edge.fromSourceVertexAndTargetVertex(sourceVertex, targetVertex),
-            edgeB = edge, ///
-            edgesIncludesEdge = edges.some((edge) => {  ///
-              const edgeA = edge, ///
-                    edgeAMatchesEdgeB = edgeA.match(edgeB);
+            matches = edgesMatchEdge(edges, edge);
 
-              if (edgeAMatchesEdgeB) {
-                return true;
-              }
-            });
-
-      if (!edgesIncludesEdge) {
+      if (!matches) {
         edges.push(edge);
       }
     }

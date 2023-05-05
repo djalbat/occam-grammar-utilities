@@ -843,21 +843,6 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   describe("two indirectly left recursive definitions and their left recursive definitions with the same underlying definitions", () => {
     const bnf = `
     
@@ -887,11 +872,11 @@ describe("src/eliminateLeftRecursion", () => {
       
           ;
       
-      V::= C | . ;
+      V::= . ;
        
     `;
 
-    it.only("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
