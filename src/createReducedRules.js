@@ -15,7 +15,7 @@ export default function createReducedRules(ruleMap, directedGraph) {
 
   ruleNames.forEach((ruleName) => {
     const rule = ruleMap[ruleName],
-          reducedRule = ReducedRule.fromRule(rule);
+          reducedRule = ReducedRule.fromRuleAndCycles(rule, cycles);
 
     if (reducedRule !== null) {
       const reducedRuleName = reducedRule.getName();
@@ -25,18 +25,18 @@ export default function createReducedRules(ruleMap, directedGraph) {
   });
 
   cycles.forEach((cycle) => {
-    const cycleEmpty = isCycleEmpty(cycle, ruleMap);
+    const reducedRulesMissing = areReducedRulesMissing(cycle, ruleMap);
 
-    if (cycleEmpty) {
+    if (reducedRulesMissing) {
       const ruleNames = cycle,
             ruleNamesString = ruleNames.join(COMMA_CHARACTER);
 
-      throw new Error(`All of the reduced rules in the '${ruleNamesString}' cycle are empty.`);
+      throw new Error(`All of the reduced rules in the '${ruleNamesString}' cycle are missing.`);
     }
   });
 }
 
-function isCycleEmpty(cycle, ruleMap) {
+function areReducedRulesMissing(cycle, ruleMap) {
   const ruleNames = cycle,  ///
         reducedRules = ruleNames.reduce((reducedRules, ruleName) => {
           const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
@@ -49,7 +49,7 @@ function isCycleEmpty(cycle, ruleMap) {
           return reducedRules;
         }, []),
         reducedRulesLength = reducedRules.length,
-        cycleEmpty = (reducedRulesLength === 0); ///
+        reducedRulesMissing = (reducedRulesLength === 0); ///
 
-  return cycleEmpty;
+  return reducedRulesMissing;
 }

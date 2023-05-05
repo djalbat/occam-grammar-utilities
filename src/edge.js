@@ -20,8 +20,10 @@ export default class Edge {
     return triviallyCyclic;
   }
 
-  match(sourceVertex, targetVertex) {
-    const matches = ((this.sourceVertex === sourceVertex) && (this.targetVertex === targetVertex));
+  match(edge) {
+    const sourceVertex = edge.getSourceVertex(),
+          targetVertex = edge.getTargetVertex(),
+          matches = this.matchSourceVertexAndTargetVertex(sourceVertex, targetVertex);
 
     return matches;
   }
@@ -36,6 +38,12 @@ export default class Edge {
     const matchesTargetVertex = (this.targetVertex === targetVertex);
 
     return matchesTargetVertex;
+  }
+
+  matchSourceVertexAndTargetVertex(sourceVertex, targetVertex) {
+    const matches = ((this.sourceVertex === sourceVertex) && (this.targetVertex === targetVertex));
+
+    return matches;
   }
 
   static fromSourceVertexAndTargetVertex(sourceVertex, targetVertex) {

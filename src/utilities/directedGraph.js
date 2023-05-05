@@ -38,9 +38,20 @@ function edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap) {
       const leftRecursiveRuleName = recursiveRuleName,  ///
             sourceVertex = ruleName,  ///
             targetVertex = leftRecursiveRuleName, ///
-            edge = Edge.fromSourceVertexAndTargetVertex(sourceVertex, targetVertex);
+            edge = Edge.fromSourceVertexAndTargetVertex(sourceVertex, targetVertex),
+            edgeB = edge, ///
+            edgesIncludesEdge = edges.some((edge) => {  ///
+              const edgeA = edge, ///
+                    edgeAMatchesEdgeB = edgeA.match(edgeB);
 
-      edges.push(edge);
+              if (edgeAMatchesEdgeB) {
+                return true;
+              }
+            });
+
+      if (!edgesIncludesEdge) {
+        edges.push(edge);
+      }
     }
 
     const recursiveRule = ruleMap[recursiveRuleName] || null;
@@ -52,3 +63,4 @@ function edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap) {
     }
   });
 }
+

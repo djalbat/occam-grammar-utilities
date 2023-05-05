@@ -142,14 +142,36 @@ class View extends Element {
 
   static initialBNF = `
 
-      A ::= B "g" 
-       
-          | "c"
-          
-          ;
+      S ::= T... <END_OF_LINE> ;
   
-      B ::= A "h" ;
+      T ::= B
+      
+          | C
+      
+          | V
+      
+          ;
+      
+      A ::= T ;
+      
+      B::= "-" A
+      
+         | C
+      
+         | V
+      
+         ;
+                            
+      C ::= A "+" A
+      
+          | V
+      
+          | "f"
 
+          ;
+      
+      V::= . ;
+  
     `;
 
   static initialContent = `akch

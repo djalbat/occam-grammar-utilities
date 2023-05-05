@@ -2,7 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
-const { last, find } = arrayUtilities;
+const { last, find, compress } = arrayUtilities;
 
 export default class DirectedGraph {
   constructor(edges, startVertex) {
@@ -75,6 +75,14 @@ export default class DirectedGraph {
             ...trivialCycles,
             ...nonTrivialCycles
           ];
+
+    compress(cycles, (cycleA, cycleB) => {
+      const cyclesCoincident = areCyclesCoincident(cycleA, cycleB);
+
+      if (cyclesCoincident) {
+        return true;
+      }
+    });
 
     return cycles;
   }
@@ -155,7 +163,7 @@ export default class DirectedGraph {
 
   findEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex) {
     const edge = this.edges.find((edge) => {
-      const matches = edge.match(sourceVertex, targetVertex);
+      const matches = edge.matchSourceVertexAndTargetVertex(sourceVertex, targetVertex);
 
       if (matches) {
         return true;
@@ -179,6 +187,68 @@ function nonTrivialCycleFromVertexes(vertexes) {
         start = index,
         end = vertexesLength - 1,
         cycle = vertexes.slice(start, end); ///
+
+  return cycle;
+}
+
+function someCyclePermutation(cycle, callback) {
+  let result = false;
+
+  const length = cycle.length;
+
+  for (let offset = 0; offset < length; offset++) {
+    result = callback(cycle);
+
+    if (result) {
+      break;
+    }
+
+    cycle = permuteCycle(cycle);
+  }
+
+  return result;
+}
+
+function areCyclesCoincident(cycleA, cycleB) {
+  let cyclesCoincident = false;
+
+  const cycleALength = cycleA.length,
+        cycleBLength = cycleB.length;
+
+  if (cycleALength === cycleBLength) {
+    cyclesCoincident = someCyclePermutation(cycleA, (cycleA) => {
+      const cyclesEqual = areCyclesEqual(cycleA, cycleB);
+
+      if (cyclesEqual) {
+        return true;
+      }
+    });
+  }
+
+  return cyclesCoincident;
+}
+
+function areCyclesEqual(cycleA, cycleB) {
+  const vertexesA = cycleA, ///
+        vertexesB = cycleB, ///
+        cyclesEqual = vertexesA.every((vertexA, index) => {
+          const vertexB = vertexesB[index];
+
+          if (vertexA === vertexB) {
+            return true;
+          }
+        });
+
+  return cyclesEqual;
+}
+
+function permuteCycle(cycle) {
+  const vertexes = cycle.slice(), ///
+        vertex = vertexes.pop();
+
+  vertexes.unshift(vertex);
+
+  cycle = vertexes; ///
 
   return cycle;
 }

@@ -8,14 +8,16 @@ import { isDefinitionLeftRecursive } from "../utilities/definition";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
 export default class ReducedRule extends Rule {
-  static fromRule(rule) {
+  static fromRuleAndCycles(rule, cycles) {
+    const ruleName = rule.getName();
+
     let reducedRule = null,
         definitions = rule.getDefinitions();
 
     definitions = definitions.filter((definition) => {
-      const definitionLeftRecursive = isDefinitionLeftRecursive(definition);
+      const definitionLeftReducible = isDefinitionReducible(definition, ruleName, cycles);
 
-      if (!definitionLeftRecursive) {
+      if (definitionLeftReducible) {
         return true;
       }
     });
@@ -34,4 +36,16 @@ export default class ReducedRule extends Rule {
 
     return reducedRule;
   }
+}
+
+function isDefinitionReducible(definition, ruleName, cycles) {
+  let definitionReducible = true;
+
+  const definitionLeftRecursive = isDefinitionLeftRecursive(definition);
+
+  if (definitionLeftRecursive) {
+    definitionReducible = false;
+  }
+
+  return definitionReducible;
 }

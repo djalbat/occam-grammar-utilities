@@ -10,7 +10,7 @@ const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
-  describe("all the reduced rules in a cycle are empty", () => {
+  describe("all the reduced rules in a cycle are missing", () => {
     const bnf = `
 
       A ::= B "f" ;
@@ -108,7 +108,7 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-  describe("a cycle where some but not all of the reduced rules are empty", () => {
+  describe("a cycle where some but not all of the reduced rules are missing", () => {
     const bnf = `
   
       A ::= B "g" 
@@ -843,7 +843,22 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-  xdescribe("two indirectly left recursive definitions and their left recursive definitions with the same underlying definitions", () => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  describe("two indirectly left recursive definitions and their left recursive definitions with the same underlying definitions", () => {
     const bnf = `
     
       S ::= T... <END_OF_LINE> ;
@@ -872,11 +887,11 @@ describe("src/eliminateLeftRecursion", () => {
       
           ;
       
-      V::= . ;
+      V::= C | . ;
        
     `;
 
-    it("are rewritten", () => {
+    it.only("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
