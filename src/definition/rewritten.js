@@ -10,38 +10,50 @@ import { reducedRuleNameFromRuleName, directlyRepeatedRuleNameFromRuleName, indi
 const { first } = arrayUtilities;
 
 export default class RewrittenDefinition extends Definition {
-  static fromPath(path) {
-    const parts = partsFromPath(path),
+  static fromPath(path, ruleMap) {
+    const parts = partsFromPath(path, ruleMap),
           rewrittenDefinition = new RewrittenDefinition(parts);
 
     return rewrittenDefinition;
   }
 
-  static fromRuleName(ruleName) {
-    const reducedRuleNamePart = reducedRuleNamePartFromRuleName(ruleName),
-          directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName),
-          parts = [
-            reducedRuleNamePart,
-            directlyRepeatedPart
-          ],
-          rewrittenDefinition = new RewrittenDefinition(parts);
+  static fromRuleName(ruleName, ruleMap) {
+    const parts = [],
+          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+          reducedRule = ruleMap[reducedRuleName] || null;
+
+    if (reducedRule !== null) {
+      const reducedRuleNamePart = reducedRuleNamePartFromRuleName(ruleName);
+
+      parts.push(reducedRuleNamePart);
+    }
+
+    const directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName);
+
+    parts.push(directlyRepeatedPart);
+
+    const rewrittenDefinition = new RewrittenDefinition(parts);
 
     return rewrittenDefinition;
   }
 }
 
-function partsFromPath(path) {
+function partsFromPath(path, ruleMap) {
   path = reversePath(path); ///
 
   const parts = [],
-        ruleNames = path.slice(), ///
-        reducedRuleNamePart = reducedRuleNamePartFromPath(path);
+        reducedRuleName = reducedRuleNameFromPath(path),
+        reducedRule = ruleMap[reducedRuleName] || null;
 
-  parts.push(reducedRuleNamePart);
+  if (reducedRule !== null) {
+    const reducedRuleNamePart = reducedRuleNamePartFromPath(path);
 
-  const pathLength = path.length;
+    parts.push(reducedRuleNamePart);
+  }
 
-  const lastIndex = pathLength - 1;
+  const ruleNames = path.slice(), ///
+        pathLength = path.length,
+        lastIndex = pathLength - 1;
 
   forEachRuleNameAndLeftRecursiveRuleName(ruleNames, (ruleName, leftRecursiveRuleName, index) => {
     if (index !== lastIndex) {
@@ -70,6 +82,15 @@ function reversePath(path) {
   path.reverse();
 
   return path;
+}
+
+function reducedRuleNameFromPath(path) {
+  const ruleNames = path.slice(), ///
+        firstRuleName = first(ruleNames),
+        ruleName = firstRuleName, ///
+        reducedRuleName = reducedRuleNameFromRuleName(ruleName);
+
+  return reducedRuleName;
 }
 
 function reducedRuleNamePartFromPath(path) {

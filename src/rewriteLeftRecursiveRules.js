@@ -12,23 +12,23 @@ export default function rewriteLeftRecursiveRules(ruleMap, directedGraph) {
   ruleNames.forEach((ruleName) => {
     const rule = ruleMap[ruleName];
 
-    rewriteRecursiveRule(rule, cycles);
+    rewriteRecursiveRule(rule, cycles, ruleMap);
   });
 }
 
-function rewriteRecursiveRule(rule, cycles) {
+function rewriteRecursiveRule(rule, cycles, ruleMap) {
   const ruleName = rule.getName();
 
   rule.removeAllDefinitions();
 
   const paths = pathsFromRuleNameAndCycles(ruleName, cycles),
-        rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName),
+        rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap),
         definition = rewrittenDefinition; ///
 
   rule.addDefinition(definition);
 
   paths.forEach((path) => {
-    const rewrittenDefinition = RewrittenDefinition.fromPath(path),
+    const rewrittenDefinition = RewrittenDefinition.fromPath(path, ruleMap),
           definition = rewrittenDefinition; ///
 
     rule.addDefinition(definition);
