@@ -33,6 +33,15 @@ export default function eliminateLeftRecursion(rules) {
   return rules;
 }
 
+function directedGraphFromRuleMapAndStartRule(ruleMap, startRule) {
+  const startRuleName = startRule.getName(),
+        edges = edgesFromStartRuleAndRuleMap(startRule, ruleMap),
+        startVertex = startRuleName,  ///
+        directedGraph = DirectedGraph.fromEdgesAndStartVertex(edges, startVertex);
+
+  return directedGraph;
+}
+
 function cyclesFromRuleMapAndStartRule(ruleMap, startRule) {
   const directedGraph = directedGraphFromRuleMapAndStartRule(ruleMap, startRule),
         cycles = directedGraph.findCycles();
@@ -46,15 +55,6 @@ function cyclesFromRuleMapAndStartRule(ruleMap, startRule) {
   });
 
   return cycles;
-}
-
-function directedGraphFromRuleMapAndStartRule(ruleMap, startRule) {
-  const startRuleName = startRule.getName(),
-        edges = edgesFromStartRuleAndRuleMap(startRule, ruleMap),
-        startVertex = startRuleName,  ///
-        directedGraph = DirectedGraph.fromEdgesAndStartVertex(edges, startVertex);
-
-  return directedGraph;
 }
 
 function isCycleLeftRecursive(cycle) {
