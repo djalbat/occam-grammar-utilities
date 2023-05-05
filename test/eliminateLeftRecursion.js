@@ -880,8 +880,96 @@ describe("src/eliminateLeftRecursion", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-      
-    
+              
+        S   ::= T... <END_OF_LINE> ;
+        
+        T   ::= T_ T~*
+        
+              | C_ C~* T~C
+        
+              | A~* C~A C~* T~C
+        
+              | B_ B~* T~B
+        
+              | C_ C~* B~C B~* T~B
+        
+              | A~* C~A C~* B~C B~* T~B
+        
+              ;
+        
+        A   ::= A~*
+        
+              | T_ T~* A~T
+        
+              | C_ C~* T~C T~* A~T
+        
+              | B_ B~* T~B T~* A~T
+        
+              | C_ C~* B~C B~* T~B T~* A~T
+        
+              ;
+        
+        B   ::= B_ B~*
+        
+              | C_ C~* B~C
+        
+              | A~* C~A C~* B~C
+        
+              | T_ T~* A~T A~* C~A C~* B~C
+        
+              ;
+        
+        C   ::= C_ C~*
+        
+              | A~* C~A
+        
+              | T_ T~* A~T A~* C~A
+        
+              | B_ B~* T~B T~* A~T A~* C~A
+        
+              ;
+        
+        V   ::= . ;
+        
+        T_  ::= V ;
+        
+        B_  ::= "-" A
+        
+              | V
+        
+              ;
+        
+        C_  ::= V ;
+        
+        T~B ::= ε ;
+        
+        B~C ::= ε ;
+        
+        C~A ::= "+" A ;
+        
+        A~T ::= ε ;
+        
+        T~C ::= ε ;
+        
+        T~  ::= A~T A~* C~A C~* B~C B~* T~B
+        
+              | A~T A~* C~A C~* T~C
+        
+              ;
+        
+        B~  ::= T~B T~* A~T A~* C~A C~* B~C ;
+        
+        C~  ::= B~C B~* T~B T~* A~T A~* C~A
+        
+              | T~C T~* A~T A~* C~A
+        
+              ;
+        
+        A~  ::= C~A C~* B~C B~* T~B T~* A~T
+        
+              | C~A C~* T~C T~* A~T
+        
+              ;    
            
      `));
     });
@@ -908,8 +996,6 @@ describe("src/eliminateLeftRecursion", () => {
           A       +[unassigned]       A                    
           |                           |                    
           T                           T                    
-          |                           |                    
-          C                           C                    
           |                           |                    
           V                           V                    
           |                           |                    

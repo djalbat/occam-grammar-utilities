@@ -166,15 +166,13 @@ class View extends Element {
       
           | V
       
-          | "f"
-
           ;
       
       V::= . ;
   
     `;
 
-  static initialContent = `akch
+  static initialContent = `n+n
 `;
 
   static initialStartRuleName = "S";
