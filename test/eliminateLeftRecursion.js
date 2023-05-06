@@ -4,7 +4,7 @@ const { assert } = require("chai");
 
 const { rulesUtilities, parserUtilities } = require("occam-parsers");
 
-const { rewriteNode, ExampleLexer, ExampleParser, eliminateLeftRecursion } = require("../lib/index.js");
+const { rewriteNodes, ExampleLexer, ExampleParser, eliminateLeftRecursion } = require("../lib/index.js");
 
 const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
@@ -1457,7 +1457,7 @@ function parseTreeStringFromBNFAndContent(bnf, content, startRuleName = null) {
         tokens = exampleLexer.tokenise(content),
         node = exampleParser.parse(tokens);
 
-  rewriteNode(node);
+  rewriteNodes(node);
 
   const abridged = true,
         parseTree = node.asParseTree(tokens, abridged);

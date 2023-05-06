@@ -10,14 +10,14 @@ import Paragraph from "./paragraph";
 import SubHeading from "./subHeading";
 import SizeableDiv from "./div/sizeable";
 import BNFTextarea from "./textarea/bnf";
-import rewriteNode from "../rewriteNode";
+import rewriteNodes from "../rewriteNodes";
 import ExampleLexer from "../lexer/example";
 import ExampleParser from "../parser/example";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
 import StartRuleNameInput from "./input/startRuleName";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
-import RewriteNodeCheckbox from "./checkbox/rewriteNode";
+import RewriteNodesCheckbox from "./checkbox/rewriteNodes";
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
 const { rulesFromBNF } = parserUtilities,
@@ -64,10 +64,10 @@ class View extends Element {
       let parseTree = null;
 
       if (node !== null) {
-        const rewriteNodeCheckboxChecked = this.isRewriteNodeCheckboxChecked();
+        const rewriteNodesCheckboxChecked = this.isRewriteNodesCheckboxChecked();
 
-        if (rewriteNodeCheckboxChecked) {
-          rewriteNode(node);
+        if (rewriteNodesCheckboxChecked) {
+          rewriteNodes(node);
         }
 
         const abridged = true;
@@ -113,8 +113,8 @@ class View extends Element {
             </SubHeading>
             <ParseTreeTextarea />
             <Paragraph>
-              <RewriteNodeCheckbox onChange={this.changeHandler} />
-              Rewrite node
+              <RewriteNodesCheckbox onChange={this.changeHandler} />
+              Rewrite nodes
             </Paragraph>
           </RowsDiv>
         </ColumnDiv>

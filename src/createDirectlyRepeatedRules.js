@@ -3,7 +3,7 @@
 import DirectlyRepeatedRule from "./rule/repeated/directly";
 
 import { ruleNamesFromCycles } from "./utilities/ruleNames";
-import { isRuleEffectivelyEmpty } from "./utilities/parts";  ///
+import { isRuleEffectivelyEmpty } from "./utilities/rule";
 
 export default function createDirectlyRepeatedRules(cycles, ruleMap) {
   const ruleNames = ruleNamesFromCycles(cycles);

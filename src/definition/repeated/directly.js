@@ -2,8 +2,8 @@
 
 import { Definition } from "occam-parsers";
 import { pathFromRuleNameAndCycle } from "../../utilities/path";
-import { ruleNamesFromCycle, forEachRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleNames";
 import { ruleNamePartFromRuleName, zeroOrMorePartsPartFromPart } from "../../utilities/part";
+import { ruleNamesFromCycle, forEachRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleNames";
 import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyRepeatedDefinition extends Definition {

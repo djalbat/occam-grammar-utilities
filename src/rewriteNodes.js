@@ -12,7 +12,7 @@ import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName } f
 
 const { front, first, last, push, filter, unshift } = arrayUtilities;
 
-export default function rewriteNode(node) {  ///
+export default function rewriteNodes(node) {  ///
   rewriteDirectlyRepeatedNodes(node);
 
   rewriteIndirectlyRepeatedNodes(node);
