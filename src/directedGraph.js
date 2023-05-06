@@ -239,8 +239,8 @@ function someCyclePermutation(cycle, callback) {
 function areCyclesCoincident(cycleA, cycleB) {
   let cyclesCoincident = false;
 
-  const cycleALength = cycleA.length,
-        cycleBLength = cycleB.length;
+  const cycleALength = cycleA.getLength(),
+        cycleBLength = cycleB.getLength();
 
   if (cycleALength === cycleBLength) {
     cyclesCoincident = someCyclePermutation(cycleA, (cycleA) => {
