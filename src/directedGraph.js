@@ -221,7 +221,7 @@ function nonTrivialCycleFromVertexes(vertexes, directedGraph) {
 function someCyclePermutation(cycle, callback) {
   let result = false;
 
-  const length = cycle.length;
+  const length = cycle.getLength();
 
   for (let offset = 0; offset < length; offset++) {
     result = callback(cycle);
