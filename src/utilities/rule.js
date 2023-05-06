@@ -41,7 +41,7 @@ export function leftRecursiveRuleNamesFromRule(rule, leftRecursiveRuleNames = []
 }
 
 function areDefinitionsEffectivelyEmpty(definitions, ruleMap) {
-  const definitionsEffectivelyEmpty = definitions.every((definition) => {
+  const definitionsEffectivelyEmpty = definitions.some((definition) => {
     const definitionEffectivelyEmpty = isDefinitionEffectivelyEmpty(definition, ruleMap);
 
     if (definitionEffectivelyEmpty) {
@@ -154,7 +154,11 @@ function isNonTerminalPartEffectivelyEmpty(nonTerminalPart, ruleMap) {
     case ChoiceOfPartsPartType: {
       const choiceOfPartsPart = nonTerminalPart, ///
             parts = choiceOfPartsPart.getParts(),
-            partsEffectivelyEmpty = arePartsEffectivelyEmpty(parts, ruleMap);
+            partsEffectivelyEmpty = parts.some((part) => {
+              const partEffectivelyEmpty = isPartEffectivelyEmpty(part, ruleMap);
+
+              return partEffectivelyEmpty;
+            })
 
       partEffectivelyEmpty = partsEffectivelyEmpty; ///
 
