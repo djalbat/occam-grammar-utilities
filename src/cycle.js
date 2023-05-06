@@ -68,7 +68,7 @@ export default class Cycle {
     const edges = this.edges.slice(), ///
           edge = edges.pop();
 
-    edges.push(edge);
+    edges.unshift(edge);
 
     const cycle = new Cycle(edges);
 
