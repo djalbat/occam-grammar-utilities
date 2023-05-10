@@ -33,7 +33,7 @@ describe("src/eliminateLeftRecursion", () => {
 
       A ::= A "c"
       
-          | B
+          | B C
       
           | "e"
       
@@ -45,6 +45,10 @@ describe("src/eliminateLeftRecursion", () => {
       
           ;
         
+      C ::= "f"? D ;
+
+      D ::= "g"? C ;
+
     `;
 
     it("does throw an exception", () => {

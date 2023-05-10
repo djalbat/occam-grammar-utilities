@@ -12,10 +12,23 @@ const { RuleNamePartType,
         ZeroOrMorePartsPartType,
         SequenceOfPartsPartType } = partTypes;
 
-export function isRuleEffectivelyEmpty(rule, ruleMap) { ///
-  const definitions = rule.getDefinitions(),
-        definitionsEffectivelyEmpty = areDefinitionsEffectivelyEmpty(definitions, ruleMap),
-        ruleEffectivelyEmpty = definitionsEffectivelyEmpty; ///
+export function isRuleEffectivelyEmpty(rule, ruleMap, ruleNames = []) {
+  let ruleEffectivelyEmpty = true;
+
+  const ruleName = rule.getName(),
+        ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
+
+  if (!ruleNamesIncludesRuleName) {
+    ruleNames = [ ///
+      ...ruleNames,
+      ruleName
+    ];
+
+    const definitions = rule.getDefinitions(),
+          definitionsEffectivelyEmpty = areDefinitionsEffectivelyEmpty(definitions, ruleMap, ruleNames);
+
+    ruleEffectivelyEmpty = definitionsEffectivelyEmpty; ///
+  }
 
   return ruleEffectivelyEmpty;
 }
@@ -40,9 +53,9 @@ export function leftRecursiveRuleNamesFromRule(rule, leftRecursiveRuleNames = []
   return leftRecursiveRuleNames;
 }
 
-function areDefinitionsEffectivelyEmpty(definitions, ruleMap) {
+function areDefinitionsEffectivelyEmpty(definitions, ruleMap, ruleNames) {
   const definitionsEffectivelyEmpty = definitions.some((definition) => {
-    const definitionEffectivelyEmpty = isDefinitionEffectivelyEmpty(definition, ruleMap);
+    const definitionEffectivelyEmpty = isDefinitionEffectivelyEmpty(definition, ruleMap, ruleNames);
 
     if (definitionEffectivelyEmpty) {
       return true;
@@ -52,17 +65,17 @@ function areDefinitionsEffectivelyEmpty(definitions, ruleMap) {
   return definitionsEffectivelyEmpty;
 }
 
-function isDefinitionEffectivelyEmpty(definition, ruleMap) {
+function isDefinitionEffectivelyEmpty(definition, ruleMap, ruleNames) {
   const parts = definition.getParts(),
-        partsEffectivelyEmpty = arePartsEffectivelyEmpty(parts, ruleMap),
+        partsEffectivelyEmpty = arePartsEffectivelyEmpty(parts, ruleMap, ruleNames),
         definitionEffectivelyEmpty = partsEffectivelyEmpty; ///
 
   return definitionEffectivelyEmpty;
 }
 
-function arePartsEffectivelyEmpty(parts, ruleMap) {
+function arePartsEffectivelyEmpty(parts, ruleMap, ruleNames) {
   const partsEffectivelyEmpty = parts.every((part) => {
-    const partEffectivelyEmpty = isPartEffectivelyEmpty(part, ruleMap);
+    const partEffectivelyEmpty = isPartEffectivelyEmpty(part, ruleMap, ruleNames);
 
     if (partEffectivelyEmpty) {
       return true;
@@ -72,7 +85,7 @@ function arePartsEffectivelyEmpty(parts, ruleMap) {
   return partsEffectivelyEmpty;
 }
 
-function isPartEffectivelyEmpty(part, ruleMap) {
+function isPartEffectivelyEmpty(part, ruleMap, ruleNames) {
   let partEffectivelyEmpty;
 
   const parTerminalPart = part.isTerminalPart();
@@ -84,7 +97,7 @@ function isPartEffectivelyEmpty(part, ruleMap) {
     partEffectivelyEmpty = terminalPartEmpty; ///
   } else {
     const nonTerminalNPart = part,  ///
-          nonTerminalPartEffectivelyEmpty = isNonTerminalPartEffectivelyEmpty(nonTerminalNPart, ruleMap);
+          nonTerminalPartEffectivelyEmpty = isNonTerminalPartEffectivelyEmpty(nonTerminalNPart, ruleMap, ruleNames);
 
     partEffectivelyEmpty = nonTerminalPartEffectivelyEmpty; ///
   }
@@ -100,7 +113,7 @@ function isTerminalPartEffectivelyEmpty(terminalPart) {
   return terminalPartEffectivelyEmpty;
 }
 
-function isNonTerminalPartEffectivelyEmpty(nonTerminalPart, ruleMap) {
+function isNonTerminalPartEffectivelyEmpty(nonTerminalPart, ruleMap, ruleNames) {
   let partEffectivelyEmpty = false;
 
   const type = nonTerminalPart.getType();
@@ -112,7 +125,7 @@ function isNonTerminalPartEffectivelyEmpty(nonTerminalPart, ruleMap) {
             rule = ruleMap[ruleName] || null;
 
       if (rule !== null) {
-        const ruleEffectivelyEmpty = isRuleEffectivelyEmpty(rule, ruleMap);
+        const ruleEffectivelyEmpty = isRuleEffectivelyEmpty(rule, ruleMap, ruleNames);
 
         partEffectivelyEmpty = ruleEffectivelyEmpty;  ///
       }
@@ -130,7 +143,7 @@ function isNonTerminalPartEffectivelyEmpty(nonTerminalPart, ruleMap) {
       const oneOrMorePartsPart = nonTerminalPart,  ///
             part = oneOrMorePartsPart.getPart();
 
-      partEffectivelyEmpty = isPartEffectivelyEmpty(part, ruleMap);
+      partEffectivelyEmpty = isPartEffectivelyEmpty(part, ruleMap, ruleNames);
 
       break;
     }
@@ -144,7 +157,7 @@ function isNonTerminalPartEffectivelyEmpty(nonTerminalPart, ruleMap) {
     case SequenceOfPartsPartType: {
       const sequenceOfPartsPart = nonTerminalPart, ///
             parts = sequenceOfPartsPart.getParts(),
-            partsEffectivelyEmpty = arePartsEffectivelyEmpty(parts, ruleMap);
+            partsEffectivelyEmpty = arePartsEffectivelyEmpty(parts, ruleMap, ruleNames);
 
       partEffectivelyEmpty = partsEffectivelyEmpty; ///
 
@@ -155,7 +168,7 @@ function isNonTerminalPartEffectivelyEmpty(nonTerminalPart, ruleMap) {
       const choiceOfPartsPart = nonTerminalPart, ///
             parts = choiceOfPartsPart.getParts(),
             partsEffectivelyEmpty = parts.some((part) => {
-              const partEffectivelyEmpty = isPartEffectivelyEmpty(part, ruleMap);
+              const partEffectivelyEmpty = isPartEffectivelyEmpty(part, ruleMap, ruleNames);
 
               return partEffectivelyEmpty;
             })
