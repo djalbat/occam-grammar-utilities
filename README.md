@@ -98,4 +98,5 @@ There is an accompanying paper:
 
 ## Contact
 
-* james.smith@openmathematics.org
+* james.smith@djalbat.com
+
