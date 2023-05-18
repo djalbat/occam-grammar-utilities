@@ -334,15 +334,11 @@ describe("src/eliminateLeftRecursion", () => {
         
         A   ::= A_ A~*
         
-              | E~* A~E
-        
               | F_ F~* E~F E~* A~E
         
               ;
         
-        E   ::= E~*
-        
-              | F_ F~* E~F
+        E   ::= F_ F~* E~F
         
               | A_ A~* F~A F~* E~F
         
@@ -353,8 +349,6 @@ describe("src/eliminateLeftRecursion", () => {
         F   ::= F_ F~*
         
               | A_ A~* F~A
-        
-              | E~* A~E A~* F~A
         
               ;
         
@@ -434,17 +428,9 @@ describe("src/eliminateLeftRecursion", () => {
                   
         S   ::= E... <END_OF_LINE> ;
         
-        A   ::= A~*
+        A   ::= E_ E~* A~E ;
         
-              | E_ E~* A~E
-        
-              ;
-        
-        E   ::= E_ E~*
-        
-              | A~* E~A
-        
-              ;
+        E   ::= E_ E~* ;
         
         V   ::= . ;
         
@@ -457,7 +443,7 @@ describe("src/eliminateLeftRecursion", () => {
         E~  ::= A~E A~* E~A ;
         
         A~  ::= E~A E~* A~E ;
-    
+
       `));
     });
 
@@ -1201,26 +1187,20 @@ describe("src/eliminateLeftRecursion", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
-              
+                      
         S   ::= T... <END_OF_LINE> ;
         
         T   ::= T_ T~*
         
               | C_ C~* T~C
         
-              | A~* C~A C~* T~C
-        
               | B_ B~* T~B
         
               | C_ C~* B~C B~* T~B
         
-              | A~* C~A C~* B~C B~* T~B
-        
               ;
         
-        A   ::= A~*
-        
-              | T_ T~* A~T
+        A   ::= T_ T~* A~T
         
               | C_ C~* T~C T~* A~T
         
@@ -1234,15 +1214,11 @@ describe("src/eliminateLeftRecursion", () => {
         
               | C_ C~* B~C
         
-              | A~* C~A C~* B~C
-        
               | T_ T~* A~T A~* C~A C~* B~C
         
               ;
         
         C   ::= C_ C~*
-        
-              | A~* C~A
         
               | T_ T~* A~T A~* C~A
         
@@ -1290,8 +1266,8 @@ describe("src/eliminateLeftRecursion", () => {
         
               | C~A C~* T~C T~* A~T
         
-              ;    
-           
+              ;
+                         
      `));
     });
 
@@ -1360,17 +1336,9 @@ describe("src/eliminateLeftRecursion", () => {
         
               ;
         
-        E   ::= E~*
+        E   ::= A_ A~* E~A ;
         
-              | A_ A~* E~A
-        
-              ;
-        
-        A   ::= A_ A~*
-        
-              | E~* A~E
-        
-              ;
+        A   ::= A_ A~* ;
         
         A_  ::= "g" ;
         

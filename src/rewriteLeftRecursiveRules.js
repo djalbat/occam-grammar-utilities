@@ -13,7 +13,7 @@ export default function rewriteLeftRecursiveRules(cycles, ruleMap) {
   ruleNames.forEach((ruleName) => {
     const rule = ruleMap[ruleName];
 
-    rewriteRecursiveRule(rule, cycles, ruleMap);
+    rewriteRule(rule, cycles, ruleMap);
   });
 
   ruleNames.forEach((ruleName) => {
@@ -29,21 +29,28 @@ export default function rewriteLeftRecursiveRules(cycles, ruleMap) {
   });
 }
 
-function rewriteRecursiveRule(rule, cycles, ruleMap) {
+function rewriteRule(rule, cycles, ruleMap) {
   const ruleName = rule.getName();
 
   rule.removeAllDefinitions();
 
-  const paths = pathsFromRuleNameAndCycles(ruleName, cycles),
-        rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap),
-        definition = rewrittenDefinition; ///
+  const rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap);
 
-  rule.addDefinition(definition);
-
-  paths.forEach((path) => {
-    const rewrittenDefinition = RewrittenDefinition.fromPath(path, ruleMap),
-          definition = rewrittenDefinition; ///
+  if (rewrittenDefinition !== null) {
+    const definition = rewrittenDefinition; ///
 
     rule.addDefinition(definition);
+  }
+
+  const paths = pathsFromRuleNameAndCycles(ruleName, cycles);
+
+  paths.forEach((path) => {
+    const rewrittenDefinition = RewrittenDefinition.fromPath(path, ruleMap);
+
+    if (rewrittenDefinition !== null) {
+      const definition = rewrittenDefinition; ///
+
+      rule.addDefinition(definition);
+    }
   });
 }

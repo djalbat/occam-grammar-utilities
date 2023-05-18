@@ -3,6 +3,8 @@
 import withStyle from "easy-with-style";  ///
 
 import { Element } from "easy";
+import { CommonLexer } from "occam-lexers";
+import { FlorenceLexer, FlorenceParser } from "occam-grammars";
 import { rulesUtilities, parserUtilities } from "occam-parsers";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 
@@ -11,16 +13,17 @@ import SubHeading from "./subHeading";
 import SizeableDiv from "./div/sizeable";
 import BNFTextarea from "./textarea/bnf";
 import rewriteNodes from "../rewriteNodes";
-import ExampleLexer from "../lexer/example";
-import ExampleParser from "../parser/example";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
 import StartRuleNameInput from "./input/startRuleName";
 import AdjustedBNFTextarea from "./textarea/adjustedBNF";
 import RewriteNodesCheckbox from "./checkbox/rewriteNodes";
+import LexicalEntriesTextarea from "./textarea/lexicalEntries";
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
 const { rulesFromBNF } = parserUtilities,
+      // { bnf: florenceBNF } = FlorenceParser, ///
+      // { entries: florenceEntries } = FlorenceLexer, ///
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 class View extends Element {
@@ -30,13 +33,6 @@ class View extends Element {
 
   changeHandler = (event, element) => {
     this.update();
-  }
-
-  getLexicalEntries() {
-    const { initialLexicalEntries } = this.constructor,
-          lexicalEntries = initialLexicalEntries; ///
-
-    return lexicalEntries;
   }
 
   update() {
@@ -56,10 +52,10 @@ class View extends Element {
     this.setAdjustedBNF(adjustedBNF);
 
     try {
-      const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
-            exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName),
-            tokens = exampleLexer.tokenise(content),
-            node = exampleParser.parse(tokens);
+      const florenceLexer = florenceLexerFromLexicalEntries(lexicalEntries),
+            florenceParser =  florenceParserFromRulesAndStartRuleName(rules, startRuleName),
+            tokens = florenceLexer.tokenise(content),
+            node = florenceParser.parse(tokens);
 
       let parseTree = null;
 
@@ -87,6 +83,10 @@ class View extends Element {
       <ColumnsDiv>
         <SizeableDiv>
           <RowsDiv>
+            <SubHeading>
+              Lexical entries
+            </SubHeading>
+            <LexicalEntriesTextarea onKeyUp={this.keyUpHandler} />
             <SubHeading>
               BNF
             </SubHeading>
@@ -126,52 +126,53 @@ class View extends Element {
   initialise() {
     this.assignContext();
 
-    const { initialBNF, initialContent, initialStartRuleName } = this.constructor,
+    const { initialBNF, initialContent, initialLexicalEntries, initialStartRuleName } = this.constructor,
           bnf = initialBNF, ///
           content = initialContent, ///
+          lexicalEntries = initialLexicalEntries, ///
           startRuleName = initialStartRuleName; ///
 
     this.setBNF(bnf);
 
     this.setContent(content);
 
+    this.setLexicalEntries(lexicalEntries);
+
     this.setStartRuleName(startRuleName);
 
-    this.keyUpHandler();
+    this.update();
   }
 
   static initialBNF = `
 
-    S ::=  F... <END_OF_LINE> ;
-
-    A ::=  E 
-    
-        |  T 
-                                           
-        ;
-    
-    E ::=  F ;
-    
-    T ::=  "n" ;
-    
-    F ::=  "(" A ")"
-                           
-        |  A "+" A
-    
-        ;
-
-  `;
+      S  ::=  F... <END_OF_LINE> ;
+      
+      A  ::=  E 
+      
+           |  T 
+                                             
+           ;
+      
+      E  ::=  F ;
+      
+      T  ::=  "n" ;
+      
+      F  ::=  "(" A ")"
+                             
+           |  A "+" A
+      
+           ;
+  
+  `
 
   static initialContent = `(n+n)
 `;
 
   static initialStartRuleName = "S";
 
-  static initialLexicalEntries = [
-    {
-      "unassigned": "."
-    }
-  ];
+  static initialLexicalEntries = [{
+    unassigned: "."
+  }];
 
   static tagName = "div";
 
@@ -186,42 +187,73 @@ export default withStyle(View)`
   
 `;
 
-function exampleLexerFromLexicalEntries(lexicalEntries) {
+function florenceLexerFromLexicalEntries(lexicalEntries) {
   const entries = lexicalEntries, ///
-        exampleLexer = ExampleLexer.fromEntries(entries);
+        florenceLexer = CommonLexer.fromEntries(FlorenceLexer, entries);
 
-  return exampleLexer;
+  return florenceLexer;
 }
 
-function exampleParserFromRulesAndStartRuleName(rules, startRuleName) {
+function florenceParserFromRulesAndStartRuleName(rules, startRuleName) {
   const ruleMap = ruleMapFromRules(rules),
         startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
-        exampleParser = new ExampleParser(startRule, ruleMap);
+        florenceParser = new FlorenceParser(startRule, ruleMap);
 
-  return exampleParser;
+  return florenceParser;
 }
 
-`
+// static initialBNF = `
+//
+//   ${florenceBNF}
+//
+//   term!                                ::=   variable ;
+//
+//   statement!                           ::=   "(" metaArgument ")"
+//
+//                                          |   argument "=" argument
+//
+//                                          |   typeInference
+//
+//                                          |   typeAssertion
+//
+//                                          |   variable "undefined"
+//
+//                                          ;
+//
+//   typeInference                        ::=   statement "|-" typeAssertion ;
+//
+//   typeAssertion                        ::=   term ":" type ;
+//
+//   metastatement!                       ::=   "(" metastatement ")"
+//
+//                                          |   ruleSubproofAssertion
+//
+//                                          |   contextDefinition
+//
+//                                          |   proofAssertion
+//
+//                                          |   metavariable ( inclusion | substitution )?
+//
+//                                          |   metavariable substitution?
+//
+//                                          |   variable "undefined"
+//
+//                                          ;
+//
+//   ruleSubproofAssertion                ::=   "[" metastatement ( "," metastatement )* "]" "..." metastatement ;
+//
+//   contextDefinition                    ::=   context "=" ( judgement | context ) ( "," ( judgement | context ) )* ;
+//
+//   proofAssertion                       ::=   context "|=" judgement ;
+//
+//   judgement                            ::=   reference "::" metastatement ;
+//
+// `;  ///
 
-    A  ::=  C "h" 
-      
-         |  "d" 
-    
-         ;
-    
-    B  ::=  C "k" 
-    
-         |  "f"
-         
-         ;
-    
-    C  ::=  A "g" 
-    
-         |  B "c" 
-    
-         |  "e"
-         
-         ;
+// static initialLexicalEntries = florenceEntries; ///
 
-
-`
+// static initialContent = `Axiom (DeleteOperation)
+//   Suppose
+//     A
+//   Then
+// `;
