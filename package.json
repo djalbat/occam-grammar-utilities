@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "necessary": "^11.3.1",
+    "occam-lexers": "^17.0.6",
     "occam-parsers": "^17.0.6"
   },
   "devDependencies": {
@@ -24,8 +25,6 @@
     "juxtapose": "^4.0.49",
     "lively-cli": "^2.0.34",
     "mocha": "^6.0.2",
-    "occam-grammars": "^1.0.431",
-    "occam-lexers": "^17.0.6",
     "watchful-cli": "^1.7.22"
   },
   "scripts": {

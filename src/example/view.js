@@ -3,8 +3,6 @@
 import withStyle from "easy-with-style";  ///
 
 import { Element } from "easy";
-import { CommonLexer } from "occam-lexers";
-import { FlorenceLexer, FlorenceParser } from "occam-grammars";
 import { rulesUtilities, parserUtilities } from "occam-parsers";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 
@@ -13,6 +11,8 @@ import SubHeading from "./subHeading";
 import SizeableDiv from "./div/sizeable";
 import BNFTextarea from "./textarea/bnf";
 import rewriteNodes from "../rewriteNodes";
+import ExampleLexer from "../lexer/example";
+import ExampleParser from "../parser/example";
 import ContentTextarea from "./textarea/content";
 import ParseTreeTextarea from "./textarea/parseTree";
 import StartRuleNameInput from "./input/startRuleName";
@@ -22,8 +22,6 @@ import LexicalEntriesTextarea from "./textarea/lexicalEntries";
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
 const { rulesFromBNF } = parserUtilities,
-      // { bnf: florenceBNF } = FlorenceParser, ///
-      // { entries: florenceEntries } = FlorenceLexer, ///
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 class View extends Element {
@@ -52,10 +50,10 @@ class View extends Element {
     this.setAdjustedBNF(adjustedBNF);
 
     try {
-      const florenceLexer = florenceLexerFromLexicalEntries(lexicalEntries),
-            florenceParser =  florenceParserFromRulesAndStartRuleName(rules, startRuleName),
-            tokens = florenceLexer.tokenise(content),
-            node = florenceParser.parse(tokens);
+      const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
+            exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName),
+            tokens = exampleLexer.tokenise(content),
+            node = exampleParser.parse(tokens);
 
       let parseTree = null;
 
@@ -187,73 +185,17 @@ export default withStyle(View)`
   
 `;
 
-function florenceLexerFromLexicalEntries(lexicalEntries) {
+function exampleLexerFromLexicalEntries(lexicalEntries) {
   const entries = lexicalEntries, ///
-        florenceLexer = CommonLexer.fromEntries(FlorenceLexer, entries);
+        exampleLexer = ExampleLexer.fromEntries(entries);
 
-  return florenceLexer;
+  return exampleLexer;
 }
 
-function florenceParserFromRulesAndStartRuleName(rules, startRuleName) {
+function exampleParserFromRulesAndStartRuleName(rules, startRuleName) {
   const ruleMap = ruleMapFromRules(rules),
         startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
-        florenceParser = new FlorenceParser(startRule, ruleMap);
+        exampleParser = new ExampleParser(startRule, ruleMap);
 
-  return florenceParser;
+  return exampleParser;
 }
-
-// static initialBNF = `
-//
-//   ${florenceBNF}
-//
-//   term!                                ::=   variable ;
-//
-//   statement!                           ::=   "(" metaArgument ")"
-//
-//                                          |   argument "=" argument
-//
-//                                          |   typeInference
-//
-//                                          |   typeAssertion
-//
-//                                          |   variable "undefined"
-//
-//                                          ;
-//
-//   typeInference                        ::=   statement "|-" typeAssertion ;
-//
-//   typeAssertion                        ::=   term ":" type ;
-//
-//   metastatement!                       ::=   "(" metastatement ")"
-//
-//                                          |   ruleSubproofAssertion
-//
-//                                          |   contextDefinition
-//
-//                                          |   proofAssertion
-//
-//                                          |   metavariable ( inclusion | substitution )?
-//
-//                                          |   metavariable substitution?
-//
-//                                          |   variable "undefined"
-//
-//                                          ;
-//
-//   ruleSubproofAssertion                ::=   "[" metastatement ( "," metastatement )* "]" "..." metastatement ;
-//
-//   contextDefinition                    ::=   context "=" ( judgement | context ) ( "," ( judgement | context ) )* ;
-//
-//   proofAssertion                       ::=   context "|=" judgement ;
-//
-//   judgement                            ::=   reference "::" metastatement ;
-//
-// `;  ///
-
-// static initialLexicalEntries = florenceEntries; ///
-
-// static initialContent = `Axiom (DeleteOperation)
-//   Suppose
-//     A
-//   Then
-// `;
