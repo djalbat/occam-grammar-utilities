@@ -13,9 +13,16 @@ import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName } f
 const { front, first, last, push, filter, unshift, find, backwardsSome } = arrayUtilities;
 
 export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
-  const indirectlyRepeatedNodes = findIndirectlyRepeatedChildNodes(nonTerminalNode);
-
   let parentNode = nonTerminalNode; ///
+
+  const childNodes = nonTerminalNode.getChildNodes(),
+        indirectlyRepeatedNodes = find(childNodes, (childNode) => {
+          const childNodeIndirectlyRepeatedNode = (childNode instanceof IndirectlyRepeatedNode);
+
+          if (childNodeIndirectlyRepeatedNode) {
+            return true;
+          }
+        });
 
   backwardsSome(indirectlyRepeatedNodes, (indirectlyRepeatedNode) => {
     const childNodes = parentNode.getChildNodes(),
@@ -35,37 +42,18 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
     parentNode = rewrittenNode; ///
   });
 
-  // const lastChildNode = last(childNodes),
-  //       lastChildNodeIndirectlyRepeatedNode = (lastChildNode instanceof IndirectlyRepeatedNode);
-
-  // if (lastChildNodeIndirectlyRepeatedNode) {
-  //   const parentNode = nonTerminalNode, ///
-  //         frontChildNodes = front(childNodes),
-  //         indirectlyRepeatedNode = lastChildNode, ///
-  //         indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
-  //         indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
-  //         ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName),
-  //         rewrittenNode = RewrittenNode.fromRuleNameAndChildNodes(ruleName, frontChildNodes), ///
-  //         indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes(),
-  //         replacementChildNodes = [
-  //           rewrittenNode,
-  //           ...indirectlyRepeatedNodeChildNodes
-  //         ];
-  //
-  //   replaceAllChildNodes(parentNode, replacementChildNodes);
-  //
-  //   counter++;
-  // }
-
   return parentNode;
 }
 
 export function rewriteDirectlyRepeatedNodes(nonTerminalNode) {
-  // let childNodes = nonTerminalNode.getChildNodes(),
-  //     directlyRepeatedNodes = findDirectlyRepeatedChildNodes(nonTerminalNode),
-  //     directlyRepeatedNodesLength = directlyRepeatedNodes.length;
+  const childNodes = nonTerminalNode.getChildNodes(),
+        directlyRepeatedNodes = find(childNodes, (childNode) => {
+          const childNodeDirectlyRepeatedNode = (childNode instanceof DirectlyRepeatedNode);
 
-  const directlyRepeatedNodes = findDirectlyRepeatedChildNodes(nonTerminalNode),
+          if (childNodeDirectlyRepeatedNode) {
+            return true;
+          }
+        }),
         directlyRepeatedNodesLength = directlyRepeatedNodes.length;
 
   if (directlyRepeatedNodesLength > 0) {
@@ -80,12 +68,6 @@ export function rewriteDirectlyRepeatedNodes(nonTerminalNode) {
     });
 
     replaceChildNodes(parentNode, replacedChildNodes, replacementChildNodes);
-
-    // childNodes = nonTerminalNode.getChildNodes();
-    //
-    // directlyRepeatedNodes = findDirectlyRepeatedChildNodes(nonTerminalNode);
-    //
-    // directlyRepeatedNodesLength = directlyRepeatedNodes.length;
   }
 }
 
@@ -132,30 +114,6 @@ export function removeEpsilonNodes(nonTerminalNode) {
   });
 }
 
-function findIndirectlyRepeatedChildNodes(nonTerminalNode) {
-  const childNodes = findChildNodes(nonTerminalNode, (childNode) => {
-    const childNodeIndirectlyRepeatedNode = (childNode instanceof IndirectlyRepeatedNode);
-
-    if (childNodeIndirectlyRepeatedNode) {
-      return true;
-    }
-  });
-
-  return childNodes;
-}
-
-function findDirectlyRepeatedChildNodes(nonTerminalNode) {
-  const childNodes = findChildNodes(nonTerminalNode, (childNode) => {
-    const childNodeDirectlyRepeatedNode = (childNode instanceof DirectlyRepeatedNode);
-
-    if (childNodeDirectlyRepeatedNode) {
-      return true;
-    }
-  });
-
-  return childNodes;
-}
-
 function replaceAllChildNodes(parentNode, replacementChildNodes) {
   const childNodes = parentNode.getChildNodes(),
         start = 0,
@@ -183,37 +141,4 @@ function replaceChildNode(parentNode, replacedChildNode, replacementChildNodes) 
         deleteCount = 1;
 
   childNodes.splice(start, deleteCount, ...replacementChildNodes);
-}
-
-function findChildNodes(nonTerminalNode, callback) {
-  let childNodes = nonTerminalNode.getChildNodes();
-
-  childNodes = find(childNodes, callback);
-
-  // const index = childNodes.findIndex(callback);
-  //
-  // if (index === -1) {
-  //   childNodes = [];
-  // } else {
-  //   let start = index,  ///
-  //       end;
-  //
-  //   childNodes = childNodes.slice(start);
-  //
-  //   childNodes.every((childNode, index) => {
-  //     const passed = callback(childNode);
-  //
-  //     if (passed) {
-  //       end = index + 1;
-  //
-  //       return true;
-  //     }
-  //   });
-  //
-  //   start = 0;
-  //
-  //   childNodes = childNodes.slice(start, end);
-  // }
-
-  return childNodes;
 }
