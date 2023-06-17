@@ -6,6 +6,7 @@ import { Rule, Parts, Definition } from "occam-parsers";
 import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { arePartsEqual } from "../../utilities/parts";
+import { removeEpsilonNodes } from "../../rewriteNodes";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 import { isDefinitionComplex, isDefinitionLookAhead, isDefinitionQualified, isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
@@ -13,6 +14,19 @@ const { first } = arrayUtilities,
       { EpsilonPart } = Parts;
 
 export default class IndirectlyRepeatedRule extends Rule {
+  parse(state, callback) {
+    const ruleNode = super.parse(state, callback);
+
+    if (ruleNode !== null) {
+      const node = ruleNode,  ///
+            recursively = false;
+
+      removeEpsilonNodes(node, recursively);
+    }
+
+    return ruleNode;
+  }
+
   static fromRuleAndLeftRecursiveRuleName(rule, leftRecursiveRuleName) {
     let definitions = rule.getDefinitions();
 

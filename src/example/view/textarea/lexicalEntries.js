@@ -4,7 +4,7 @@ import withStyle from "easy-with-style";  ///
 
 import Textarea from "../textarea";
 
-import { DOUBLE_SPACE } from "../constants";
+import { DOUBLE_SPACE } from "../../constants";
 
 class LexicalEntriesTextarea extends Textarea {
   getLexicalEntries() {
@@ -47,6 +47,6 @@ class LexicalEntriesTextarea extends Textarea {
 
 export default withStyle(LexicalEntriesTextarea)`
 
-  height: 32rem;
+  height: 12rem;
 
 `;

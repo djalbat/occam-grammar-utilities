@@ -6,19 +6,19 @@ import { Element } from "easy";
 import { rulesUtilities, parserUtilities } from "occam-parsers";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 
-import Paragraph from "./paragraph";
-import SubHeading from "./subHeading";
-import SizeableDiv from "./div/sizeable";
-import BNFTextarea from "./textarea/bnf";
+import Paragraph from "./view/paragraph";
+import SubHeading from "./view/subHeading";
+import SizeableDiv from "./view/div/sizeable";
+import BNFTextarea from "./view/textarea/bnf";
 import rewriteNodes from "../rewriteNodes";
 import ExampleLexer from "../lexer/example";
 import ExampleParser from "../parser/example";
-import ContentTextarea from "./textarea/content";
-import ParseTreeTextarea from "./textarea/parseTree";
-import StartRuleNameInput from "./input/startRuleName";
-import AdjustedBNFTextarea from "./textarea/adjustedBNF";
-import RewriteNodesCheckbox from "./checkbox/rewriteNodes";
-import LexicalEntriesTextarea from "./textarea/lexicalEntries";
+import ContentTextarea from "./view/textarea/content";
+import ParseTreeTextarea from "./view/textarea/parseTree";
+import StartRuleNameInput from "./view/input/startRuleName";
+import AdjustedBNFTextarea from "./view/textarea/adjustedBNF";
+import RewriteNodesCheckbox from "./view/checkbox/rewriteNodes";
+import LexicalEntriesTextarea from "./view/textarea/lexicalEntries";
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
 
 const { rulesFromBNF } = parserUtilities,
@@ -142,28 +142,45 @@ class View extends Element {
   }
 
   static initialBNF = `
+      S ::= A... <END_OF_LINE> ;
 
-      S  ::=  F... <END_OF_LINE> ;
+      A ::= B "g"
       
-      A  ::=  E 
+          | "e"
       
-           |  T 
-                                             
-           ;
+          ;
       
-      E  ::=  F ;
+      B ::= A "h"
       
-      T  ::=  "n" ;
+          | B "f"
       
-      F  ::=  "(" A ")"
-                             
-           |  A "+" A
-      
-           ;
+          | "d"
   
+          ;  
+  `;
+
+  static initialContent = `ehfg  
+`;
+
+  static _initialBNF = `
+
+     expression  ::=  term... <END_OF_LINE> ;
+      
+           term  ::=  "(" term ")" 
+      
+                   |  compoundTerm
+                   
+                   |  number 
+                                                     
+                   ;
+      
+   compoundTerm  ::=  term ( "+" | "-" | "/" | "*" ) term ;
+      
+         number  ::=  /\\d+/ ;
+        
   `
 
-  static initialContent = `(n+n)
+  static _initialContent = `(1+2/3)
 `;
 
   static initialStartRuleName = "S";

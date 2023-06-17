@@ -1,19 +1,22 @@
 "use strict";
 
-import RewrittenDefinition from "./definition/rewritten";
+import RewrittenRule from "./rule/rewritten";
 
 import { ruleNamesFromCycles } from "./utilities/ruleNames";
 import { isRuleEffectivelyEmpty } from "./utilities/rule";
-import { pathsFromRuleNameAndCycles } from "./utilities/path";
 import { directlyRepeatedRuleNameFromRuleName } from "./utilities/ruleName";
 
 export default function rewriteLeftRecursiveRules(cycles, ruleMap) {
   const ruleNames = ruleNamesFromCycles(cycles);
 
   ruleNames.forEach((ruleName) => {
-    const rule = ruleMap[ruleName];
+    let rule = ruleMap[ruleName];
 
-    rewriteRule(rule, cycles, ruleMap);
+    const rewrittenRule = RewrittenRule.fromRuleAndCycles(rule, cycles, ruleMap);
+
+    rule = rewrittenRule; ///
+
+    ruleMap[ruleName] = rule;
   });
 
   ruleNames.forEach((ruleName) => {
@@ -25,32 +28,6 @@ export default function rewriteLeftRecursiveRules(cycles, ruleMap) {
       const directlyRepeatedRuleName = directlyRepeatedRule.getName();
 
       throw new Error(`The '${directlyRepeatedRuleName}' directly repeated rule is effectively empty.`);
-    }
-  });
-}
-
-function rewriteRule(rule, cycles, ruleMap) {
-  const ruleName = rule.getName();
-
-  rule.removeAllDefinitions();
-
-  const rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap);
-
-  if (rewrittenDefinition !== null) {
-    const definition = rewrittenDefinition; ///
-
-    rule.addDefinition(definition);
-  }
-
-  const paths = pathsFromRuleNameAndCycles(ruleName, cycles);
-
-  paths.forEach((path) => {
-    const rewrittenDefinition = RewrittenDefinition.fromPath(path, ruleMap);
-
-    if (rewrittenDefinition !== null) {
-      const definition = rewrittenDefinition; ///
-
-      rule.addDefinition(definition);
     }
   });
 }
