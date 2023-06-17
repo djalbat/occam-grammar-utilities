@@ -3,35 +3,16 @@
 import { EpsilonNode } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
-import ReducedNode from "./node/reduced";
-import RewrittenNode from "./node/rewritten";
-import DirectlyRepeatedNode from "./node/repeated/directly";
-import IndirectlyRepeatedNode from "./node/repeated/indirectly";
+import ReducedNode from "../node/reduced";
+import RewrittenNode from "../node/rewritten";
+import DirectlyRepeatedNode from "../node/repeated/directly";
+import IndirectlyRepeatedNode from "../node/repeated/indirectly";
 
-import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName } from "./utilities/ruleName";
+import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName } from "../utilities/ruleName";
 
 const { front, first, last, push, filter, unshift, find, backwardsSome } = arrayUtilities;
 
-export default function rewriteNodes(node) {  ///
-  // rewriteDirectlyRepeatedNodes(node);
-
-  // rewriteIndirectlyRepeatedNodes(node);
-
-  // rewriteReducedNodes(node);
-
-  // removeEpsilonNodes(node);
-}
-
-export function rewriteIndirectlyRepeatedNodes(node, recursively = true) {
-  const nodeNonTerminalNode = node.isNonTerminalNode();
-
-  if (!nodeNonTerminalNode) {
-    return;
-  }
-
-  const nonTerminalNode = node, ///
-        childNodes = nonTerminalNode.getChildNodes();
-
+export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
   const indirectlyRepeatedNodes = findIndirectlyRepeatedChildNodes(nonTerminalNode);
 
   let parentNode = nonTerminalNode; ///
@@ -76,28 +57,10 @@ export function rewriteIndirectlyRepeatedNodes(node, recursively = true) {
   //   counter++;
   // }
 
-  if (recursively) {
-    const childNodes = nonTerminalNode.getChildNodes();
-
-    childNodes.forEach((childNode) => {
-      const node = childNode; ///
-
-      rewriteIndirectlyRepeatedNodes(node);
-    });
-  }
-
   return parentNode;
 }
 
-export function rewriteDirectlyRepeatedNodes(node, recursively = true) {
-  const nodeNonTerminalNode = node.isNonTerminalNode();
-
-  if (!nodeNonTerminalNode) {
-    return;
-  }
-
-  const nonTerminalNode = node; ///
-
+export function rewriteDirectlyRepeatedNodes(nonTerminalNode) {
   // let childNodes = nonTerminalNode.getChildNodes(),
   //     directlyRepeatedNodes = findDirectlyRepeatedChildNodes(nonTerminalNode),
   //     directlyRepeatedNodesLength = directlyRepeatedNodes.length;
@@ -124,27 +87,9 @@ export function rewriteDirectlyRepeatedNodes(node, recursively = true) {
     //
     // directlyRepeatedNodesLength = directlyRepeatedNodes.length;
   }
-
-  if (recursively) {
-    const childNodes = nonTerminalNode.getChildNodes();
-
-    childNodes.forEach((childNode) => {
-      const node = childNode; ///
-
-      rewriteDirectlyRepeatedNodes(node);
-    });
-  }
 }
 
-export function rewriteReducedNodes(node, recursively = true) {
-  const nodeNonTerminalNode = node.isNonTerminalNode();
-
-  if (!nodeNonTerminalNode) {
-    return;
-  }
-
-  const nonTerminalNode = node; ///
-
+export function rewriteReducedNodes(nonTerminalNode) {
   let childNodes = nonTerminalNode.getChildNodes();
 
   const firstChildNode = first(childNodes),
@@ -173,27 +118,10 @@ export function rewriteReducedNodes(node, recursively = true) {
 
     replaceChildNode(parentNode, replacedChildNode, replacementChildNodes);
   }
-
-  if (recursively) {
-    const childNodes = nonTerminalNode.getChildNodes();
-
-    childNodes.forEach((childNode) => {
-      const node = childNode; ///
-
-      rewriteReducedNodes(node);
-    });
-  }
 }
 
-export function removeEpsilonNodes(node, recursively = true) {
-  const nodeNonTerminalNode = node.isNonTerminalNode();
-
-  if (!nodeNonTerminalNode) {
-    return;
-  }
-
-  const nonTerminalNode = node, ///
-        childNodes = nonTerminalNode.getChildNodes();
+export function removeEpsilonNodes(nonTerminalNode) {
+  const childNodes = nonTerminalNode.getChildNodes();
 
   filter(childNodes, (childNode) => {
     const childNodeEpsilonNode = (childNode instanceof EpsilonNode);
@@ -202,16 +130,6 @@ export function removeEpsilonNodes(node, recursively = true) {
       return true;
     }
   });
-
-  if (recursively) {
-    const childNodes = nonTerminalNode.getChildNodes();
-
-    childNodes.forEach((childNode) => {
-      const node = childNode; ///
-
-      removeEpsilonNodes(node);
-    });
-  }
 }
 
 function findIndirectlyRepeatedChildNodes(nonTerminalNode) {

@@ -6,20 +6,17 @@ import { Element } from "easy";
 import { rulesUtilities, parserUtilities } from "occam-parsers";
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 
-import Paragraph from "./view/paragraph";
 import SubHeading from "./view/subHeading";
 import SizeableDiv from "./view/div/sizeable";
 import BNFTextarea from "./view/textarea/bnf";
-import rewriteNodes from "../rewriteNodes";
 import ExampleLexer from "../lexer/example";
 import ExampleParser from "../parser/example";
 import ContentTextarea from "./view/textarea/content";
 import ParseTreeTextarea from "./view/textarea/parseTree";
 import StartRuleNameInput from "./view/input/startRuleName";
 import AdjustedBNFTextarea from "./view/textarea/adjustedBNF";
-import RewriteNodesCheckbox from "./view/checkbox/rewriteNodes";
-import LexicalEntriesTextarea from "./view/textarea/lexicalEntries";
 import eliminateLeftRecursion from "../eliminateLeftRecursion";
+import LexicalEntriesTextarea from "./view/textarea/lexicalEntries";
 
 const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
@@ -58,12 +55,6 @@ class View extends Element {
       let parseTree = null;
 
       if (node !== null) {
-        const rewriteNodesCheckboxChecked = this.isRewriteNodesCheckboxChecked();
-
-        if (rewriteNodesCheckboxChecked) {
-          rewriteNodes(node);
-        }
-
         const abridged = true;
 
         parseTree = node.asParseTree(tokens, abridged);
@@ -110,10 +101,6 @@ class View extends Element {
               Parse tree
             </SubHeading>
             <ParseTreeTextarea />
-            <Paragraph>
-              <RewriteNodesCheckbox onChange={this.changeHandler} />
-              Rewrite nodes
-            </Paragraph>
           </RowsDiv>
         </ColumnDiv>
       </ColumnsDiv>
