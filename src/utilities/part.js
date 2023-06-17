@@ -87,9 +87,14 @@ export function isPartLookAhead(part) {
 
   if (partNonTerminalPart) {
     const nonTerminalPart = part, ///
-          lookAhead = nonTerminalPart.isLookAhead();
+          nonTerminalPartRuleNamePart = nonTerminalPart.isRuleNamePart();
 
-    partLookAhead = lookAhead;  ///
+    if (nonTerminalPartRuleNamePart) {
+      const ruleNamePart = nonTerminalPart, ///
+            lookAhead = ruleNamePart.isLookAhead();
+
+      partLookAhead = lookAhead;  ///
+    }
   }
 
   return partLookAhead;
