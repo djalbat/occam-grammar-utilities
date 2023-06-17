@@ -10,10 +10,10 @@ import IndirectlyRepeatedNode from "../node/repeated/indirectly";
 
 import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName } from "../utilities/ruleName";
 
-const { front, first, last, push, filter, unshift, find, backwardsSome } = arrayUtilities;
+const { front, first, push, filter, unshift, find, backwardsSome } = arrayUtilities;
 
 export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
-  let parentNode = nonTerminalNode; ///
+  let parentNode;
 
   const childNodes = nonTerminalNode.getChildNodes(),
         indirectlyRepeatedNodes = find(childNodes, (childNode) => {
@@ -23,6 +23,8 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
             return true;
           }
         });
+
+  parentNode = nonTerminalNode; ///
 
   backwardsSome(indirectlyRepeatedNodes, (indirectlyRepeatedNode) => {
     const childNodes = parentNode.getChildNodes(),
@@ -54,21 +56,16 @@ export function rewriteDirectlyRepeatedNodes(nonTerminalNode) {
             return true;
           }
         }),
-        directlyRepeatedNodesLength = directlyRepeatedNodes.length;
+        replacementChildNodes = [],
+        replacedChildNodes = directlyRepeatedNodes; ///
 
-  if (directlyRepeatedNodesLength > 0) {
-    const parentNode = nonTerminalNode, ///
-          replacedChildNodes = directlyRepeatedNodes, ///
-          replacementChildNodes = [];
+  directlyRepeatedNodes.forEach((directlyRepeatedNodes) => {
+    const directlyRepeatedNodesChildNodes = directlyRepeatedNodes.getChildNodes();
 
-    directlyRepeatedNodes.forEach((directlyRepeatedNodes) => {
-      const directlyRepeatedNodesChildNodes = directlyRepeatedNodes.getChildNodes();
+    unshift(replacementChildNodes, directlyRepeatedNodesChildNodes);
+  });
 
-      unshift(replacementChildNodes, directlyRepeatedNodesChildNodes);
-    });
-
-    replaceChildNodes(parentNode, replacedChildNodes, replacementChildNodes);
-  }
+  replaceChildNodes(childNodes, replacedChildNodes, replacementChildNodes);
 }
 
 export function rewriteReducedNodes(nonTerminalNode) {
@@ -122,14 +119,17 @@ function replaceAllChildNodes(parentNode, replacementChildNodes) {
   childNodes.splice(start, deleteCount, ...replacementChildNodes);
 }
 
-function replaceChildNodes(parentNode, replacedChildNodes, replacementChildNodes) {
-  const childNodes = parentNode.getChildNodes(),
-        lastReplacedChildNode = last(replacedChildNodes),
-        firstReplacedChildNode = first(replacedChildNodes),
+function replaceChildNodes(childNodes, replacedChildNodes, replacementChildNodes) {
+  const replacedChildNodesLength = replacedChildNodes.length;
+
+  if (replacedChildNodesLength === 0) {
+    return;
+  }
+
+  const firstReplacedChildNode = first(replacedChildNodes),
         firstIndex = childNodes.indexOf(firstReplacedChildNode),
-        lastIndex = childNodes.indexOf(lastReplacedChildNode),
         start = firstIndex, ///
-        deleteCount = lastIndex - firstIndex + 1;
+        deleteCount = replacedChildNodesLength; ///
 
   childNodes.splice(start, deleteCount, ...replacementChildNodes);
 }
