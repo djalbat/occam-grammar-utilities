@@ -386,7 +386,7 @@ describe("src/eliminateLeftRecursion", () => {
     it("results in the requisite parse tree" , () => {
       const content = `(n+n)
 `,
-        parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           

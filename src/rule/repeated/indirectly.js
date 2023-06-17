@@ -33,77 +33,73 @@ export default class IndirectlyRepeatedRule extends Rule {
       const definitionLeftRecursive = isDefinitionLeftRecursive(definition);
 
       if (definitionLeftRecursive) {
-        const definitionComplex = isDefinitionComplex(definition);
-
-        if (definitionComplex) {
-          const ruleName = rule.getName(),
-                definitionString = definition.asString();
-
-          throw new Error(`The '${definitionString}' definition of the '${ruleName}' rule is complex.`);
-        }
-
-        const definitionLookAhead = isDefinitionLookAhead(definition);
-
-        if (definitionLookAhead) {
-          const ruleName = rule.getName(),
-                definitionString = definition.asString();
-
-          throw new Error(`The first part of the '${definitionString}' definition of the '${ruleName}' rule is look-ahead.`);
-        }
-
-        const definitionQualified = isDefinitionQualified(definition);
-
-        if (definitionQualified) {
-          const ruleName = rule.getName(),
-                definitionString = definition.asString();
-
-          throw new Error(`The first part of the '${definitionString}' definition of the '${ruleName}' rule is qualified.`);
-        }
-
         const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
               firstLeftRecursiveRuleName = first(leftRecursiveRuleNames);
 
         if (firstLeftRecursiveRuleName === leftRecursiveRuleName) {
+          const definitionComplex = isDefinitionComplex(definition);
+
+          if (definitionComplex) {
+            const ruleName = rule.getName(),
+                  definitionString = definition.asString();
+
+            throw new Error(`The '${definitionString}' definition of the '${ruleName}' rule is complex.`);
+          }
+
+          const definitionLookAhead = isDefinitionLookAhead(definition);
+
+          if (definitionLookAhead) {
+            const ruleName = rule.getName(),
+                  definitionString = definition.asString();
+
+            throw new Error(`The first part of the '${definitionString}' definition of the '${ruleName}' rule is look-ahead.`);
+          }
+
+          const definitionQualified = isDefinitionQualified(definition);
+
+          if (definitionQualified) {
+            const ruleName = rule.getName(),
+                  definitionString = definition.asString();
+
+            throw new Error(`The first part of the '${definitionString}' definition of the '${ruleName}' rule is qualified.`);
+          }
+
           return true;
         }
       }
     });
-
-    const firstParts = [];
 
     definitions = definitions.filter((definition) => {
       const parts = definition.getParts(),
             partsLength = parts.length;
 
       if (partsLength > 1) {
-        const firstPart = parts.shift();
-
-        firstParts.push(firstPart);
-
         return true;
       }
     });
 
-    const ruleName = rule.getName(),
-          definitionsLength = definitions.length;
+    const definitionsLength = definitions.length;
 
     if (definitionsLength === 0) {
-      const epsilonPart = new EpsilonPart(),
-            parts = [
-              epsilonPart
-            ],
-            definition = new Definition(parts);
+      const epsilonDefinitions = epsilonDefinitionsFromNothing();
 
-      definitions.push(definition);
+      definitions = epsilonDefinitions; ///
     } else {
-      const firstPartsEqual = arePartsEqual(firstParts);
+      const firstPartsEqual = areFirstPartsEqual(definitions);
 
       if (!firstPartsEqual) {
+        const ruleName = rule.getName();
+
         throw new Error(`The first parts of the '${leftRecursiveRuleName}' left recursive definitions in the '${ruleName}' rule are not equal.`);
       }
+
+      const indirectlyRepeatedDefinitions = indirectlyRepeatedDefinitionsFromDefinitions(definitions);
+
+      definitions = indirectlyRepeatedDefinitions;  ///
     }
 
-    const indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
+    const ruleName = rule.getName(),
+          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
           name = indirectlyRepeatedRuleName,  ///
           ambiguous = false,
           NonTerminalNode = IndirectlyRepeatedNode,  ///
@@ -111,4 +107,50 @@ export default class IndirectlyRepeatedRule extends Rule {
 
     return indirectlyRepeatedRule;
   }
+}
+
+function areFirstPartsEqual(definitions) {
+  const firstParts = definitions.map((definition) => {
+          const parts = definition.getParts(),
+                firstPart = first(parts);
+
+          return firstPart;
+        }),
+        firstPartsEqual = arePartsEqual(firstParts);
+
+  return firstPartsEqual;
+}
+
+function epsilonDefinitionsFromNothing() {
+  const epsilonPart = new EpsilonPart(),
+        parts = [
+          epsilonPart
+        ],
+        definition = new Definition(parts),
+        epsilonDefinition = definition, ///
+        epsilonDefinitions = [
+          epsilonDefinition
+        ];
+
+  return epsilonDefinitions;
+}
+
+function indirectlyRepeatedDefinitionsFromDefinitions(definitions) {
+  const indirectlyRepeatedDefinitions = definitions.map((definition) => { ///
+    let parts = definition.getParts();
+
+    parts = [ ///
+      ...parts
+    ]
+
+    parts.shift();
+
+    definition = new Definition(parts);
+
+    const indirectlyRepeatedDefinition = definition;  ///
+
+    return indirectlyRepeatedDefinition;
+  });
+
+  return indirectlyRepeatedDefinitions;
 }
