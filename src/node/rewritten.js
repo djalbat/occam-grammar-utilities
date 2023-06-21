@@ -15,8 +15,8 @@ export default class RewrittenNode extends NonTerminalNode {
     return rewrittenNode;
   }
 
-  static fromRuleNameAndChildNodes(ruleName, childNodes) {
-    const  rewrittenNode = new RewrittenNode(ruleName, childNodes);
+  static fromRuleNameChildNodesAndPrecedence(ruleName, childNodes, precedence) {
+    const  rewrittenNode = new RewrittenNode(ruleName, childNodes, precedence);
 
     return rewrittenNode;
   }

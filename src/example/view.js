@@ -31,33 +31,15 @@ class View extends Element {
   }
 
   update() {
-    const bnf = this.getBNF(),
-          content = this.getContent(),
-          startRuleName = this.getStartRuleName(),
-          lexicalEntries = this.getLexicalEntries();
-
-    let rules = rulesFromBNF(bnf);
-
-    rules = eliminateLeftRecursion(rules);  ///
-
-    const multiLine = true,
-          rulesString = rulesAsString(rules, multiLine),
-          adjustedBNF = rulesString;  ///
-
-    this.setAdjustedBNF(adjustedBNF);
-
     try {
-      const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
-            exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName),
-            tokens = exampleLexer.tokenise(content),
-            node = exampleParser.parse(tokens);
+      const content = this.getContent(),
+            tokens = this.exampleLexer.tokenise(content),
+            node = this.exampleParser.parse(tokens);
 
       let parseTree = null;
 
       if (node !== null) {
-        const abridged = true;
-
-        parseTree = node.asParseTree(tokens, abridged);
+        parseTree = node.asParseTree(tokens);
       }
 
       this.setParseTree(parseTree);
@@ -125,10 +107,29 @@ class View extends Element {
 
     this.setStartRuleName(startRuleName);
 
+    // const bnf = this.getBNF(),
+    //   content = this.getContent(),
+    //   startRuleName = this.getStartRuleName(),
+    //   lexicalEntries = this.getLexicalEntries();
+
+    let rules = rulesFromBNF(bnf);
+
+    rules = eliminateLeftRecursion(rules);  ///
+
+    const multiLine = true,
+          rulesString = rulesAsString(rules, multiLine),
+          adjustedBNF = rulesString;  ///
+
+    this.setAdjustedBNF(adjustedBNF);
+
+    this.exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries);
+
+    this.exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName);
+
     this.update();
   }
 
-  static _initialBNF = `
+  static initialBNF = `
 
      expression  ::=  term... <END_OF_LINE> ;
       
@@ -136,19 +137,19 @@ class View extends Element {
       
                    |  term ( 
                       
-                             "/"  
+                             "/"  (1)
                               
                              | 
                               
-                             "*" 
+                             "*"  (2)
                               
                              | 
                               
-                             "+" 
+                             "+"  (3)
                               
                              | 
                               
-                             "-" 
+                             "-"  (4)
                             
                            ) term
                    
@@ -160,33 +161,7 @@ class View extends Element {
         
   `
 
-  static _initialContent = `(1+2/3)
-`;
-
-  static initialBNF = `
-
-              S  ::=  A... <END_OF_LINE> ;
-      
-              A  ::=  B "f" 
-      
-                   |  "e"
-                   
-                   ;
-      
-              B  ::=  B "h" 
-      
-                   |  C "g"
-                   
-                   ;
-              
-              C  ::=  C "m" 
-      
-                   |  A "k"
-                   
-                   ;
-  `
-
-  static initialContent = `akmmghhf
+  static initialContent = `1+2
 `;
 
   static initialStartRuleName = "S";

@@ -1,7 +1,7 @@
 "use strict";
 
-import RepeatedNode from "../repeated";
+import { NonTerminalNode } from "occam-parsers";
 
-export default class DirectlyRepeatedNode extends RepeatedNode {
-  static fromRuleNameAndChildNodes(ruleName, childNodes) { return RepeatedNode.fromRuleNameAndChildNodes(DirectlyRepeatedNode, ruleName, childNodes); }
+export default class DirectlyRepeatedNode extends NonTerminalNode {
+  static fromRuleNameChildNodesAndPrecedence(ruleName, childNodes, precedence) { return NonTerminalNode.fromRuleNameChildNodesAndPrecedence(DirectlyRepeatedNode, ruleName, childNodes, precedence); }
 }

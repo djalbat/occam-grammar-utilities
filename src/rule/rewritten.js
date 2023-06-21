@@ -8,21 +8,21 @@ import { pathsFromRuleNameAndCycles } from "../utilities/path";
 import { rewriteReducedNodes, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRepeatedNodes } from "../utilities/nodes";
 
 export default class RewrittenRule extends Rule {
-  parse(state, callback) {
-    const ruleNode = super.parse(state, callback);
+  parse(state, callback, precedence, parentRuleName) {
+    const ruleNode = super.parse(state, callback, precedence, parentRuleName);
 
     if (ruleNode !== null) {
-      let nonTerminalNode;
+      // let nonTerminalNode;
+      //
+      // nonTerminalNode = ruleNode;  ///
+      //
+      // rewriteDirectlyRepeatedNodes(nonTerminalNode);
 
-      nonTerminalNode = ruleNode;  ///
-
-      rewriteDirectlyRepeatedNodes(nonTerminalNode);
-
-      const parentNode = rewriteIndirectlyRepeatedNodes(nonTerminalNode);
-
-      nonTerminalNode = parentNode; ///
-
-      rewriteReducedNodes(nonTerminalNode);
+      // const parentNode = rewriteIndirectlyRepeatedNodes(nonTerminalNode);
+      //
+      // nonTerminalNode = parentNode; ///
+      //
+      // rewriteReducedNodes(nonTerminalNode);
     }
 
     return ruleNode;
