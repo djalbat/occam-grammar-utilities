@@ -122,11 +122,11 @@ function areFirstPartsEqual(definitions) {
 }
 
 function epsilonDefinitionsFromNothing() {
-  const epsilonPart = new EpsilonPart(),
+  const epsilonPart = EpsilonPart.fromNothing(),
         parts = [
           epsilonPart
         ],
-        definition = new Definition(parts),
+        definition = Definition.fromParts(parts),
         epsilonDefinition = definition, ///
         epsilonDefinitions = [
           epsilonDefinition
@@ -145,7 +145,7 @@ function indirectlyRepeatedDefinitionsFromDefinitions(definitions) {
 
     parts.shift();
 
-    definition = new Definition(parts);
+    definition = Definition.fromParts(parts);
 
     const indirectlyRepeatedDefinition = definition;  ///
 

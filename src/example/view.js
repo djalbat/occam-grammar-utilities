@@ -128,25 +128,65 @@ class View extends Element {
     this.update();
   }
 
-  static initialBNF = `
+  static _initialBNF = `
 
      expression  ::=  term... <END_OF_LINE> ;
       
            term  ::=  "(" term ")" 
       
-                   |  compoundTerm
+                   |  term ( 
+                      
+                             "/"  
+                              
+                             | 
+                              
+                             "*" 
+                              
+                             | 
+                              
+                             "+" 
+                              
+                             | 
+                              
+                             "-" 
+                            
+                           ) term
                    
                    |  number 
                                                      
                    ;
       
-   compoundTerm  ::=  term ( "+" | "-" | "/" | "*" ) term ;
-      
          number  ::=  /\\d+/ ;
         
   `
 
-  static initialContent = `(1+2/3)
+  static _initialContent = `(1+2/3)
+`;
+
+  static initialBNF = `
+
+              S  ::=  A... <END_OF_LINE> ;
+      
+              A  ::=  B "f" 
+      
+                   |  "e"
+                   
+                   ;
+      
+              B  ::=  B "h" 
+      
+                   |  C "g"
+                   
+                   ;
+              
+              C  ::=  C "m" 
+      
+                   |  A "k"
+                   
+                   ;
+  `
+
+  static initialContent = `akmmghhf
 `;
 
   static initialStartRuleName = "S";

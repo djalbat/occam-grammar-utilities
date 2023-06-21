@@ -45,7 +45,9 @@ export default class RewrittenDefinition extends Definition {
         }
       });
 
-      rewrittenDefinition = new RewrittenDefinition(parts);
+      const precedence = null;
+
+      rewrittenDefinition = new RewrittenDefinition(parts, precedence);
     }
 
     return rewrittenDefinition;
@@ -63,9 +65,10 @@ export default class RewrittenDefinition extends Definition {
             parts = [
               reducedRuleNamePart,
               directlyRepeatedPart
-            ];
+            ],
+            precedence = null;
 
-      rewrittenDefinition = new RewrittenDefinition(parts);
+      rewrittenDefinition = new RewrittenDefinition(parts, precedence);
     }
 
     return rewrittenDefinition;

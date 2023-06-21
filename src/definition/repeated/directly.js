@@ -16,9 +16,10 @@ export default class DirectlyRepeatedDefinition extends Definition {
 
     if (ruleNameIncludesRuleName) {
       const path = pathFromRuleNameAndCycle(ruleName, cycle),
-            parts = partsFromPath(path);
+            parts = partsFromPath(path),
+            precedence = null;
 
-      directlyRepeatedDefinition = new DirectlyRepeatedDefinition(parts);
+      directlyRepeatedDefinition = new DirectlyRepeatedDefinition(parts, precedence);
     }
 
     return directlyRepeatedDefinition;

@@ -45,4 +45,3 @@ export function leftRecursiveRuleNamesFromParts(parts, leftRecursiveRuleNames = 
 
   return leftRecursiveRuleNames;
 }
-
