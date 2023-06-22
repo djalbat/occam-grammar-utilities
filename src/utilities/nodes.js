@@ -10,44 +10,47 @@ import IndirectlyRepeatedNode from "../node/repeated/indirectly";
 
 import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName } from "../utilities/ruleName";
 
-const { front, first, push, filter, unshift, find, backwardsSome } = arrayUtilities;
+const { front, first, push, clear, filter, unshift, backwardsForEach } = arrayUtilities;
 
 export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
-  let parentNode;
+  let childNodes = nonTerminalNode.getChildNodes(),
+      indirectlyRepeatedNodes = findIndirectlyRepeatedNodes(childNodes),
+      indirectlyRepeatedNodesLength = indirectlyRepeatedNodes.length;
 
-  const childNodes = nonTerminalNode.getChildNodes(),
-        indirectlyRepeatedNodes = find(childNodes, (childNode) => {
-          const childNodeIndirectlyRepeatedNode = (childNode instanceof IndirectlyRepeatedNode);
+  while (indirectlyRepeatedNodesLength > 0) {
+    backwardsForEach(indirectlyRepeatedNodes, (indirectlyRepeatedNode) => {
+      const indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
+            indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
+            frontChildNodes = front(childNodes),
+            ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);
 
-          if (childNodeIndirectlyRepeatedNode) {
-            return true;
-          }
-        });
+      childNodes = frontChildNodes; ///
 
-  parentNode = nonTerminalNode; ///
+      const precedence = indirectlyRepeatedNode.getPrecedence(),
+            rewrittenNode = RewrittenNode.fromRuleNameChildNodesAndPrecedence(ruleName, childNodes, precedence),
+            indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes(),
+            replacementChildNodes = [
+              rewrittenNode,
+              ...indirectlyRepeatedNodeChildNodes
+            ];
 
-  backwardsSome(indirectlyRepeatedNodes, (indirectlyRepeatedNode) => {
-    let childNodes = parentNode.getChildNodes();
+      childNodes = nonTerminalNode.getChildNodes();
 
-    const frontChildNodes = front(childNodes),
-          indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
-          indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
-          ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);
+      replaceAllChildNodes(childNodes, replacementChildNodes);
 
-    childNodes = frontChildNodes; ///
+      nonTerminalNode = rewrittenNode;  ///
 
-    const precedence = indirectlyRepeatedNode.getPrecedence(),
-          rewrittenNode = RewrittenNode.fromRuleNameChildNodesAndPrecedence(ruleName, childNodes, precedence),
-          indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes(),
-          replacementChildNodes = [
-            rewrittenNode,
-            ...indirectlyRepeatedNodeChildNodes
-          ];
+      childNodes = nonTerminalNode.getChildNodes();
+    });
 
-    replaceAllChildNodes(parentNode, replacementChildNodes);
+    childNodes = nonTerminalNode.getChildNodes();
 
-    parentNode = rewrittenNode; ///
-  });
+    indirectlyRepeatedNodes = findIndirectlyRepeatedNodes(childNodes);
+
+    indirectlyRepeatedNodesLength = indirectlyRepeatedNodes.length;
+  }
+
+  const parentNode = nonTerminalNode; ///
 
   return parentNode;
 }
@@ -120,41 +123,10 @@ export function removeEpsilonNodes(nonTerminalNode) {
   });
 }
 
-function findDirectlyRepeatedNodes(childNodes) {
-  const directlyRepeatedNodes = [];
+function replaceAllChildNodes(childNodes, replacementChildNodes) {
+  clear(childNodes);
 
-  const lastIndex = childNodes.findLastIndex((childNode) => {
-    const childNodeDirectlyRepeatedNode = (childNode instanceof DirectlyRepeatedNode);
-
-    if (childNodeDirectlyRepeatedNode) {
-      return true;
-    }
-  });
-
-  if (lastIndex !== null) {
-    for (let index = lastIndex; index >= 0; index--) {
-      const childNode = childNodes[index],
-            childNodeDirectlyRepeatedNode = (childNode instanceof DirectlyRepeatedNode);
-
-      if (!childNodeDirectlyRepeatedNode) {
-        break;
-      }
-
-      const directlyRepeatedNode = childNode; ///
-
-      directlyRepeatedNodes.unshift(directlyRepeatedNode);
-    }
-  }
-
-  return directlyRepeatedNodes;
-}
-
-function replaceAllChildNodes(parentNode, replacementChildNodes) {
-  const childNodes = parentNode.getChildNodes(),
-        start = 0,
-        deleteCount = Infinity;
-
-  childNodes.splice(start, deleteCount, ...replacementChildNodes);
+  push(childNodes, replacementChildNodes);
 }
 
 function replaceChildNodes(childNodes, replacedChildNodes, replacementChildNodes) {
@@ -179,4 +151,50 @@ function replaceChildNode(parentNode, replacedChildNode, replacementChildNodes) 
         deleteCount = 1;
 
   childNodes.splice(start, deleteCount, ...replacementChildNodes);
+}
+
+function findIndirectlyRepeatedNodes(childNodes) {
+  const indirectlyRepeatedNodes = findRepeatedNodes(childNodes, (childNode) => {
+    const childNodeIndirectlyRepeatedNode = (childNode instanceof IndirectlyRepeatedNode);
+
+    if (childNodeIndirectlyRepeatedNode) {
+      return true;
+    }
+  });
+
+  return indirectlyRepeatedNodes;
+}
+
+function findDirectlyRepeatedNodes(childNodes) {
+  const directlyRepeatedNodes = findRepeatedNodes(childNodes, (childNode) => {
+    const childNodeDirectlyRepeatedNode = (childNode instanceof DirectlyRepeatedNode);
+
+    if (childNodeDirectlyRepeatedNode) {
+      return true;
+    }
+  });
+
+  return directlyRepeatedNodes;
+}
+
+function findRepeatedNodes(childNodes, callback) {
+  const repeatedNodes = [],
+        lastIndex = childNodes.findLastIndex(callback);
+
+  if (lastIndex !== null) {
+    for (let index = lastIndex; index >= 0; index--) {
+      const childNode = childNodes[index],
+            childNodeRepeatedNode = callback(childNode);
+
+      if (!childNodeRepeatedNode) {
+        break;
+      }
+
+      const repeatedNode = childNode; ///
+
+      repeatedNodes.unshift(repeatedNode);
+    }
+  }
+
+  return repeatedNodes;
 }

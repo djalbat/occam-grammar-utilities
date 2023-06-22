@@ -290,25 +290,25 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(compare(parseTreeString, `
                     
-                                                     S                   
-                                                     |                   
-                                        ---------------------------      
-                                        |                         |      
-                                        A                   <END_OF_LINE>
-                                        |                                
-                            -------------------------                    
-                            |                       |                    
-                            B                 g[unassigned]              
-                            |                                            
-                 ----------------------                                  
-                 |                    |                                  
-                 B              f[unassigned]                            
-                 |                                                       
-          ---------------                                                
-          |             |                                                
-          A       h[unassigned]                                          
-          |                                                              
-    e[unassigned]                                                        
+                                                                      S {0-4}                    
+                                                                         |                       
+                                                        -----------------------------------      
+                                                        |                                 |      
+                                                     A {0-3}                        <END_OF_LINE>
+                                                        |                                        
+                                      ------------------------------------                       
+                                      |                                  |                       
+                                   B {0-2}                      "g"[unassigned] {3}              
+                                      |                                                          
+                       -------------------------------                                           
+                       |                             |                                           
+                    B {0-1}                 "f"[unassigned] {2}                                  
+                       |                                                                         
+             ---------------------                                                               
+             |                   |                                                               
+           A {0}        "h"[unassigned] {1}                                                      
+             |                                                                                   
+    "e"[unassigned] {0}                                                                          
              
       `));
     });
@@ -390,27 +390,27 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(compare(parseTreeString, `
           
-                                                           S                           
-                                                           |                           
-                                      -------------------------------------------      
-                                      |                                         |      
-                                      F                                   <END_OF_LINE>
-                                      |                                                
-          ---------------------------------------------------------                    
-          |                           |                           |                    
-    ([unassigned]                     A                     )[unassigned]              
-                                      |                                                
-                                      E                                                
-                                      |                                                
-                                      F                                                
-                                      |                                                
-                        -----------------------------                                  
-                        |             |             |                                  
-                        A       +[unassigned]       A                                  
-                        |                           |                                  
-                        T                           T                                  
-                        |                           |                                  
-                  n[unassigned]               n[unassigned]                            
+                                                                               S {0-5}                               
+                                                                                  |                                  
+                                                     ----------------------------------------------------------      
+                                                     |                                                        |      
+                                                  F {0-4}                                               <END_OF_LINE>
+                                                     |                                                               
+             ---------------------------------------------------------------------------------                       
+             |                                       |                                       |                       
+    "("[unassigned] {0}                           A {1-3}                           ")"[unassigned] {4}              
+                                                     |                                                               
+                                                  E {1-3}                                                            
+                                                     |                                                               
+                                                  F {1-3}                                                            
+                                                     |                                                               
+                                 -----------------------------------------                                           
+                                 |                   |                   |                                           
+                               A {1}        "+"[unassigned] {2}        A {3}                                         
+                                 |                                       |                                           
+                               T {1}                                   T {3}                                         
+                                 |                                       |                                           
+                        "n"[unassigned] {1}                     "n"[unassigned] {3}                                  
 
       `));
     });
@@ -462,25 +462,25 @@ describe("src/eliminateLeftRecursion", () => {
     it("results in the requisite parse tree" , () => {
       const content = `n+m
 `,
-        parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-                                      S                    
-                                      |                    
-                        -----------------------------      
-                        |                           |      
-                        E                     <END_OF_LINE>
-                        |                                  
-          -----------------------------                    
-          |             |             |                    
-          A       +[unassigned]       A                    
-          |                           |                    
-          E                           E                    
-          |                           |                    
-          V                           V                    
-          |                           |                    
-    n[unassigned]               m[unassigned]              
+                                                 S {0-3}                     
+                                                    |                        
+                                 --------------------------------------      
+                                 |                                    |      
+                              E {0-2}                           <END_OF_LINE>
+                                 |                                           
+             -----------------------------------------                       
+             |                   |                   |                       
+           A {0}        "+"[unassigned] {1}        A {2}                     
+             |                                       |                       
+           E {0}                                   E {2}                     
+             |                                       |                       
+           V {0}                                   V {2}                     
+             |                                       |                       
+    "n"[unassigned] {0}                     "m"[unassigned] {2}              
     
       `));
     });
@@ -554,21 +554,21 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(compare(parseTreeString, `
           
-                                        S                  
-                                        |                  
-                            -------------------------      
-                            |                       |      
-                            A                 <END_OF_LINE>
-                            |                              
-                 ----------------------                    
-                 |                    |                    
-                 B              d[unassigned]              
-                 |                                         
-          ---------------                                  
-          |             |                                  
-          A       f[unassigned]                            
-          |                                                
-    e[unassigned]                                          
+                                                   S {0-3}                   
+                                                      |                      
+                                      ---------------------------------      
+                                      |                               |      
+                                   A {0-2}                      <END_OF_LINE>
+                                      |                                      
+                       -------------------------------                       
+                       |                             |                       
+                    B {0-1}                 "d"[unassigned] {2}              
+                       |                                                     
+             ---------------------                                           
+             |                   |                                           
+           A {0}        "f"[unassigned] {1}                                  
+             |                                                               
+    "e"[unassigned] {0}                                                      
 
       `));
     });
@@ -722,41 +722,41 @@ describe("src/eliminateLeftRecursion", () => {
     it("results in the requisite parse tree" , () => {
       const content = `gkhrldf
 `,
-        parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
               
-                                                                                               S                   
-                                                                                               |                   
-                                                                                 ----------------------------      
-                                                                                 |                          |      
-                                                                                 A                    <END_OF_LINE>
-                                                                                 |                                 
-                                                                   ----------------------------                    
-                                                                   |                          |                    
-                                                                   B                    f[unassigned]              
-                                                                   |                                               
-                                                     ----------------------------                                  
-                                                     |                          |                                  
-                                                     C                    d[unassigned]                            
-                                                     |                                                             
-                                        ---------------------------                                                
-                                        |                         |                                                
-                                        D                   l[unassigned]                                          
-                                        |                                                                          
-                            -------------------------                                                              
-                            |                       |                                                              
-                            B                 r[unassigned]                                                        
-                            |                                                                                      
-                 ----------------------                                                                            
-                 |                    |                                                                            
-                 A              h[unassigned]                                                                      
-                 |                                                                                                 
-          ---------------                                                                                          
-          |             |                                                                                          
-          A       k[unassigned]                                                                                    
-          |                                                                                                        
-    g[unassigned]                                                                                                  
+                                                                                                                                 S {0-7}                     
+                                                                                                                                    |                        
+                                                                                                                  -------------------------------------      
+                                                                                                                  |                                   |      
+                                                                                                               A {0-6}                          <END_OF_LINE>
+                                                                                                                  |                                          
+                                                                                              ----------------------------------------                       
+                                                                                              |                                      |                       
+                                                                                           B {0-5}                          "f"[unassigned] {6}              
+                                                                                              |                                                              
+                                                                           ---------------------------------------                                           
+                                                                           |                                     |                                           
+                                                                        C {0-4}                         "d"[unassigned] {5}                                  
+                                                                           |                                                                                 
+                                                        --------------------------------------                                                               
+                                                        |                                    |                                                               
+                                                     D {0-3}                        "l"[unassigned] {4}                                                      
+                                                        |                                                                                                    
+                                      ------------------------------------                                                                                   
+                                      |                                  |                                                                                   
+                                   B {0-2}                      "r"[unassigned] {3}                                                                          
+                                      |                                                                                                                      
+                       -------------------------------                                                                                                       
+                       |                             |                                                                                                       
+                    A {0-1}                 "h"[unassigned] {2}                                                                                              
+                       |                                                                                                                                     
+             ---------------------                                                                                                                           
+             |                   |                                                                                                                           
+           A {0}        "k"[unassigned] {1}                                                                                                                  
+             |                                                                                                                                               
+    "g"[unassigned] {0}                                                                                                                                      
 
       `));
     });
@@ -850,25 +850,25 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(compare(parseTreeString, `
           
-                                                     S                   
-                                                     |                   
-                                        ---------------------------      
-                                        |                         |      
-                                        A                   <END_OF_LINE>
-                                        |                                
-                            -------------------------                    
-                            |                       |                    
-                            C                 h[unassigned]              
-                            |                                            
-                 ----------------------                                  
-                 |                    |                                  
-                 B              c[unassigned]                            
-                 |                                                       
-          ---------------                                                
-          |             |                                                
-          C       k[unassigned]                                          
-          |                                                              
-    a[unassigned]                                                        
+                                                                      S {0-4}                    
+                                                                         |                       
+                                                        -----------------------------------      
+                                                        |                                 |      
+                                                     A {0-3}                        <END_OF_LINE>
+                                                        |                                        
+                                      ------------------------------------                       
+                                      |                                  |                       
+                                   C {0-2}                      "h"[unassigned] {3}              
+                                      |                                                          
+                       -------------------------------                                           
+                       |                             |                                           
+                    B {0-1}                 "c"[unassigned] {2}                                  
+                       |                                                                         
+             ---------------------                                                               
+             |                   |                                                               
+           C {0}        "k"[unassigned] {1}                                                      
+             |                                                                                   
+    "a"[unassigned] {0}                                                                          
   
       `));
     });
@@ -938,33 +938,33 @@ describe("src/eliminateLeftRecursion", () => {
     it("results in the requisite parse tree" , () => {
       const content = `gdefefh
 `,
-        parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
           
-                                                                                            S                      
-                                                                                            |                      
-                                                                            ---------------------------------      
-                                                                            |                               |      
-                                                                            A                         <END_OF_LINE>
-                                                                            |                                      
-                                                          -------------------------------------                    
-                                                          |                                   |                    
-                                                          B                             h[unassigned]              
-                                                          |                                                        
-                                   ----------------------------------------------                                  
-                                   |                              |             |                                  
-                                   B                        e[unassigned] f[unassigned]                            
-                                   |                                                                               
-                 ------------------------------------                                                              
-                 |                    |             |                                                              
-                 B              e[unassigned] f[unassigned]                                                        
-                 |                                                                                                 
-          ---------------                                                                                          
-          |             |                                                                                          
-          A       d[unassigned]                                                                                    
-          |                                                                                                        
-    g[unassigned]                                                                                                  
+                                                                                                                              S {0-7}                        
+                                                                                                                                 |                           
+                                                                                                           --------------------------------------------      
+                                                                                                           |                                          |      
+                                                                                                        A {0-6}                                 <END_OF_LINE>
+                                                                                                           |                                                 
+                                                                                 -----------------------------------------------------                       
+                                                                                 |                                                   |                       
+                                                                              B {0-5}                                       "h"[unassigned] {6}              
+                                                                                 |                                                                           
+                                                ------------------------------------------------------------------                                           
+                                                |                                            |                   |                                           
+                                             B {0-3}                                "e"[unassigned] {4} "f"[unassigned] {5}                                  
+                                                |                                                                                                            
+                       ---------------------------------------------------                                                                                   
+                       |                             |                   |                                                                                   
+                    B {0-1}                 "e"[unassigned] {2} "f"[unassigned] {3}                                                                          
+                       |                                                                                                                                     
+             ---------------------                                                                                                                           
+             |                   |                                                                                                                           
+           A {0}        "d"[unassigned] {1}                                                                                                                  
+             |                                                                                                                                               
+    "g"[unassigned] {0}                                                                                                                                      
 
       `));
     });
@@ -1030,25 +1030,25 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(compare(parseTreeString, `
             
-                                        S                  
-                                        |                  
-                            -------------------------      
-                            |                       |      
-                            B                 <END_OF_LINE>
-                            |                              
-                 ----------------------                    
-                 |                    |                    
-                 A              e[unassigned]              
-                 |                                         
-                 B                                         
-                 |                                         
-          ---------------                                  
-          |             |                                  
-          A       e[unassigned]                            
-          |                                                
-          B                                                
-          |                                                
-    d[unassigned]                                          
+                                                   S {0-3}                   
+                                                      |                      
+                                      ---------------------------------      
+                                      |                               |      
+                                   B {0-2}                      <END_OF_LINE>
+                                      |                                      
+                       -------------------------------                       
+                       |                             |                       
+                    A {0-1}                 "e"[unassigned] {2}              
+                       |                                                     
+                    B {0-1}                                                  
+                       |                                                     
+             ---------------------                                           
+             |                   |                                           
+           A {0}        "e"[unassigned] {1}                                  
+             |                                                               
+           B {0}                                                             
+             |                                                               
+    "d"[unassigned] {0}                                                      
              
       `));
     });
@@ -1142,29 +1142,29 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(compare(parseTreeString, `
           
-                                                                   S                   
-                                                                   |                   
-                                                     ----------------------------      
-                                                     |                          |      
-                                                     A                    <END_OF_LINE>
-                                                     |                                 
-                                        ---------------------------                    
-                                        |                         |                    
-                                        B                   h[unassigned]              
-                                        |                                              
-                            -------------------------                                  
-                            |                       |                                  
-                            A                 f[unassigned]                            
-                            |                                                          
-                 ----------------------                                                
-                 |                    |                                                
-                 C              k[unassigned]                                          
-                 |                                                                     
-          ---------------                                                              
-          |             |                                                              
-          A       e[unassigned]                                                        
-          |                                                                            
-    b[unassigned]                                                                      
+                                                                                          S {0-5}                    
+                                                                                             |                       
+                                                                           ------------------------------------      
+                                                                           |                                  |      
+                                                                        A {0-4}                         <END_OF_LINE>
+                                                                           |                                         
+                                                        --------------------------------------                       
+                                                        |                                    |                       
+                                                     B {0-3}                        "h"[unassigned] {4}              
+                                                        |                                                            
+                                      ------------------------------------                                           
+                                      |                                  |                                           
+                                   A {0-2}                      "f"[unassigned] {3}                                  
+                                      |                                                                              
+                       -------------------------------                                                               
+                       |                             |                                                               
+                    C {0-1}                 "k"[unassigned] {2}                                                      
+                       |                                                                                             
+             ---------------------                                                                                   
+             |                   |                                                                                   
+           A {0}        "e"[unassigned] {1}                                                                          
+             |                                                                                                       
+    "b"[unassigned] {0}                                                                                              
   
       `));
     });
@@ -1298,25 +1298,25 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(compare(parseTreeString, `
       
-                                      S                    
-                                      |                    
-                        -----------------------------      
-                        |                           |      
-                        T                     <END_OF_LINE>
-                        |                                  
-                        B                                  
-                        |                                  
-                        C                                  
-                        |                                  
-          -----------------------------                    
-          |             |             |                    
-          A       +[unassigned]       A                    
-          |                           |                    
-          T                           T                    
-          |                           |                    
-          V                           V                    
-          |                           |                    
-    n[unassigned]               n[unassigned]              
+                                                 S {0-3}                     
+                                                    |                        
+                                 --------------------------------------      
+                                 |                                    |      
+                              T {0-2}                           <END_OF_LINE>
+                                 |                                           
+                              B {0-2}                                        
+                                 |                                           
+                              C {0-2}                                        
+                                 |                                           
+             -----------------------------------------                       
+             |                   |                   |                       
+           A {0}        "+"[unassigned] {1}        A {2}                     
+             |                                       |                       
+           T {0}                                   T {2}                     
+             |                                       |                       
+           V {0}                                   V {2}                     
+             |                                       |                       
+    "n"[unassigned] {0}                     "n"[unassigned] {2}              
     
       `));
     });
@@ -1380,21 +1380,21 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(compare(parseTreeString, `
       
-                                     S                     
-                                     |                     
-                     --------------------------------      
-                     |                              |      
-                     T                        <END_OF_LINE>
-                     |                                     
-          ----------------------                           
-          |                    |                           
-    a[unassigned]              E                           
-                               |                           
-                        ---------------                    
-                        |             |                    
-                        A       f[unassigned]              
-                        |                                  
-                  g[unassigned]                            
+                                              S {0-3}                        
+                                                 |                           
+                            -------------------------------------------      
+                            |                                         |      
+                         T {0-2}                                <END_OF_LINE>
+                            |                                                
+             -------------------------------                                 
+             |                             |                                 
+    "a"[unassigned] {0}                 E {1-2}                              
+                                           |                                 
+                                 ---------------------                       
+                                 |                   |                       
+                               A {1}        "f"[unassigned] {2}              
+                                 |                                           
+                        "g"[unassigned] {1}                                  
     
       `));
     });
@@ -1448,8 +1448,7 @@ function parseTreeStringFromBNFAndContent(bnf, content, startRuleName = null) {
         exampleParser = exampleParserFromRulesAndStartRuleName(rules, startRuleName),
         tokens = exampleLexer.tokenise(content),
         node = exampleParser.parse(tokens),
-        abridged = true,
-        parseTree = node.asParseTree(tokens, abridged);
+        parseTree = node.asParseTree(tokens);
 
   parseTree.shiftLine();  //
 

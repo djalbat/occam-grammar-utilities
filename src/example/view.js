@@ -32,9 +32,25 @@ class View extends Element {
 
   update() {
     try {
-      const content = this.getContent(),
-            tokens = this.exampleLexer.tokenise(content),
-            node = this.exampleParser.parse(tokens);
+      const bnf = this.getBNF(),
+            content = this.getContent(),
+            startRuleName = this.getStartRuleName(),
+            lexicalEntries = this.getLexicalEntries();
+
+      let rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const multiLine = true,
+            rulesString = rulesAsString(rules, multiLine),
+            adjustedBNF = rulesString;  ///
+
+      this.setAdjustedBNF(adjustedBNF);
+
+      const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
+            exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName),
+            tokens = exampleLexer.tokenise(content),
+            node = exampleParser.parse(tokens);
 
       let parseTree = null;
 
@@ -107,61 +123,28 @@ class View extends Element {
 
     this.setStartRuleName(startRuleName);
 
-    // const bnf = this.getBNF(),
-    //   content = this.getContent(),
-    //   startRuleName = this.getStartRuleName(),
-    //   lexicalEntries = this.getLexicalEntries();
-
-    let rules = rulesFromBNF(bnf);
-
-    rules = eliminateLeftRecursion(rules);  ///
-
-    const multiLine = true,
-          rulesString = rulesAsString(rules, multiLine),
-          adjustedBNF = rulesString;  ///
-
-    this.setAdjustedBNF(adjustedBNF);
-
-    this.exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries);
-
-    this.exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName);
-
     this.update();
   }
 
   static initialBNF = `
+      S ::= A... <END_OF_LINE> ;
 
-     expression  ::=  term... <END_OF_LINE> ;
+      A ::= B "g"
       
-           term  ::=  "(" term ")" 
+          | "e"
       
-                   |  term ( 
-                      
-                             "/"  (1)
-                              
-                             | 
-                              
-                             "*"  (2)
-                              
-                             | 
-                              
-                             "+"  (3)
-                              
-                             | 
-                              
-                             "-"  (4)
-                            
-                           ) term
-                   
-                   |  number 
-                                                     
-                   ;
+          ;
       
-         number  ::=  /\\d+/ ;
-        
+      B ::= A "h"
+      
+          | B "f"
+      
+          | "d"
+  
+          ;
   `
 
-  static initialContent = `1+2
+  static initialContent = `ehfg
 `;
 
   static initialStartRuleName = "S";

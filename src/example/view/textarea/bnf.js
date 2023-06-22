@@ -36,6 +36,6 @@ class BNFTextarea extends Textarea {
 
 export default withStyle(BNFTextarea)`
 
-  height: 24rem;
+  height: 45rem;
 
 `;

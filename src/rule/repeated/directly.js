@@ -9,13 +9,13 @@ import { rewriteDirectlyRepeatedNodes } from "../../utilities/nodes";
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyRepeatedRule extends Rule {
-  parse(state, callback, precedence, parentRuleName) {
-    const ruleNode = super.parse(state, callback, precedence, parentRuleName);
+  parse(state, callback) {
+    const ruleNode = super.parse(state, callback);
 
     if (ruleNode !== null) {
-      // const nonTerminalNode = ruleNode;  ///
-      //
-      // rewriteDirectlyRepeatedNodes(nonTerminalNode);
+      const nonTerminalNode = ruleNode;  ///
+
+      rewriteDirectlyRepeatedNodes(nonTerminalNode);
     }
 
     return ruleNode;
