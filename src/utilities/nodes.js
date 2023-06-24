@@ -10,7 +10,7 @@ import IndirectlyRepeatedNode from "../node/repeated/indirectly";
 
 import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName } from "../utilities/ruleName";
 
-const { front, first, push, clear, filter, unshift, backwardsForEach } = arrayUtilities;
+const { front, first, push, clear, filter, unshift, backwardsSome } = arrayUtilities;
 
 export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
   let childNodes = nonTerminalNode.getChildNodes(),
@@ -18,7 +18,7 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
       indirectlyRepeatedNodesLength = indirectlyRepeatedNodes.length;
 
   while (indirectlyRepeatedNodesLength > 0) {
-    backwardsForEach(indirectlyRepeatedNodes, (indirectlyRepeatedNode) => {
+    backwardsSome(indirectlyRepeatedNodes, (indirectlyRepeatedNode) => {
       const indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
             indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
             frontChildNodes = front(childNodes),
@@ -27,12 +27,14 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
       childNodes = frontChildNodes; ///
 
       const precedence = indirectlyRepeatedNode.getPrecedence(),
-            rewrittenNode = RewrittenNode.fromRuleNameChildNodesAndPrecedence(ruleName, childNodes, precedence),
+            rewrittenNode = RewrittenNode.fromRuleNameAndChildNodes(ruleName, childNodes),
             indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes(),
             replacementChildNodes = [
               rewrittenNode,
               ...indirectlyRepeatedNodeChildNodes
             ];
+
+      nonTerminalNode.setPrecedence(precedence);
 
       childNodes = nonTerminalNode.getChildNodes();
 

@@ -10,14 +10,13 @@ export default class RewrittenNode extends NonTerminalNode {
           reducedRuleName = reducedNodeRuleName,  ///
           ruleName = ruleNameFromReducedRuleName(reducedRuleName),
           childNodes = reducedNode.getChildNodes(),
-          rewrittenNode = new RewrittenNode(ruleName, childNodes);
+          precedence = reducedNode.getPrecedence(),
+          rewrittenNode = new RewrittenNode(ruleName, childNodes, precedence);
 
     return rewrittenNode;
   }
 
-  static fromRuleNameChildNodesAndPrecedence(ruleName, childNodes, precedence) {
-    const  rewrittenNode = new RewrittenNode(ruleName, childNodes, precedence);
+  static fromRuleNameAndChildNodes(ruleName, childNodes) { return NonTerminalNode.fromRuleNameAndChildNodes(RewrittenNode, ruleName, childNodes); }
 
-    return rewrittenNode;
-  }
+  static fromRuleNameChildNodesAndPrecedence(ruleName, childNodes, precedence) { return NonTerminalNode.fromRuleNameChildNodesAndPrecedence(RewrittenNode, ruleName, childNodes, precedence); }
 }

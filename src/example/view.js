@@ -127,27 +127,35 @@ class View extends Element {
   }
 
   static initialBNF = `
-      S ::= A... <END_OF_LINE> ;
+      expression ::= term... <END_OF_LINE> ;
 
-      A ::= B "g"
-      
-          | "e"
-      
-          ;
-      
-      B ::= A "h"
-      
-          | B "f"
-      
-          | "d"
-  
-          ;
+            term ::= term (
+            
+                          "/" (1)
+                          
+                          |
+            
+                          "*" (2)
+                          
+                          |
+                          
+                          "+" (3)
+                          
+                          |
+                          
+                          "-" (4)
+                          
+                          ) term 
+                          
+                   | number ;
+                    
+        number ::= /\\d+/ ;
   `
 
-  static initialContent = `ehfg
+  static initialContent = `1+2/3
 `;
 
-  static initialStartRuleName = "S";
+  static initialStartRuleName = "expression";
 
   static initialLexicalEntries = [{
     unassigned: "."
