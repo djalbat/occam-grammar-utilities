@@ -127,29 +127,31 @@ class View extends Element {
   }
 
   static initialBNF = `
-      expression ::= term... <END_OF_LINE> ;
+  
+    term  ::=  "1"
 
-            term ::= term (
+               (
+
+                 ( "+" "2" "/" )   (4)
+
+                 |
+
+                 "+"               (0)
+
+               )
+
+               term
+
+            |  "2" "/" "3"         (1)
+
+            |  "3"                 (3)
             
-                          "/" (1)
-                          
-                          |
-            
-                          "*" (2)
-                          
-                          |
-                          
-                          "+" (3)
-                          
-                          |
-                          
-                          "-" (4)
-                          
-                          ) term 
-                          
-                   | number ;
-                    
-        number ::= /\\d+/ ;
+            |  number 
+
+            ;
+
+  number  ::=  /\\d+/ ;
+
   `
 
   static initialContent = `1+2/3

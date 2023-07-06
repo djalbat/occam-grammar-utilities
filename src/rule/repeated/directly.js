@@ -1,6 +1,7 @@
 "use strict";
 
 import { Rule } from "occam-parsers";
+import { arrayUtilities } from "necessary";
 
 import DirectlyRepeatedNode from "../../node/repeated/directly";
 import DirectlyRepeatedDefinition from "../../definition/repeated/directly"
@@ -8,17 +9,20 @@ import DirectlyRepeatedDefinition from "../../definition/repeated/directly"
 import { rewriteDirectlyRepeatedNodes } from "../../utilities/nodes";
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
-export default class DirectlyRepeatedRule extends Rule {
-  parse(state, callback) {
-    const ruleNode = super.parse(state, callback);
+const { first } = arrayUtilities;
 
-    if (ruleNode !== null) {
-      const nonTerminalNode = ruleNode;  ///
+export default class DirectlyRepeatedRule extends Rule {
+  parse(nodes, state, callback) {
+    const parsed = super.parse(nodes, state, callback);
+
+    if (parsed) {
+      const firstNode = first(nodes),
+            nonTerminalNode = firstNode;  ///
 
       rewriteDirectlyRepeatedNodes(nonTerminalNode);
     }
 
-    return ruleNode;
+    return parsed;
   }
 
   static fromRuleAndCycles(rule, cycles) {

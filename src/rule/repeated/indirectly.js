@@ -14,16 +14,17 @@ const { first } = arrayUtilities,
       { EpsilonPart } = Parts;
 
 export default class IndirectlyRepeatedRule extends Rule {
-  parse(state, callback) {
-    const ruleNode = super.parse(state, callback);
+  parse(nodes, state, callback) {
+    const parsed = super.parse(nodes, state, callback);
 
-    if (ruleNode !== null) {
-      const nonTerminalNode = ruleNode; ///
+    if (parsed) {
+      const firstNode = first(nodes),
+            nonTerminalNode = firstNode; ///
 
       removeEpsilonNodes(nonTerminalNode);
     }
 
-    return ruleNode;
+    return parsed;
   }
 
   static fromRuleAndLeftRecursiveRuleName(rule, leftRecursiveRuleName) {
