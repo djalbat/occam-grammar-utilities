@@ -142,26 +142,26 @@ class View extends Element {
   }
 
   static initialBNF = `
-  
-      S ::= A... <END_OF_LINE> ;
-
-      A ::= B "h" 
-        
-          | "g" 
-   
-          ;
-  
-      B ::= B "e" "f"
       
-          | A "d" 
-      
-          | "c" 
-  
-          ;
+     expression ::= term... <END_OF_LINE> ;
 
+          term  ::=  term "/" term (4) 
+                            
+                  |  term "*" term (3) 
+                            
+                  |  term "+" term (2) 
+                            
+                  |  term "-" term (1) 
+                            
+                  |  number            
+      
+                  ;
+                  
+         number ::= /\\d+/ ;
+                  
   `
 
-  static initialContent = `gdefefh
+  static initialContent = `1+2/3
 `;
 
   static initialStartRuleName = "";
@@ -197,33 +197,3 @@ function exampleParserFromRulesAndStartRuleName(rules, startRuleName) {
 
   return exampleParser;
 }
-
-`
-
-
-    term  ::=  "1"
-
-               (
-
-                 ( "+" "2" "/" )   (4)
-
-                 |
-
-                 "+"               (0)
-
-               )
-
-               term
-
-            |  "2" "/" "3"         (1)
-
-            |  "3"                 (3)
-            
-            |  number 
-
-            ;
-
-  number  ::=  /\\d+/ ;
-
-
-`

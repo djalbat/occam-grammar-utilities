@@ -132,7 +132,9 @@ function indirectlyRepeatedDefinitionsFromDefinitions(definitions) {
 
     parts.shift();
 
-    definition = Definition.fromParts(parts);
+    const precedence = definition.getPrecedence();
+
+    definition = Definition.fromPartsAndPrecedence(parts, precedence);
 
     const indirectlyRepeatedDefinition = definition;  ///
 

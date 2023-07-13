@@ -10,7 +10,7 @@ import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyRepeatedRule extends Rule {
   rewriteNonTerminalNode(nonTerminalNode) {
-    rewriteDirectlyRepeatedNodes(nonTerminalNode);
+    // rewriteDirectlyRepeatedNodes(nonTerminalNode);
   }
 
   static fromRuleAndCycles(rule, cycles) {

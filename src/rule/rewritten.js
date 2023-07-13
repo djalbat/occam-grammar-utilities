@@ -8,15 +8,15 @@ import { pathsFromRuleNameAndCycles } from "../utilities/path";
 import { rewriteReducedNodes, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRepeatedNodes } from "../utilities/nodes";
 
 export default class RewrittenRule extends Rule {
-  rewriteNonTerminalNode(nonTerminalNode) {
-    rewriteDirectlyRepeatedNodes(nonTerminalNode);
-
-    const parentNode = rewriteIndirectlyRepeatedNodes(nonTerminalNode);
-
-    nonTerminalNode = parentNode; ///
-
-    rewriteReducedNodes(nonTerminalNode);
-  }
+  // rewriteNonTerminalNode(nonTerminalNode) {
+  //   rewriteDirectlyRepeatedNodes(nonTerminalNode);
+  //
+  //   const parentNode = rewriteIndirectlyRepeatedNodes(nonTerminalNode);
+  //
+  //   nonTerminalNode = parentNode; ///
+  //
+  //   rewriteReducedNodes(nonTerminalNode);
+  // }
 
   static fromRuleAndCycles(rule, cycles, ruleMap) {
     const ruleName = rule.getName(),
