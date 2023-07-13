@@ -1,36 +1,21 @@
 "use strict";
 
 import { Rule } from "occam-parsers";
-import { arrayUtilities } from "necessary";
 
 import RewrittenDefinition from "../definition/rewritten";
 
 import { pathsFromRuleNameAndCycles } from "../utilities/path";
 import { rewriteReducedNodes, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRepeatedNodes } from "../utilities/nodes";
 
-const { first } = arrayUtilities;
-
 export default class RewrittenRule extends Rule {
-  parse(nodes, state, callback) {
-    const parsed = super.parse(nodes, state, callback);
+  rewriteNonTerminalNode(nonTerminalNode) {
+    rewriteDirectlyRepeatedNodes(nonTerminalNode);
 
-    if (parsed) {
-      let nonTerminalNode;
+    const parentNode = rewriteIndirectlyRepeatedNodes(nonTerminalNode);
 
-      const firstNode = first(nodes);
+    nonTerminalNode = parentNode; ///
 
-      nonTerminalNode = firstNode;  ///
-
-      rewriteDirectlyRepeatedNodes(nonTerminalNode);
-
-      const parentNode = rewriteIndirectlyRepeatedNodes(nonTerminalNode);
-
-      nonTerminalNode = parentNode; ///
-
-      rewriteReducedNodes(nonTerminalNode);
-    }
-
-    return parsed;
+    rewriteReducedNodes(nonTerminalNode);
   }
 
   static fromRuleAndCycles(rule, cycles, ruleMap) {

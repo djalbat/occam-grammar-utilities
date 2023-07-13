@@ -10,7 +10,7 @@ import IndirectlyRepeatedNode from "../node/repeated/indirectly";
 
 import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName } from "../utilities/ruleName";
 
-const { front, first, push, clear, filter, unshift, backwardsSome } = arrayUtilities;
+const { front, first, push, clear, filter, backwardsSome } = arrayUtilities;
 
 export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
   let childNodes = nonTerminalNode.getChildNodes(),
@@ -39,6 +39,8 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
       childNodes = nonTerminalNode.getChildNodes();
 
       replaceAllChildNodes(childNodes, replacementChildNodes);
+
+      removeEpsilonNodes(nonTerminalNode);
 
       nonTerminalNode = rewrittenNode;  ///
 
@@ -69,7 +71,7 @@ export function rewriteDirectlyRepeatedNodes(nonTerminalNode) {
     directlyRepeatedNodes.forEach((directlyRepeatedNodes) => {
       const directlyRepeatedNodesChildNodes = directlyRepeatedNodes.getChildNodes();
 
-      unshift(replacementChildNodes, directlyRepeatedNodesChildNodes);
+      push(replacementChildNodes, directlyRepeatedNodesChildNodes);
     });
 
     replaceChildNodes(childNodes, replacedChildNodes, replacementChildNodes);

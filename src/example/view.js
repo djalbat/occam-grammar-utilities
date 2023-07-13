@@ -32,25 +32,26 @@ class View extends Element {
 
   update() {
     try {
-      const bnf = this.getBNF(),
-            content = this.getContent(),
-            startRuleName = this.getStartRuleName(),
-            lexicalEntries = this.getLexicalEntries();
+      // const bnf = this.getBNF(),
+      //       startRuleName = this.getStartRuleName(),
+      //       lexicalEntries = this.getLexicalEntries();
+      //
+      // let rules = rulesFromBNF(bnf);
+      //
+      // rules = eliminateLeftRecursion(rules);  ///
+      //
+      // const multiLine = true,
+      //       rulesString = rulesAsString(rules, multiLine),
+      //       adjustedBNF = rulesString;  ///
+      //
+      // this.setAdjustedBNF(adjustedBNF);
+      //
+      // const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
+      //       exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName);
 
-      let rules = rulesFromBNF(bnf);
-
-      rules = eliminateLeftRecursion(rules);  ///
-
-      const multiLine = true,
-            rulesString = rulesAsString(rules, multiLine),
-            adjustedBNF = rulesString;  ///
-
-      this.setAdjustedBNF(adjustedBNF);
-
-      const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
-            exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName),
-            tokens = exampleLexer.tokenise(content),
-            node = exampleParser.parse(tokens);
+      const content = this.getContent(),
+            tokens = this.exampleLexer.tokenise(content),
+            node = this.exampleParser.parse(tokens);
 
       let parseTree = null;
 
@@ -123,41 +124,47 @@ class View extends Element {
 
     this.setStartRuleName(startRuleName);
 
+    let rules = rulesFromBNF(bnf);
+
+    rules = eliminateLeftRecursion(rules);  ///
+
+    const multiLine = true,
+          rulesString = rulesAsString(rules, multiLine),
+          adjustedBNF = rulesString;  ///
+
+    this.setAdjustedBNF(adjustedBNF);
+
+    this.exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries);
+
+    this.exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName);
+
     this.update();
   }
 
   static initialBNF = `
   
-    term  ::=  "1"
+      S ::= A... <END_OF_LINE> ;
 
-               (
-
-                 ( "+" "2" "/" )   (4)
-
-                 |
-
-                 "+"               (0)
-
-               )
-
-               term
-
-            |  "2" "/" "3"         (1)
-
-            |  "3"                 (3)
-            
-            |  number 
-
-            ;
-
-  number  ::=  /\\d+/ ;
+      A ::= B "h" 
+        
+          | "g" 
+   
+          ;
+  
+      B ::= B "e" "f"
+      
+          | A "d" 
+      
+          | "c" 
+  
+          ;
 
   `
 
-  static initialContent = `1+2/3
+  static initialContent = `gdefefh
 `;
 
-  static initialStartRuleName = "expression";
+  static initialStartRuleName = "";
 
   static initialLexicalEntries = [{
     unassigned: "."
@@ -190,3 +197,33 @@ function exampleParserFromRulesAndStartRuleName(rules, startRuleName) {
 
   return exampleParser;
 }
+
+`
+
+
+    term  ::=  "1"
+
+               (
+
+                 ( "+" "2" "/" )   (4)
+
+                 |
+
+                 "+"               (0)
+
+               )
+
+               term
+
+            |  "2" "/" "3"         (1)
+
+            |  "3"                 (3)
+            
+            |  number 
+
+            ;
+
+  number  ::=  /\\d+/ ;
+
+
+`
