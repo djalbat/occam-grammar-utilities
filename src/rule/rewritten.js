@@ -2,22 +2,12 @@
 
 import { Rule } from "occam-parsers";
 
+import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
 
 import { pathsFromRuleNameAndCycles } from "../utilities/path";
-import { rewriteReducedNodes, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRepeatedNodes } from "../utilities/nodes";
 
 export default class RewrittenRule extends Rule {
-  // rewriteNonTerminalNode(nonTerminalNode) {
-  //   rewriteDirectlyRepeatedNodes(nonTerminalNode);
-  //
-  //   const parentNode = rewriteIndirectlyRepeatedNodes(nonTerminalNode);
-  //
-  //   nonTerminalNode = parentNode; ///
-  //
-  //   rewriteReducedNodes(nonTerminalNode);
-  // }
-
   static fromRuleAndCycles(rule, cycles, ruleMap) {
     const ruleName = rule.getName(),
           definitions = [],
@@ -43,7 +33,7 @@ export default class RewrittenRule extends Rule {
 
     const name = ruleName,  ///
           ambiguous = rule.isAmbiguous(),
-          NonTerminalNode = rule.getNonTerminalNode(),
+          NonTerminalNode = RewrittenNode,
           rewrittenRule = new RewrittenRule(name, ambiguous, definitions, NonTerminalNode);
 
     return rewrittenRule;

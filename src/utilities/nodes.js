@@ -13,30 +13,36 @@ import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName } f
 const { front, first, push, clear, filter, backwardsSome } = arrayUtilities;
 
 export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
-  let childNodes = nonTerminalNode.getChildNodes(),
+  let parentNode,
+      childNodes = nonTerminalNode.getChildNodes(),
+      precedence = nonTerminalNode.getPrecedence(),
       indirectlyRepeatedNodes = findIndirectlyRepeatedNodes(childNodes),
       indirectlyRepeatedNodesLength = indirectlyRepeatedNodes.length;
 
   while (indirectlyRepeatedNodesLength > 0) {
     backwardsSome(indirectlyRepeatedNodes, (indirectlyRepeatedNode) => {
-      const indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
+      const indirectlyRepeatedNodePrecedence = indirectlyRepeatedNode.getPrecedence(),
+            indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
             indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
             frontChildNodes = front(childNodes),
             ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);
 
       childNodes = frontChildNodes; ///
 
-      const precedence = indirectlyRepeatedNode.getPrecedence(),
-            rewrittenNode = RewrittenNode.fromRuleNameAndChildNodes(ruleName, childNodes),
+      const rewrittenNode = RewrittenNode.fromRuleNameAndChildNodes(ruleName, childNodes),
             indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes(),
             replacementChildNodes = [
               rewrittenNode,
               ...indirectlyRepeatedNodeChildNodes
             ];
 
-      nonTerminalNode.setPrecedence(precedence);
+      rewrittenNode.rewritePrecedence(precedence);
+
+      precedence = indirectlyRepeatedNodePrecedence;  ///
 
       childNodes = nonTerminalNode.getChildNodes();
+
+      nonTerminalNode.rewritePrecedence(precedence);
 
       replaceAllChildNodes(childNodes, replacementChildNodes);
 
@@ -54,14 +60,15 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
     indirectlyRepeatedNodesLength = indirectlyRepeatedNodes.length;
   }
 
-  const parentNode = nonTerminalNode; ///
+  parentNode = nonTerminalNode; ///
 
   return parentNode;
 }
 
 export function rewriteDirectlyRepeatedNodes(nonTerminalNode) {
-  let childNodes = nonTerminalNode.getChildNodes(),
-      directlyRepeatedNodes = findDirectlyRepeatedNodes(childNodes),
+  const childNodes = nonTerminalNode.getChildNodes();
+
+  let directlyRepeatedNodes = findDirectlyRepeatedNodes(childNodes),
       directlyRepeatedNodesLength = directlyRepeatedNodes.length;
 
   while (directlyRepeatedNodesLength > 0) {
@@ -75,8 +82,6 @@ export function rewriteDirectlyRepeatedNodes(nonTerminalNode) {
     });
 
     replaceChildNodes(childNodes, replacedChildNodes, replacementChildNodes);
-
-    childNodes = nonTerminalNode.getChildNodes();
 
     directlyRepeatedNodes = findDirectlyRepeatedNodes(childNodes);
 

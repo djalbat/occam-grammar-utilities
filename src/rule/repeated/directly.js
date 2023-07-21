@@ -5,14 +5,9 @@ import { Rule } from "occam-parsers";
 import DirectlyRepeatedNode from "../../node/repeated/directly";
 import DirectlyRepeatedDefinition from "../../definition/repeated/directly"
 
-import { rewriteDirectlyRepeatedNodes } from "../../utilities/nodes";
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyRepeatedRule extends Rule {
-  rewriteNonTerminalNode(nonTerminalNode) {
-    // rewriteDirectlyRepeatedNodes(nonTerminalNode);
-  }
-
   static fromRuleAndCycles(rule, cycles) {
     const ruleName = rule.getName(),
           definitions = [];
