@@ -1,13 +1,15 @@
 "use strict";
 
+import { EMPTY_STRING } from "../constants";
+
 export function ruleNameFromReducedRuleName(reducedRuleName) {
-  const ruleName = reducedRuleName.replace(/(__|_)$/g, "");
+  const ruleName = reducedRuleName.replace(/_$/g, EMPTY_STRING);
 
   return ruleName;
 }
 
 export function ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName) {
-  const ruleName = indirectlyRepeatedRuleName.replace(/^[^~]+~|~$/g, "");
+  const ruleName = indirectlyRepeatedRuleName.replace(/^[^~]+~/g, EMPTY_STRING);
 
   return ruleName;
 }

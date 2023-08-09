@@ -4,6 +4,8 @@ import withStyle from "easy-with-style";  ///
 
 import Textarea from "../textarea";
 
+import { EMPTY_STRING } from "../../constants";
+
 class ParseTreeTextarea extends Textarea {
   setParseTree(parseTree) {
     if (parseTree !== null) {
@@ -19,7 +21,7 @@ class ParseTreeTextarea extends Textarea {
   }
 
   clearParseTree() {
-    const value = "";
+    const value = EMPTY_STRING;
 
     this.setValue(value);
   }
