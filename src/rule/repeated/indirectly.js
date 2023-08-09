@@ -68,7 +68,8 @@ export default class IndirectlyRepeatedRule extends Rule {
     const definitionsLength = definitions.length;
 
     if (definitionsLength === 0) {
-      const epsilonDefinitions = epsilonDefinitionsFromNothing();
+      const precedence = null,
+            epsilonDefinitions = epsilonDefinitionsFromPrecedence(precedence);
 
       definitions = epsilonDefinitions; ///
     } else {
@@ -108,12 +109,12 @@ function areFirstPartsEqual(definitions) {
   return firstPartsEqual;
 }
 
-function epsilonDefinitionsFromNothing() {
+function epsilonDefinitionsFromPrecedence(precedence) {
   const epsilonPart = EpsilonPart.fromNothing(),
         parts = [
           epsilonPart
         ],
-        definition = Definition.fromParts(parts),
+        definition = Definition.fromPartsAndPrecedence(parts, precedence),
         epsilonDefinition = definition, ///
         epsilonDefinitions = [
           epsilonDefinition
