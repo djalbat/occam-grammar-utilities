@@ -145,9 +145,9 @@ class View extends Element {
       
      expression ::= term... "." ;
 
-          term  ::=  argument "/" argument (4)
+          term  ::=  term "/" term (4)
                             
-                  |  argument "+" argument (2)
+                  |  term "+" term (2)
                             
                   |  /\\d+/            
       
