@@ -142,7 +142,6 @@ class View extends Element {
   }
 
   static initialBNF = `
-      
      expression ::= term... "." ;
 
           term  ::=  argument ( "/" (4)
@@ -165,7 +164,7 @@ class View extends Element {
 
   `
 
-  static initialContent = "1+2/3.";
+  static initialContent = "1-3/2*3.";
 
   static initialStartRuleName = "";
 

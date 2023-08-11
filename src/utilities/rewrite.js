@@ -23,19 +23,12 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
     const indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
           indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
           parentNodeNodeRuleName = parentNode.getRuleName(),
-          leftRecursiveRuleName = leftRecursiveRuleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName),
           ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);
 
     if (parentNodeNodeRuleName === ruleName) {
       const precedence = indirectlyRepeatedNode.getPrecedence();
 
       parentNode.setPrecedence(precedence);
-    }
-
-    if (leftRecursiveRuleName === parentNodeNodeRuleName) {
-      const precedence = parentNode.getPrecedence();
-
-      // nonTerminalNode.setPrecedence(precedence);
     }
 
     const replacementChildNodes = replacementChildNodesFromNonTerminalNodeNodeAndIndirectlyRepeatedNode(nonTerminalNode, indirectlyRepeatedNode);
