@@ -16,7 +16,7 @@ export default class IndirectlyRepeatedRule extends Rule {
   static fromRuleAndLeftRecursiveRuleName(rule, leftRecursiveRuleName) {
     let definitions = rule.getDefinitions();
 
-    definitions = definitions.filter((definition) => {
+    let leftRecursiveDefinitions = definitions.filter((definition) => {  ///
       const definitionLeftRecursive = isDefinitionLeftRecursive(definition);
 
       if (definitionLeftRecursive) {
@@ -56,41 +56,38 @@ export default class IndirectlyRepeatedRule extends Rule {
       }
     });
 
-    definitions = definitions.filter((definition) => {
-      const parts = definition.getParts(),
+    const firstPartsEqual = areFirstPartsEqual(leftRecursiveDefinitions);
+
+    if (!firstPartsEqual) {
+      const ruleName = rule.getName();
+
+      throw new Error(`The first parts of the '${leftRecursiveRuleName}' left recursive definitions in the '${ruleName}' rule are not equal.`);
+    }
+
+    let precedence = null;
+
+    leftRecursiveDefinitions = leftRecursiveDefinitions.filter((leftRecursiveDefinition) => {
+      const parts = leftRecursiveDefinition.getParts(),
             partsLength = parts.length;
 
-      if (partsLength > 1) {
+      if (partsLength === 1) {
+        precedence = leftRecursiveDefinition.getPrecedence();
+      } else  {
         return true;
       }
     });
 
-    const definitionsLength = definitions.length;
-
-    if (definitionsLength === 0) {
-      const precedence = null,
-            epsilonDefinitions = epsilonDefinitionsFromPrecedence(precedence);
-
-      definitions = epsilonDefinitions; ///
-    } else {
-      const firstPartsEqual = areFirstPartsEqual(definitions);
-
-      if (!firstPartsEqual) {
-        const ruleName = rule.getName();
-
-        throw new Error(`The first parts of the '${leftRecursiveRuleName}' left recursive definitions in the '${ruleName}' rule are not equal.`);
-      }
-
-      const indirectlyRepeatedDefinitions = indirectlyRepeatedDefinitionsFromDefinitions(definitions);
-
-      definitions = indirectlyRepeatedDefinitions;  ///
-    }
-
     const ruleName = rule.getName(),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
+          leftRecursiveDefinitionsLength = leftRecursiveDefinitions.length,
           name = indirectlyRepeatedRuleName,  ///
-          ambiguous = false,
-          NonTerminalNode = IndirectlyRepeatedNode,  ///
+          ambiguous = false;
+
+    definitions = (leftRecursiveDefinitionsLength === 0) ?
+                    definitionsFromPrecedence(precedence) :
+                      definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions);
+
+    const NonTerminalNode = IndirectlyRepeatedNode,  ///
           indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, ambiguous, definitions, NonTerminalNode);
 
     return indirectlyRepeatedRule;
@@ -109,23 +106,22 @@ function areFirstPartsEqual(definitions) {
   return firstPartsEqual;
 }
 
-function epsilonDefinitionsFromPrecedence(precedence) {
+function definitionsFromPrecedence(precedence) {
   const epsilonPart = EpsilonPart.fromNothing(),
         parts = [
           epsilonPart
         ],
         definition = Definition.fromPartsAndPrecedence(parts, precedence),
-        epsilonDefinition = definition, ///
-        epsilonDefinitions = [
-          epsilonDefinition
+        definitions = [
+          definition
         ];
 
-  return epsilonDefinitions;
+  return definitions;
 }
 
-function indirectlyRepeatedDefinitionsFromDefinitions(definitions) {
-  const indirectlyRepeatedDefinitions = definitions.map((definition) => { ///
-    let parts = definition.getParts();
+function definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions) {
+  const definitions = leftRecursiveDefinitions.map((leftRecursiveDefinition) => { ///
+    let parts = leftRecursiveDefinition.getParts();
 
     parts = [ ///
       ...parts
@@ -133,14 +129,11 @@ function indirectlyRepeatedDefinitionsFromDefinitions(definitions) {
 
     parts.shift();
 
-    const precedence = definition.getPrecedence();
+    const precedence = leftRecursiveDefinition.getPrecedence(),
+          definition = Definition.fromPartsAndPrecedence(parts, precedence);
 
-    definition = Definition.fromPartsAndPrecedence(parts, precedence);
-
-    const indirectlyRepeatedDefinition = definition;  ///
-
-    return indirectlyRepeatedDefinition;
+    return definition;
   });
 
-  return indirectlyRepeatedDefinitions;
+  return definitions;
 }
