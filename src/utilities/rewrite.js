@@ -27,15 +27,17 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
           ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);
 
     if (parentNodeNodeRuleName === ruleName) {
-      const precedence = indirectlyRepeatedNode.getPrecedence();
+      const recursively = false,
+            precedence = indirectlyRepeatedNode.getPrecedence(recursively);
 
       parentNode.setPrecedence(precedence);
     }
 
     if (leftRecursiveRuleName === parentNodeNodeRuleName) {
-      const precedence = parentNode.getPrecedence();
+      const recursively = false,
+            precedence = parentNode.getPrecedence(recursively);
 
-      nonTerminalNode.setPrecedence(precedence);
+      // nonTerminalNode.setPrecedence(precedence);
     }
 
     const replacementChildNodes = replacementChildNodesFromNonTerminalNodeNodeAndIndirectlyRepeatedNode(nonTerminalNode, indirectlyRepeatedNode);
@@ -83,32 +85,39 @@ export function rewriteReducedNodes(nonTerminalNode) {
   const firstChildNode = first(childNodes),
         firstChildNodeReducedNode = (firstChildNode instanceof ReducedNode);
 
-  if (firstChildNodeReducedNode) {
-    const parentNode = nonTerminalNode, ///
-          reducedNode = firstChildNode, ///
-          replacedChildNode = reducedNode, ///
-          reducedNodeRuleName = reducedNode.getRuleName(),
-          parentNodeRuleName = parentNode.getRuleName(),
-          reducedRuleName = reducedNodeRuleName,  ///
-          parentRuleName = parentNodeRuleName,  ///
-          ruleName = ruleNameFromReducedRuleName(reducedRuleName),
-          replacementChildNodes = []; ///
-
-    if (ruleName === parentRuleName) {
-      const reducedNodeChildNodes = reducedNode.getChildNodes();
-
-      push(replacementChildNodes, reducedNodeChildNodes);
-    } else {
-      const childNodes = reducedNode.getChildNodes(),
-            precedence = reducedNode.getPrecedence(),
-            nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndPrecedence(ruleName, childNodes, precedence),
-            replacementChildNode = nonTerminalNode;  ///
-
-      replacementChildNodes.push(replacementChildNode);
-    }
-
-    replaceChildNode(parentNode, replacedChildNode, replacementChildNodes);
+  if (!firstChildNodeReducedNode) {
+    return;
   }
+
+  let replacementChildNodes;
+
+  const parentNode = nonTerminalNode, ///
+        reducedNode = firstChildNode, ///
+        replacedChildNode = reducedNode, ///
+        parentNodeRuleName = parentNode.getRuleName(),
+        reducedNodeRuleName = reducedNode.getRuleName(),
+        reducedNodePrecedence = reducedNode.getPrecedence(),
+        reducedRuleName = reducedNodeRuleName,  ///
+        parentRuleName = parentNodeRuleName,  ///
+        precedence = reducedNodePrecedence, ///
+        ruleName = ruleNameFromReducedRuleName(reducedRuleName);
+
+  if (ruleName === parentRuleName) {
+    const reducedNodeChildNodes = reducedNode.getChildNodes();
+
+    replacementChildNodes = reducedNodeChildNodes;  ///
+
+    parentNode.setPrecedence(precedence);
+  } else {
+    const childNodes = reducedNode.getChildNodes(),
+          nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndPrecedence(ruleName, childNodes, precedence);
+
+    replacementChildNodes = [
+      nonTerminalNode
+    ];
+  }
+
+  replaceChildNode(parentNode, replacedChildNode, replacementChildNodes);
 }
 
 function replaceChildNode(parentNode, replacedChildNode, replacementChildNodes) {

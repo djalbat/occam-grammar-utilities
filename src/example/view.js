@@ -149,15 +149,19 @@ class View extends Element {
                             
                   |  term "+" term (2)
                             
-                  |  /\\d+/            
+                  |  /\\d+/ (11)            
       
                   ;
                   
-       argument ::= term (11) | type (13) ;
+       argument ::= term
+       
+                  | type 
+                  
+                  ;
 
   `
 
-  static initialContent = "1+2/3.";
+  static initialContent = "1+2.";
 
   static initialStartRuleName = "";
 
