@@ -1,50 +1,49 @@
 "use strict";
 
 import { arrayUtilities } from "necessary";
-import { EpsilonNode, NonTerminalNode } from "occam-parsers";
+import { NonTerminalNode } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
-import RewrittenNode from "../node/rewritten";
 import DirectlyRepeatedNode from "../node/repeated/directly";
 import IndirectlyRepeatedNode from "../node/repeated/indirectly";
 
 import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName, leftRecursiveRuleNameFromIndirectlyRepeatedRuleName } from "../utilities/ruleName";
 
-const { front, first, push, clear, filter, backwardsSome } = arrayUtilities;
+const { front, first, push, clear, backwardsSome } = arrayUtilities;
 
 export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
-  const childNodes = nonTerminalNode.getChildNodes(),
+  let parentNode = nonTerminalNode; ///
+
+  const childNodes = parentNode.getChildNodes(),
         indirectlyRepeatedNodes = findIndirectlyRepeatedNodes(childNodes);
 
   backwardsSome(indirectlyRepeatedNodes, (indirectlyRepeatedNode) => {
-    const parentNode = nonTerminalNode, ///
-          rewrittenNode = rewrittenNodeFromNonTerminalNodeAndIndirectlyRepeatedNode(nonTerminalNode, indirectlyRepeatedNode),
-          replacementChildNodes = replacementChildNodesFromRewrittenNodeAndIndirectlyRepeatedNode(rewrittenNode, indirectlyRepeatedNode);
+    nonTerminalNode = nonTerminalNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode); ///
 
     const indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
           indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
-          nonTerminalNodeRuleName = nonTerminalNode.getRuleName(),
+          parentNodeNodeRuleName = parentNode.getRuleName(),
           leftRecursiveRuleName = leftRecursiveRuleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName),
           ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);
 
-    if (nonTerminalNodeRuleName === ruleName) {
+    if (parentNodeNodeRuleName === ruleName) {
       const precedence = indirectlyRepeatedNode.getPrecedence();
 
-      nonTerminalNode.rewritePrecedence(precedence);
+      parentNode.setPrecedence(precedence);
     }
 
-    if (leftRecursiveRuleName === nonTerminalNodeRuleName) {
-      const precedence = nonTerminalNode.getPrecedence();
+    if (leftRecursiveRuleName === parentNodeNodeRuleName) {
+      const precedence = parentNode.getPrecedence();
 
-      rewrittenNode.rewritePrecedence(precedence);
+      nonTerminalNode.setPrecedence(precedence);
     }
+
+    const replacementChildNodes = replacementChildNodesFromNonTerminalNodeNodeAndIndirectlyRepeatedNode(nonTerminalNode, indirectlyRepeatedNode);
 
     replaceAllChildNodes(parentNode, replacementChildNodes);
 
-    nonTerminalNode = rewrittenNode;  ///
+    parentNode = nonTerminalNode; ///
   });
-
-  const parentNode = nonTerminalNode; ///
 
   return parentNode;
 }
@@ -191,49 +190,37 @@ function findRepeatedNonTerminalNodes(childNodes, callback) {
   return repeatedNonTerminalNodes;
 }
 
-function rewrittenNodeFromNonTerminalNodeAndIndirectlyRepeatedNode(nonTerminalNode, indirectlyRepeatedNode) {
+function nonTerminalNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode) {
   let ruleName,
       childNodes;
 
-  childNodes = nonTerminalNode.getChildNodes();
+  childNodes = parentNode.getChildNodes();
 
   const indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
         indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
-        nonTerminalNodeRuleName = nonTerminalNode.getRuleName(),
         leftRecursiveRuleName = leftRecursiveRuleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName),
         frontChildNodes = front(childNodes);
-
-  ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);
-
-  if (nonTerminalNodeRuleName === ruleName) {
-    const precedence = indirectlyRepeatedNode.getPrecedence();
-
-    nonTerminalNode.rewritePrecedence(precedence);
-  }
 
   ruleName = leftRecursiveRuleName; ///
 
   childNodes = frontChildNodes; ///
 
-  const rewrittenNode = RewrittenNode.fromRuleNameAndChildNodes(ruleName, childNodes);
+  const nonTerminalNode = NonTerminalNode.fromRuleNameAndChildNodes(ruleName, childNodes);  ///
 
-  return rewrittenNode;
+  return nonTerminalNode;
 }
 
-function replacementChildNodesFromRewrittenNodeAndIndirectlyRepeatedNode(rewrittenNode, indirectlyRepeatedNode) {
-  const indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes(),
-        replacementChildNodes = [
-          rewrittenNode,
-          ...indirectlyRepeatedNodeChildNodes
-        ];
+function replacementChildNodesFromNonTerminalNodeNodeAndIndirectlyRepeatedNode(nonTerminalNode, indirectlyRepeatedNode) {
+  const replacementChildNodes = [
+          nonTerminalNode
+        ],
+        indirectlyRepeatedNodeNullary = indirectlyRepeatedNode.isNullary();
 
-  filter(replacementChildNodes, (replacementChildNode) => {
-    const replacementChildNodeEpsilonNode = (replacementChildNode instanceof EpsilonNode);
+  if (!indirectlyRepeatedNodeNullary) {
+    const indirectlyRepeatedNodeChildNodes = indirectlyRepeatedNode.getChildNodes();
 
-    if (!replacementChildNodeEpsilonNode) {
-      return true;
-    }
-  });
+    push(replacementChildNodes, indirectlyRepeatedNodeChildNodes);
+  }
 
   return replacementChildNodes;
 }

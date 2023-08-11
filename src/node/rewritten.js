@@ -2,13 +2,9 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
-import { rewriteReducedNodes, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRepeatedNodes } from "../utilities/nodes";
+import { rewriteReducedNodes, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRepeatedNodes } from "../utilities/rewrite";
 
 export default class RewrittenNode extends NonTerminalNode {
-  getPreviousChildNodes() {
-    return this.previousChildNodes;
-  }
-
   rewrite() {
     const nonTerminalNode = this.clone();
 
@@ -23,14 +19,6 @@ export default class RewrittenNode extends NonTerminalNode {
     }
 
     return nonTerminalNode;
-  }
-
-  setPrecedence(precedence) {
-    ///
-  }
-
-  rewritePrecedence(precedence) {
-    super.setPrecedence(precedence);
   }
 
   static fromRuleNameAndChildNodes(ruleName, childNodes) { return NonTerminalNode.fromRuleNameAndChildNodes(RewrittenNode, ruleName, childNodes); }
