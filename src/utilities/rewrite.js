@@ -9,7 +9,7 @@ import IndirectlyRepeatedNode from "../node/repeated/indirectly";
 
 import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName, leftRecursiveRuleNameFromIndirectlyRepeatedRuleName } from "../utilities/ruleName";
 
-const { front, first, push, clear, backwardsSome } = arrayUtilities;
+const { front, first, push, clear, backwardsForEach } = arrayUtilities;
 
 export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
   let parentNode = nonTerminalNode; ///
@@ -17,7 +17,7 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
   const childNodes = parentNode.getChildNodes(),
         indirectlyRepeatedNodes = findIndirectlyRepeatedNodes(childNodes);
 
-  backwardsSome(indirectlyRepeatedNodes, (indirectlyRepeatedNode) => {
+  backwardsForEach(indirectlyRepeatedNodes, (indirectlyRepeatedNode) => {
     nonTerminalNode = nonTerminalNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode); ///
 
     const indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
@@ -27,15 +27,13 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
           ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);
 
     if (parentNodeNodeRuleName === ruleName) {
-      const recursively = false,
-            precedence = indirectlyRepeatedNode.getPrecedence(recursively);
+      const precedence = indirectlyRepeatedNode.getPrecedence();
 
       parentNode.setPrecedence(precedence);
     }
 
     if (leftRecursiveRuleName === parentNodeNodeRuleName) {
-      const recursively = false,
-            precedence = parentNode.getPrecedence(recursively);
+      const precedence = parentNode.getPrecedence();
 
       // nonTerminalNode.setPrecedence(precedence);
     }
