@@ -142,17 +142,27 @@ class View extends Element {
   }
 
   static initialBNF = `
-     expression ::= term... "." ;
+    expression  ::=  term... "." ;
 
-          term  ::=  argument ( "/" (4)
-                            
-                              | "*" (3)
-                                        
-                              | "+" (2)
-            
-                              | "-" (1) ) argument
+          term  ::=  argument<NO_WHITESPACE>"[" "..." argument "]"  (20)
 
-                  |  /\\d+/   
+                  |  argument<NO_WHITESPACE>( ( "[" argument "..." argument "]" ) (21)
+
+                                            | ( "[" argument "..." "]" ) 
+ 
+                                            ) (20)
+
+                  |  argument<NO_WHITESPACE>"[" argument "..." "]"  (20)
+                  
+                  |  argument ( "÷" (14)
+
+                                           | "×" (13)
+
+                                           | "+" (12)
+
+                                           | "-" (11) ) argument
+
+                  |  .   
       
                   ;
                   
@@ -164,13 +174,21 @@ class View extends Element {
 
   `
 
-  static initialContent = "1-3/2*3.";
+  static initialContent = "s+s[n...].";
 
   static initialStartRuleName = "";
 
-  static initialLexicalEntries = [{
-    unassigned: "."
-  }];
+  static initialLexicalEntries = [
+    {
+      ellipsis: "^\\.\\.\\."
+    },
+    {
+      operator: "^(?:=|\\+)"
+    },
+    {
+      unassigned: "^."
+    }
+  ];
 
   static tagName = "div";
 

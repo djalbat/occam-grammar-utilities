@@ -7,6 +7,7 @@ import ReducedNode from "../node/reduced";
 import DirectlyRepeatedNode from "../node/repeated/directly";
 import IndirectlyRepeatedNode from "../node/repeated/indirectly";
 
+import { findLastIndex } from "../utilities/nodes";
 import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName, leftRecursiveRuleNameFromIndirectlyRepeatedRuleName } from "../utilities/ruleName";
 
 const { front, first, push, clear, backwardsForEach } = arrayUtilities;
@@ -170,7 +171,7 @@ function findIndirectlyRepeatedNodes(childNodes) {
 
 function findRepeatedNonTerminalNodes(childNodes, callback) {
   const repeatedNonTerminalNodes = [],
-        lastIndex = childNodes.findLastIndex(callback);
+        lastIndex = findLastIndex(childNodes, callback);
 
   if (lastIndex !== null) {
     for (let index = lastIndex; index >= 0; index--) {
