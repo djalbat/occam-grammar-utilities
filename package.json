@@ -1,7 +1,7 @@
 {
   "name": "occam-grammar-utilities",
   "author": "James Smith",
-  "version": "8.0.65",
+  "version": "8.0.66",
   "license": "MIT, Anti-996",
   "homepage": "https://github.com/djalbat/occam-grammar-utilities",
   "description": "Occam's grammar utilities.",
@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "necessary": "^13.0.6",
-    "occam-lexers": "^19.0.58",
-    "occam-parsers": "^19.0.64"
+    "occam-lexers": "^19.0.60",
+    "occam-parsers": "^19.0.65"
   },
   "devDependencies": {
     "@swc/core": "^1.2.50",
