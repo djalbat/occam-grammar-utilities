@@ -144,7 +144,7 @@ class View extends Element {
              
   argument ::= term ( ) 
   
-             | type 
+             | type ( )
              
              ;
 
