@@ -32,26 +32,26 @@ class View extends Element {
 
   update() {
     try {
-      // const bnf = this.getBNF(),
-      //       startRuleName = this.getStartRuleName(),
-      //       lexicalEntries = this.getLexicalEntries();
-      //
-      // let rules = rulesFromBNF(bnf);
-      //
-      // rules = eliminateLeftRecursion(rules);  ///
-      //
-      // const multiLine = true,
-      //       rulesString = rulesAsString(rules, multiLine),
-      //       adjustedBNF = rulesString;  ///
-      //
-      // this.setAdjustedBNF(adjustedBNF);
-      //
-      // const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
-      //       exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName);
+      const bnf = this.getBNF(),
+            startRuleName = this.getStartRuleName(),
+            lexicalEntries = this.getLexicalEntries();
+
+      let rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const multiLine = true,
+            rulesString = rulesAsString(rules, multiLine),
+            adjustedBNF = rulesString;  ///
+
+      this.setAdjustedBNF(adjustedBNF);
+
+      const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
+            exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName);
 
       const content = this.getContent(),
-            tokens = this.exampleLexer.tokenise(content),
-            node = this.exampleParser.parse(tokens);
+            tokens = exampleLexer.tokenise(content),
+            node = exampleParser.parse(tokens);
 
       let parseTree = null;
 
@@ -124,47 +124,35 @@ class View extends Element {
 
     this.setStartRuleName(startRuleName);
 
-    let rules = rulesFromBNF(bnf);
-
-    rules = eliminateLeftRecursion(rules);  ///
-
-    const multiLine = true,
-          rulesString = rulesAsString(rules, multiLine),
-          adjustedBNF = rulesString;  ///
-
-    this.setAdjustedBNF(adjustedBNF);
-
-    this.exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries);
-
-    this.exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName);
-
     this.update();
   }
 
-  static initialBNF = `
-     expression ::= term... "." ;
+  static initialBNF = `expression ::= term... "." ;
 
-          term  ::=  argument ( "/" (4)
+
+     term  ::=  argument ( "/" (4)
                             
-                              | "*" (3)
-                                        
-                              | "+" (2)
-            
-                              | "-" (1) ) argument
+                         | "*" (3)
+                                            
+                         | "+" (2)
+                
+                         | "-" (1) ) argument
 
-                  |  /\\d+/   
+             |  number
+
+             ;
+             
+  argument ::= term ( ) 
+  
+             | type 
+             
+             ;
+
       
-                  ;
-                  
-       argument ::= term ( )
-       
-                  | type 
-                  
-                  ;
+   number  ::=  /\\d+/ ;
+`
 
-  `
-
-  static initialContent = "1-3/2*3.";
+  static initialContent = "1+2/3-4.";
 
   static initialStartRuleName = "";
 
