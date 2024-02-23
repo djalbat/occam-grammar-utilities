@@ -13,7 +13,5 @@ export default class DirectlyRepeatedNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  static fromRuleNameAndChildNodes(ruleName, childNodes) { return NonTerminalNode.fromRuleNameAndChildNodes(DirectlyRepeatedNode, ruleName, childNodes); }
-
-  static fromRuleNameChildNodesAndPrecedence(ruleName, childNodes, precedence) { return NonTerminalNode.fromRuleNameChildNodesAndPrecedence(DirectlyRepeatedNode, ruleName, childNodes, precedence); }
+  static fromRuleNameChildNodesAndAmbiguous(ruleName, childNodes, ambiguous) { return NonTerminalNode.fromRuleNameChildNodesAndAmbiguous(DirectlyRepeatedNode, ruleName, childNodes, ambiguous); }
 }

@@ -24,7 +24,5 @@ export default class IndirectlyRepeatedNode extends NonTerminalNode {
     return nullary;
   }
 
-  static fromRuleNameAndChildNodes(ruleName, childNodes) { return NonTerminalNode.fromRuleNameAndChildNodes(IndirectlyRepeatedNode, ruleName, childNodes); }
-
-  static fromRuleNameChildNodesAndPrecedence(ruleName, childNodes, precedence) { return NonTerminalNode.fromRuleNameChildNodesAndPrecedence(IndirectlyRepeatedNode, ruleName, childNodes, precedence); }
+  static fromRuleNameChildNodesAndAmbiguous(ruleName, childNodes, ambiguous) { return NonTerminalNode.fromRuleNameChildNodesAndAmbiguous(IndirectlyRepeatedNode, ruleName, childNodes, ambiguous); }
 }

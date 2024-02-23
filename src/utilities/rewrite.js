@@ -27,7 +27,10 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
           ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);
 
     if (parentNodeNodeRuleName === ruleName) {
-      const precedence = indirectlyRepeatedNode.getPrecedence();
+      const ambiguous = indirectlyRepeatedNode.isAmbiguous(),
+            precedence = indirectlyRepeatedNode.getPrecedence();
+
+      parentNode.setAmbiguous(ambiguous);
 
       parentNode.setPrecedence(precedence);
     }
@@ -88,10 +91,12 @@ export function rewriteReducedNodes(nonTerminalNode) {
         replacedChildNode = reducedNode, ///
         parentNodeRuleName = parentNode.getRuleName(),
         reducedNodeRuleName = reducedNode.getRuleName(),
+        reducedNodeAmbiguous = reducedNode.isAmbiguous(),
         reducedNodePrecedence = reducedNode.getPrecedence(),
         reducedRuleName = reducedNodeRuleName,  ///
         parentRuleName = parentNodeRuleName,  ///
         precedence = reducedNodePrecedence, ///
+        ambiguous = reducedNodeAmbiguous, ///
         ruleName = ruleNameFromReducedRuleName(reducedRuleName);
 
   if (ruleName === parentRuleName) {
@@ -100,9 +105,13 @@ export function rewriteReducedNodes(nonTerminalNode) {
     replacementChildNodes = reducedNodeChildNodes;  ///
 
     parentNode.setPrecedence(precedence);
+
+    parentNode.setAmbiguous(ambiguous);
   } else {
     const childNodes = reducedNode.getChildNodes(),
-          nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndPrecedence(ruleName, childNodes, precedence);
+          nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndAmbiguous(ruleName, childNodes, ambiguous);
+
+    nonTerminalNode.setPrecedence(nonTerminalNode);
 
     replacementChildNodes = [
       nonTerminalNode
@@ -193,11 +202,13 @@ function findRepeatedNonTerminalNodes(childNodes, callback) {
 
 function nonTerminalNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode) {
   let ruleName,
-      childNodes;
+      childNodes,
+      ambiguous;
 
   childNodes = parentNode.getChildNodes();
 
-  const indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
+  const indirectlyRepeatedNodeAmbiguous = indirectlyRepeatedNode.isAmbiguous(),
+        indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
         indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
         leftRecursiveRuleName = leftRecursiveRuleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName),
         frontChildNodes = front(childNodes);
@@ -206,7 +217,9 @@ function nonTerminalNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indi
 
   childNodes = frontChildNodes; ///
 
-  const nonTerminalNode = NonTerminalNode.fromRuleNameAndChildNodes(ruleName, childNodes);  ///
+  ambiguous = indirectlyRepeatedNodeAmbiguous;  ///
+
+  const nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndAmbiguous(ruleName, childNodes, ambiguous);  ///
 
   return nonTerminalNode;
 }

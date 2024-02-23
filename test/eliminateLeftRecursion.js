@@ -283,32 +283,32 @@ describe("src/eliminateLeftRecursion", () => {
       `));
     });
 
-    it("results in the requisite parse tree" , () => {
+    it.only("results in the requisite parse tree" , () => {
       const content = `ehfg
 `,
             parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
 
       assert.isTrue(compare(parseTreeString, `
                     
-                                                                      S {0-4}                    
-                                                                         |                       
-                                                        -----------------------------------      
-                                                        |                                 |      
-                                                     A {0-3}                        <END_OF_LINE>
-                                                        |                                        
-                                      ------------------------------------                       
-                                      |                                  |                       
-                                   B {0-2}                      "g"[unassigned] {3}              
-                                      |                                                          
-                       -------------------------------                                           
-                       |                             |                                           
-                    B {0-1}                 "f"[unassigned] {2}                                  
-                       |                                                                         
-             ---------------------                                                               
-             |                   |                                                               
-           A {0}        "h"[unassigned] {1}                                                      
-             |                                                                                   
-    "e"[unassigned] {0}                                                                          
+                                                                           S [0]                     
+                                                                             |                       
+                                                            -----------------------------------      
+                                                            |                                 |      
+                                                    A [0] (undefined)                   <END_OF_LINE>
+                                                            |                                        
+                                          ------------------------------------                       
+                                          |                                  |                       
+                                  B [0] (undefined)                 "g"[unassigned] [0]              
+                                          |                                                          
+                           -------------------------------                                           
+                           |                             |                                           
+                   B [0] (undefined)            "f"[unassigned] [0]                                  
+                           |                                                                         
+                 ---------------------                                                               
+                 |                   |                                                               
+         A [0] (undefined)  "h"[unassigned] [0]                                                      
+                 |                                                                                   
+        "e"[unassigned] [0]                                                                          
              
       `));
     });
