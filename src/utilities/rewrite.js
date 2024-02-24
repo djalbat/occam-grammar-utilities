@@ -27,10 +27,7 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
           ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);
 
     if (parentNodeNodeRuleName === ruleName) {
-      const ambiguous = indirectlyRepeatedNode.isAmbiguous(),
-            precedence = indirectlyRepeatedNode.getPrecedence();
-
-      parentNode.setAmbiguous(ambiguous);
+      const precedence = indirectlyRepeatedNode.getPrecedence();
 
       parentNode.setPrecedence(precedence);
     }
@@ -105,8 +102,6 @@ export function rewriteReducedNodes(nonTerminalNode) {
     replacementChildNodes = reducedNodeChildNodes;  ///
 
     parentNode.setPrecedence(precedence);
-
-    parentNode.setAmbiguous(ambiguous);
   } else {
     const childNodes = reducedNode.getChildNodes(),
           nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndAmbiguous(ruleName, childNodes, ambiguous);
@@ -219,7 +214,7 @@ function nonTerminalNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indi
 
   ambiguous = indirectlyRepeatedNodeAmbiguous;  ///
 
-  const nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndAmbiguous(ruleName, childNodes, ambiguous);  ///
+  const nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndAmbiguous(ruleName, childNodes, ambiguous);
 
   return nonTerminalNode;
 }
