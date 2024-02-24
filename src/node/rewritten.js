@@ -14,7 +14,7 @@ export default class RewrittenNode extends NonTerminalNode {
     return unprecedented;
   }
 
-  rewrite() {
+  _rewrite() {
     const nonTerminalNode = this.clone();
 
     rewriteDirectlyRepeatedNodes(nonTerminalNode);

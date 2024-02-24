@@ -13,8 +13,10 @@ const { first } = arrayUtilities,
       { EpsilonPart } = Parts;
 
 export default class IndirectlyRepeatedRule extends Rule {
-  static fromRuleAndLeftRecursiveRuleName(rule, leftRecursiveRuleName) {
+  static fromRuleAndLeftRecursiveRule(rule, leftRecursiveRule) {
     let definitions = rule.getDefinitions();
+
+    const leftRecursiveRuleName = leftRecursiveRule.getName();
 
     let leftRecursiveDefinitions = definitions.filter((definition) => {  ///
       const definitionLeftRecursive = isDefinitionLeftRecursive(definition);
@@ -78,10 +80,11 @@ export default class IndirectlyRepeatedRule extends Rule {
     });
 
     const ruleName = rule.getName(),
+          leftRecursiveRuleAmbiguous = leftRecursiveRule.isAmbiguous(),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
           leftRecursiveDefinitionsLength = leftRecursiveDefinitions.length,
           name = indirectlyRepeatedRuleName,  ///
-          ambiguous = false;
+          ambiguous = leftRecursiveRuleAmbiguous; ///
 
     definitions = (leftRecursiveDefinitionsLength === 0) ?
                     definitionsFromPrecedence(precedence) :

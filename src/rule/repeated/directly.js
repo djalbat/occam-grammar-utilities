@@ -24,7 +24,7 @@ export default class DirectlyRepeatedRule extends Rule {
 
     const directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
           name = directlyRepeatedRuleName, ///
-          ambiguous = false,
+          ambiguous = rule.isAmbiguous(),
           NonTerminalNode = DirectlyRepeatedNode,  ///
           directlyRepeatedRule = new DirectlyRepeatedRule(name, ambiguous, definitions, NonTerminalNode);
 

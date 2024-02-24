@@ -15,9 +15,10 @@ export default function createIndirectlyRepeatedRules(cycles, ruleMap) {
       let indirectlyRepeatedRule = ruleMap[indirectlyRepeatedRuleName] || null;
 
       if (indirectlyRepeatedRule === null) {
-        const rule = ruleMap[ruleName];
+        const rule = ruleMap[ruleName],
+              leftRecursiveRule = ruleMap[leftRecursiveRuleName];
 
-        indirectlyRepeatedRule = IndirectlyRepeatedRule.fromRuleAndLeftRecursiveRuleName(rule, leftRecursiveRuleName);
+        indirectlyRepeatedRule = IndirectlyRepeatedRule.fromRuleAndLeftRecursiveRule(rule, leftRecursiveRule);
 
         ruleMap[indirectlyRepeatedRuleName] = indirectlyRepeatedRule;
       }
