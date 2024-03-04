@@ -4,18 +4,16 @@ import withStyle from "easy-with-style";  ///
 
 import { Element } from "easy";
 import { rulesUtilities, parserUtilities } from "occam-parsers";
+import { ExampleLexer, ExampleParser, eliminateLeftRecursion } from "../index"; ///
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 
 import SubHeading from "./view/subHeading";
 import SizeableDiv from "./view/div/sizeable";
 import BNFTextarea from "./view/textarea/bnf";
-import ExampleLexer from "../lexer/example";
-import ExampleParser from "../parser/example";
 import ContentTextarea from "./view/textarea/content";
 import ParseTreeTextarea from "./view/textarea/parseTree";
 import StartRuleNameInput from "./view/input/startRuleName";
 import AdjustedBNFTextarea from "./view/textarea/adjustedBNF";
-import eliminateLeftRecursion from "../eliminateLeftRecursion";
 import LexicalEntriesTextarea from "./view/textarea/lexicalEntries";
 
 const { rulesFromBNF } = parserUtilities,
