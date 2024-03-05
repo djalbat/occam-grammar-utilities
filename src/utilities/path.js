@@ -4,7 +4,7 @@ import { arrayUtilities } from "necessary";
 
 import { ruleNamesFromCycle } from "../utilities/ruleNames";
 
-const { compress } = arrayUtilities;
+const { match, compress } = arrayUtilities;
 
 export function pathsFromRuleNameAndCycles(ruleName, cycles) {
   const paths = [];
@@ -31,9 +31,17 @@ export function pathsFromRuleNameAndCycles(ruleName, cycles) {
   });
 
   compress(paths, (pathA, pathB) => {
-    const pathsEqual = arePathsEqual(pathA, pathB);
+    const ruleNamesA = pathA, ///
+          ruleNamesB = pathB, ///
+          ruleNamesMatch = match(ruleNamesA, ruleNamesB, (ruleNameA, ruleNameB) => {
+            const ruleNameAMatchesRuleNameB = (ruleNameA === ruleNameB);
 
-    if (pathsEqual) {
+            if (ruleNameAMatchesRuleNameB) {
+              return true;
+            }
+          });
+
+    if (ruleNamesMatch) {
       return true;
     }
   });
@@ -63,26 +71,4 @@ export function pathFromRuleNameAndCycle(ruleName, cycle) {
         ];
 
   return path;
-}
-
-function arePathsEqual(pathA, pathB) {
-  let pathsEqual = false;
-
-  const pathALength = pathA.length,
-        pathBLength = pathB.length;
-
-  if (pathALength === pathBLength) {
-    const ruleNamesA = pathA, ///
-          ruleNamesB = pathB; ///
-
-    pathsEqual = ruleNamesA.every((ruleNameA, index) => {
-      const ruleNameB = ruleNamesB[index];
-
-      if (ruleNameA === ruleNameB) {
-        return true;
-      }
-    });
-  }
-
-  return pathsEqual;
 }
