@@ -125,17 +125,17 @@ class View extends Element {
     this.update();
   }
 
-  static initialBNF = `expression. ::= "(" expression ")"
+  static initialBNF = `expression ::= term... "." ; 
+  
+term ::= "(" term ")"
 
-             | term
+             | term operator term
 
              | number
 
              ;
 
-term       ::= expression operator expression ;
-
-  operator ::= "+" | "-" | "÷" | "×" ;
+  operator ::= "+" | "-" | "/" | "*" ;
 
     number ::= /\\d+/ ;`
 
