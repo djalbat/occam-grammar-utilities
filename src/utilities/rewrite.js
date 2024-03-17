@@ -87,8 +87,8 @@ export function rewriteReducedNodes(nonTerminalNode) {
         reducedNode = firstChildNode, ///
         replacedChildNode = reducedNode, ///
         parentNodeRuleName = parentNode.getRuleName(),
+        reducedNodeOpacity = reducedNode.getOpacity(),
         reducedNodeRuleName = reducedNode.getRuleName(),
-        reducedNodeOpacity = reducedNode.isOpacity(),
         reducedNodePrecedence = reducedNode.getPrecedence(),
         reducedRuleName = reducedNodeRuleName,  ///
         parentRuleName = parentNodeRuleName,  ///
@@ -202,7 +202,7 @@ function nonTerminalNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indi
 
   childNodes = parentNode.getChildNodes();
 
-  const indirectlyRepeatedNodeOpacity = indirectlyRepeatedNode.isOpacity(),
+  const indirectlyRepeatedNodeOpacity = indirectlyRepeatedNode.getOpacity(),
         indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
         indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
         leftRecursiveRuleName = leftRecursiveRuleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName),

@@ -125,7 +125,7 @@ class View extends Element {
     this.update();
   }
 
-  static initialBNF = `expression! ::= "(" expression ")"
+  static initialBNF = `expression. ::= "(" expression ")"
 
              | term
 

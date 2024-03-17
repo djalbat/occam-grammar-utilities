@@ -80,7 +80,7 @@ export default class IndirectlyRepeatedRule extends Rule {
     });
 
     const ruleName = rule.getName(),
-          leftRecursiveRuleOpacity = leftRecursiveRule.isOpacity(),
+          leftRecursiveRuleOpacity = leftRecursiveRule.getOpacity(),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
           leftRecursiveDefinitionsLength = leftRecursiveDefinitions.length,
           name = indirectlyRepeatedRuleName,  ///
