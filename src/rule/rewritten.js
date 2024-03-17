@@ -32,9 +32,9 @@ export default class RewrittenRule extends Rule {
     });
 
     const name = ruleName,  ///
-          ambiguous = rule.isAmbiguous(),
+          opacity = rule.getOpacity(),
           NonTerminalNode = RewrittenNode,
-          rewrittenRule = new RewrittenRule(name, ambiguous, definitions, NonTerminalNode);
+          rewrittenRule = new RewrittenRule(name, opacity, definitions, NonTerminalNode);
 
     return rewrittenRule;
   }

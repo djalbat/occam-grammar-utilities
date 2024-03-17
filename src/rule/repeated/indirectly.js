@@ -80,18 +80,18 @@ export default class IndirectlyRepeatedRule extends Rule {
     });
 
     const ruleName = rule.getName(),
-          leftRecursiveRuleAmbiguous = leftRecursiveRule.isAmbiguous(),
+          leftRecursiveRuleOpacity = leftRecursiveRule.isOpacity(),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
           leftRecursiveDefinitionsLength = leftRecursiveDefinitions.length,
           name = indirectlyRepeatedRuleName,  ///
-          ambiguous = leftRecursiveRuleAmbiguous; ///
+          opacity = leftRecursiveRuleOpacity; ///
 
     definitions = (leftRecursiveDefinitionsLength === 0) ?
                     definitionsFromPrecedence(precedence) :
                       definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions);
 
     const NonTerminalNode = IndirectlyRepeatedNode,  ///
-          indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, ambiguous, definitions, NonTerminalNode);
+          indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions, NonTerminalNode);
 
     return indirectlyRepeatedRule;
   }

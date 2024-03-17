@@ -31,10 +31,10 @@ export default class ReducedRule extends Rule {
       const ruleName = rule.getName(),
             reducedRuleName = reducedRuleNameFromRuleName(ruleName),
             name = reducedRuleName, ///
-            ambiguous = rule.isAmbiguous(),
+            opacity = rule.getOpacity(),
             NonTerminalNode = ReducedNode;  ///
 
-      reducedRule = new ReducedRule(name, ambiguous, definitions, NonTerminalNode);
+      reducedRule = new ReducedRule(name, opacity, definitions, NonTerminalNode);
     }
 
     return reducedRule;
