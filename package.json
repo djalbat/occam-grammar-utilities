@@ -15,7 +15,7 @@
     "occam-parsers": "^22.0.21"
   },
   "devDependencies": {
-    "@swc/core": "^1.2.50",
+    "@swc/core": "1.2.52",
     "chai": "^4.1.0",
     "easy": "^16.0.19",
     "easy-layout": "^6.0.143",
