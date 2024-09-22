@@ -110,13 +110,9 @@ function areFirstPartsEqual(definitions) {
 }
 
 function definitionsFromPrecedence(precedence) {
-  const epsilonPart = EpsilonPart.fromNothing(),
-        parts = [
-          epsilonPart
-        ],
-        definition = Definition.fromPartsAndPrecedence(parts, precedence),
+  const epsilonDefinition = epsilonDefinitionFromPrecedence(precedence),
         definitions = [
-          definition
+          epsilonDefinition
         ];
 
   return definitions;
@@ -124,19 +120,30 @@ function definitionsFromPrecedence(precedence) {
 
 function definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions) {
   const definitions = leftRecursiveDefinitions.map((leftRecursiveDefinition) => { ///
-    let parts = leftRecursiveDefinition.getParts();
+          let parts = leftRecursiveDefinition.getParts();
 
-    parts = [ ///
-      ...parts
-    ]
+          parts = [ ///
+            ...parts
+          ]
 
-    parts.shift();
+          parts.shift();
 
-    const precedence = leftRecursiveDefinition.getPrecedence(),
-          definition = Definition.fromPartsAndPrecedence(parts, precedence);
+          const precedence = leftRecursiveDefinition.getPrecedence(),
+                definition = Definition.fromPartsAndPrecedence(parts, precedence);
 
-    return definition;
-  });
+          return definition;
+        });
 
   return definitions;
+}
+
+function epsilonDefinitionFromPrecedence(precedence) {
+  const epsilonPart = EpsilonPart.fromNothing(),
+        parts = [
+          epsilonPart
+        ],
+        definition = Definition.fromPartsAndPrecedence(parts, precedence),
+        epsilonDefinition = definition; ///
+
+  return epsilonDefinition;
 }

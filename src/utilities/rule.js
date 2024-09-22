@@ -2,8 +2,8 @@
 
 import { partTypes } from "occam-parsers";
 
-import { isPartEmpty } from "./part";
-import { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "./definition";
+import { isPartEmpty } from "../utilities/part";
+import { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../utilities/definition";
 
 const { RuleNamePartType,
         OptionalPartPartType,

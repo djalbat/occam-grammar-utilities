@@ -125,21 +125,24 @@ class View extends Element {
     this.update();
   }
 
-  static initialBNF = `expression ::= term... "." ; 
+  static initialBNF = `unqualifiedStatement ::= statement... <END_OF_LINE> ; 
   
-term ::= "(" term ")"
+statement            ::= judgement
 
-             | term operator term
+                       | metavariable
 
-             | number
+                       ;
 
-             ;
+judgement            ::= frame "=" ;
 
-  operator ::= "+" | "-" | "/" | "*" ;
+frame                ::= statement ;
 
-    number ::= /\\d+/ ;`
+declaration          ::= "b" ;
 
-  static initialContent = "1+2/3-4.";
+metavariable         ::= "a" ;`
+
+  static initialContent = `a =
+`;
 
   static initialStartRuleName = "";
 
