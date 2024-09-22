@@ -33,6 +33,27 @@ export function isRuleEffectivelyEmpty(rule, ruleMap, ruleNames = []) {
   return ruleEffectivelyEmpty;
 }
 
+export function isRuleEffectivelyUseless(rule, ruleMap, ruleNames = []) {
+  let ruleEffectivelyUseless = true;
+
+  const ruleName = rule.getName(),
+        ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
+
+  if (!ruleNamesIncludesRuleName) {
+    ruleNames = [ ///
+      ...ruleNames,
+      ruleName
+    ];
+
+    const definitions = rule.getDefinitions(),
+          definitionsEffectivelyUseless = areDefinitionsEffectivelyUseless(definitions, ruleMap, ruleNames);
+
+    ruleEffectivelyUseless = definitionsEffectivelyUseless; ///
+  }
+
+  return ruleEffectivelyUseless;
+}
+
 export function recursiveRuleNamesFromRule(rule, recursiveRuleNames = []) {
   const definitions = rule.getDefinitions();
 
@@ -51,6 +72,133 @@ export function leftRecursiveRuleNamesFromRule(rule, leftRecursiveRuleNames = []
   });
 
   return leftRecursiveRuleNames;
+}
+
+function areDefinitionsEffectivelyUseless(definitions, ruleMap, ruleNames) {
+  const definitionsEffectivelyUseless = definitions.every((definition) => {
+    const definitionEffectivelyUseless = isDefinitionEffectivelyUseless(definition, ruleMap, ruleNames);
+
+    if (definitionEffectivelyUseless) {
+      return true;
+    }
+  });
+
+  return definitionsEffectivelyUseless;
+}
+
+function isDefinitionEffectivelyUseless(definition, ruleMap, ruleNames) {
+  const parts = definition.getParts(),
+        partsEffectivelyUseless = arePartsEffectivelyUseless(parts, ruleMap, ruleNames),
+        definitionEffectivelyUseless = partsEffectivelyUseless; ///
+
+  return definitionEffectivelyUseless;
+}
+
+function arePartsEffectivelyUseless(parts, ruleMap, ruleNames) {
+  const partsEffectivelyUseless = parts.some((part) => {
+    const partEffectivelyUseless = isPartEffectivelyUseless(part, ruleMap, ruleNames);
+
+    if (partEffectivelyUseless) {
+      return true;
+    }
+  });
+
+  return partsEffectivelyUseless;
+}
+
+function isPartEffectivelyUseless(part, ruleMap, ruleNames) {
+  let partEffectivelyUseless;
+
+  const parTerminalPart = part.isTerminalPart();
+
+  if (parTerminalPart) {
+    const terminalPart = part,  ///
+          terminalPartUseless = isTerminalPartEffectivelyUseless(terminalPart);
+
+    partEffectivelyUseless = terminalPartUseless; ///
+  } else {
+    const nonTerminalNPart = part,  ///
+          nonTerminalPartEffectivelyUseless = isNonTerminalPartEffectivelyUseless(nonTerminalNPart, ruleMap, ruleNames);
+
+    partEffectivelyUseless = nonTerminalPartEffectivelyUseless; ///
+  }
+
+  return partEffectivelyUseless;
+}
+
+function isTerminalPartEffectivelyUseless(terminalPart) {
+  const terminalPartEffectivelyUseless = false;
+
+  return terminalPartEffectivelyUseless;
+}
+
+function isNonTerminalPartEffectivelyUseless(nonTerminalPart, ruleMap, ruleNames) {
+  let partEffectivelyUseless = false;
+
+  const type = nonTerminalPart.getType();
+
+  switch (type) {
+    case RuleNamePartType: {
+      const ruleNamePart = nonTerminalPart,  ///
+            ruleName = ruleNamePart.getRuleName(),
+            rule = ruleMap[ruleName] || null;
+
+      if (rule !== null) {
+        const ruleEffectivelyUseless = isRuleEffectivelyUseless(rule, ruleMap, ruleNames);
+
+        partEffectivelyUseless = ruleEffectivelyUseless;  ///
+      }
+
+      break;
+    }
+
+    case OptionalPartPartType: {
+      partEffectivelyUseless = true;
+
+      break;
+    }
+
+    case OneOrMorePartsPartType: {
+      const oneOrMorePartsPart = nonTerminalPart,  ///
+            part = oneOrMorePartsPart.getPart();
+
+      partEffectivelyUseless = isPartEffectivelyUseless(part, ruleMap, ruleNames);
+
+      break;
+    }
+
+    case ZeroOrMorePartsPartType: {
+      partEffectivelyUseless = true;
+
+      break;
+    }
+
+    case SequenceOfPartsPartType: {
+      const sequenceOfPartsPart = nonTerminalPart, ///
+            parts = sequenceOfPartsPart.getParts(),
+            partsEffectivelyUseless = arePartsEffectivelyUseless(parts, ruleMap, ruleNames);
+
+      partEffectivelyUseless = partsEffectivelyUseless; ///
+
+      break;
+    }
+
+    case ChoiceOfPartsPartType: {
+      const choiceOfPartsPart = nonTerminalPart, ///
+            parts = choiceOfPartsPart.getParts(),
+            partsEffectivelyUseless = parts.every((part) => {
+              const partEffectivelyUseless = isPartEffectivelyUseless(part, ruleMap, ruleNames);
+
+              return partEffectivelyUseless;
+            })
+
+      partEffectivelyUseless = partsEffectivelyUseless; ///
+
+      break;
+    }
+  }
+
+  return partEffectivelyUseless;
 }
 
 function areDefinitionsEffectivelyEmpty(definitions, ruleMap, ruleNames) {

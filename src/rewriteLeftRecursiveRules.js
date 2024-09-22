@@ -1,10 +1,15 @@
 "use strict";
 
-import RewrittenRule from "./rule/rewritten";
+import { arrayUtilities } from "necessary";
 
-import {ruleNamesFromCycle, ruleNamesFromCycles} from "./utilities/ruleNames";
+import RewrittenRule from "./rule/rewritten";
+import DirectlyRepeatedRule from "./rule/repeated/directly";
+
+import { ruleNamesFromCycles } from "./utilities/ruleNames";
 import { isRuleEffectivelyEmpty } from "./utilities/rule";
-import {directlyRepeatedRuleNameFromRuleName, reducedRuleNameFromRuleName} from "./utilities/ruleName";
+import { isCycleIrreducible, ruleCyclesFromRuleNameAndCycles } from "./utilities/cycle";
+
+const { filter } = arrayUtilities;
 
 export default function rewriteLeftRecursiveRules(cycles, ruleMap) {
   const ruleNames = ruleNamesFromCycles(cycles);
@@ -19,20 +24,20 @@ export default function rewriteLeftRecursiveRules(cycles, ruleMap) {
     ruleMap[ruleName] = rule;
   });
 
-  ruleNames.forEach((ruleName) => {
-    const directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
-          directlyRepeatedRule = ruleMap[directlyRepeatedRuleName],
-          directlyRepeatedRuleEffectivelyEmpty = isRuleEffectivelyEmpty(directlyRepeatedRule, ruleMap);
+  const directlyRepeatedRules = rulesFromRuleMapAndRule(ruleMap, DirectlyRepeatedRule);
+
+  directlyRepeatedRules.forEach((directlyRepeatedRule) => {
+    const directlyRepeatedRuleEffectivelyEmpty = isRuleEffectivelyEmpty(directlyRepeatedRule, ruleMap);
 
     if (directlyRepeatedRuleEffectivelyEmpty) {
       const directlyRepeatedRuleName = directlyRepeatedRule.getName();
 
-      throw new Error(`The '${directlyRepeatedRuleName}' directly repeated rule is effectively empty.`);
+      throw new Error(`The directly repeated '${directlyRepeatedRuleName}' rule is effectively empty.`);
     }
   });
 
   ruleNames.forEach((ruleName) => {
-    const ruleCycles = ruleCyclesFromRuleNamdAndCyclces(ruleName, cycles),
+    const ruleCycles = ruleCyclesFromRuleNameAndCycles(ruleName, cycles),
           ruleCyclesIrreducible = ruleCycles.every((ruleCycle) => {
             const ruleCycleIrreducible = isCycleIrreducible(ruleCycle, ruleMap);
 
@@ -47,37 +52,16 @@ export default function rewriteLeftRecursiveRules(cycles, ruleMap) {
   });
 }
 
-function isCycleIrreducible(cycle, ruleMap) {
-  const ruleNames = ruleNamesFromCycle(cycle),
-        reducedRules = ruleNames.reduce((reducedRules, ruleName) => {
-          const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-            reducedRule = ruleMap[reducedRuleName] || null;
+function rulesFromRuleMapAndRule(ruleMap, Rule) {
+  const rules = Object.values(ruleMap); ///
 
-          if (reducedRule !== null) {
-            reducedRules.push(reducedRule);
-          }
+  filter(rules, (rule) => {
+    const ruleRule = (rule instanceof Rule);
 
-          return reducedRules;
-        }, []),
-        reducedRulesLength = reducedRules.length,
-        cycleIrreducible = (reducedRulesLength === 0); ///
-
-  return cycleIrreducible;
-}
-
-function ruleCyclesFromRuleNamdAndCyclces(ruleName, cycles) {
-  const ruleCycles = cycles.reduce((ruleCycles, cycle) => {
-    const ruleNames = ruleNamesFromCycle(cycle),
-      ruleNamesIncludeRuleName = ruleNames.includes(ruleName);
-
-    if (ruleNamesIncludeRuleName) {
-      const ruleCycle = cycle;  ///
-
-      ruleCycles.push(ruleCycle);
+    if (ruleRule) {
+      return true;
     }
+  });
 
-    return ruleCycles;
-  }, []);
-
-  return ruleCycles;
+  return rules;
 }

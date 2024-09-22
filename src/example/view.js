@@ -135,7 +135,7 @@ statement            ::= judgement
 
 judgement            ::= frame "=" ;
 
-frame                ::= statement ;
+frame                ::= statement declaration* ;
 
 declaration          ::= "b" ;
 

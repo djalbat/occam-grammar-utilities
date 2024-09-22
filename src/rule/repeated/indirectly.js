@@ -6,6 +6,7 @@ import { Rule, Parts, Definition } from "occam-parsers";
 import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { arePartsEqual } from "../../utilities/parts";
+import { isRuleEffectivelyUseless } from "../../utilities/rule";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 import { isDefinitionComplex, isDefinitionLookAhead, isDefinitionQualified, isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
@@ -13,7 +14,7 @@ const { first } = arrayUtilities,
       { EpsilonPart } = Parts;
 
 export default class IndirectlyRepeatedRule extends Rule {
-  static fromRuleAndLeftRecursiveRule(rule, leftRecursiveRule) {
+  static fromRuleAndLeftRecursiveRule(rule, leftRecursiveRule, ruleMap) {
     let definitions = rule.getDefinitions();
 
     const leftRecursiveRuleName = leftRecursiveRule.getName();
@@ -91,7 +92,14 @@ export default class IndirectlyRepeatedRule extends Rule {
                       definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions);
 
     const NonTerminalNode = IndirectlyRepeatedNode,  ///
-          indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions, NonTerminalNode);
+          indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions, NonTerminalNode),
+          indirectlyRepeatedRuleEffectivelyUseless = isRuleEffectivelyUseless(indirectlyRepeatedRule, ruleMap);
+
+    if (indirectlyRepeatedRuleEffectivelyUseless) {
+      const epsilonDefinition = epsilonDefinitionFromPrecedence(precedence);
+
+      definitions.push(epsilonDefinition);
+    }
 
     return indirectlyRepeatedRule;
   }
@@ -118,6 +126,17 @@ function definitionsFromPrecedence(precedence) {
   return definitions;
 }
 
+function epsilonDefinitionFromPrecedence(precedence) {
+  const epsilonPart = EpsilonPart.fromNothing(),
+        parts = [
+          epsilonPart
+        ],
+        definition = Definition.fromPartsAndPrecedence(parts, precedence),
+        epsilonDefinition = definition; ///
+
+  return epsilonDefinition;
+}
+
 function definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions) {
   const definitions = leftRecursiveDefinitions.map((leftRecursiveDefinition) => { ///
           let parts = leftRecursiveDefinition.getParts();
@@ -135,15 +154,4 @@ function definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions) {
         });
 
   return definitions;
-}
-
-function epsilonDefinitionFromPrecedence(precedence) {
-  const epsilonPart = EpsilonPart.fromNothing(),
-        parts = [
-          epsilonPart
-        ],
-        definition = Definition.fromPartsAndPrecedence(parts, precedence),
-        epsilonDefinition = definition; ///
-
-  return epsilonDefinition;
 }
