@@ -1,17 +1,17 @@
 "use strict";
 
 import { arrayUtilities } from "necessary";
-import { Rule, Parts, Definition } from "occam-parsers";
+import { Rule, Definition } from "occam-parsers";
 
+import EpsilonDefinition from "../../definition/epsilon";
 import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { arePartsEqual } from "../../utilities/parts";
-import { isRuleEffectivelyUseless } from "../../utilities/rule";
+import { areDefinitionsEffectivelyUseless } from "../../utilities/rule";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 import { isDefinitionComplex, isDefinitionLookAhead, isDefinitionQualified, isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
-const { first } = arrayUtilities,
-      { EpsilonPart } = Parts;
+const { first } = arrayUtilities;
 
 export default class IndirectlyRepeatedRule extends Rule {
   static fromRuleAndLeftRecursiveRule(rule, leftRecursiveRule, ruleMap) {
@@ -87,19 +87,26 @@ export default class IndirectlyRepeatedRule extends Rule {
           name = indirectlyRepeatedRuleName,  ///
           opacity = leftRecursiveRuleOpacity; ///
 
-    definitions = (leftRecursiveDefinitionsLength === 0) ?
-                    definitionsFromPrecedence(precedence) :
-                      definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions);
+    if (leftRecursiveDefinitionsLength === 0) {
+      const epsilonDefinition = EpsilonDefinition.fromPrecedence(precedence);
+
+      definitions = [
+        epsilonDefinition
+      ];
+    } else {
+      definitions = definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions);
+
+      const definitionsEffectivelyUseless = areDefinitionsEffectivelyUseless(definitions, ruleMap);
+
+      if (definitionsEffectivelyUseless) {
+        const epsilonDefinition = EpsilonDefinition.fromPrecedence(precedence);
+
+        definitions.push(epsilonDefinition);
+      }
+    }
 
     const NonTerminalNode = IndirectlyRepeatedNode,  ///
-          indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions, NonTerminalNode),
-          indirectlyRepeatedRuleEffectivelyUseless = isRuleEffectivelyUseless(indirectlyRepeatedRule, ruleMap);
-
-    if (indirectlyRepeatedRuleEffectivelyUseless) {
-      const epsilonDefinition = epsilonDefinitionFromPrecedence(precedence);
-
-      definitions.push(epsilonDefinition);
-    }
+          indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions, NonTerminalNode);
 
     return indirectlyRepeatedRule;
   }
@@ -115,26 +122,6 @@ function areFirstPartsEqual(definitions) {
         firstPartsEqual = arePartsEqual(firstParts);
 
   return firstPartsEqual;
-}
-
-function definitionsFromPrecedence(precedence) {
-  const epsilonDefinition = epsilonDefinitionFromPrecedence(precedence),
-        definitions = [
-          epsilonDefinition
-        ];
-
-  return definitions;
-}
-
-function epsilonDefinitionFromPrecedence(precedence) {
-  const epsilonPart = EpsilonPart.fromNothing(),
-        parts = [
-          epsilonPart
-        ],
-        definition = Definition.fromPartsAndPrecedence(parts, precedence),
-        epsilonDefinition = definition; ///
-
-  return epsilonDefinition;
 }
 
 function definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions) {

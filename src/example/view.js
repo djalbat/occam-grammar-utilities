@@ -165,7 +165,7 @@ reference            ::=  metavariable ;
 
 metavariable         ::=  [name] ( <NO_WHITESPACE>"(" argument... ")" )? ;`
 
-  static initialContent = `a, a :: a |= a :: a
+  static initialContent = `a, P :: Q |= R :: S
 `;
 
   static initialStartRuleName = "";

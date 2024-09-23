@@ -74,7 +74,7 @@ export function leftRecursiveRuleNamesFromRule(rule, leftRecursiveRuleNames = []
   return leftRecursiveRuleNames;
 }
 
-function areDefinitionsEffectivelyUseless(definitions, ruleMap, ruleNames) {
+export function areDefinitionsEffectivelyUseless(definitions, ruleMap, ruleNames) {
   const definitionsEffectivelyUseless = definitions.every((definition) => {
     const definitionEffectivelyUseless = isDefinitionEffectivelyUseless(definition, ruleMap, ruleNames);
 
@@ -88,8 +88,9 @@ function areDefinitionsEffectivelyUseless(definitions, ruleMap, ruleNames) {
 
 function isDefinitionEffectivelyUseless(definition, ruleMap, ruleNames) {
   const parts = definition.getParts(),
+        partsEffectivelyEmpty = arePartsEffectivelyEmpty(parts, ruleMap, ruleNames),
         partsEffectivelyUseless = arePartsEffectivelyUseless(parts, ruleMap, ruleNames),
-        definitionEffectivelyUseless = partsEffectivelyUseless; ///
+        definitionEffectivelyUseless = (partsEffectivelyEmpty || partsEffectivelyUseless);
 
   return definitionEffectivelyUseless;
 }
