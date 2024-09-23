@@ -153,7 +153,7 @@ function isNonTerminalPartEffectivelyUseless(nonTerminalPart, ruleMap, ruleNames
     }
 
     case OptionalPartPartType: {
-      partEffectivelyUseless = true;
+      partEffectivelyUseless = false
 
       break;
     }
@@ -168,7 +168,7 @@ function isNonTerminalPartEffectivelyUseless(nonTerminalPart, ruleMap, ruleNames
     }
 
     case ZeroOrMorePartsPartType: {
-      partEffectivelyUseless = true;
+      partEffectivelyUseless = false
 
       break;
     }

@@ -163,9 +163,9 @@ declaration          ::=  reference "::" statement ;
 
 reference            ::=  metavariable ;
 
-metavariable         ::=  [identifier] ;`
+metavariable         ::=  [name] ( <NO_WHITESPACE>"(" argument... ")" )? ;`
 
-  static initialContent = `a |= R :: S
+  static initialContent = `a, a :: a |= a :: a
 `;
 
   static initialStartRuleName = "";
@@ -175,7 +175,7 @@ metavariable         ::=  [identifier] ;`
       "special": "\\|=|::"
     },
     {
-      "identifier": "[a-zA-Z]+"
+      "name": "[a-zA-Z]+"
     },
     {
       "unassigned": "."
