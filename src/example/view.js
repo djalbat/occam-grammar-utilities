@@ -125,6 +125,24 @@ class View extends Element {
     this.update();
   }
 
+  static occludedBNF = `unqualifiedStatement ::= statement... <END_OF_LINE> ; 
+  
+statement            ::= judgement
+
+                       | metavariable
+
+                       ;
+
+judgement            ::=  frame "|=" declaration ;
+
+frame                ::=  entry ( "," entry ) ;
+ 
+entry                ::=  ( reference "::" )?  statement ;
+
+declaration          ::=  reference "::" statement ;
+
+metavariable         ::= "a" ;`
+
   static initialBNF = `unqualifiedStatement ::= statement... <END_OF_LINE> ; 
   
 statement            ::= judgement
@@ -133,22 +151,36 @@ statement            ::= judgement
 
                        ;
 
-judgement            ::= frame "=" ;
+judgement            ::=  frame "|=" declaration ;
 
-frame                ::= statement declaration* ;
+frame                ::=  declaration ( "," ( statement | declaration ) )* 
 
-declaration          ::= "b" ;
+                       |  statement ( "," ( statement | declaration ) )*
+                                       
+                       ;
+ 
+declaration          ::=  reference "::" statement ;
 
-metavariable         ::= "a" ;`
+reference            ::=  metavariable ;
 
-  static initialContent = `a =
+metavariable         ::=  [identifier] ;`
+
+  static initialContent = `a |= R :: S
 `;
 
   static initialStartRuleName = "";
 
-  static initialLexicalEntries = [{
-    unassigned: "."
-  }];
+  static initialLexicalEntries = [
+    {
+      "special": "\\|=|::"
+    },
+    {
+      "identifier": "[a-zA-Z]+"
+    },
+    {
+      "unassigned": "."
+    }
+  ];
 
   static tagName = "div";
 
