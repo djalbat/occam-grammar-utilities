@@ -7,7 +7,7 @@ import EpsilonDefinition from "../../definition/epsilon";
 import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { arePartsEqual } from "../../utilities/parts";
-import { areDefinitionsEffectivelyUseless } from "../../utilities/rule";
+import { isRuleNonProducing } from "../../utilities/rule";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 import { isDefinitionComplex, isDefinitionLookAhead, isDefinitionQualified, isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
 
@@ -83,30 +83,20 @@ export default class IndirectlyRepeatedRule extends Rule {
     const ruleName = rule.getName(),
           leftRecursiveRuleOpacity = leftRecursiveRule.getOpacity(),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
-          leftRecursiveDefinitionsLength = leftRecursiveDefinitions.length,
           name = indirectlyRepeatedRuleName,  ///
           opacity = leftRecursiveRuleOpacity; ///
 
-    if (leftRecursiveDefinitionsLength === 0) {
-      const epsilonDefinition = EpsilonDefinition.fromPrecedence(precedence);
-
-      definitions = [
-        epsilonDefinition
-      ];
-    } else {
-      definitions = definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions);
-
-      const definitionsEffectivelyUseless = areDefinitionsEffectivelyUseless(definitions, ruleMap);
-
-      if (definitionsEffectivelyUseless) {
-        const epsilonDefinition = EpsilonDefinition.fromPrecedence(precedence);
-
-        definitions.push(epsilonDefinition);
-      }
-    }
+    definitions = definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions);
 
     const NonTerminalNode = IndirectlyRepeatedNode,  ///
-          indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions, NonTerminalNode);
+          indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions, NonTerminalNode),
+          indirectlyRepeatedRuleNonProducing = isRuleNonProducing(indirectlyRepeatedRule, ruleMap);
+
+    if (indirectlyRepeatedRuleNonProducing) {
+      const epsilonDefinition = EpsilonDefinition.fromPrecedence(precedence);
+
+      definitions.push(epsilonDefinition);
+    }
 
     return indirectlyRepeatedRule;
   }

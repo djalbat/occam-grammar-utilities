@@ -28,7 +28,7 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-  describe("a directly repeated rule is effectively empty", () => {
+  describe("a directly repeated rule is non-consuming", () => {
     const bnf = `
 
       A ::= A "c"
@@ -58,7 +58,7 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-  describe("a directly repeated rule is not effectively empty", () => {
+  describe("a directly repeated rule is not non-consuming", () => {
     const bnf = `
   
       A ::= "d"
@@ -1318,6 +1318,72 @@ describe("src/eliminateLeftRecursion", () => {
                  |                                       |                       
         "n"[unassigned] [0]                     "n"[unassigned] [0]              
     
+      `));
+    });
+  });
+
+  describe("an indirectly repeated rule that is non-producing", () => {
+    const bnf = `S  ::=  A... <END_OF_LINE> ; 
+  
+A  ::=  B "=" C
+
+     |  C
+
+     ;
+
+B  ::=  A ( "," A )* ;
+ 
+C  ::=  . ;`;
+
+    it("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compare(adjustedBNF, `S   ::= A... <END_OF_LINE> ;
+
+A   ::= A_ A~* ;
+
+B   ::= A_ A~* B~A ;
+
+C   ::= . ;
+
+A_  ::= C ;
+
+A~B ::= "=" C ;
+
+B~A ::= ( "," A )*
+
+      | ε
+
+      ;
+
+A~  ::= B~A B~* A~B ;
+
+B~  ::= A~B A~* B~A ;`));
+    });
+
+    it("results in the requisite parse tree" , () => {
+      const content = `a = R
+`,
+            parseTreeString = parseTreeStringFromBNFAndContent(bnf, content);
+
+      assert.isTrue(compare(parseTreeString, `
+                    
+                                                      S [0]                      
+                                                        |                        
+                                     --------------------------------------      
+                                     |                                    |      
+                                   A [0]                            <END_OF_LINE>
+                                     |                                           
+                 -----------------------------------------                       
+                 |                   |                   |                       
+               B [0]        "="[unassigned] [0]        C [0]                     
+                 |                                       |                       
+               A [0]                            "R"[unassigned] [0]              
+                 |                                                               
+               C [0]                                                             
+                 |                                                               
+        "a"[unassigned] [0]                                                      
+             
       `));
     });
   });

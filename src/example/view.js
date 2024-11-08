@@ -143,40 +143,24 @@ declaration          ::=  reference "::" statement ;
 
 metavariable         ::= "a" ;`
 
-  static initialBNF = `unqualifiedStatement ::= statement... <END_OF_LINE> ; 
+  static initialBNF = `S  ::=  A... <END_OF_LINE> ; 
   
-statement            ::= judgement
+A  ::=  B "=" C
 
-                       | metavariable
+     |  C
 
-                       ;
+     ;
 
-judgement            ::=  frame "|=" declaration ;
-
-frame                ::=  declaration ( "," ( statement | declaration ) )* 
-
-                       |  statement ( "," ( statement | declaration ) )*
-                                       
-                       ;
+B  ::=  A ( "," A )* ;
  
-declaration          ::=  reference "::" statement ;
+C  ::=  . ;`
 
-reference            ::=  metavariable ;
-
-metavariable         ::=  [name] ( <NO_WHITESPACE>"(" argument... ")" )? ;`
-
-  static initialContent = `a, P :: Q |= R :: S
+  static initialContent = `a = R
 `;
 
   static initialStartRuleName = "";
 
   static initialLexicalEntries = [
-    {
-      "special": "\\|=|::"
-    },
-    {
-      "name": "[a-zA-Z]+"
-    },
     {
       "unassigned": "."
     }

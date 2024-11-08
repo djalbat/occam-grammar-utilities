@@ -6,7 +6,7 @@ import RewrittenRule from "./rule/rewritten";
 import DirectlyRepeatedRule from "./rule/repeated/directly";
 
 import { ruleNamesFromCycles } from "./utilities/ruleNames";
-import { isRuleEffectivelyEmpty } from "./utilities/rule";
+import { isRuleNonConsuming } from "./utilities/rule";
 import { isCycleIrreducible, ruleCyclesFromRuleNameAndCycles } from "./utilities/cycle";
 
 const { filter } = arrayUtilities;
@@ -27,12 +27,12 @@ export default function rewriteLeftRecursiveRules(cycles, ruleMap) {
   const directlyRepeatedRules = rulesFromRuleMapAndRule(ruleMap, DirectlyRepeatedRule);
 
   directlyRepeatedRules.forEach((directlyRepeatedRule) => {
-    const directlyRepeatedRuleEffectivelyEmpty = isRuleEffectivelyEmpty(directlyRepeatedRule, ruleMap);
+    const directlyRepeatedRuleNonConsuming = isRuleNonConsuming(directlyRepeatedRule, ruleMap);
 
-    if (directlyRepeatedRuleEffectivelyEmpty) {
+    if (directlyRepeatedRuleNonConsuming) {
       const directlyRepeatedRuleName = directlyRepeatedRule.getName();
 
-      throw new Error(`The directly repeated '${directlyRepeatedRuleName}' rule is effectively empty.`);
+      throw new Error(`The directly repeated '${directlyRepeatedRuleName}' rule is non-consuming.`);
     }
   });
 
