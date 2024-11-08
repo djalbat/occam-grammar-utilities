@@ -1,11 +1,12 @@
 "use strict";
 
 import { partTypes } from "occam-parsers";
+import { specialSymbols } from "occam-lexers";
 
-import { isPartEmpty } from "../utilities/part";
 import { recursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromDefinition } from "../utilities/definition";
 
-const { RuleNamePartType,
+const { epsilon, noWhitespace, startOfContent } = specialSymbols,
+      { RuleNamePartType,
         OptionalPartPartType,
         ChoiceOfPartsPartType,
         OneOrMorePartsPartType,
@@ -154,7 +155,7 @@ function isNonTerminalPartEffectivelyUseless(nonTerminalPart, ruleMap, ruleNames
     }
 
     case OptionalPartPartType: {
-      partEffectivelyUseless = false
+      partEffectivelyUseless = false;
 
       break;
     }
@@ -169,7 +170,7 @@ function isNonTerminalPartEffectivelyUseless(nonTerminalPart, ruleMap, ruleNames
     }
 
     case ZeroOrMorePartsPartType: {
-      partEffectivelyUseless = false
+      partEffectivelyUseless = false;
 
       break;
     }
@@ -241,9 +242,9 @@ function isPartEffectivelyEmpty(part, ruleMap, ruleNames) {
 
   if (parTerminalPart) {
     const terminalPart = part,  ///
-          terminalPartEmpty = isTerminalPartEffectivelyEmpty(terminalPart);
+          terminalPartEffectivelyEmpty = isTerminalPartEffectivelyEmpty(terminalPart);
 
-    partEffectivelyEmpty = terminalPartEmpty; ///
+    partEffectivelyEmpty = terminalPartEffectivelyEmpty; ///
   } else {
     const nonTerminalNPart = part,  ///
           nonTerminalPartEffectivelyEmpty = isNonTerminalPartEffectivelyEmpty(nonTerminalNPart, ruleMap, ruleNames);
@@ -255,9 +256,10 @@ function isPartEffectivelyEmpty(part, ruleMap, ruleNames) {
 }
 
 function isTerminalPartEffectivelyEmpty(terminalPart) {
-  const part = terminalPart,  ///
-        partEmpty = isPartEmpty(part),
-        terminalPartEffectivelyEmpty = partEmpty; ///
+  const terminalPartString = terminalPart.asString(),
+        terminalPartStringEpsilon = (terminalPartString === epsilon),
+        terminalPartEpsilonPart = terminalPartStringEpsilon,  ///
+        terminalPartEffectivelyEmpty = terminalPartEpsilonPart;  ///
 
   return terminalPartEffectivelyEmpty;
 }

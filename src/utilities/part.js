@@ -1,7 +1,6 @@
 "use strict";
 
 import { arrayUtilities } from "necessary";
-import { specialSymbols } from "occam-lexers";
 import { Parts, partTypes } from "occam-parsers";
 
 const { RuleNamePart, ZeroOrMorePartsPart } = Parts,
@@ -12,16 +11,7 @@ const { RuleNamePart, ZeroOrMorePartsPart } = Parts,
         SequenceOfPartsPartType,
         ZeroOrMorePartsPartType } = partTypes;
 
-const { first } = arrayUtilities,
-      { epsilon } = specialSymbols;
-
-export function isPartEmpty(part) {
-  const partString = part.asString(),
-        partStringEpsilon = (partString === epsilon),
-        partEmpty = partStringEpsilon;  ///
-
-  return partEmpty;
-}
+const { first } = arrayUtilities;
 
 export function isPartComplex(part) {
   let partComplex = true;
