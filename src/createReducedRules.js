@@ -9,7 +9,7 @@ export default function createReducedRules(cycles, ruleMap) {
 
   ruleNames.forEach((ruleName) => {
     const rule = ruleMap[ruleName],
-          reducedRule = ReducedRule.fromRuleAndCycles(rule, cycles);
+          reducedRule = ReducedRule.fromRuleAndCycles(rule, cycles, ruleMap);
 
     if (reducedRule !== null) {
       const reducedRuleName = reducedRule.getName();

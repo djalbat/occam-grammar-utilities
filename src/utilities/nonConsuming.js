@@ -12,7 +12,7 @@ const { epsilon, noWhitespace, startOfContent } = specialSymbols,
         SequenceOfPartsPartType } = partTypes;
 
 export function isRuleNonConsuming(rule, ruleMap, ruleNames = []) {
-  let ruleNonConsuming = true;
+  let ruleNonConsuming = false;
 
   const ruleName = rule.getName(),
         ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
@@ -30,6 +30,26 @@ export function isRuleNonConsuming(rule, ruleMap, ruleNames = []) {
   }
 
   return ruleNonConsuming;
+}
+
+export function isPartNonConsuming(part, ruleMap, ruleNames = []) {
+  let partNonConsuming;
+
+  const parTerminalPart = part.isTerminalPart();
+
+  if (parTerminalPart) {
+    const terminalPart = part,  ///
+          terminalPartNonConsuming = isTerminalPartNonConsuming(terminalPart);
+
+    partNonConsuming = terminalPartNonConsuming; ///
+  } else {
+    const nonTerminalNPart = part,  ///
+          nonTerminalPartNonConsuming = isNonTerminalPartNonConsuming(nonTerminalNPart, ruleMap, ruleNames);
+
+    partNonConsuming = nonTerminalPartNonConsuming; ///
+  }
+
+  return partNonConsuming;
 }
 
 function areDefinitionsNonConsuming(definitions, ruleMap, ruleNames) {
@@ -62,26 +82,6 @@ function arePartsNonConsuming(parts, ruleMap, ruleNames) {
   });
 
   return partsNonConsuming;
-}
-
-function isPartNonConsuming(part, ruleMap, ruleNames) {
-  let partNonConsuming;
-
-  const parTerminalPart = part.isTerminalPart();
-
-  if (parTerminalPart) {
-    const terminalPart = part,  ///
-          terminalPartNonConsuming = isTerminalPartNonConsuming(terminalPart);
-
-    partNonConsuming = terminalPartNonConsuming; ///
-  } else {
-    const nonTerminalNPart = part,  ///
-          nonTerminalPartNonConsuming = isNonTerminalPartNonConsuming(nonTerminalNPart, ruleMap, ruleNames);
-
-    partNonConsuming = nonTerminalPartNonConsuming; ///
-  }
-
-  return partNonConsuming;
 }
 
 function isTerminalPartNonConsuming(terminalPart) {

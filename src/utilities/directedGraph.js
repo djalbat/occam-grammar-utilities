@@ -55,7 +55,7 @@ function edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap) {
   ];
 
   const recursiveRuleNames = recursiveRuleNamesFromRule(rule),
-        leftRecursiveRuleNames = leftRecursiveRuleNamesFromRule(rule);
+        leftRecursiveRuleNames = leftRecursiveRuleNamesFromRule(rule, ruleMap);
 
   recursiveRuleNames.forEach((recursiveRuleName) => {
     const leftRecursiveRuleNamesIncludesRecursiveRuleName = leftRecursiveRuleNames.includes(recursiveRuleName),

@@ -88,7 +88,9 @@ function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
         const sequenceOfPartsPart = nonTerminalPart,  ///
               parts = sequenceOfPartsPart.getParts();
 
-        parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
+        parts.forEach((part) => {
+          recursiveRuleNamesFromPart(part, recursiveRuleNames);
+        });
 
         break;
       }
@@ -97,7 +99,9 @@ function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
         const choiceOfPartsPart = nonTerminalPart, ///
               parts = choiceOfPartsPart.getParts();
 
-        parts.forEach((part) => recursiveRuleNamesFromPart(part, recursiveRuleNames));
+        parts.forEach((part) => {
+          recursiveRuleNamesFromPart(part, recursiveRuleNames)
+        });
 
         break;
       }

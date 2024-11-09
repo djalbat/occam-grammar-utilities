@@ -10,6 +10,28 @@ const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
 describe("src/eliminateLeftRecursion", () => {
+  describe("a left recursive definition is occluded", () => {
+    const bnf = `
+  
+      A  ::=  B
+      
+           |  C
+      
+           ;
+      
+      B  ::=  C? A ;
+      
+      C  ::=  . ;
+        
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
   describe("all the reduced rules in a cycle are missing", () => {
     const bnf = `
 

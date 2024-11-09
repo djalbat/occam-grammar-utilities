@@ -29,7 +29,7 @@ class View extends Element {
   }
 
   update() {
-    try {
+    // try {
       const bnf = this.getBNF(),
             startRuleName = this.getStartRuleName(),
             lexicalEntries = this.getLexicalEntries();
@@ -58,9 +58,9 @@ class View extends Element {
       }
 
       this.setParseTree(parseTree);
-    } catch (error) {
-      console.log(error);
-    }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   childElements() {
@@ -125,19 +125,15 @@ class View extends Element {
     this.update();
   }
 
-  static initialBNF = `unqualifiedStatement  ::=  statement... <END_OF_LINE> ; 
-  
-statement             ::=  judgement
+  static initialBNF = `A  ::=  B
 
-                        |  metavariable
+     |  C
 
-                        ;
+     ;
 
-judgement             ::=  entry ( "," entry ) ;
- 
-entry                 ::=  ( reference "::" )? statement ;
+B  ::=  C? A ;
 
-metavariable          ::=  . ;`
+C  ::=  . ;`
 
   static initialContent = `a
 `;

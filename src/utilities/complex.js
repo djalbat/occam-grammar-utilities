@@ -31,7 +31,7 @@ function isPartComplex(part) {
 
     switch (type) {
       case RuleNamePartType: {
-            partComplex = false;
+        partComplex = false;
 
         break;
       }

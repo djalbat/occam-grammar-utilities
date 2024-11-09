@@ -11,14 +11,14 @@ import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursive
 import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/directedGraph";
 
 export default class ReducedRule extends Rule {
-  static fromRuleAndCycles(rule, cycles) {
+  static fromRuleAndCycles(rule, cycles, ruleMap) {
     const ruleName = rule.getName();
 
     let reducedRule = null,
         definitions = rule.getDefinitions();
 
     definitions = definitions.filter((definition) => {
-      const definitionLeftReducible = isDefinitionReducible(definition, ruleName, cycles);
+      const definitionLeftReducible = isDefinitionReducible(definition, ruleName, cycles, ruleMap);
 
       if (definitionLeftReducible) {
         return true;
@@ -41,8 +41,8 @@ export default class ReducedRule extends Rule {
   }
 }
 
-function isDefinitionReducible(definition, ruleName, cycles) {
-  const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition),
+function isDefinitionReducible(definition, ruleName, cycles, ruleMap) {
+  const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition, ruleMap),
         definitionReducible = leftRecursiveRuleNames.every((leftRecursiveRuleName) => {
           const cyclesIncludeRuleNameAndLeftRecursiveRuleName = cycles.some((cycle) => {
             const cycleIncludesRuleNameAndLeftRecursiveRuleName = doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName);

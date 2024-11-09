@@ -9,7 +9,7 @@ export default function createDirectlyRepeatedRules(cycles, ruleMap) {
 
   ruleNames.forEach((ruleName) => {
     const rule = ruleMap[ruleName],
-          directlyRepeatedRule = DirectlyRepeatedRule.fromRuleAndCycles(rule, cycles),
+          directlyRepeatedRule = DirectlyRepeatedRule.fromRuleAndCycles(rule, cycles, ruleMap),
           directlyRepeatedRuleName = directlyRepeatedRule.getName();
 
     ruleMap[directlyRepeatedRuleName] = directlyRepeatedRule;
