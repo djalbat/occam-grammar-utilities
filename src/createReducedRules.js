@@ -2,7 +2,7 @@
 
 import ReducedRule from "./rule/reduced";
 
-import { ruleNamesFromCycles } from "./utilities/ruleNames";
+import { ruleNamesFromCycles } from "./utilities/cycle";
 
 export default function createReducedRules(cycles, ruleMap) {
   const ruleNames = ruleNamesFromCycles(cycles);

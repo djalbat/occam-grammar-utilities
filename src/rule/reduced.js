@@ -5,9 +5,9 @@ import { Rule } from "occam-parsers";
 import ReducedNode from "../node/reduced";
 
 import { edgesMatchEdge } from "../directedGraph";
-import { ruleNamesFromCycle } from "../utilities/ruleNames";
+import { ruleNamesFromCycle } from "../utilities/cycle";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
-import { leftRecursiveRuleNamesFromDefinition } from "../utilities/definition";
+import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursive";
 import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/directedGraph";
 
 export default class ReducedRule extends Rule {

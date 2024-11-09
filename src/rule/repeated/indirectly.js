@@ -7,9 +7,12 @@ import EpsilonDefinition from "../../definition/epsilon";
 import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { arePartsEqual } from "../../utilities/parts";
-import { isRuleNonProducing } from "../../utilities/rule";
+import { isRuleNonProducing } from "../../utilities/nonProducing";
+import { isDefinitionComplex } from "../../utilities/complex";
+import { isDefinitionLookAhead } from "../../utilities/lokkAhead";
+import { isDefinitionQualified } from "../../utilities/qualified";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
-import { isDefinitionComplex, isDefinitionLookAhead, isDefinitionQualified, isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "../../utilities/definition";
+import { isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "../../utilities/leftRecursive";
 
 const { first } = arrayUtilities;
 

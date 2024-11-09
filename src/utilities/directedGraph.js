@@ -3,8 +3,9 @@
 import Edge from "../edge";
 
 import { edgesMatchEdge } from "../directedGraph";
+import { recursiveRuleNamesFromRule } from "../utilities/recursive";
+import { leftRecursiveRuleNamesFromRule } from "../utilities/leftRecursive";
 import { RECURSIVE_LABEL, LEFT_RECURSIVE_LABEL } from "../labels";
-import { recursiveRuleNamesFromRule, leftRecursiveRuleNamesFromRule } from "../utilities/rule";
 
 export function edgesFromRuleNames(ruleNames) {
   const length = ruleNames.length,

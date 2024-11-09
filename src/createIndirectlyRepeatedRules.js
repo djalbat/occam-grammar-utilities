@@ -2,7 +2,8 @@
 
 import IndirectlyRepeatedRule from "./rule/repeated/indirectly";
 
-import { ruleNamesFromCycle, forEachRuleNameAndLeftRecursiveRuleName } from "./utilities/ruleNames";
+import { ruleNamesFromCycle } from "./utilities/cycle";
+import { forEachRuleNameAndLeftRecursiveRuleName } from "./utilities/ruleNames";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "./utilities/ruleName";
 
 export default function createIndirectlyRepeatedRules(cycles, ruleMap) {

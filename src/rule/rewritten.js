@@ -5,7 +5,7 @@ import { Rule } from "occam-parsers";
 import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
 
-import { pathsFromRuleNameAndCycles } from "../utilities/path";
+import { pathsFromRuleNameAndCycles } from "../utilities/cycle";
 
 export default class RewrittenRule extends Rule {
   static fromRuleAndCycles(rule, cycles, ruleMap) {

@@ -5,8 +5,8 @@ import { arrayUtilities } from "necessary";
 import RewrittenRule from "./rule/rewritten";
 import DirectlyRepeatedRule from "./rule/repeated/directly";
 
-import { ruleNamesFromCycles } from "./utilities/ruleNames";
-import { isRuleNonConsuming } from "./utilities/rule";
+import { isRuleNonConsuming } from "./utilities/nonConsuming";
+import { ruleNamesFromCycles } from "./utilities/cycle";
 import { isCycleIrreducible, ruleCyclesFromRuleNameAndCycles } from "./utilities/cycle";
 
 const { filter } = arrayUtilities;

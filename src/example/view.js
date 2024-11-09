@@ -125,37 +125,21 @@ class View extends Element {
     this.update();
   }
 
-  static occludedBNF = `unqualifiedStatement ::= statement... <END_OF_LINE> ; 
+  static initialBNF = `unqualifiedStatement  ::=  statement... <END_OF_LINE> ; 
   
-statement            ::= judgement
+statement             ::=  judgement
 
-                       | metavariable
+                        |  metavariable
 
-                       ;
+                        ;
 
-judgement            ::=  frame "|=" declaration ;
-
-frame                ::=  entry ( "," entry ) ;
+judgement             ::=  entry ( "," entry ) ;
  
-entry                ::=  ( reference "::" )?  statement ;
+entry                 ::=  ( reference "::" )? statement ;
 
-declaration          ::=  reference "::" statement ;
+metavariable          ::=  . ;`
 
-metavariable         ::= "a" ;`
-
-  static initialBNF = `S  ::=  A... <END_OF_LINE> ; 
-  
-A  ::=  B "=" C
-
-     |  C
-
-     ;
-
-B  ::=  A ( "," A )* ;
- 
-C  ::=  . ;`
-
-  static initialContent = `a = R
+  static initialContent = `a
 `;
 
   static initialStartRuleName = "";
