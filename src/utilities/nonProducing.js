@@ -10,7 +10,7 @@ const { RuleNamePartType,
         SequenceOfPartsPartType } = partTypes;
 
 export function isRuleNonProducing(rule, ruleMap, ruleNames = []) {
-  let ruleNonProducing = true;
+  let ruleNonProducing = false;
 
   const ruleName = rule.getName(),
         ruleNamesIncludesRuleName = ruleNames.includes(ruleName);

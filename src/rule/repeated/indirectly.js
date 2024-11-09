@@ -45,19 +45,19 @@ export default class IndirectlyRepeatedRule extends Rule {
           if (definitionOccluded) {
             const definitionString = definition.asString();
 
-            throw new Error(`The '${definitionString}' left recursive-definition of the '${ruleName}' rule is occluded.`);
+            throw new Error(`The '${definitionString}' left recursive definition of the '${ruleName}' rule is occluded.`);
           }
 
           const definitionLookAhead = isDefinitionLookAhead(definition);
 
           if (definitionLookAhead) {
-            throw new Error(`The first part of the '${definitionString}' left-recursive definition of the '${ruleName}' rule is look-ahead.`);
+            throw new Error(`The first part of the '${definitionString}' left recursive definition of the '${ruleName}' rule is look-ahead.`);
           }
 
           const definitionQualified = isDefinitionQualified(definition);
 
           if (definitionQualified) {
-            throw new Error(`The first part of the '${definitionString}' left-recursive definition of the '${ruleName}' rule is qualified.`);
+            throw new Error(`The first part of the '${definitionString}' left recursive definition of the '${ruleName}' rule is qualified.`);
           }
 
           return true;
@@ -70,7 +70,7 @@ export default class IndirectlyRepeatedRule extends Rule {
     if (!firstPartsEqual) {
       const ruleName = rule.getName();
 
-      throw new Error(`The first parts of the '${leftRecursiveRuleName}' left-recursive definitions in the '${ruleName}' rule are not equal.`);
+      throw new Error(`The first parts of the '${leftRecursiveRuleName}' left recursive definitions in the '${ruleName}' rule are not equal.`);
     }
 
     let precedence = null;
