@@ -3,6 +3,7 @@
 import withStyle from "easy-with-style";  ///
 
 import { Element } from "easy";
+import { lexerUtilities } from "occam-lexers";
 import { rulesUtilities, parserUtilities } from "occam-parsers";
 import { ExampleLexer, ExampleParser, eliminateLeftRecursion } from "../index"; ///
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
@@ -16,8 +17,9 @@ import StartRuleNameInput from "./view/input/startRuleName";
 import AdjustedBNFTextarea from "./view/textarea/adjustedBNF";
 import LexicalEntriesTextarea from "./view/textarea/lexicalEntries";
 
-const { rulesFromBNF } = parserUtilities,
-      { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
+const { rulesAsString } = rulesUtilities,
+      { rulesFromEntries, lexerFromRules } = lexerUtilities,
+      { rulesFromBNF, parserFromRulesAndStartRuleName } = parserUtilities;
 
 class View extends Element {
   keyUpHandler = (event, element) => {
@@ -29,7 +31,7 @@ class View extends Element {
   }
 
   update() {
-    // try {
+    try {
       const bnf = this.getBNF(),
             startRuleName = this.getStartRuleName(),
             lexicalEntries = this.getLexicalEntries();
@@ -58,9 +60,9 @@ class View extends Element {
       }
 
       this.setParseTree(parseTree);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   childElements() {
@@ -161,15 +163,14 @@ export default withStyle(View)`
 
 function exampleLexerFromLexicalEntries(lexicalEntries) {
   const entries = lexicalEntries, ///
-        exampleLexer = ExampleLexer.fromEntries(entries);
+        rules = rulesFromEntries(entries),
+        exampleLexer = lexerFromRules(ExampleLexer, rules);
 
   return exampleLexer;
 }
 
 function exampleParserFromRulesAndStartRuleName(rules, startRuleName) {
-  const ruleMap = ruleMapFromRules(rules),
-        startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
-        exampleParser = new ExampleParser(startRule, ruleMap);
+  const exampleParser = parserFromRulesAndStartRuleName(ExampleParser, rules, startRuleName);
 
   return exampleParser;
 }
