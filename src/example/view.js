@@ -127,17 +127,22 @@ class View extends Element {
     this.update();
   }
 
-  static initialBNF = `A  ::=  B
+  static initialBNF = `S  ::=  A... <END_OF_LINE> ;
 
-     |  C
+A  ::=  T ":" . ;
+
+B  ::=  T ;
+
+V  ::=  . ;
+
+T  ::=  B ":" B 
+
+     |  V 
 
      ;
+`
 
-B  ::=  C? A ;
-
-C  ::=  . ;`
-
-  static initialContent = `a
+  static initialContent = `f:A:M
 `;
 
   static initialStartRuleName = "";
