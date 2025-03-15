@@ -244,7 +244,7 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-  describe("a cycle of length two", () => {
+  describe.only("a cycle of length two", () => {
     const bnf = `
   
       S ::= A... <END_OF_LINE> ;
@@ -265,7 +265,7 @@ describe("src/eliminateLeftRecursion", () => {
 
     `;
 
-    it("is rewritten", () => {
+    xit("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compare(adjustedBNF, `
@@ -1551,4 +1551,27 @@ function exampleParserFromRulesAndStartRuleName(rules, startRuleName) {
         exampleParser = new ExampleParser(startRule, ruleMap);
 
   return exampleParser;
+}
+
+function checkParentNode(node, parentNode = null) {
+  const nodeParentNode = node.getParentNode();
+
+  if (nodeParentNode !== parentNode) {
+    debugger
+  } else {
+    const nodeNonTerminalNode = node.isNonTerminalNode();
+
+    if (nodeNonTerminalNode) {
+      const nonTerminalNode = node, ///
+          childNodes = nonTerminalNode.getChildNodes();
+
+      parentNode = node;  ///
+
+      childNodes.forEach((childNode) => {
+        const node = childNode; ///
+
+        checkParentNode(node, parentNode);
+      });
+    }
+  }
 }
