@@ -4,17 +4,17 @@ import { arrayUtilities } from "necessary";
 
 const { first } = arrayUtilities;
 
-export function isDefinitionLookAhead(definition) {
+export function isDefinitionCallAhead(definition) {
   const parts = definition.getParts(),
         firstPart = first(parts),
-        firstPartLookAhead = isPartLookAhead(firstPart),
-        definitionLookAhead = firstPartLookAhead; ///
+        firstPartCallAhead = isPartCallAhead(firstPart),
+        definitionCallAhead = firstPartCallAhead; ///
 
-  return definitionLookAhead;
+  return definitionCallAhead;
 }
 
-function isPartLookAhead(part) {
-  let partLookAhead = false;
+function isPartCallAhead(part) {
+  let partCallAhead = false;
 
   const partNonTerminalPart = part.isNonTerminalPart();
 
@@ -24,11 +24,11 @@ function isPartLookAhead(part) {
 
     if (nonTerminalPartRuleNamePart) {
       const ruleNamePart = nonTerminalPart, ///
-            lookAhead = ruleNamePart.isLookAhead();
+            callAhead = ruleNamePart.isCallAhead();
 
-      partLookAhead = lookAhead;  ///
+      partCallAhead = callAhead;  ///
     }
   }
 
-  return partLookAhead;
+  return partCallAhead;
 }

@@ -5,7 +5,7 @@ import { NonTerminalNode } from "occam-parsers";
 import { rewriteDirectlyRepeatedNodes } from "../../utilities/rewrite";
 
 export default class DirectlyRepeatedNode extends NonTerminalNode {
-  _rewrite() {
+  rewrite() {
     const nonTerminalNode = this.clone();
 
     rewriteDirectlyRepeatedNodes(nonTerminalNode);

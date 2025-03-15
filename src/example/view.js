@@ -131,15 +131,16 @@ class View extends Element {
 
 A  ::=  T ":" . ;
 
-B  ::=  T ;
-
-V  ::=  . ;
-
 T  ::=  B ":" B 
 
      |  V 
 
      ;
+     
+B  ::=  T ;
+
+V  ::=  . ;
+
 `
 
   static initialContent = `f:A:M
