@@ -19,6 +19,10 @@ export default class RewrittenNode extends NonTerminalNode {
       rewriteReducedNodes(nonTerminalNode);
     }
 
+    if (nonTerminalNode.childNodes[0].ruleName === "E") {
+      globalThis.watchedNode = nonTerminalNode;
+    }
+
     return nonTerminalNode;
   }
 
@@ -32,4 +36,3 @@ export default class RewrittenNode extends NonTerminalNode {
 
   static fromRuleNameChildNodesAndOpacity(ruleName, childNodes, opacity) { return NonTerminalNode.fromRuleNameChildNodesAndOpacity(RewrittenNode, ruleName, childNodes, opacity); }
 }
-

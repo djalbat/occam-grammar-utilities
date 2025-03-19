@@ -33,7 +33,7 @@ export default class RewrittenRule extends Rule {
 
     const name = ruleName,  ///
           opacity = rule.getOpacity(),
-          NonTerminalNode = RewrittenNode,
+          NonTerminalNode = RewrittenNode,  ///
           rewrittenRule = new RewrittenRule(name, opacity, definitions, NonTerminalNode);
 
     return rewrittenRule;

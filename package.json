@@ -12,7 +12,7 @@
   "dependencies": {
     "necessary": "^14.3.2",
     "occam-lexers": "^23.0.47",
-    "occam-parsers": "^23.0.59"
+    "occam-parsers": "^23.0.69"
   },
   "devDependencies": {
     "@swc/core": "^1.5.6",
