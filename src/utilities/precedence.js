@@ -1,6 +1,6 @@
 "use strict";
 
-export  function isNonTerminalNodeUnprecedented(nonTerminalNode) {
+export function isNonTerminalNodeUnprecedented(nonTerminalNode) {
   let nonTerminalNodeUnprecedented;
 
   const childNodes = nonTerminalNode.getChildNodes(),
