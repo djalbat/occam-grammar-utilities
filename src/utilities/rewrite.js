@@ -8,7 +8,6 @@ import DirectlyRepeatedNode from "../node/repeated/directly";
 import IndirectlyRepeatedNode from "../node/repeated/indirectly";
 
 import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName, leftRecursiveRuleNameFromIndirectlyRepeatedRuleName } from "../utilities/ruleName";
-import {backwardsSome} from "necessary/lib/utilities/array";
 
 const { push } = arrayUtilities;
 
