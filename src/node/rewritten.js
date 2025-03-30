@@ -19,10 +19,6 @@ export default class RewrittenNode extends NonTerminalNode {
       rewriteReducedNodes(nonTerminalNode);
     }
 
-    if (nonTerminalNode.childNodes[0].ruleName === "E") {
-      globalThis.watchedNode = nonTerminalNode;
-    }
-
     return nonTerminalNode;
   }
 
