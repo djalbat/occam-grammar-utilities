@@ -9,16 +9,14 @@ export default class IndirectlyRepeatedNode extends NonTerminalNode {
   isNullary() {
     let nullary = false;
 
-    const childNodes = this.getChildNodes(),
-          childNodesLength = childNodes.length;
+    const singular = this.isSingular();
 
-    if (childNodesLength === 1) {
-      const firstChildNode = first(childNodes),
-            firstChildNodeEpsilonNode = (firstChildNode instanceof EpsilonNode);
-
-      if (firstChildNodeEpsilonNode) {
-        nullary = true;
-      }
+    if (singular) {
+      nullary = this.everyChildNode((childNode) => {
+        if (childNode instanceof EpsilonNode) {
+          return true;
+        }
+      });
     }
 
     return nullary;

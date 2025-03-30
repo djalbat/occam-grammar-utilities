@@ -3,19 +3,16 @@
 export function isNonTerminalNodeUnprecedented(nonTerminalNode) {
   let nonTerminalNodeUnprecedented;
 
-  const childNodes = nonTerminalNode.getChildNodes(),
-        childNonTerminalNodes = childNodes.filter((childNode) => {
+  const childNonTerminalNodeUnprecedented = nonTerminalNode.someChildNode((childNode) => {
           const childNodeNonTerminalNode = childNode.isNonTerminalNode();
 
           if (childNodeNonTerminalNode) {
-            return true;
-          }
-        }),
-        childNonTerminalNodeUnprecedented = childNonTerminalNodes.some((childNonTerminalNode) => {
-          const childNonTerminalNodeUnprecedented = isNonTerminalNodeUnprecedented(childNonTerminalNode);
+            const childNonTerminalNode = childNode, ///
+                  childNonTerminalNodeUnprecedented = isNonTerminalNodeUnprecedented(childNonTerminalNode);
 
-          if (childNonTerminalNodeUnprecedented) {
-            return true;
+            if (childNonTerminalNodeUnprecedented) {
+              return true;
+            }
           }
         });
 
@@ -25,10 +22,9 @@ export function isNonTerminalNodeUnprecedented(nonTerminalNode) {
     const precedence = nonTerminalNode.getPrecedence();
 
     if (precedence !== null) {
-      const ruleName = nonTerminalNode.getRuleName(),
-            childNodes = nonTerminalNode.getChildNodes();
+      const ruleName = nonTerminalNode.getRuleName();
 
-      nonTerminalNodeUnprecedented = childNodes.some((childNode) => {  ///
+      nonTerminalNodeUnprecedented = nonTerminalNode.someChildNode((childNode) => {  ///
         const childNodeLowerPrecedence = childNode.isLowerPrecedence(ruleName, precedence);
 
         if (childNodeLowerPrecedence) {
