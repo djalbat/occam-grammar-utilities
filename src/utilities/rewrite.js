@@ -4,7 +4,6 @@ import { arrayUtilities } from "necessary";
 import { NonTerminalNode } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
-import LeftRecursiveNode from "../node/leftRecursive";
 import DirectlyRepeatedNode from "../node/repeated/directly";
 import IndirectlyRepeatedNode from "../node/repeated/indirectly";
 
@@ -44,12 +43,13 @@ export function rewriteReducedNodes(nonTerminalNode) {
     parentNode.setPrecedence(precedence);
   } else {
     const childNodes = removedChildNodes, ///
-          nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndOpacity(ruleName, childNodes, opacity);
+          nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndOpacity(ruleName, childNodes, opacity),
+          replacementChildNode = nonTerminalNode; ///
 
-    nonTerminalNode.setPrecedence(nonTerminalNode);
+    replacementChildNode.setPrecedence(precedence);
 
     replacementChildNodes = [
-      nonTerminalNode
+      replacementChildNode
     ];
   }
 
@@ -189,7 +189,8 @@ function leftRecursiveNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, in
         leftRecursiveRuleName = leftRecursiveRuleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName),
         ruleName = leftRecursiveRuleName, ///
         opacity = indirectlyRepeatedNodeOpacity,  ///
-        leftRecursiveNode = LeftRecursiveNode.fromRuleNameChildNodesAndOpacity(ruleName, childNodes, opacity);
+        nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndOpacity(ruleName, childNodes, opacity),
+        leftRecursiveNode = nonTerminalNode;  ///
 
   return leftRecursiveNode;
 }
