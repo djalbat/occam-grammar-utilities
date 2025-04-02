@@ -1555,12 +1555,11 @@ function checkParentNodes(node, parentNode = null) {
     const nodeNonTerminalNode = node.isNonTerminalNode();
 
     if (nodeNonTerminalNode) {
-      const nonTerminalNode = node, ///
-            childNodes = nonTerminalNode.getChildNodes();
+      const nonTerminalNode = node; ///
 
       parentNode = node;  ///
 
-      checked = childNodes.every((childNode) => {
+      checked = nonTerminalNode.everyChildNode((childNode) => {
         const node = childNode, ///
               checked = checkParentNodes(node, parentNode);
 
