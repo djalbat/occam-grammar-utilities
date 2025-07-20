@@ -8,6 +8,12 @@ import RewrittenDefinition from "../definition/rewritten";
 import { pathsFromRuleNameAndCycles } from "../utilities/cycle";
 
 export default class RewrittenRule extends Rule {
+  NonTerminalNodeFromRuleName(ruleName, state) {
+    const NonTerminalNode = RewrittenNode;
+
+    return NonTerminalNode;
+  }
+
   static fromRuleAndCycles(rule, cycles, ruleMap) {
     const ruleName = rule.getName(),
           definitions = [],
@@ -33,8 +39,7 @@ export default class RewrittenRule extends Rule {
 
     const name = ruleName,  ///
           opacity = rule.getOpacity(),
-          NonTerminalNode = RewrittenNode,  ///
-          rewrittenRule = new RewrittenRule(name, opacity, definitions, NonTerminalNode);
+          rewrittenRule = new RewrittenRule(name, opacity, definitions);
 
     return rewrittenRule;
   }

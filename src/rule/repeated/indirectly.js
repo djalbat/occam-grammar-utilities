@@ -18,6 +18,12 @@ import { isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from 
 const { first } = arrayUtilities;
 
 export default class IndirectlyRepeatedRule extends Rule {
+  NonTerminalNodeFromRuleName(ruleName, state) {
+    const NonTerminalNode = IndirectlyRepeatedNode;
+
+    return NonTerminalNode;
+  }
+
   static fromRuleAndLeftRecursiveRule(rule, leftRecursiveRule, ruleMap) {
     let definitions = rule.getDefinitions();
 
@@ -94,8 +100,7 @@ export default class IndirectlyRepeatedRule extends Rule {
 
     definitions = definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions);
 
-    const NonTerminalNode = IndirectlyRepeatedNode,  ///
-          indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions, NonTerminalNode),
+    const indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions),
           indirectlyRepeatedRuleNonProducing = isRuleNonProducing(indirectlyRepeatedRule, ruleMap);
 
     if (indirectlyRepeatedRuleNonProducing) {

@@ -11,6 +11,12 @@ import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursive
 import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/directedGraph";
 
 export default class ReducedRule extends Rule {
+  NonTerminalNodeFromRuleName(ruleName, state) {
+    const NonTerminalNode = ReducedNode;
+
+    return NonTerminalNode;
+  }
+
   static fromRuleAndCycles(rule, cycles, ruleMap) {
     const ruleName = rule.getName();
 
@@ -31,10 +37,9 @@ export default class ReducedRule extends Rule {
       const ruleName = rule.getName(),
             reducedRuleName = reducedRuleNameFromRuleName(ruleName),
             name = reducedRuleName, ///
-            opacity = rule.getOpacity(),
-            NonTerminalNode = ReducedNode;  ///
+            opacity = rule.getOpacity();
 
-      reducedRule = new ReducedRule(name, opacity, definitions, NonTerminalNode);
+      reducedRule = new ReducedRule(name, opacity, definitions);
     }
 
     return reducedRule;

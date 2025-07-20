@@ -8,6 +8,12 @@ import DirectlyRepeatedDefinition from "../../definition/repeated/directly"
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyRepeatedRule extends Rule {
+  NonTerminalNodeFromRuleName(ruleName, state) {
+    const NonTerminalNode = DirectlyRepeatedNode;
+
+    return NonTerminalNode;
+  }
+
   static fromRuleAndCycles(rule, cycles) {
     const ruleName = rule.getName(),
           definitions = [];
@@ -25,8 +31,7 @@ export default class DirectlyRepeatedRule extends Rule {
     const directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
           name = directlyRepeatedRuleName, ///
           opacity = rule.getOpacity(),
-          NonTerminalNode = DirectlyRepeatedNode,  ///
-          directlyRepeatedRule = new DirectlyRepeatedRule(name, opacity, definitions, NonTerminalNode);
+          directlyRepeatedRule = new DirectlyRepeatedRule(name, opacity, definitions);
 
     return directlyRepeatedRule;
   }
