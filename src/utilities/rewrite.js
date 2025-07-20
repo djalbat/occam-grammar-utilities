@@ -1,7 +1,6 @@
 "use strict";
 
 import { arrayUtilities } from "necessary";
-import { NonTerminalNode } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
 import DirectlyRepeatedNode from "../node/repeated/directly";
@@ -11,7 +10,7 @@ import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName, le
 
 const { push } = arrayUtilities;
 
-export function rewriteReducedNodes(nonTerminalNode) {
+export function rewriteReducedNodes(nonTerminalNode, state) {
   let reducedChildNode;
 
   const firstChildNodeReducedNode = nonTerminalNode.someChildNode((childNode, index) => {
@@ -49,6 +48,7 @@ export function rewriteReducedNodes(nonTerminalNode) {
     parentNode.setPrecedence(precedence);
   } else {
     const childNodes = replacedChildNodeChildNodes, ///
+          NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName),
           nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndOpacity(ruleName, childNodes, opacity),
           replacementChildNode = nonTerminalNode; ///
 
@@ -62,7 +62,7 @@ export function rewriteReducedNodes(nonTerminalNode) {
   parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 }
 
-export function rewriteDirectlyRepeatedNodes(nonTerminalNode) {
+export function rewriteDirectlyRepeatedNodes(nonTerminalNode, state) {
   let directlyRepeatedNodesReplaced;
 
   directlyRepeatedNodesReplaced = replaceDirectlyRepeatedNodes(nonTerminalNode);
@@ -72,13 +72,13 @@ export function rewriteDirectlyRepeatedNodes(nonTerminalNode) {
   }
 }
 
-export function rewriteIndirectlyRepeatedNodes(nonTerminalNode) {
+export function rewriteIndirectlyRepeatedNodes(nonTerminalNode, state) {
   let parentNode = nonTerminalNode; ///
 
   const indirectlyRepeatedNodes = findIndirectlyRepeatedNodes(nonTerminalNode);
 
   indirectlyRepeatedNodes.forEach((indirectlyRepeatedNode) => {
-    const leftRecursiveNode = leftRecursiveNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode),
+    const leftRecursiveNode = leftRecursiveNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode, state),
           childNodes = childNodesFromLeftRecursiveNodeNodeAndIndirectlyRepeatedNode(leftRecursiveNode, indirectlyRepeatedNode);
 
     adjustParentNodePrecedence(parentNode, indirectlyRepeatedNode);
@@ -190,7 +190,7 @@ function adjustParentNodePrecedence(parentNode, indirectlyRepeatedNode) {
   }
 }
 
-function leftRecursiveNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode) {
+function leftRecursiveNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode, state) {
   const indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
         indirectlyRepeatedNodeOpacity = indirectlyRepeatedNode.getOpacity(),
         indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
@@ -199,6 +199,7 @@ function leftRecursiveNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, in
         ruleName = leftRecursiveRuleName, ///
         childNodes = removedFrontChildNodes,  ///
         opacity = indirectlyRepeatedNodeOpacity,  ///
+        NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName),
         nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndOpacity(ruleName, childNodes, opacity),
         leftRecursiveNode = nonTerminalNode;  ///
 
