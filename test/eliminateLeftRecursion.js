@@ -9,6 +9,9 @@ const { ExampleLexer, ExampleParser, eliminateLeftRecursion } = require("../lib/
 const { rulesFromBNF } = parserUtilities,
       { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
 
+const { NonTerminalNodeMap } = ExampleParser,
+      NonTerminalNodes = Object.values(NonTerminalNodeMap);
+
 describe("src/eliminateLeftRecursion", () => {
   describe("a left recursive definition is occluded", () => {
     const bnf = `
@@ -314,6 +317,8 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
+      assert.isTrue(checkNonTerminalNodes(node));
+
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
                                                                            S [0]                     
@@ -418,6 +423,8 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
+      assert.isTrue(checkNonTerminalNodes(node));
+
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
                                                                                   S [0]                                
@@ -497,6 +504,8 @@ describe("src/eliminateLeftRecursion", () => {
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(checkParentNodes(node));
+
+      assert.isTrue(checkNonTerminalNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
@@ -589,6 +598,8 @@ describe("src/eliminateLeftRecursion", () => {
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(checkParentNodes(node));
+
+      assert.isTrue(checkNonTerminalNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
@@ -766,6 +777,8 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
+      assert.isTrue(checkNonTerminalNodes(node));
+
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
               
                                                                                                                                       S [0]                      
@@ -894,6 +907,8 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
+      assert.isTrue(checkNonTerminalNodes(node));
+
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
                                                                            S [0]                     
@@ -990,6 +1005,8 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
+      assert.isTrue(checkNonTerminalNodes(node));
+
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
                                                                                                                                    S [0]                         
@@ -1081,6 +1098,8 @@ describe("src/eliminateLeftRecursion", () => {
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(checkParentNodes(node));
+
+      assert.isTrue(checkNonTerminalNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
             
@@ -1197,6 +1216,8 @@ describe("src/eliminateLeftRecursion", () => {
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(checkParentNodes(node));
+
+      assert.isTrue(checkNonTerminalNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
@@ -1358,6 +1379,8 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
+      assert.isTrue(checkNonTerminalNodes(node));
+
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
       
                                                       S [0]                      
@@ -1387,15 +1410,17 @@ describe("src/eliminateLeftRecursion", () => {
   describe("an indirectly repeated rule that is non-producing", () => {
     const bnf = `S  ::=  A... <END_OF_LINE> ; 
   
-A  ::=  B "=" C
-
-     |  C
-
-     ;
-
-B  ::=  A ( "," A )* ;
- 
-C  ::=  . ;`;
+      A  ::=  B "=" C
+      
+           |  C
+      
+           ;
+      
+      B  ::=  A ( "," A )* ;
+       
+      C  ::=  . ;
+      
+    `;
 
     it("is rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
@@ -1431,6 +1456,8 @@ B~  ::= A~B A~* B~A ;`));
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(checkParentNodes(node));
+
+      assert.isTrue(checkNonTerminalNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -1513,6 +1540,8 @@ B~  ::= A~B A~* B~A ;`));
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(checkParentNodes(node));
+
+      assert.isTrue(checkNonTerminalNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
       
@@ -1602,6 +1631,30 @@ function nodeFromBNFAndTokens(bnf, tokens, startRuleName = null) {
   return node;
 }
 
+function checkNonTerminalNodes(node) {
+  let checked = false;
+
+  const nodeInstanceOfNonTerminalNode = isNodeInstanceOfNonTerminalNode(node);
+
+  if (nodeInstanceOfNonTerminalNode) {
+    const descendantNodesInstanceOfNonTerminalNode = node.everyDescendantNode((descendantNode) => {
+      const descendantNodeInstanceOfNonTerminalNode = isNodeInstanceOfNonTerminalNode(descendantNode);
+
+      if (descendantNodeInstanceOfNonTerminalNode) {
+        return true;
+      } else {
+        debugger
+      }
+    });
+
+    if (descendantNodesInstanceOfNonTerminalNode) {
+      checked = true;
+    }
+  }
+
+  return checked;
+}
+
 function tokensFromBNFAndContent(bnf, content) {
   const unassigned = ".",
         lexicalEntries = [
@@ -1615,6 +1668,25 @@ function tokensFromBNFAndContent(bnf, content) {
   return tokens;
 }
 
+function exampleLexerFromLexicalEntries(lexicalEntries) {
+  const entries = lexicalEntries, ///
+        exampleLexer = ExampleLexer.fromEntries(entries);
+
+  return exampleLexer;
+}
+
+function isNodeInstanceOfNonTerminalNode(node) {
+  const nodeInstanceOfNonTerminalNode = NonTerminalNodes.some((NonTerminalNode) => {
+    const nodeInstanceOfNonTerminalNode = (node instanceof NonTerminalNode);
+
+    if (nodeInstanceOfNonTerminalNode) {
+      return true;
+    }
+  });
+
+  return nodeInstanceOfNonTerminalNode;
+}
+
 function parseTreeStringFromNodeAndTokens(node, tokens) {
   const parseTree = node.asParseTree(tokens);
 
@@ -1623,13 +1695,6 @@ function parseTreeStringFromNodeAndTokens(node, tokens) {
   const parseTreeString = parseTree.asString();
 
   return parseTreeString;
-}
-
-function exampleLexerFromLexicalEntries(lexicalEntries) {
-  const entries = lexicalEntries, ///
-        exampleLexer = ExampleLexer.fromEntries(entries);
-
-  return exampleLexer;
 }
 
 function exampleParserFromRulesAndStartRuleName(rules, startRuleName) {
