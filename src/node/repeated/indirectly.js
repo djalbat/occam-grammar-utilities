@@ -1,9 +1,6 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
 import { EpsilonNode, NonTerminalNode } from "occam-parsers";
-
-const { first } = arrayUtilities;
 
 export default class IndirectlyRepeatedNode extends NonTerminalNode {
   isNullary() {
