@@ -19,5 +19,5 @@ export default class IndirectlyRepeatedNode extends NonTerminalNode {
     return nullary;
   }
 
-  static fromRuleNameChildNodesAndOpacity(ruleName, childNodes, opacity) { return NonTerminalNode.fromRuleNameChildNodesAndOpacity(IndirectlyRepeatedNode, ruleName, childNodes, opacity); }
+  static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(IndirectlyRepeatedNode, ruleName, childNodes, opacity, precedence); }
 }

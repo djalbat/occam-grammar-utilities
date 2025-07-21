@@ -18,9 +18,7 @@ export default class RewrittenNode extends NonTerminalNode {
           childNodes = nonTerminalNode.getChildNodes(),
           precedence = nonTerminalNode.getPrecedence();
 
-    nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndOpacity(ruleName, childNodes, opacity);
-
-    nonTerminalNode.setPrecedence(precedence);
+    nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence);
 
     rewriteDirectlyRepeatedNodes(nonTerminalNode, state);
 
@@ -43,5 +41,5 @@ export default class RewrittenNode extends NonTerminalNode {
     return unprecedented;
   }
 
-  static fromRuleNameChildNodesAndOpacity(ruleName, childNodes, opacity) { return NonTerminalNode.fromRuleNameChildNodesAndOpacity(RewrittenNode, ruleName, childNodes, opacity); }
+  static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(RewrittenNode, ruleName, childNodes, opacity, precedence); }
 }
