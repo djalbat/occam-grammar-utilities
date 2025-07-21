@@ -317,7 +317,7 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
-      assert.isTrue(checkNonTerminalNodes(node));
+      assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -423,7 +423,7 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
-      assert.isTrue(checkNonTerminalNodes(node));
+      assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
@@ -505,7 +505,7 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
-      assert.isTrue(checkNonTerminalNodes(node));
+      assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
@@ -599,7 +599,7 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
-      assert.isTrue(checkNonTerminalNodes(node));
+      assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
@@ -777,7 +777,7 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
-      assert.isTrue(checkNonTerminalNodes(node));
+      assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
               
@@ -907,7 +907,7 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
-      assert.isTrue(checkNonTerminalNodes(node));
+      assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
@@ -1005,7 +1005,7 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
-      assert.isTrue(checkNonTerminalNodes(node));
+      assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
@@ -1099,7 +1099,7 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
-      assert.isTrue(checkNonTerminalNodes(node));
+      assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
             
@@ -1217,7 +1217,7 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
-      assert.isTrue(checkNonTerminalNodes(node));
+      assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
@@ -1379,7 +1379,7 @@ describe("src/eliminateLeftRecursion", () => {
 
       assert.isTrue(checkParentNodes(node));
 
-      assert.isTrue(checkNonTerminalNodes(node));
+      assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
       
@@ -1457,7 +1457,7 @@ B~  ::= A~B A~* B~A ;`));
 
       assert.isTrue(checkParentNodes(node));
 
-      assert.isTrue(checkNonTerminalNodes(node));
+      assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -1541,7 +1541,7 @@ B~  ::= A~B A~* B~A ;`));
 
       assert.isTrue(checkParentNodes(node));
 
-      assert.isTrue(checkNonTerminalNodes(node));
+      assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
       
@@ -1631,25 +1631,42 @@ function nodeFromBNFAndTokens(bnf, tokens, startRuleName = null) {
   return node;
 }
 
-function checkNonTerminalNodes(node) {
-  let checked = false;
+function checkDescendentNodes(node) {
+  let checked;
 
-  const nodeInstanceOfNonTerminalNode = isNodeInstanceOfNonTerminalNode(node);
+  const descendantNode = node;  ///
 
-  if (nodeInstanceOfNonTerminalNode) {
-    const descendantNodesInstanceOfNonTerminalNode = node.everyDescendantNode((descendantNode) => {
-      const descendantNodeInstanceOfNonTerminalNode = isNodeInstanceOfNonTerminalNode(descendantNode);
+  checked = checkDescendentNode(descendantNode);
 
-      if (descendantNodeInstanceOfNonTerminalNode) {
+  if (checked) {
+    checked = node.everyDescendantNode((descendantNode) => {
+      const checked = checkDescendentNode(descendantNode);
+
+      if (checked) {
         return true;
-      } else {
-        debugger
       }
     });
+  }
 
-    if (descendantNodesInstanceOfNonTerminalNode) {
-      checked = true;
-    }
+  return checked;
+}
+
+function checkDescendentNode(descendantNode) {
+  let checked;
+
+  const node = descendantNode,  ///
+        nodeTerminalNode = node.isTerminalNode();
+
+  if (nodeTerminalNode) {
+    checked = true;
+  } else {
+    checked = NonTerminalNodes.some((NonTerminalNode) => {
+      const nodeNonTerminalNode = (node instanceof NonTerminalNode);
+
+      if (nodeNonTerminalNode) {
+        return true;
+      }
+    });
   }
 
   return checked;
@@ -1673,18 +1690,6 @@ function exampleLexerFromLexicalEntries(lexicalEntries) {
         exampleLexer = ExampleLexer.fromEntries(entries);
 
   return exampleLexer;
-}
-
-function isNodeInstanceOfNonTerminalNode(node) {
-  const nodeInstanceOfNonTerminalNode = NonTerminalNodes.some((NonTerminalNode) => {
-    const nodeInstanceOfNonTerminalNode = (node instanceof NonTerminalNode);
-
-    if (nodeInstanceOfNonTerminalNode) {
-      return true;
-    }
-  });
-
-  return nodeInstanceOfNonTerminalNode;
 }
 
 function parseTreeStringFromNodeAndTokens(node, tokens) {

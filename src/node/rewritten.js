@@ -7,7 +7,20 @@ import { rewriteReducedNodes, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRep
 
 export default class RewrittenNode extends NonTerminalNode {
   rewrite(state) {
-    const nonTerminalNode = this.clone();
+    let nonTerminalNode;
+
+    const ruleName = this.getRuleName(),
+          NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName);
+
+    nonTerminalNode = this.clone();
+
+    const opacity = nonTerminalNode.getOpacity(),
+          childNodes = nonTerminalNode.getChildNodes(),
+          precedence = nonTerminalNode.getPrecedence();
+
+    nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesAndOpacity(ruleName, childNodes, opacity);
+
+    nonTerminalNode.setPrecedence(precedence);
 
     rewriteDirectlyRepeatedNodes(nonTerminalNode, state);
 
