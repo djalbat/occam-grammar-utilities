@@ -7,52 +7,9 @@ import { forEachRuleNameAndLeftRecursiveRuleName } from "../utilities/ruleNames"
 import { ruleNamePartFromRuleName, zeroOrMorePartsPartFromPart } from "../utilities/part";
 import { reducedRuleNameFromRuleName, directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../utilities/ruleName";
 
-const { first } = arrayUtilities;
+const { last, second } = arrayUtilities;
 
 export default class RewrittenDefinition extends Definition {
-  static fromPath(path, ruleMap) {
-    path = reversePath(path); ///
-
-    let rewrittenDefinition = null;
-
-    const reducedRuleName = reducedRuleNameFromPath(path),
-          reducedRule = ruleMap[reducedRuleName] || null;
-
-    if (reducedRule !== null) {
-      const parts = [],
-            ruleNames = path.slice(), ///
-            pathLength = path.length,
-            lastIndex = pathLength - 1,
-            reducedRuleNamePart = reducedRuleNamePartFromPath(path);
-
-      parts.push(reducedRuleNamePart);
-
-      forEachRuleNameAndLeftRecursiveRuleName(ruleNames, (ruleName, leftRecursiveRuleName, index) => {
-        if (index !== lastIndex) {
-          const directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName);
-
-          parts.push(directlyRepeatedPart);
-
-          const temporaryRuleName = leftRecursiveRuleName; ///
-
-          leftRecursiveRuleName = ruleName; ///
-
-          ruleName = temporaryRuleName;  ///
-
-          const indirectlyRepeatedPart = indirectlyRepeatedPartFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName);
-
-          parts.push(indirectlyRepeatedPart);
-        }
-      });
-
-      const precedence = null;
-
-      rewrittenDefinition = new RewrittenDefinition(parts, precedence);
-    }
-
-    return rewrittenDefinition;
-  }
-
   static fromRuleName(ruleName, ruleMap) {
     let rewrittenDefinition = null;
 
@@ -60,15 +17,25 @@ export default class RewrittenDefinition extends Definition {
           reducedRule = ruleMap[reducedRuleName] || null;
 
     if (reducedRule !== null) {
-      const reducedRuleNamePart = reducedRuleNamePartFromRuleName(ruleName),
-            directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName),
-            parts = [
-              reducedRuleNamePart,
-              directlyRepeatedPart
-            ],
-            precedence = null;
+      rewrittenDefinition = rewrittenDefinitionFromRuleName(ruleName);
+    }
 
-      rewrittenDefinition = new RewrittenDefinition(parts, precedence);
+    return rewrittenDefinition;
+  }
+
+  static fromLeftRecursiveRuleNamesAndPath(leftRecursiveRuleNames, path, ruleMap) {
+    let rewrittenDefinition = null;
+
+    const leftRecursiveRuleName = leftRecursiveRuleNameFromPath(path),
+          leftRecursiveRuleNamesIncludesLeftRecursiveRuleName = leftRecursiveRuleNames.includes(leftRecursiveRuleName);
+
+    if (leftRecursiveRuleNamesIncludesLeftRecursiveRuleName) {
+      const reducedRuleName = reducedRuleNameFromPath(path),
+            reducedRule = ruleMap[reducedRuleName] || null;
+
+      if (reducedRule !== null) {
+        rewrittenDefinition = rewrittenDefinitionFromPath(path);
+      }
     }
 
     return rewrittenDefinition;
@@ -76,29 +43,82 @@ export default class RewrittenDefinition extends Definition {
 }
 
 function reversePath(path) {
-  path = path.slice();
+  const reversedPath = path.slice();
 
-  path.reverse();
+  reversedPath.reverse();
 
-  return path;
+  return reversedPath;
 }
 
 function reducedRuleNameFromPath(path) {
-  const ruleNames = path.slice(), ///
-        firstRuleName = first(ruleNames),
-        ruleName = firstRuleName, ///
+  const ruleNames = path, ///
+        lastRuleName = last(ruleNames),
+        ruleName = lastRuleName, ///
         reducedRuleName = reducedRuleNameFromRuleName(ruleName);
 
   return reducedRuleName;
 }
 
+function rewrittenDefinitionFromPath(path) {
+  const reducedRuleNamePart = reducedRuleNamePartFromPath(path),
+        reversedPath = reversePath(path),
+        pathLength = path.length,
+        lastIndex = pathLength - 1,
+        ruleNames = reversedPath, ///
+        parts = []; ///
+
+  parts.push(reducedRuleNamePart);
+
+  forEachRuleNameAndLeftRecursiveRuleName(ruleNames, (ruleName, leftRecursiveRuleName, index) => {
+    if (index !== lastIndex) {
+      const directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName);
+
+      parts.push(directlyRepeatedPart);
+
+      const temporaryRuleName = leftRecursiveRuleName; ///
+
+      leftRecursiveRuleName = ruleName; ///
+
+      ruleName = temporaryRuleName;  ///
+
+      const indirectlyRepeatedPart = indirectlyRepeatedPartFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName);
+
+      parts.push(indirectlyRepeatedPart);
+    }
+  });
+
+  const precedence = null,
+        rewrittenDefinition = new RewrittenDefinition(parts, precedence);
+
+  return rewrittenDefinition;
+}
+
 function reducedRuleNamePartFromPath(path) {
-  const ruleNames = path.slice(), ///
-        firstRuleName = first(ruleNames),
-        ruleName = firstRuleName, ///
-        reducedRuleNamePart = reducedRuleNamePartFromRuleName(ruleName);
+  const reducedRuleName = reducedRuleNameFromPath(path),
+        reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
 
   return reducedRuleNamePart;
+}
+
+function leftRecursiveRuleNameFromPath(path) {
+  const ruleNames = path, ///
+        secondRuleName = second(ruleNames),
+        leftRecursiveRuleName = secondRuleName; ///
+
+  return leftRecursiveRuleName;
+}
+
+function rewrittenDefinitionFromRuleName(ruleName) {
+  const reducedRuleNamePart = reducedRuleNamePartFromRuleName(ruleName),
+        directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName),
+        parts = [
+          reducedRuleNamePart,
+          directlyRepeatedPart
+        ],
+        precedence = null,
+        rewrittenDefinition = new RewrittenDefinition(parts, precedence);
+
+  return rewrittenDefinition;
 }
 
 function reducedRuleNamePartFromRuleName(ruleName) {
@@ -124,3 +144,4 @@ function indirectlyRepeatedPartFromRuleNameAndLeftRecursiveRuleName(ruleName, le
 
   return indirectlyRepeatedPart;
 }
+

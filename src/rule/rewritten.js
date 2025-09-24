@@ -6,6 +6,7 @@ import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
 
 import { pathsFromRuleNameAndCycles } from "../utilities/cycle";
+import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursive";
 
 export default class RewrittenRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -15,27 +16,34 @@ export default class RewrittenRule extends Rule {
   }
 
   static fromRuleAndCycles(rule, cycles, ruleMap) {
+    let definitions;
+
     const ruleName = rule.getName(),
-          definitions = [],
-          rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap);
+          paths = pathsFromRuleNameAndCycles(ruleName, cycles);
+
+    const rewrittenDefinitions = [];
+
+    definitions = rule.getDefinitions();
+
+    definitions.forEach((definition) => {
+      const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition, ruleName);
+
+      paths.forEach((path) => {
+        const rewrittenDefinition = RewrittenDefinition.fromLeftRecursiveRuleNamesAndPath(leftRecursiveRuleNames, path, ruleMap);
+
+        if (rewrittenDefinition !== null) {
+          rewrittenDefinitions.push(rewrittenDefinition);
+        }
+      });
+    });
+
+    const rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap);
 
     if (rewrittenDefinition !== null) {
-      const definition = rewrittenDefinition; ///
-
-      definitions.push(definition);
+      rewrittenDefinitions.push(rewrittenDefinition);
     }
 
-    const paths = pathsFromRuleNameAndCycles(ruleName, cycles);
-
-    paths.forEach((path) => {
-      const rewrittenDefinition = RewrittenDefinition.fromPath(path, ruleMap);
-
-      if (rewrittenDefinition !== null) {
-        const definition = rewrittenDefinition; ///
-
-        definitions.push(definition);
-      }
-    });
+    definitions = rewrittenDefinitions; ///
 
     const name = ruleName,  ///
           opacity = rule.getOpacity(),

@@ -2,9 +2,22 @@
 
 import { arrayUtilities } from "necessary";
 
-const { match, compress } = arrayUtilities;
+const { push, match, compress } = arrayUtilities;
 
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
+
+export function arePathsEqual(pathA, pathB) {
+  const ruleNamesA = pathA, ///
+        ruleNamesB = pathB, ///
+        ruleNamesMatch = match(ruleNamesA, ruleNamesB, (ruleNameA, ruleNameB) => {
+          if (ruleNameA === ruleNameB) {
+            return true;
+          }
+        }),
+        pathsEqual = ruleNamesMatch;  ///
+
+  return pathsEqual;
+}
 
 export function isCycleIrreducible(cycle, ruleMap) {
   const ruleNames = ruleNamesFromCycle(cycle),
@@ -24,29 +37,24 @@ export function isCycleIrreducible(cycle, ruleMap) {
   return cycleIrreducible;
 }
 
-export function ruleNamesFromCycle(cycle) {
+export function ruleNamesFromCycle(cycle, ruleNames = []) {
   const cycleVertexes = cycle.getVertexes(),
-        ruleNames = cycleVertexes;  ///
+        cycleRuleNames = cycleVertexes; ///
+
+  push(ruleNames, cycleRuleNames);
 
   return ruleNames;
 }
 
-export function ruleNamesFromCycles(cycles) {
-  const ruleNames = [];
-
+export function ruleNamesFromCycles(cycles, ruleNames = []) {
   cycles.forEach((cycle) => {
-    const cycleVertexes = cycle.getVertexes(),
-          cyclicRuleNames = cycleVertexes;  ///
+    ruleNamesFromCycle(cycle, ruleNames);
+  });
 
-    cyclicRuleNames.forEach((cyclicRuleName) => {
-      const ruleNamesIncludesCyclicRuleName = ruleNames.includes(cyclicRuleName);
-
-      if (!ruleNamesIncludesCyclicRuleName) {
-        const ruleName = cyclicRuleName;  ///
-
-        ruleNames.push(ruleName);
-      }
-    });
+  compress(ruleNames, (ruleNameA, ruleNameB) => {
+    if (ruleNameA === ruleNameB) {
+      return true;
+    }
   });
 
   return ruleNames;
@@ -54,8 +62,8 @@ export function ruleNamesFromCycles(cycles) {
 
 export function pathFromRuleNameAndCycle(ruleName, cycle) {
   let ruleNames = ruleNamesFromCycle(cycle),
-    start,
-    end;
+      start,
+      end;
 
   const index = ruleNames.indexOf(ruleName);
 
@@ -68,10 +76,10 @@ export function pathFromRuleNameAndCycle(ruleName, cycle) {
   start = index;  ///
 
   const trailingRuleNames = ruleNames.slice(start),
-    path = [
-      ...trailingRuleNames,
-      ...leadingRuleNames
-    ];
+        path = [
+          ...trailingRuleNames,
+          ...leadingRuleNames
+        ];
 
   return path;
 }
@@ -101,17 +109,9 @@ export function pathsFromRuleNameAndCycles(ruleName, cycles) {
   });
 
   compress(paths, (pathA, pathB) => {
-    const ruleNamesA = pathA, ///
-          ruleNamesB = pathB, ///
-          ruleNamesMatch = match(ruleNamesA, ruleNamesB, (ruleNameA, ruleNameB) => {
-            const ruleNameAMatchesRuleNameB = (ruleNameA === ruleNameB);
+    const pathsEqual = arePathsEqual(pathA, pathB);
 
-            if (ruleNameAMatchesRuleNameB) {
-              return true;
-            }
-          });
-
-    if (ruleNamesMatch) {
+    if (pathsEqual) {
       return true;
     }
   });

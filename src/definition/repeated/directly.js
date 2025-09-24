@@ -27,23 +27,21 @@ export default class DirectlyRepeatedDefinition extends Definition {
 }
 
 function permutePath(path) {
-  path = path.slice();
+  const permutedPath = path.slice();  ///
 
-  path.reverse();
+  permutedPath.reverse();
 
-  const ruleName = path.pop();
+  const ruleName = permutedPath.pop();
 
-  path.unshift(ruleName);
+  permutedPath.unshift(ruleName);
 
-  return path;
+  return permutedPath;
 }
 
 function partsFromPath(path) {
-  const parts = [];
-
-  path = permutePath(path);
-
-  const ruleNames = path.slice(); ///
+  const permutedPath = permutePath(path),
+        ruleNames = permutedPath, ///
+        parts = [];
 
   forEachRuleNameAndLeftRecursiveRuleName(ruleNames, (ruleName, leftRecursiveRuleName) => {
     const temporaryRuleName = leftRecursiveRuleName; ///

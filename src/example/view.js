@@ -129,35 +129,48 @@ class View extends Element {
 
   static initialBNF = `
 
-      S  ::=  F... <END_OF_LINE> ;
+      S ::= T... <END_OF_LINE> ;
+  
+      T ::= B
       
-      A  ::=  E 
+          | C
       
-           |  T 
-                                             
-           ;
+          | V
       
-      E  ::=  F ;
+          ;
       
-      T  ::=  "n" ;
+      A ::= T ;
       
-      F  ::=  "(" A ")"
-                             
-           |  A "+" A
+      B::= "-" A
       
-           ;
+         | C
+      
+         | V
+      
+         ;
+                            
+      C ::= A "+" A
+      
+          | V
+      
+          ;
+      
+      V ::= . ;
+    
+`;
 
-`
-
-  static initialContent = `(n+n)
+  static initialContent = `n+n
 `;
 
   static initialStartRuleName = "";
 
   static initialLexicalEntries = [
     {
+      "symbol": "zero|-"
+    },
+    {
       "unassigned": "."
-    }
+    },
   ];
 
   static tagName = "div";
