@@ -31,7 +31,7 @@ class View extends Element {
   }
 
   update() {
-    try {
+    // try {
       const bnf = this.getBNF(),
             startRuleName = this.getStartRuleName(),
             lexicalEntries = this.getLexicalEntries();
@@ -60,9 +60,9 @@ class View extends Element {
       }
 
       this.setParseTree(parseTree);
-    } catch (error) {
-      console.log(error);
-    }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   childElements() {

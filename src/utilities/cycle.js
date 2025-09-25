@@ -2,7 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
-const { push, match, compress } = arrayUtilities;
+const { push, match, filter, compress } = arrayUtilities;
 
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
@@ -85,26 +85,34 @@ export function pathFromRuleNameAndCycle(ruleName, cycle) {
 }
 
 export function pathsFromRuleNameAndCycles(ruleName, cycles) {
-  const paths = [];
+  const paths = cycles.map((cycle) => {
+    const path = pathFromRuleNameAndCycle(ruleName, cycle);
 
-  cycles.forEach((cycle) => {
-    const ruleNames = ruleNamesFromCycle(cycle),
+    return path;
+  });
+
+  filter(paths, (path) => {
+    const ruleNames = path, ///
           ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
 
     if (ruleNamesIncludesRuleName) {
-      let path = pathFromRuleNameAndCycle(ruleName, cycle);
+      return true;
+    }
+  });
 
-      let length = path.length;
+  let length;
 
-      while (length > 1) {
-        paths.unshift(path);
+  paths.forEach((path) => {
+    length = path.length;
 
-        path = path.slice();  ///
+    while (length > 2) {
+      path = path.slice();  ///
 
-        path.pop();
+      path.pop();
 
-        length = path.length;
-      }
+      paths.push(path);
+
+      length = path.length;
     }
   });
 

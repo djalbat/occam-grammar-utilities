@@ -1249,7 +1249,7 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
-  describe.only("two intersecting cycles of length two and three", () => {
+  describe("two intersecting cycles of length two and three", () => {
     const bnf = `
     
       S ::= T... <END_OF_LINE> ;
@@ -1282,7 +1282,7 @@ describe("src/eliminateLeftRecursion", () => {
        
     `;
 
-    it("are rewritten", () => {
+    it.only("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compareParseTreeStrings(adjustedBNF, `

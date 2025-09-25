@@ -110,18 +110,20 @@ function findRepeatedNodes(nonTerminalNode, RepeatedNode) {
     let startIndex;
 
     nonTerminalNode.backwardsSomeChildNode((childNode, index) => {
-      if (index < endIndex) {
-        const childNodeRepeatedNode = (childNode instanceof RepeatedNode);
+      const childNodeRepeatedNode = (childNode instanceof RepeatedNode);
 
-        if (!childNodeRepeatedNode) {
-          startIndex = index + 1;
+      if (!childNodeRepeatedNode) {
+        if (index < endIndex) {
+          return true;
         }
       }
+
+      startIndex = index; ///
     });
 
     const childNodes = nonTerminalNode.sliceChildNodes(startIndex, endIndex);
 
-    repeatedNodes = childNodes;
+    repeatedNodes = childNodes; ///
   }
 
   return repeatedNodes;
