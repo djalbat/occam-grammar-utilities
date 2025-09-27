@@ -131,15 +131,23 @@ class View extends Element {
 
 S ::= A... <END_OF_LINE> ;
 
-A ::= A "g"
+A ::= B "g"
 
     | "e"
 
     ;
 
+B ::= A "h"
+
+    | B "f"
+
+    | "d"
+
+    ;
+
 `;
 
-  static initialContent = `egg
+  static initialContent = `ehfg
 `;
 
   static initialStartRuleName = "";

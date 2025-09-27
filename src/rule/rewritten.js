@@ -1,14 +1,11 @@
 "use strict";
 
 import { Rule } from "occam-parsers";
-import { arrayUtilities } from "necessary";
 
 import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
 
 import { pathsFromRuleNameAndCycles } from "../utilities/path";
-
-const { last } = arrayUtilities;
 
 export default class RewrittenRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -31,14 +28,6 @@ export default class RewrittenRule extends Rule {
         definitions.push(definition);
       }
     });
-
-    const rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap);
-
-    if (rewrittenDefinition !== null) {
-      const definition = rewrittenDefinition; ///
-
-      definitions.push(definition);
-    }
 
     const name = ruleName,  ///
           opacity = rule.getOpacity(),

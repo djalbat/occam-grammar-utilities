@@ -19,7 +19,7 @@ const { filter } = arrayUtilities,
 export default function eliminateLeftRecursion(rules) {
   const ruleMap = ruleMapFromRules(rules),
         startRule = startRuleFromRules(rules),
-        ruleNamesMap = ruleNamesMapFromRuleMao(ruleMap),
+        ruleNamesMap = ruleNamesMapFromNothing(ruleMap),
         cycles = cyclesFromStartRule(startRule, ruleMap, ruleNamesMap);
 
   createReducedRules(cycles, ruleMap);
@@ -44,7 +44,7 @@ function directedGraphFromStartRule(startRule, ruleMap, ruleNamesMap) {
   return directedGraph;
 }
 
-function ruleNamesMapFromRuleMao(ruleMap) {
+function ruleNamesMapFromNothing(ruleMap) {
   const ruleNamesMap = {},
         ruleNames = Object.keys(ruleMap);
 
