@@ -1,8 +1,9 @@
 "use strict";
 
 import { Definition } from "occam-parsers";
+import { ruleNamesFromCycle } from "../../utilities/cycle";
+import { pathFromRuleNameAndCycle } from "../../utilities/path";
 import { forEachRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleNames";
-import { ruleNamesFromCycle, pathFromRuleNameAndCycle } from "../../utilities/cycle";
 import { ruleNamePartFromRuleName, zeroOrMorePartsPartFromPart } from "../../utilities/part";
 import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 
