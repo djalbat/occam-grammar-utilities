@@ -3,8 +3,10 @@
 import { arrayUtilities } from "necessary";
 
 import { ruleNamesFromCycle } from "../utilities/cycle";
+import { ruleNamePartFromRuleName } from "../utilities/part";
+import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
-const { match, filter, compress } = arrayUtilities;
+const { last, match, filter, compress } = arrayUtilities;
 
 export function arePathsEqual(pathA, pathB) {
   const ruleNamesA = pathA, ///
@@ -17,6 +19,15 @@ export function arePathsEqual(pathA, pathB) {
         pathsEqual = ruleNamesMatch;  ///
 
   return pathsEqual;
+}
+
+export function reducedRuleNameFromPath(path) {
+  const ruleNames = path, ///
+        lastRuleName = last(ruleNames),
+        ruleName = lastRuleName, ///
+        reducedRuleName = reducedRuleNameFromRuleName(ruleName);
+
+  return reducedRuleName;
 }
 
 export function pathFromRuleNameAndCycle(ruleName, cycle) {
@@ -43,7 +54,7 @@ export function pathFromRuleNameAndCycle(ruleName, cycle) {
   return path;
 }
 
-export function pathsFromRuleNameAndCycles(ruleName, cycles) {
+export function pathsFromRuleNameAndCycles(ruleName, cycles, ruleMap) {
   const paths = cycles.map((cycle) => {
     const path = pathFromRuleNameAndCycle(ruleName, cycle);
 
@@ -84,4 +95,11 @@ export function pathsFromRuleNameAndCycles(ruleName, cycles) {
   });
 
   return paths;
+}
+
+export function reducedRuleNamePartFromPath(path) {
+  const reducedRuleName = reducedRuleNameFromPath(path),
+        reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
+
+  return reducedRuleNamePart;
 }

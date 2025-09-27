@@ -1,15 +1,26 @@
 "use strict";
 
 import { Definition } from "occam-parsers";
-import { arrayUtilities } from "necessary";
 
 import { forEachRuleNameAndLeftRecursiveRuleName } from "../utilities/ruleNames";
+import { reducedRuleNameFromPath, reducedRuleNamePartFromPath } from "../utilities/path";
 import { ruleNamePartFromRuleName, zeroOrMorePartsPartFromPart } from "../utilities/part";
 import { reducedRuleNameFromRuleName, directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../utilities/ruleName";
 
-const { last, second } = arrayUtilities;
-
 export default class RewrittenDefinition extends Definition {
+  static fromPath(path, ruleMap) {
+    let rewrittenDefinition = null;
+
+    const reducedRuleName = reducedRuleNameFromPath(path),
+          reducedRule = ruleMap[reducedRuleName] || null;
+
+    if (reducedRule !== null) {
+      rewrittenDefinition = rewrittenDefinitionFromPath(path);
+    }
+
+    return rewrittenDefinition;
+  }
+
   static fromRuleName(ruleName, ruleMap) {
     let rewrittenDefinition = null;
 
@@ -22,24 +33,6 @@ export default class RewrittenDefinition extends Definition {
 
     return rewrittenDefinition;
   }
-
-  static fromLeftRecursiveRuleNamesAndPath(leftRecursiveRuleNames, path, ruleMap) {
-    let rewrittenDefinition = null;
-
-    const leftRecursiveRuleName = leftRecursiveRuleNameFromPath(path),
-          leftRecursiveRuleNamesIncludesLeftRecursiveRuleName = leftRecursiveRuleNames.includes(leftRecursiveRuleName);
-
-    if (leftRecursiveRuleNamesIncludesLeftRecursiveRuleName) {
-      const reducedRuleName = reducedRuleNameFromPath(path),
-            reducedRule = ruleMap[reducedRuleName] || null;
-
-      if (reducedRule !== null) {
-        rewrittenDefinition = rewrittenDefinitionFromPath(path);
-      }
-    }
-
-    return rewrittenDefinition;
-  }
 }
 
 function reversePath(path) {
@@ -48,15 +41,6 @@ function reversePath(path) {
   reversedPath.reverse();
 
   return reversedPath;
-}
-
-function reducedRuleNameFromPath(path) {
-  const ruleNames = path, ///
-        lastRuleName = last(ruleNames),
-        ruleName = lastRuleName, ///
-        reducedRuleName = reducedRuleNameFromRuleName(ruleName);
-
-  return reducedRuleName;
 }
 
 function rewrittenDefinitionFromPath(path) {
@@ -91,21 +75,6 @@ function rewrittenDefinitionFromPath(path) {
         rewrittenDefinition = new RewrittenDefinition(parts, precedence);
 
   return rewrittenDefinition;
-}
-
-function reducedRuleNamePartFromPath(path) {
-  const reducedRuleName = reducedRuleNameFromPath(path),
-        reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
-
-  return reducedRuleNamePart;
-}
-
-function leftRecursiveRuleNameFromPath(path) {
-  const ruleNames = path, ///
-        secondRuleName = second(ruleNames),
-        leftRecursiveRuleName = secondRuleName; ///
-
-  return leftRecursiveRuleName;
 }
 
 function rewrittenDefinitionFromRuleName(ruleName) {
