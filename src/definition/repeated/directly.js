@@ -2,8 +2,7 @@
 
 import { Definition } from "occam-parsers";
 import { ruleNamesFromCycle } from "../../utilities/cycle";
-import { pathFromRuleNameAndCycle } from "../../utilities/path";
-import { forEachRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleNames";
+import { permuteRuleNames, forEachRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleNames";
 import { ruleNamePartFromRuleName, zeroOrMorePartsPartFromPart } from "../../utilities/part";
 import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 
@@ -16,7 +15,8 @@ export default class DirectlyRepeatedDefinition extends Definition {
           ruleNameIncludesRuleName = ruleNames.includes(ruleName);
 
     if (ruleNameIncludesRuleName) {
-      const path = pathFromRuleNameAndCycle(ruleName, cycle),
+      const permutedRuleNames = permuteRuleNames(ruleNames, ruleName),
+            path = permutedRuleNames, ///
             parts = partsFromPath(path),
             precedence = null;
 

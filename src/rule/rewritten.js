@@ -14,28 +14,31 @@ export default class RewrittenRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromRuleAndCycles(rule, cycles, ruleMap) {
-    const rewrittenDefinitions = [],
+  static fromRuleAndCycles(rule, cycles, ruleMap, ruleNamesMap) {
+    const definitions = [],
           ruleName = rule.getName(),
-          paths = pathsFromRuleNameAndCycles(ruleName, cycles, ruleMap);
+          paths = pathsFromRuleNameAndCycles(ruleName, cycles, ruleMap, ruleNamesMap);
 
     paths.forEach((path) => {
       const rewrittenDefinition = RewrittenDefinition.fromPath(path, ruleMap);
 
       if (rewrittenDefinition !== null) {
-        rewrittenDefinitions.push(rewrittenDefinition);
+        const definition = rewrittenDefinition; ///
+
+        definitions.push(definition);
       }
     });
 
     const rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap);
 
     if (rewrittenDefinition !== null) {
-      rewrittenDefinitions.push(rewrittenDefinition);
+      const definition = rewrittenDefinition; ///
+
+      definitions.push(definition);
     }
 
     const name = ruleName,  ///
           opacity = rule.getOpacity(),
-          definitions = rewrittenDefinitions, ///
           rewrittenRule = new RewrittenRule(name, opacity, definitions);
 
     return rewrittenRule;

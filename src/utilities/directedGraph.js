@@ -4,7 +4,6 @@ import Edge from "../edge";
 
 import { edgesMatchEdge } from "../directedGraph";
 import { recursiveRuleNamesFromRule } from "../utilities/recursive";
-import { leftRecursiveRuleNamesFromRule } from "../utilities/leftRecursive";
 import { RECURSIVE_LABEL, LEFT_RECURSIVE_LABEL } from "../labels";
 
 export function edgesFromRuleNames(ruleNames) {
@@ -21,12 +20,12 @@ export function edgesFromRuleNames(ruleNames) {
   return edges;
 }
 
-export function edgesFromStartRuleAndRuleMap(startRule, ruleMap) {
+export function edgesFromStartRule(startRule, ruleMap, ruleNamesMap) {
   const rule = startRule, ///
         edges = [],
         vertexes = [];
 
-  edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap);
+  edgesFromRule(rule, edges, vertexes, ruleMap, ruleNamesMap);
 
   return edges;
 }
@@ -40,7 +39,7 @@ export function edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursive
   return edge;
 }
 
-function edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap) {
+function edgesFromRule(rule, edges, vertexes, ruleMap, ruleNamesMap) {
   const ruleName = rule.getName(),
         vertex = ruleName,  ///
         vertexesIncludesVertex = vertexes.includes(vertex);
@@ -54,8 +53,9 @@ function edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap) {
     vertex
   ];
 
-  const recursiveRuleNames = recursiveRuleNamesFromRule(rule),
-        leftRecursiveRuleNames = leftRecursiveRuleNamesFromRule(rule, ruleMap);
+  const ruleNames = ruleNamesMap[ruleName],
+        recursiveRuleNames = recursiveRuleNamesFromRule(rule),
+        leftRecursiveRuleNames = ruleNames; ///
 
   recursiveRuleNames.forEach((recursiveRuleName) => {
     const leftRecursiveRuleNamesIncludesRecursiveRuleName = leftRecursiveRuleNames.includes(recursiveRuleName),
@@ -77,7 +77,7 @@ function edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap) {
     if (recursiveRule !== null) {
       const rule = recursiveRule; ///
 
-      edgesFromRuleAndRuleMap(rule, edges, vertexes, ruleMap);
+      edgesFromRule(rule, edges, vertexes, ruleMap, ruleNamesMap);
     }
   });
 }

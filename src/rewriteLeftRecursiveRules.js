@@ -11,13 +11,13 @@ import { isCycleIrreducible, ruleCyclesFromRuleNameAndCycles } from "./utilities
 
 const { filter } = arrayUtilities;
 
-export default function rewriteLeftRecursiveRules(cycles, ruleMap) {
+export default function rewriteLeftRecursiveRules(cycles, ruleMap, ruleNamesMap) {
   const ruleNames = ruleNamesFromCycles(cycles);
 
   ruleNames.forEach((ruleName) => {
     let rule = ruleMap[ruleName];
 
-    const rewrittenRule = RewrittenRule.fromRuleAndCycles(rule, cycles, ruleMap);
+    const rewrittenRule = RewrittenRule.fromRuleAndCycles(rule, cycles, ruleMap, ruleNamesMap);
 
     rule = rewrittenRule; ///
 

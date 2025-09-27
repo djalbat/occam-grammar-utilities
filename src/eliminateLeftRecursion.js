@@ -9,8 +9,9 @@ import rewriteLeftRecursiveRules from "./rewriteLeftRecursiveRules";
 import createDirectlyRepeatedRules from "./createDirectlyRepeatedRules";
 import createIndirectlyRepeatedRules from "./createIndirectlyRepeatedRules";
 
+import { edgesFromStartRule } from "./utilities/directedGraph";
 import { LEFT_RECURSIVE_LABEL } from "./labels";
-import { edgesFromStartRuleAndRuleMap } from "./utilities/directedGraph";
+import { leftRecursiveRuleNamesFromRule } from "./utilities/leftRecursive";
 
 const { filter } = arrayUtilities,
       { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
@@ -18,7 +19,8 @@ const { filter } = arrayUtilities,
 export default function eliminateLeftRecursion(rules) {
   const ruleMap = ruleMapFromRules(rules),
         startRule = startRuleFromRules(rules),
-        cycles = cyclesFromRuleMapAndStartRule(ruleMap, startRule);
+        ruleNamesMap = ruleNamesMapFromRuleMao(ruleMap),
+        cycles = cyclesFromStartRule(startRule, ruleMap, ruleNamesMap);
 
   createReducedRules(cycles, ruleMap);
 
@@ -26,24 +28,24 @@ export default function eliminateLeftRecursion(rules) {
 
   createDirectlyRepeatedRules(cycles, ruleMap);
 
-  rewriteLeftRecursiveRules(cycles, ruleMap);
+  rewriteLeftRecursiveRules(cycles, ruleMap, ruleNamesMap);
 
   rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap); ///
 
   return rules;
 }
 
-function directedGraphFromRuleMapAndStartRule(ruleMap, startRule) {
+function directedGraphFromStartRule(startRule, ruleMap, ruleNamesMap) {
   const startRuleName = startRule.getName(),
-        edges = edgesFromStartRuleAndRuleMap(startRule, ruleMap),
+        edges = edgesFromStartRule(startRule, ruleMap, ruleNamesMap),
         startVertex = startRuleName,  ///
         directedGraph = DirectedGraph.fromEdgesAndStartVertex(edges, startVertex);
 
   return directedGraph;
 }
 
-function cyclesFromRuleMapAndStartRule(ruleMap, startRule) {
-  const directedGraph = directedGraphFromRuleMapAndStartRule(ruleMap, startRule),
+function cyclesFromStartRule(startRule, ruleMap, ruleNamesMap) {
+  const directedGraph = directedGraphFromStartRule(startRule, ruleMap, ruleNamesMap),
         cycles = directedGraph.findCycles();
 
   filter(cycles, (cycle) => {
@@ -55,6 +57,21 @@ function cyclesFromRuleMapAndStartRule(ruleMap, startRule) {
   });
 
   return cycles;
+}
+
+function ruleNamesMapFromRuleMao(ruleMap) {
+  const ruleNamesMap = {},
+        ruleNames = Object.keys(ruleMap);
+
+  ruleNames.forEach((ruleName) => {
+    const rule = ruleMap[ruleName],
+          leftRecursiveRuleNames = leftRecursiveRuleNamesFromRule(rule, ruleMap),
+          ruleNames = leftRecursiveRuleNames; ///
+
+    ruleNamesMap[ruleName] = ruleNames;
+  });
+
+  return ruleNamesMap;
 }
 
 function isCycleLeftRecursive(cycle) {
