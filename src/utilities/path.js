@@ -34,13 +34,17 @@ export function reducedRuleNameFromPath(path) {
 export function pathsFromRuleNameAndCycles(ruleName, cycles, ruleMap, ruleNamesMap) {
   const paths = cycles.reduce((paths, cycle) => {
     const ruleNames = ruleNamesFromCycle(cycle),
-          ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
+          ruleNamesLength = ruleNames.length;
 
-    if (ruleNamesIncludesRuleName) {
-      const permutedRuleNames = permuteRuleNames(ruleNames, ruleName),
-            path = permutedRuleNames; ///
+    if (ruleNamesLength > 1) {
+      const ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
 
-      paths.push(path);
+      if (ruleNamesIncludesRuleName) {
+        const permutedRuleNames = permuteRuleNames(ruleNames, ruleName),
+              path = permutedRuleNames; ///
+
+        paths.push(path);
+      }
     }
 
     return paths;

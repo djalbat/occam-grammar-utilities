@@ -24,7 +24,7 @@ export default function rewriteLeftRecursiveRules(cycles, ruleMap, ruleNamesMap)
     ruleMap[ruleName] = rule;
   });
 
-  const directlyRepeatedRules = rulesFromRuleMapAndRule(ruleMap, DirectlyRepeatedRule);
+  const directlyRepeatedRules = rulesFromRule(DirectlyRepeatedRule, ruleMap);
 
   directlyRepeatedRules.forEach((directlyRepeatedRule) => {
     const directlyRepeatedRuleNonConsuming = isRuleNonConsuming(directlyRepeatedRule, ruleMap);
@@ -52,7 +52,7 @@ export default function rewriteLeftRecursiveRules(cycles, ruleMap, ruleNamesMap)
   });
 }
 
-function rulesFromRuleMapAndRule(ruleMap, Rule) {
+function rulesFromRule(Rule, ruleMap) {
   const rules = Object.values(ruleMap); ///
 
   filter(rules, (rule) => {

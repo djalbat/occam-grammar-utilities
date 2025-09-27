@@ -44,21 +44,6 @@ function directedGraphFromStartRule(startRule, ruleMap, ruleNamesMap) {
   return directedGraph;
 }
 
-function cyclesFromStartRule(startRule, ruleMap, ruleNamesMap) {
-  const directedGraph = directedGraphFromStartRule(startRule, ruleMap, ruleNamesMap),
-        cycles = directedGraph.findCycles();
-
-  filter(cycles, (cycle) => {
-    const cycleLeftRecursive = isCycleLeftRecursive(cycle);
-
-    if (cycleLeftRecursive) {
-      return true;
-    }
-  });
-
-  return cycles;
-}
-
 function ruleNamesMapFromRuleMao(ruleMap) {
   const ruleNamesMap = {},
         ruleNames = Object.keys(ruleMap);
@@ -87,3 +72,19 @@ function isCycleLeftRecursive(cycle) {
 
   return cycleLeftRecursive;
 }
+
+function cyclesFromStartRule(startRule, ruleMap, ruleNamesMap) {
+  const directedGraph = directedGraphFromStartRule(startRule, ruleMap, ruleNamesMap),
+        cycles = directedGraph.findCycles();
+
+  filter(cycles, (cycle) => {
+    const cycleLeftRecursive = isCycleLeftRecursive(cycle);
+
+    if (cycleLeftRecursive) {
+      return true;
+    }
+  });
+
+  return cycles;
+}
+

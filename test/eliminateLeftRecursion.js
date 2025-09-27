@@ -247,6 +247,70 @@ describe("src/eliminateLeftRecursion", () => {
     });
   });
 
+  describe("a cycle of length one", () => {
+    const bnf = `
+  
+      S ::= A... <END_OF_LINE> ;
+
+      A ::= A "g"
+      
+          | "e"
+      
+          ;
+      
+    `;
+
+    it("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compareParseTreeStrings(adjustedBNF, `
+                  
+        S   ::= A... <END_OF_LINE> ;
+        
+        A   ::= A_ A~* ;
+        
+        A_  ::= "e" ;
+        
+        A~A ::= "g" ;
+        
+        A~  ::= A~A ;
+        
+      `));
+    });
+
+    it("results in the requisite parse tree" , () => {
+      const content = `egg
+`,
+        tokens = tokensFromBNFAndContent(bnf, content),
+        node = nodeFromBNFAndTokens(bnf, tokens),
+        parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+      assert.isTrue(checkParentNodes(node));
+
+      assert.isTrue(checkDescendentNodes(node));
+
+      assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                    
+                                                        S [0]                    
+                                                          |                      
+                                          ---------------------------------      
+                                          |                               |      
+                                        A [0]                       <END_OF_LINE>
+                                          |                                      
+                           -------------------------------                       
+                           |                             |                       
+                         A [0]                  "g"[unassigned] [0]              
+                           |                                                     
+                 ---------------------                                           
+                 |                   |                                           
+               A [0]        "g"[unassigned] [0]                                  
+                 |                                                               
+        "e"[unassigned] [0]                                                      
+             
+      `));
+    });
+  });
+
   describe("a cycle of length two", () => {
     const bnf = `
   
@@ -381,9 +445,9 @@ describe("src/eliminateLeftRecursion", () => {
         
               ;
         
-        E   ::= F_ F~* E~F
+        E   ::= A_ A~* F~A F~* E~F
         
-              | A_ A~* F~A F~* E~F
+              | F_ F~* E~F
         
               ;
         
@@ -664,52 +728,52 @@ describe("src/eliminateLeftRecursion", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compareParseTreeStrings(adjustedBNF, `
-                                      
+                                              
         S   ::= A... <END_OF_LINE> ;
         
-        A   ::= B_ B~* A~B
+        A   ::= D_ D~* C~D C~* B~C B~* A~B
         
               | C_ C~* B~C B~* A~B
         
-              | D_ D~* C~D C~* B~C B~* A~B
+              | B_ B~* A~B
         
               | A_ A~*
         
               ;
         
-        B   ::= A_ A~* B~A
-        
-              | C_ C~* B~C
+        B   ::= A_ A~* D~A D~* C~D C~* B~C
         
               | D_ D~* C~D C~* B~C
         
-              | A_ A~* D~A D~* C~D C~* B~C
+              | C_ C~* B~C
+        
+              | A_ A~* B~A
         
               | B_ B~*
         
               ;
         
-        C   ::= D_ D~* C~D
-        
-              | A_ A~* D~A D~* C~D
+        C   ::= B_ B~* D~B D~* C~D
         
               | B_ B~* A~B A~* D~A D~* C~D
         
-              | B_ B~* D~B D~* C~D
+              | A_ A~* D~A D~* C~D
+        
+              | D_ D~* C~D
         
               | C_ C~*
         
               ;
         
-        D   ::= A_ A~* D~A
-        
-              | B_ B~* A~B A~* D~A
-        
-              | C_ C~* B~C B~* A~B A~* D~A
+        D   ::= C_ C~* B~C B~* D~B
         
               | B_ B~* D~B
         
-              | C_ C~* B~C B~* D~B
+              | C_ C~* B~C B~* A~B A~* D~A
+        
+              | B_ B~* A~B A~* D~A
+        
+              | A_ A~* D~A
         
               | D_ D~*
         
@@ -764,7 +828,7 @@ describe("src/eliminateLeftRecursion", () => {
               | C~D C~* B~C B~* A~B A~* D~A
         
               ;
-                                                            
+                                                                          
       `));
     });
 
@@ -848,7 +912,7 @@ describe("src/eliminateLeftRecursion", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compareParseTreeStrings(adjustedBNF, `
-                  
+                          
         S   ::= A... <END_OF_LINE> ;
         
         A   ::= C_ C~* A~C
@@ -863,9 +927,9 @@ describe("src/eliminateLeftRecursion", () => {
         
               ;
         
-        C   ::= B_ B~* C~B
+        C   ::= A_ A~* C~A
         
-              | A_ A~* C~A
+              | B_ B~* C~B
         
               | C_ C~*
         
@@ -1158,12 +1222,12 @@ describe("src/eliminateLeftRecursion", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compareParseTreeStrings(adjustedBNF, `
-                              
+                                      
         S   ::= A... <END_OF_LINE> ;
         
-        A   ::= C_ C~* A~C
+        A   ::= B_ B~* A~B
         
-              | B_ B~* A~B
+              | C_ C~* A~C
         
               | A_ A~*
         
@@ -1282,16 +1346,16 @@ describe("src/eliminateLeftRecursion", () => {
        
     `;
 
-    it.only("are rewritten", () => {
+    it("are rewritten", () => {
       const adjustedBNF = adjustedBNFFromBNF(bnf);
 
       assert.isTrue(compareParseTreeStrings(adjustedBNF, `
-                                      
+                                              
         S   ::= T... <END_OF_LINE> ;
         
-        T   ::= B_ B~* T~B
+        T   ::= C_ C~* B~C B~* T~B
         
-              | C_ C~* B~C B~* T~B
+              | B_ B~* T~B
         
               | C_ C~* T~C
         
@@ -1299,27 +1363,27 @@ describe("src/eliminateLeftRecursion", () => {
         
               ;
         
-        A   ::= T_ T~* A~T
-        
-              | C_ C~* T~C T~* A~T
+        A   ::= C_ C~* B~C B~* T~B T~* A~T
         
               | B_ B~* T~B T~* A~T
         
-              | C_ C~* B~C B~* T~B T~* A~T
+              | C_ C~* T~C T~* A~T
+        
+              | T_ T~* A~T
         
               ;
         
-        B   ::= C_ C~* B~C
+        B   ::= T_ T~* A~T A~* C~A C~* B~C
         
-              | T_ T~* A~T A~* C~A C~* B~C
+              | C_ C~* B~C
         
               | B_ B~*
         
               ;
         
-        C   ::= T_ T~* A~T A~* C~A
+        C   ::= B_ B~* T~B T~* A~T A~* C~A
         
-              | B_ B~* T~B T~* A~T A~* C~A
+              | T_ T~* A~T A~* C~A
         
               | C_ C~*
         
@@ -1366,7 +1430,7 @@ describe("src/eliminateLeftRecursion", () => {
               | C~A C~* T~C T~* A~T
         
               ;
-                                                     
+                                                                   
      `));
     });
 
@@ -1398,6 +1462,10 @@ describe("src/eliminateLeftRecursion", () => {
                A [0]        "+"[unassigned] [0]        A [0]                     
                  |                                       |                       
                T [0]                                   T [0]                     
+                 |                                       |                       
+               B [0]                                   B [0]                     
+                 |                                       |                       
+               C [0]                                   C [0]                     
                  |                                       |                       
                V [0]                                   V [0]                     
                  |                                       |                       

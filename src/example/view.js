@@ -31,7 +31,7 @@ class View extends Element {
   }
 
   update() {
-    // try {
+    try {
       const bnf = this.getBNF(),
             startRuleName = this.getStartRuleName(),
             lexicalEntries = this.getLexicalEntries();
@@ -60,9 +60,9 @@ class View extends Element {
       }
 
       this.setParseTree(parseTree);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   childElements() {
@@ -129,37 +129,17 @@ class View extends Element {
 
   static initialBNF = `
 
-      S ::= T... <END_OF_LINE> ;
-  
-      T ::= B
-      
-          | C
-      
-          | V
-      
-          ;
-      
-      A ::= T ;
-      
-      B::= "-" A
-      
-         | C
-      
-         | V
-      
-         ;
-                            
-      C ::= A "+" A
-      
-          | V
-      
-          ;
-      
-      V ::= . ;
-    
+S ::= A... <END_OF_LINE> ;
+
+A ::= A "g"
+
+    | "e"
+
+    ;
+
 `;
 
-  static initialContent = `n+n
+  static initialContent = `egg
 `;
 
   static initialStartRuleName = "";
