@@ -44,7 +44,7 @@ function rewrittenDefinitionFromPath(path) {
   parts.push(reducedRuleNamePart);
 
   forEachRuleNameAndLeftRecursiveRuleName(ruleNames, (ruleName, leftRecursiveRuleName, index) => {
-    if (index !== lastIndex) {
+    if (index < lastIndex) {
       const directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName);
 
       parts.push(directlyRepeatedPart);

@@ -31,7 +31,7 @@ export function forEachRuleNameAndLeftRecursiveRuleName(ruleNames, callback) {
     const nextIndex = (index === lastIndex) ?
                         0 :
                           index + 1,
-          leftRecursiveRuleName = ruleNames[nextIndex];
+                      leftRecursiveRuleName = ruleNames[nextIndex];
 
     callback(ruleName, leftRecursiveRuleName, index);
   });
