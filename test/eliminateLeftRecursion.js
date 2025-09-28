@@ -1463,10 +1463,6 @@ describe("src/eliminateLeftRecursion", () => {
                  |                                       |                       
                T [0]                                   T [0]                     
                  |                                       |                       
-               B [0]                                   B [0]                     
-                 |                                       |                       
-               C [0]                                   C [0]                     
-                 |                                       |                       
                V [0]                                   V [0]                     
                  |                                       |                       
         "n"[unassigned] [0]                     "n"[unassigned] [0]              
@@ -1606,6 +1602,102 @@ B~  ::= A~B A~* B~A ;`));
             tokens = tokensFromBNFAndContent(bnf, content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+      assert.isTrue(checkParentNodes(node));
+
+      assert.isTrue(checkDescendentNodes(node));
+
+      assert.isTrue(compareParseTreeStrings(parseTreeString, `
+      
+                                                   S [0]                         
+                                                     |                           
+                                -------------------------------------------      
+                                |                                         |      
+                              T [0]                                 <END_OF_LINE>
+                                |                                                
+                 -------------------------------                                 
+                 |                             |                                 
+        "a"[unassigned] [0]                  E [0]                               
+                                               |                                 
+                                     ---------------------                       
+                                     |                   |                       
+                                   A [0]        "f"[unassigned] [0]              
+                                     |                                           
+                            "g"[unassigned] [0]                                  
+    
+      `));
+    });
+  });
+
+  xdescribe("a cycle of length two together with ambiguity", () => {
+    const bnf = `
+
+      S ::= T... <END_OF_LINE> ;
+      
+      T ::= "-"<NO_WHITESPACE>A
+       
+          | A "-" A 
+              
+          | "zero"
+          
+          ;
+      
+      A ::= T ( ) 
+      
+          | U
+      
+          ;
+          
+      U ::= . ;
+    
+    `;
+
+    it("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compareParseTreeStrings(adjustedBNF, `
+              
+        S   ::= T... <END_OF_LINE> ;
+        
+        T   ::= T_ T~*
+        
+              | A_ A~* T~A
+        
+              ;
+        
+        A   ::= A_ A~*
+        
+              | T_ T~* A~T
+        
+              ;
+        
+        U   ::= . ;
+        
+        T_  ::= "-" <NO_WHITESPACE> A
+        
+              | "zero"
+        
+              ;
+        
+        A_  ::= U ;
+        
+        T~A ::= "-" A ;
+        
+        A~T ::= ε ( ) ;
+        
+        T~  ::= A~T A~* T~A ;
+        
+        A~  ::= T~A T~* A~T ;
+                      
+      `));
+    });
+
+    it("results in the requisite parse tree" , () => {
+      const content = `agf
+`,
+        tokens = tokensFromBNFAndContent(bnf, content),
+        node = nodeFromBNFAndTokens(bnf, tokens),
+        parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(checkParentNodes(node));
 

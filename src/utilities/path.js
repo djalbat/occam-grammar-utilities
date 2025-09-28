@@ -28,11 +28,17 @@ export function differenceFromPaths(pathA, pathB, ruleName, ruleMap, ruleNamesMa
   const pathALength = pathA.length,
         pathBLength = pathB.length;
 
-  if ((pathALength === 0) && (pathBLength === 0)) {
-    difference = 0;
-  } else if (pathALength === 0) {
+  if (false) {
+    ///
+  } else if ((pathALength === 1)) {
+    difference = -1;
+  } else if ((pathBLength === 1)) {
     difference = +1;
-  } else if (pathBLength === 0) {
+  } else if ((pathALength === 0) && (pathBLength === 0)) {
+    difference = 0;
+  } else if ((pathALength === 0)) {
+    difference = +1;
+  } else if ((pathBLength === 0)) {
     difference = -1;
   } else {
     const ruleNamesA = pathA.slice(),

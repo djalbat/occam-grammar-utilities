@@ -31,38 +31,34 @@ class View extends Element {
   }
 
   update() {
-    try {
-      const bnf = this.getBNF(),
-            startRuleName = this.getStartRuleName(),
-            lexicalEntries = this.getLexicalEntries();
+    const bnf = this.getBNF(),
+          startRuleName = this.getStartRuleName(),
+          lexicalEntries = this.getLexicalEntries();
 
-      let rules = rulesFromBNF(bnf);
+    let rules = rulesFromBNF(bnf);
 
-      rules = eliminateLeftRecursion(rules);  ///
+    rules = eliminateLeftRecursion(rules);  ///
 
-      const multiLine = true,
-            rulesString = rulesAsString(rules, multiLine),
-            adjustedBNF = rulesString;  ///
+    const multiLine = true,
+          rulesString = rulesAsString(rules, multiLine),
+          adjustedBNF = rulesString;  ///
 
-      this.setAdjustedBNF(adjustedBNF);
+    this.setAdjustedBNF(adjustedBNF);
 
-      const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
-            exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName);
+    const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
+          exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName);
 
-      const content = this.getContent(),
-            tokens = exampleLexer.tokenise(content),
-            node = exampleParser.parse(tokens);
+    const content = this.getContent(),
+          tokens = exampleLexer.tokenise(content),
+          node = exampleParser.parse(tokens);
 
-      let parseTree = null;
+    let parseTree = null;
 
-      if (node !== null) {
-        parseTree = node.asParseTree(tokens);
-      }
-
-      this.setParseTree(parseTree);
-    } catch (error) {
-      console.log(error);
+    if (node !== null) {
+      parseTree = node.asParseTree(tokens);
     }
+
+    this.setParseTree(parseTree);
   }
 
   childElements() {
@@ -127,19 +123,35 @@ class View extends Element {
     this.update();
   }
 
-  static initialBNF = `
+  static initialBNF = `S ::= T... <END_OF_LINE> ;
+  
+      T ::= B
+      
+          | C
+      
+          | V
+      
+          ;
+      
+      A ::= T ;
+      
+      B::= "-" A
+      
+         | C
+      
+         | V
+      
+         ;
+                            
+      C ::= A "+" A
+      
+          | V
+      
+          ;
+      
+      V ::= . ;`;
 
-    S ::= A... <END_OF_LINE> ;
-    
-    A ::= A "g"
-    
-        | "e"
-    
-        ;
-
-`;
-
-  static initialContent = `egg
+  static initialContent = `n+n
 `;
 
   static initialStartRuleName = "";
