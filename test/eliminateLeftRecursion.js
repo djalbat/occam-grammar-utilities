@@ -339,15 +339,15 @@ describe("src/eliminateLeftRecursion", () => {
                   
         S   ::= A... <END_OF_LINE> ;
         
-        A   ::= B_ B~* A~B
+        A   ::= A_ A~*
         
-              | A_ A~*
+              | B_ B~* A~B
         
               ;
         
-        B   ::= A_ A~* B~A
+        B   ::= B_ B~*
         
-              | B_ B~*
+              | A_ A~* B~A
         
               ;
         
@@ -439,23 +439,23 @@ describe("src/eliminateLeftRecursion", () => {
               
         S   ::= F... <END_OF_LINE> ;
         
-        A   ::= F_ F~* E~F E~* A~E
+        A   ::= A_ A~*
         
-              | A_ A~*
+              | F_ F~* E~F E~* A~E
         
               ;
         
-        E   ::= A_ A~* F~A F~* E~F
+        E   ::= F_ F~* E~F
         
-              | F_ F~* E~F
+              | A_ A~* F~A F~* E~F
         
               ;
         
         T   ::= "n" ;
         
-        F   ::= A_ A~* F~A
+        F   ::= F_ F~*
         
-              | F_ F~*
+              | A_ A~* F~A
         
               ;
         
@@ -621,15 +621,15 @@ describe("src/eliminateLeftRecursion", () => {
               
         S   ::= A... <END_OF_LINE> ;
         
-        A   ::= B_ B~* A~B
+        A   ::= A_ A~*
         
-              | A_ A~*
+              | B_ B~* A~B
         
               ;
         
-        B   ::= A_ A~* B~A
+        B   ::= B_ B~*
         
-              | B_ B~*
+              | A_ A~* B~A
         
               ;
         
@@ -731,51 +731,51 @@ describe("src/eliminateLeftRecursion", () => {
                                               
         S   ::= A... <END_OF_LINE> ;
         
-        A   ::= D_ D~* C~D C~* B~C B~* A~B
-        
-              | C_ C~* B~C B~* A~B
+        A   ::= A_ A~*
         
               | B_ B~* A~B
         
-              | A_ A~*
+              | C_ C~* B~C B~* A~B
+        
+              | D_ D~* C~D C~* B~C B~* A~B
         
               ;
         
-        B   ::= A_ A~* D~A D~* C~D C~* B~C
-        
-              | D_ D~* C~D C~* B~C
+        B   ::= B_ B~*
         
               | C_ C~* B~C
         
               | A_ A~* B~A
         
-              | B_ B~*
+              | D_ D~* C~D C~* B~C
+        
+              | A_ A~* D~A D~* C~D C~* B~C
         
               ;
         
-        C   ::= B_ B~* D~B D~* C~D
-        
-              | B_ B~* A~B A~* D~A D~* C~D
-        
-              | A_ A~* D~A D~* C~D
+        C   ::= C_ C~*
         
               | D_ D~* C~D
         
-              | C_ C~*
+              | A_ A~* D~A D~* C~D
+        
+              | B_ B~* D~B D~* C~D
+        
+              | B_ B~* A~B A~* D~A D~* C~D
         
               ;
         
-        D   ::= C_ C~* B~C B~* D~B
-        
-              | B_ B~* D~B
-        
-              | C_ C~* B~C B~* A~B A~* D~A
-        
-              | B_ B~* A~B A~* D~A
+        D   ::= D_ D~*
         
               | A_ A~* D~A
         
-              | D_ D~*
+              | B_ B~* D~B
+        
+              | C_ C~* B~C B~* D~B
+        
+              | B_ B~* A~B A~* D~A
+        
+              | C_ C~* B~C B~* A~B A~* D~A
         
               ;
         
@@ -915,23 +915,23 @@ describe("src/eliminateLeftRecursion", () => {
                           
         S   ::= A... <END_OF_LINE> ;
         
-        A   ::= C_ C~* A~C
+        A   ::= A_ A~*
         
-              | A_ A~*
-        
-              ;
-        
-        B   ::= C_ C~* B~C
-        
-              | B_ B~*
+              | C_ C~* A~C
         
               ;
         
-        C   ::= A_ A~* C~A
+        B   ::= B_ B~*
+        
+              | C_ C~* B~C
+        
+              ;
+        
+        C   ::= C_ C~*
         
               | B_ B~* C~B
         
-              | C_ C~*
+              | A_ A~* C~A
         
               ;
         
@@ -1027,15 +1027,15 @@ describe("src/eliminateLeftRecursion", () => {
         
         S   ::= A... <END_OF_LINE> ;
         
-        A   ::= B_ B~* A~B
+        A   ::= A_ A~*
         
-              | A_ A~*
+              | B_ B~* A~B
         
               ;
         
-        B   ::= A_ A~* B~A
+        B   ::= B_ B~*
         
-              | B_ B~*
+              | A_ A~* B~A
         
               ;
         
@@ -1127,15 +1127,15 @@ describe("src/eliminateLeftRecursion", () => {
                       
         S   ::= B... <END_OF_LINE> ;
         
-        A   ::= B_ B~* A~B
+        A   ::= A_ A~*
         
-              | A_ A~*
+              | B_ B~* A~B
         
               ;
         
-        B   ::= A_ A~* B~A
+        B   ::= B_ B~*
         
-              | B_ B~*
+              | A_ A~* B~A
         
               ;
         
@@ -1225,23 +1225,23 @@ describe("src/eliminateLeftRecursion", () => {
                                       
         S   ::= A... <END_OF_LINE> ;
         
-        A   ::= B_ B~* A~B
+        A   ::= A_ A~*
         
               | C_ C~* A~C
         
-              | A_ A~*
+              | B_ B~* A~B
         
               ;
         
-        B   ::= A_ A~* B~A
+        B   ::= B_ B~*
         
-              | B_ B~*
+              | A_ A~* B~A
         
               ;
         
-        C   ::= A_ A~* C~A
+        C   ::= C_ C~*
         
-              | C_ C~*
+              | A_ A~* C~A
         
               ;
         
@@ -1353,39 +1353,39 @@ describe("src/eliminateLeftRecursion", () => {
                                               
         S   ::= T... <END_OF_LINE> ;
         
-        T   ::= C_ C~* B~C B~* T~B
-        
-              | B_ B~* T~B
+        T   ::= T_ T~*
         
               | C_ C~* T~C
         
-              | T_ T~*
+              | B_ B~* T~B
+        
+              | C_ C~* B~C B~* T~B
         
               ;
         
-        A   ::= C_ C~* B~C B~* T~B T~* A~T
+        A   ::= T_ T~* A~T
         
               | B_ B~* T~B T~* A~T
         
               | C_ C~* T~C T~* A~T
         
-              | T_ T~* A~T
+              | C_ C~* B~C B~* T~B T~* A~T
         
               ;
         
-        B   ::= T_ T~* A~T A~* C~A C~* B~C
+        B   ::= B_ B~*
         
               | C_ C~* B~C
         
-              | B_ B~*
+              | T_ T~* A~T A~* C~A C~* B~C
         
               ;
         
-        C   ::= B_ B~* T~B T~* A~T A~* C~A
+        C   ::= C_ C~*
         
               | T_ T~* A~T A~* C~A
         
-              | C_ C~*
+              | B_ B~* T~B T~* A~T A~* C~A
         
               ;
         
