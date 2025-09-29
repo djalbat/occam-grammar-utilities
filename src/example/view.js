@@ -123,42 +123,32 @@ class View extends Element {
     this.update();
   }
 
-  static initialBNF = `S ::= T... <END_OF_LINE> ;
-  
-      T ::= B
-      
-          | C
-      
-          | V
-      
-          ;
-      
-      A ::= T ;
-      
-      B::= "-" A
-      
-         | C
-      
-         | V
-      
-         ;
-                            
-      C ::= A "+" A
-      
-          | V
-      
-          ;
-      
-      V ::= . ;`;
+  static initialBNF = `S ::= T... <END_OF_LINE> ;  
 
-  static initialContent = `n+n
+A ::=  T ( ) 
+
+    |  Y ( )
+               
+    |  U
+
+    ;
+
+T  ::=  "-"<NO_WHITESPACE>A
+
+     |  A "÷" A 
+                   
+     |  "z" 
+    
+     ;`;
+
+  static initialContent = `--z
 `;
 
   static initialStartRuleName = "";
 
   static initialLexicalEntries = [
     {
-      "symbol": "zero|-"
+      "symbol": "z|-"
     },
     {
       "unassigned": "."
