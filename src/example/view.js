@@ -46,7 +46,7 @@ class View extends Element {
     this.setAdjustedBNF(adjustedBNF);
 
     const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
-          exampleParser =  exampleParserFromRulesAndStartRuleName(rules, startRuleName);
+          exampleParser = exampleParserFromRulesAndStartRuleName(rules, startRuleName);
 
     const content = this.getContent(),
           tokens = exampleLexer.tokenise(content),
