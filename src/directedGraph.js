@@ -73,7 +73,7 @@ export default class DirectedGraph {
     compress(cycles, (cycleA, cycleB) => {
       const cyclesCoincident = areCyclesCoincident(cycleA, cycleB);
 
-      if (cyclesCoincident) {
+      if (!cyclesCoincident) {
         return true;
       }
     });

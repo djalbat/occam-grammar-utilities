@@ -109,7 +109,7 @@ export function pathsFromRuleNameAndCycles(ruleName, cycles, ruleMap, ruleNamesM
   compress(paths, (pathA, pathB) => {
     const pathsEqual = arePathsEqual(pathA, pathB);
 
-    if (pathsEqual) {
+    if (!pathsEqual) {
       return true;
     }
   });

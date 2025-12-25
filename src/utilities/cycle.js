@@ -39,7 +39,7 @@ export function ruleNamesFromCycles(cycles, ruleNames = []) {
   });
 
   compress(ruleNames, (ruleNameA, ruleNameB) => {
-    if (ruleNameA === ruleNameB) {
+    if (ruleNameA !== ruleNameB) {
       return true;
     }
   });
