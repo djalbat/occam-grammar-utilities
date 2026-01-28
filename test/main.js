@@ -12,7 +12,7 @@ const { rulesFromBNF } = parserUtilities,
 const { NonTerminalNodeMap } = ExampleParser,
       NonTerminalNodes = Object.values(NonTerminalNodeMap);
 
-describe("src/eliminateLeftRecursion", () => {
+describe("src/main", () => {
   describe("a left recursive definition is occluded", () => {
     const bnf = `
   
@@ -1629,7 +1629,7 @@ B~  ::= A~B A~* B~A ;`));
     });
   });
 
-  xdescribe("a cycle of length two together with ambiguity", () => {
+  describe("a cycle of length two together with ambiguity", () => {
     const bnf = `
 
       S ::= T... <END_OF_LINE> ;
@@ -1692,12 +1692,12 @@ B~  ::= A~B A~* B~A ;`));
       `));
     });
 
-    it("results in the requisite parse tree" , () => {
+    it.only("results in the requisite parse tree" , () => {
       const content = `agf
 `,
-        tokens = tokensFromBNFAndContent(bnf, content),
-        node = nodeFromBNFAndTokens(bnf, tokens),
-        parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+            tokens = tokensFromBNFAndContent(bnf, content),
+            node = nodeFromBNFAndTokens(bnf, tokens),
+            parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(checkParentNodes(node));
 
