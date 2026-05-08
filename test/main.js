@@ -1,7 +1,5 @@
 "use strict";
 
-const { assert } = require("chai");
-
 const { rulesUtilities, parserUtilities } = require("occam-parsers");
 
 const { ExampleLexer, ExampleParser, eliminateLeftRecursion } = require("../lib/index.js");
@@ -1692,7 +1690,7 @@ B~  ::= A~B A~* B~A ;`));
       `));
     });
 
-    it.only("results in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = `agf
 `,
             tokens = tokensFromBNFAndContent(bnf, content),
