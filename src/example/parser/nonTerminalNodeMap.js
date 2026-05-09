@@ -34,6 +34,10 @@ class T extends NonTerminalNode {
   static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(T, ruleName, childNodes, opacity, precedence); }
 }
 
+class U extends NonTerminalNode {
+  static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(T, ruleName, childNodes, opacity, precedence); }
+}
+
 class V extends NonTerminalNode {
   static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(V, ruleName, childNodes, opacity, precedence); }
 }
@@ -47,6 +51,7 @@ const NonTerminalNodeMap = {
   F,
   S,
   T,
+  U,
   V
 }
 

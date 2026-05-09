@@ -1636,7 +1636,7 @@ B~  ::= A~B A~* B~A ;`));
        
           | A "-" A 
               
-          | "zero"
+          | "z"
           
           ;
       
@@ -1673,7 +1673,7 @@ B~  ::= A~B A~* B~A ;`));
         
         T_  ::= "-" <NO_WHITESPACE> A
         
-              | "zero"
+              | "z"
         
               ;
         
@@ -1691,7 +1691,7 @@ B~  ::= A~B A~* B~A ;`));
     });
 
     it("results in the requisite parse tree" , () => {
-      const content = `agf
+      const content = `--z
 `,
             tokens = tokensFromBNFAndContent(bnf, content),
             node = nodeFromBNFAndTokens(bnf, tokens),
@@ -1702,22 +1702,26 @@ B~  ::= A~B A~* B~A ;`));
       assert.isTrue(checkDescendentNodes(node));
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
-      
-                                                   S [0]                         
-                                                     |                           
-                                -------------------------------------------      
-                                |                                         |      
-                              T [0]                                 <END_OF_LINE>
-                                |                                                
-                 -------------------------------                                 
-                 |                             |                                 
-        "a"[unassigned] [0]                  E [0]                               
-                                               |                                 
-                                     ---------------------                       
-                                     |                   |                       
-                                   A [0]        "f"[unassigned] [0]              
-                                     |                                           
-                            "g"[unassigned] [0]                                  
+          
+                                                                     S [0]                                   
+                                                                       |                                     
+                                        ---------------------------------------------------------------      
+                                        |                                                             |      
+                                      T [0]                                                     <END_OF_LINE>
+                                        |                                                                    
+             -------------------------------------------------------                                         
+             |                 |                                   |                                         
+    "-"[unassigned] [0] <NO_WHITESPACE>                        A [0] ( )                                     
+                                                                   |                                         
+                                                                 T [0]                                       
+                                                                   |                                         
+                                                 -------------------------------------                       
+                                                 |                 |                 |                       
+                                        "-"[unassigned] [0] <NO_WHITESPACE>        A [0]                     
+                                                                                     |                       
+                                                                                   U [0]                     
+                                                                                     |                       
+                                                                            "z"[unassigned] [0]              
     
       `));
     });
