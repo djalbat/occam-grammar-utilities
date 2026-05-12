@@ -10,9 +10,10 @@ class LexicalEntriesTextarea extends Textarea {
 
     try {
       const value = this.getValue(),
-            lexicalEntriesString = value; ///
+            jsonString = value, ///
+            json = JSON.parse(jsonString);
 
-      lexicalEntries = JSON.parse(lexicalEntriesString);
+      lexicalEntries = json; ///
     } catch (error) {
       ///
     }
@@ -21,8 +22,9 @@ class LexicalEntriesTextarea extends Textarea {
   }
 
   setLexicalEntries(lexicalEntries) {
-    const lexicalEntriesString = JSON.stringify(lexicalEntries, null, 2),
-          value = lexicalEntriesString; ///
+    const json = lexicalEntries,  ///
+          jsonString = JSON.stringify(json, null, 2),
+          value = jsonString; ///
 
     this.setValue(value);
   }
