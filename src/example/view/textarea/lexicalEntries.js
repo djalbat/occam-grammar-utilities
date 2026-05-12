@@ -4,8 +4,6 @@ import withStyle from "easy-with-style";  ///
 
 import Textarea from "../textarea";
 
-import { DOUBLE_SPACE } from "../../constants";
-
 class LexicalEntriesTextarea extends Textarea {
   getLexicalEntries() {
     let lexicalEntries = {};
@@ -23,7 +21,7 @@ class LexicalEntriesTextarea extends Textarea {
   }
 
   setLexicalEntries(lexicalEntries) {
-    const lexicalEntriesString = JSON.stringify(lexicalEntries, null, DOUBLE_SPACE),
+    const lexicalEntriesString = JSON.stringify(lexicalEntries, null, 2),
           value = lexicalEntriesString; ///
 
     this.setValue(value);
