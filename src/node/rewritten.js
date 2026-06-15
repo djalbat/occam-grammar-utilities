@@ -6,6 +6,20 @@ import { isNonTerminalNodeUnprecedented } from "../utilities/precedence";
 import { rewriteReducedNodes, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRepeatedNodes } from "../utilities/rewrite";
 
 export default class RewrittenNode extends NonTerminalNode {
+  constructor(ruleName, parentNode, childNodes, opacity, precedence, unprecedented) {
+    super(ruleName, parentNode, childNodes, opacity, precedence);
+
+    this.unprecedented = unprecedented;
+  }
+
+  isUnprecedented() {
+    const unprecedented = (this.unprecedented !== null) ?
+                             this.unprecedented :
+                               super.isUnprecedented();
+
+    return unprecedented;
+  }
+
   rewrite(state) {
     let nonTerminalNode;
 
@@ -20,6 +34,10 @@ export default class RewrittenNode extends NonTerminalNode {
 
     nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence);
 
+    console.log(">>>")
+
+    console.log(nonTerminalNode.asParseTree(state.getTokens()).asString())
+
     rewriteDirectlyRepeatedNodes(nonTerminalNode, state);
 
     const parentNode = rewriteIndirectlyRepeatedNodes(nonTerminalNode, state);
@@ -30,16 +48,19 @@ export default class RewrittenNode extends NonTerminalNode {
       rewriteReducedNodes(nonTerminalNode, state);
     }
 
+    console.log(nonTerminalNode.asParseTree(state.getTokens()).asString())
+
+    console.log("<<<")
+
+    console.log()
+
     return nonTerminalNode;
   }
 
-  isUnprecedented() {
-    const nonTerminalNode = this, ///
-          nonTerminalNodeUnprecedented = isNonTerminalNodeUnprecedented(nonTerminalNode),
-          unprecedented = nonTerminalNodeUnprecedented; ///
+  static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) {
+    const unprecedented = null,
+          directlyRepeatedNode = NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(RewrittenNode, ruleName, childNodes, opacity, precedence, unprecedented);
 
-    return unprecedented;
+    return directlyRepeatedNode;
   }
-
-  static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(RewrittenNode, ruleName, childNodes, opacity, precedence); }
 }

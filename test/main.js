@@ -279,7 +279,7 @@ describe("src/main", () => {
     it("results in the requisite parse tree" , () => {
       const content = `egg
 `,
-        tokens = tokensFromBNFAndContent(bnf, content),
+        tokens = tokensFromContent(content),
         node = nodeFromBNFAndTokens(bnf, tokens),
         parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -373,7 +373,7 @@ describe("src/main", () => {
     it("results in the requisite parse tree" , () => {
       const content = `ehfg
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -479,7 +479,7 @@ describe("src/main", () => {
     it("results in the requisite parse tree" , () => {
       const content = `(n+n)
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -561,7 +561,7 @@ describe("src/main", () => {
     it("results in the requisite parse tree" , () => {
       const content = `n+m
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -655,7 +655,7 @@ describe("src/main", () => {
     it("results in the requisite parse tree" , () => {
       const content = `efd
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -833,7 +833,7 @@ describe("src/main", () => {
     it("results in the requisite parse tree" , () => {
       const content = `gkhrldf
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -963,7 +963,7 @@ describe("src/main", () => {
     it("results in the requisite parse tree" , () => {
       const content = `akch
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -1061,7 +1061,7 @@ describe("src/main", () => {
     it("results in the requisite parse tree" , () => {
       const content = `gdefefh
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -1155,7 +1155,7 @@ describe("src/main", () => {
     it("results in the requisite parse tree" , () => {
       const content = `dee
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -1273,7 +1273,7 @@ describe("src/main", () => {
     it("results in the requisite parse tree" , () => {
       const content = `bekfh
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -1435,7 +1435,7 @@ describe("src/main", () => {
     it("results in the requisite parse tree" , () => {
       const content = `n+n
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -1513,7 +1513,7 @@ B~  ::= A~B A~* B~A ;`));
     it("results in the requisite parse tree" , () => {
       const content = `a = R
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -1597,7 +1597,7 @@ B~  ::= A~B A~* B~A ;`));
     it("results in the requisite parse tree" , () => {
       const content = `agf
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -1693,7 +1693,81 @@ B~  ::= A~B A~* B~A ;`));
     it("results in the requisite parse tree" , () => {
       const content = `--z
 `,
-            tokens = tokensFromBNFAndContent(bnf, content),
+            tokens = tokensFromContent(content),
+            node = nodeFromBNFAndTokens(bnf, tokens),
+            parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+      assert.isTrue(checkParentNodes(node));
+
+      assert.isTrue(checkDescendentNodes(node));
+
+      assert.isTrue(compareParseTreeStrings(parseTreeString, `
+          
+                                                                     S [0]                                   
+                                                                       |                                     
+                                        ---------------------------------------------------------------      
+                                        |                                                             |      
+                                      T [0]                                                     <END_OF_LINE>
+                                        |                                                                    
+             -------------------------------------------------------                                         
+             |                 |                                   |                                         
+    "-"[unassigned] [0] <NO_WHITESPACE>                        A [0] ( )                                     
+                                                                   |                                         
+                                                                 T [0]                                       
+                                                                   |                                         
+                                                 -------------------------------------                       
+                                                 |                 |                 |                       
+                                        "-"[unassigned] [0] <NO_WHITESPACE>        A [0]                     
+                                                                                     |                       
+                                                                                   U [0]                     
+                                                                                     |                       
+                                                                            "z"[unassigned] [0]              
+    
+      `));
+    });
+  });
+
+  describe("an indirectly recursive rule with precedence", () => {
+    const bnf = `
+      
+      S    ::= T... <END_OF_LINE> ;
+      
+      T    ::= ( "1" | "2" | "3" | "4" )
+      
+             | T<NO_WHITESPACE>T (100)
+      
+             | "1" "+" T (12)
+      
+             ;
+                        
+    `;
+
+    it("is rewritten", () => {
+      const adjustedBNF = adjustedBNFFromBNF(bnf);
+
+      assert.isTrue(compareParseTreeStrings(adjustedBNF, `
+              
+        S   ::= T... <END_OF_LINE> ;
+        
+        T   ::= T_ T~* ;
+        
+        T_  ::= ( "1" | "2" | "3" | "4" )
+            
+              | "1" "+" T (12)
+        
+              ;
+        
+        T~T ::= <NO_WHITESPACE> T (100) ;
+        
+        T~  ::= T~T ;
+                      
+      `));
+    });
+
+    it.only("results in the requisite parse tree" , () => {
+      const content = `1+234
+`,
+            tokens = tokensFromContent(content),
             node = nodeFromBNFAndTokens(bnf, tokens),
             parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -1834,7 +1908,7 @@ function checkDescendentNode(descendantNode) {
   return checked;
 }
 
-function tokensFromBNFAndContent(bnf, content) {
+function tokensFromContent(content) {
   const unassigned = ".",
         lexicalEntries = [
           {
