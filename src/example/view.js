@@ -5,7 +5,7 @@ import withStyle from "easy-with-style";  ///
 import { Element } from "easy";
 import { lexerUtilities } from "occam-lexers";
 import { rulesUtilities, parserUtilities } from "occam-parsers";
-import { ExampleLexer, ExampleParser, eliminateLeftRecursion } from "../index"; ///
+import { BasicLexer, BasicParser, eliminateLeftRecursion } from "../index"; ///
 import { RowsDiv, ColumnDiv, ColumnsDiv, VerticalSplitterDiv } from "easy-layout";
 
 import SubHeading from "./view/subHeading";
@@ -45,12 +45,12 @@ class View extends Element {
 
     this.setAdjustedBNF(adjustedBNF);
 
-    const exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
-          exampleParser = exampleParserFromRulesAndStartRuleName(rules, startRuleName);
+    const basicLexer = basicLexerFromLexicalEntries(lexicalEntries),
+          basicParser = basicParserFromRulesAndStartRuleName(rules, startRuleName);
 
     const content = this.getContent(),
-          tokens = exampleLexer.tokenise(content),
-          node = exampleParser.parse(tokens);
+          tokens = basicLexer.tokenise(content),
+          node = basicParser.parse(tokens);
 
     let parseTree = null;
 
@@ -123,19 +123,16 @@ class View extends Element {
     this.update();
   }
 
-  static initialBNF = `S    ::= T... <END_OF_LINE> ;
+  static initialBNF = `S ::= A... <END_OF_LINE> ;
 
-T    ::= ( "1" | "2" | "3" | "4" )
+A ::= A "g"
 
-       | T<NO_WHITESPACE>T (100)
-
-       | "1" "+" T (12)
-
-       ;
-
+    | "e"
+    
+    ;
 `;
 
-  static initialContent = `1+234
+  static initialContent = `egg
 `;
 
   static initialStartRuleName = "";
@@ -159,16 +156,16 @@ export default withStyle(View)`
   
 `;
 
-function exampleLexerFromLexicalEntries(lexicalEntries) {
+function basicLexerFromLexicalEntries(lexicalEntries) {
   const entries = lexicalEntries, ///
         rules = rulesFromEntries(entries),
-        exampleLexer = lexerFromRules(ExampleLexer, rules);
+        basicLexer = lexerFromRules(BasicLexer, rules);
 
-  return exampleLexer;
+  return basicLexer;
 }
 
-function exampleParserFromRulesAndStartRuleName(rules, startRuleName) {
-  const exampleParser = parserFromRulesAndStartRuleName(ExampleParser, rules, startRuleName);
+function basicParserFromRulesAndStartRuleName(rules, startRuleName) {
+  const basicParser = parserFromRulesAndStartRuleName(BasicParser, rules, startRuleName);
 
-  return exampleParser;
+  return basicParser;
 }

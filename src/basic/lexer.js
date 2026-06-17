@@ -2,7 +2,7 @@
 
 import { CommonLexer, WhitespaceToken, EndOfLineSignificantToken } from "occam-lexers";
 
-export default class ExampleLexer extends CommonLexer {
+export default class BasicLexer extends CommonLexer {
   static EndOfLineToken = EndOfLineSignificantToken; ///
 
   static WhitespaceToken = WhitespaceToken;
@@ -23,5 +23,5 @@ export default class ExampleLexer extends CommonLexer {
 
   static DoublyQuotedStringLiteralToken = null;
 
-  static fromEntries(entries) { return CommonLexer.fromEntries(ExampleLexer, entries); }
+  static fromEntries(entries) { return CommonLexer.fromEntries(BasicLexer, entries); }
 }

@@ -8,8 +8,8 @@ import RewrittenDefinition from "../definition/rewritten";
 import { pathsFromRuleNameAndCycles } from "../utilities/path";
 
 export default class RewrittenRule extends Rule {
-  NonTerminalNodeFromRuleName(ruleName, state) {
-    const NonTerminalNode = RewrittenNode;
+  NonTerminalNodeFromRuleName(ruleName, context) {
+    const NonTerminalNode = RewrittenNode;  ///
 
     return NonTerminalNode;
   }

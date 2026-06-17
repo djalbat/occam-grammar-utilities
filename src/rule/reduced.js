@@ -11,8 +11,8 @@ import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursive
 import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/directedGraph";
 
 export default class ReducedRule extends Rule {
-  NonTerminalNodeFromRuleName(ruleName, state) {
-    const NonTerminalNode = ReducedNode;
+  NonTerminalNodeFromRuleName(ruleName, context) {
+    const NonTerminalNode = ReducedNode;  ///
 
     return NonTerminalNode;
   }

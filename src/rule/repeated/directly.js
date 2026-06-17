@@ -8,8 +8,8 @@ import DirectlyRepeatedDefinition from "../../definition/repeated/directly"
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyRepeatedRule extends Rule {
-  NonTerminalNodeFromRuleName(ruleName, state) {
-    const NonTerminalNode = DirectlyRepeatedNode;
+  NonTerminalNodeFromRuleName(ruleName, context) {
+    const NonTerminalNode = DirectlyRepeatedNode; ///
 
     return NonTerminalNode;
   }

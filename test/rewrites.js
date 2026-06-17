@@ -1,267 +1,61 @@
 "use strict";
 
-const { rulesUtilities, parserUtilities } = require("occam-parsers");
+const { testUtilities } = require("occam-parsers"),
+      { parserUtilities } = require("occam-parsers"),
+      { BasicLexer, BasicParser, eliminateLeftRecursion } = require("../lib/index");  ///
 
-const { ExampleLexer, ExampleParser, eliminateLeftRecursion } = require("../lib/index.js");
+const { adjustedBNFFromRules } = require("./utilities/bnf"),
+      { checkParentNodes, checkDescendentNodes } = require("./utilities/node");
 
 const { rulesFromBNF } = parserUtilities,
-      { rulesAsString, ruleMapFromRules, startRuleFromRulesAndStartRuleName } = rulesUtilities;
+      { nodeFromRulesAndTokens, compareParseTreeStrings, tokensFromEntriesAndContent, parseTreeStringFromNodeAndTokens } = testUtilities;
 
-const { NonTerminalNodeMap } = ExampleParser,
-      NonTerminalNodes = Object.values(NonTerminalNodeMap);
+describe("Rewrites", () => {
+  const entries = [
+    {
+      "unassigned": "^[^\\s]"
+    }
+  ];
 
-describe("src/main", () => {
-  describe("a left recursive definition is occluded", () => {
-    const bnf = `
+  describe.only("a cycle of length one", () => {
+    const content = `egg
+`;
+
+    let bnf,
+        node,
+        rules,
+        tokens;
+
+    before(() => {
+      bnf = `
   
-      A  ::=  B
-      
-           |  C
-      
-           ;
-      
-      B  ::=  C? A ;
-      
-      C  ::=  . ;
+        S ::= A... <END_OF_LINE> ;
         
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("all the reduced rules in a cycle are missing", () => {
-    const bnf = `
-
-      A ::= B "f" ;
-  
-      B ::= C "g" ;
-  
-      C ::= A "h" ;
-    
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("a directly repeated rule is non-consuming", () => {
-    const bnf = `
-
-      A ::= A "c"
-      
-          | B C
-      
-          | "e"
-      
-          ;
-  
-      B ::= A "f"?
-      
-          | "g"
-      
-          ;
+        A ::= A "g"
         
-      C ::= "f"? D ;
+            | "e"
+            
+            ;
+        
+      `;
 
-      D ::= "g"? C ;
+      rules = rulesFromBNF(bnf);
 
-    `;
+      rules = eliminateLeftRecursion(rules);  ///
 
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
     });
-  });
 
-  describe("a directly repeated rule is not non-consuming", () => {
-    const bnf = `
-  
-      A ::= "d"
-      
-          | B "g"
-      
-          | "e"
-      
-          ;
-      
-      B ::= "b"
-      
-          | A
-      
-          | "c"
-  
-          ;
-  
-    `;
+    before(() => {
+      tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
 
-    it("does not throw an exception", () => {
-      assert.doesNotThrow(() => {
-        adjustedBNFFromBNF(bnf);
-      });
+      node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
     });
-  });
-
-  describe("two left recursive definitions in a cycle are mismatched", () => {
-    const bnf = `
-   
-      A ::= B "h"
-      
-          | "d"
-      
-          ;
-      
-      B ::= A "g"
-      
-          | A+ "f"
-      
-          | "c"
-      
-          ;
-      
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("the first part of a left recursive definition is qualified", () => {
-    const bnf = `
-   
-      A ::= "c"
-  
-          | A "f" "g"
-      
-          | "d"
-  
-          | A+ "h"
-      
-          | "e"
-      
-          ;
-
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("the first part of a left recursive definition is look-ahead", () => {
-    const bnf = `
-   
-      A ::= A... "h"
-      
-          | "e"
-      
-          ;
-
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("a cycle where some but not all of the reduced rules are missing", () => {
-    const bnf = `
-  
-      A ::= B "g" 
-       
-          | "c"
-          
-          ;
-  
-      B ::= A "h" ;
-  
-    `;
-
-    it("does not throw an exception", () => {
-      assert.doesNotThrow(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("a left recursive definition in a cycle of length one is complex", () => {
-    const bnf = `
-  
-      A ::= "f"
-      
-          | ( A | B ) "g"
-      
-          | "h"
-      
-          ;
-      
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("a left recursive definition in a cycle of length two is complex", () => {
-    const bnf = `
-  
-      A ::= "d"
-      
-          | B "g"
-      
-          | "e"
-      
-          ;
-      
-      B ::= "c" 
-      
-          | ( A | C ) "h"
-      
-          | "c"
-  
-          ;
-  
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("a cycle of length one", () => {
-    const bnf = `
-  
-      S ::= A... <END_OF_LINE> ;
-
-      A ::= A "g"
-      
-          | "e"
-      
-          ;
-      
-    `;
 
     it("is rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compareParseTreeStrings(adjustedBNF, `
+      assert.isTrue(compareParseTreeStrings(bnf, `
                   
         S   ::= A... <END_OF_LINE> ;
         
@@ -276,16 +70,14 @@ describe("src/main", () => {
       `));
     });
 
-    it("results in the requisite parse tree" , () => {
-      const content = `egg
-`,
-        tokens = tokensFromContent(content),
-        node = nodeFromBNFAndTokens(bnf, tokens),
-        parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
+    it("results in the requisite nodes" , () => {
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+    });
+
+    it("results in the requisite parse tree" , () => {
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -1764,7 +1556,7 @@ B~  ::= A~B A~* B~A ;`));
       `));
     });
 
-    it.only("results in the requisite parse tree" , () => {
+    it("results in the requisite parse tree" , () => {
       const content = `1+234
 `,
             tokens = tokensFromContent(content),
@@ -1801,147 +1593,3 @@ B~  ::= A~B A~* B~A ;`));
     });
   });
 });
-
-function compareParseTreeStrings(stringA, stringB) {
-  stringA = stripWhitespace(stringA);
-  stringB = stripWhitespace(stringB);
-
-  return (stringA === stringB);
-}
-
-function checkParentNodes(node, parentNode = null) {
-  let checked = true;
-
-  const nodeParentNode = node.getParentNode();
-
-  if (nodeParentNode !== parentNode) {
-    checked = false;
-  } else {
-    const nodeNonTerminalNode = node.isNonTerminalNode();
-
-    if (nodeNonTerminalNode) {
-      const nonTerminalNode = node; ///
-
-      parentNode = node;  ///
-
-      checked = nonTerminalNode.everyChildNode((childNode) => {
-        const node = childNode, ///
-              checked = checkParentNodes(node, parentNode);
-
-        if (checked) {
-          return true;
-        }
-      });
-    }
-  }
-
-  return checked;
-}
-
-function stripWhitespace(string) {
-  string = string.replace(/[\s\t\n\r]/g, "");
-
-  return string;
-}
-
-function adjustedBNFFromBNF(bnf) {
-  let rules = rulesFromBNF(bnf);
-
-  rules = eliminateLeftRecursion(rules);  ///
-
-  const multiLine = true,
-        rulesString = rulesAsString(rules, multiLine),
-        adjustedBNF = rulesString;  ///
-
-  return adjustedBNF;
-}
-
-function nodeFromBNFAndTokens(bnf, tokens, startRuleName = null) {
-  let rules = rulesFromBNF(bnf);
-
-  rules = eliminateLeftRecursion(rules);  ///
-
-  const exampleParser = exampleParserFromRulesAndStartRuleName(rules, startRuleName),
-        node = exampleParser.parse(tokens);
-
-  return node;
-}
-
-function checkDescendentNodes(node) {
-  let checked;
-
-  const descendantNode = node;  ///
-
-  checked = checkDescendentNode(descendantNode);
-
-  if (checked) {
-    checked = node.everyDescendantNode((descendantNode) => {
-      const checked = checkDescendentNode(descendantNode);
-
-      if (checked) {
-        return true;
-      }
-    });
-  }
-
-  return checked;
-}
-
-function checkDescendentNode(descendantNode) {
-  let checked;
-
-  const node = descendantNode,  ///
-        nodeTerminalNode = node.isTerminalNode();
-
-  if (nodeTerminalNode) {
-    checked = true;
-  } else {
-    checked = NonTerminalNodes.some((NonTerminalNode) => {
-      const nodeNonTerminalNode = (node instanceof NonTerminalNode);
-
-      if (nodeNonTerminalNode) {
-        return true;
-      }
-    });
-  }
-
-  return checked;
-}
-
-function tokensFromContent(content) {
-  const unassigned = ".",
-        lexicalEntries = [
-          {
-            unassigned
-          }
-        ],
-        exampleLexer = exampleLexerFromLexicalEntries(lexicalEntries),
-        tokens = exampleLexer.tokenise(content);
-
-  return tokens;
-}
-
-function exampleLexerFromLexicalEntries(lexicalEntries) {
-  const entries = lexicalEntries, ///
-        exampleLexer = ExampleLexer.fromEntries(entries);
-
-  return exampleLexer;
-}
-
-function parseTreeStringFromNodeAndTokens(node, tokens) {
-  const parseTree = node.asParseTree(tokens);
-
-  parseTree.shiftLine();  //
-
-  const parseTreeString = parseTree.asString();
-
-  return parseTreeString;
-}
-
-function exampleParserFromRulesAndStartRuleName(rules, startRuleName) {
-  const ruleMap = ruleMapFromRules(rules),
-        startRule = startRuleFromRulesAndStartRuleName(rules, startRuleName),
-        exampleParser = new ExampleParser(startRule, ruleMap);
-
-  return exampleParser;
-}

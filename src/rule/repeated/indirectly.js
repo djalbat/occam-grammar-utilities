@@ -18,8 +18,8 @@ import { isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from 
 const { first } = arrayUtilities;
 
 export default class IndirectlyRepeatedRule extends Rule {
-  NonTerminalNodeFromRuleName(ruleName, state) {
-    const NonTerminalNode = IndirectlyRepeatedNode;
+  NonTerminalNodeFromRuleName(ruleName, context) {
+    const NonTerminalNode = IndirectlyRepeatedNode; ///
 
     return NonTerminalNode;
   }

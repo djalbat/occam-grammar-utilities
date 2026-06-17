@@ -2,65 +2,40 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
-import { isNonTerminalNodeUnprecedented } from "../utilities/precedence";
-import { rewriteReducedNodes, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRepeatedNodes } from "../utilities/rewrite";
+import { rewriteReducedNode, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRepeatedNodes } from "../utilities/rewrite";
 
 export default class RewrittenNode extends NonTerminalNode {
-  constructor(ruleName, parentNode, childNodes, opacity, precedence, unprecedented) {
-    super(ruleName, parentNode, childNodes, opacity, precedence);
-
-    this.unprecedented = unprecedented;
-  }
-
-  isUnprecedented() {
-    const unprecedented = (this.unprecedented !== null) ?
-                             this.unprecedented :
-                               super.isUnprecedented();
-
-    return unprecedented;
-  }
-
-  rewrite(state) {
+  rewrite(context) {
     let nonTerminalNode;
 
-    const ruleName = this.getRuleName(),
-          NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName);
+    nonTerminalNode = this; ///
 
-    nonTerminalNode = this.clone();
+    nonTerminalNode = nonTerminalNodeFromNonTerminalNode(nonTerminalNode, context); ///
 
-    const opacity = nonTerminalNode.getOpacity(),
-          childNodes = nonTerminalNode.getChildNodes(),
-          precedence = nonTerminalNode.getPrecedence();
+    rewriteDirectlyRepeatedNodes(nonTerminalNode, context);
 
-    nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence);
-
-    console.log(">>>")
-
-    console.log(nonTerminalNode.asParseTree(state.getTokens()).asString())
-
-    rewriteDirectlyRepeatedNodes(nonTerminalNode, state);
-
-    const parentNode = rewriteIndirectlyRepeatedNodes(nonTerminalNode, state);
+    const parentNode = rewriteIndirectlyRepeatedNodes(nonTerminalNode, context);
 
     {
       const nonTerminalNode = parentNode; ///
 
-      rewriteReducedNodes(nonTerminalNode, state);
+      rewriteReducedNode(nonTerminalNode, context);
     }
-
-    console.log(nonTerminalNode.asParseTree(state.getTokens()).asString())
-
-    console.log("<<<")
-
-    console.log()
 
     return nonTerminalNode;
   }
 
-  static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) {
-    const unprecedented = null,
-          directlyRepeatedNode = NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(RewrittenNode, ruleName, childNodes, opacity, precedence, unprecedented);
+  static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(RewrittenNode, ruleName, childNodes, opacity, precedence); }
+}
 
-    return directlyRepeatedNode;
-  }
+function nonTerminalNodeFromNonTerminalNode(nonTerminalNode, context) {
+  const opacity = nonTerminalNode.getOpacity(),
+        ruleName = nonTerminalNode.getRuleName(),
+        precedence = nonTerminalNode.getPrecedence(),
+        childNodes = nonTerminalNode.removeChildNodes(),
+        NonTerminalNode = context.NonTerminalNodeFromRuleName(ruleName);
+
+  nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence);  ///
+
+  return nonTerminalNode;
 }
