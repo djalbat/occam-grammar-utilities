@@ -10,8 +10,8 @@ import { arePartsEqual } from "../../utilities/parts";
 import { isRuleNonProducing } from "../../utilities/nonProducing";
 import { isDefinitionComplex } from "../../utilities/complex";
 import { isDefinitionOccluded } from "../../utilities/occluded";
-import { isDefinitionCallAhead } from "../../utilities/callAhead";
 import { isDefinitionQualified } from "../../utilities/qualified";
+import { isDefinitionContinuation } from "../../utilities/continuation";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 import { isDefinitionLeftRecursive, leftRecursiveRuleNamesFromDefinition } from "../../utilities/leftRecursive";
 
@@ -54,9 +54,9 @@ export default class IndirectlyRepeatedRule extends Rule {
             throw new Error(`The '${definitionString}' left recursive definition of the '${ruleName}' rule is occluded.`);
           }
 
-          const definitionCallAhead = isDefinitionCallAhead(definition);
+          const definitionContinuation = isDefinitionContinuation(definition);
 
-          if (definitionCallAhead) {
+          if (definitionContinuation) {
             throw new Error(`The first part of the '${definitionString}' left recursive definition of the '${ruleName}' rule is look-ahead.`);
           }
 

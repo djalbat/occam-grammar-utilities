@@ -4,17 +4,17 @@ import { arrayUtilities } from "necessary";
 
 const { first } = arrayUtilities;
 
-export function isDefinitionCallAhead(definition) {
+export function isDefinitionContinuation(definition) {
   const parts = definition.getParts(),
         firstPart = first(parts),
-        firstPartCallAhead = isPartCallAhead(firstPart),
-        definitionCallAhead = firstPartCallAhead; ///
+        firstPartContinuation = isPartContinuation(firstPart),
+        definitionContinuation = firstPartContinuation; ///
 
-  return definitionCallAhead;
+  return definitionContinuation;
 }
 
-function isPartCallAhead(part) {
-  let partCallAhead = false;
+function isPartContinuation(part) {
+  let partContinuation = false;
 
   const partNonTerminalPart = part.isNonTerminalPart();
 
@@ -24,11 +24,11 @@ function isPartCallAhead(part) {
 
     if (nonTerminalPartRuleNamePart) {
       const ruleNamePart = nonTerminalPart, ///
-            callAhead = ruleNamePart.isCallAhead();
+            continuation = ruleNamePart.isContinuation();
 
-      partCallAhead = callAhead;  ///
+      partContinuation = continuation;  ///
     }
   }
 
-  return partCallAhead;
+  return partContinuation;
 }
