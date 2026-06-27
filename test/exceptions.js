@@ -2,7 +2,7 @@
 
 const { adjustedBNFFromBNF } = require("./utilities/bnf");
 
-xdescribe("Exceptions", () => {
+describe("Exceptions", () => {
   describe("a left recursive definition is occluded", () => {
     const bnf = `
   

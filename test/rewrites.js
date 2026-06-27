@@ -10,7 +10,7 @@ const { adjustedBNFFromRules } = require("./utilities/bnf"),
 const { rulesFromBNF } = parserUtilities,
       { nodeFromRulesAndTokens, compareParseTreeStrings, tokensFromEntriesAndContent, parseTreeStringFromNodeAndTokens } = testUtilities;
 
-describe("Cycles", () => {
+describe("Rewrites", () => {
   const entries = [
     {
       "unassigned": "^[^\\s]"
@@ -34,8 +34,8 @@ describe("Cycles", () => {
 `;
 
     let node,
-      rules,
-      tokens;
+        rules,
+        tokens;
 
     before(() => {
       rules = rulesFromBNF(bnf);
