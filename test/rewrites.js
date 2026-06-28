@@ -68,11 +68,11 @@ describe("Rewrites", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -177,11 +177,11 @@ describe("Rewrites", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -298,11 +298,11 @@ describe("Rewrites", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -395,11 +395,11 @@ describe("Rewrites", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -504,11 +504,11 @@ describe("Rewrites", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -696,11 +696,11 @@ describe("Rewrites", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -841,11 +841,11 @@ describe("Rewrites", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -953,11 +953,11 @@ describe("Rewrites", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -1062,11 +1062,11 @@ describe("Rewrites", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -1195,11 +1195,11 @@ describe("Rewrites", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
           
@@ -1373,11 +1373,11 @@ describe("Rewrites", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -1405,7 +1405,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("an indirectly repeated rule that is non-producing", () => {
+  describe("an indirectly repeated rule that is non-producing", () => {
     let bnf = `
   
       S  ::=  A... <END_OF_LINE> ; 
@@ -1472,11 +1472,11 @@ describe("Rewrites", () => {
     });
 
     it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
+
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
                     
@@ -1500,156 +1500,8 @@ describe("Rewrites", () => {
     });
   });
 
-
-
-
-
-
-
-
-  describe.skip("<TEMPLATE>", () => {
-    let bnf = `
-  
-    `;
-
-    const content = `
-`;
-
-    let node,
-      rules,
-      tokens;
-
-    before(() => {
-      rules = rulesFromBNF(bnf);
-
-      rules = eliminateLeftRecursion(rules);  ///
-
-      const adjustedBNF = adjustedBNFFromRules(rules);
-
-      bnf = adjustedBNF;  ///
-
-      tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
-
-      node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
-    });
-
-    it("is rewritten", () => {
-      assert.isTrue(compareParseTreeStrings(bnf, `
-                  
-        
-      `));
-    });
-
-    it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
-      assert.isTrue(checkParentNodes(node));
-
-      assert.isTrue(checkDescendentNodes(node));
-
-      assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                    
-             
-      `));
-    });
-  });
-
-  describe.skip("<TEMPLATE>", () => {
-    let bnf = `
-  
-    `;
-
-    const content = `
-`;
-
-    let node,
-      rules,
-      tokens;
-
-    before(() => {
-      rules = rulesFromBNF(bnf);
-
-      rules = eliminateLeftRecursion(rules);  ///
-
-      const adjustedBNF = adjustedBNFFromRules(rules);
-
-      bnf = adjustedBNF;  ///
-
-      tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
-
-      node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
-    });
-
-    it("is rewritten", () => {
-      assert.isTrue(compareParseTreeStrings(bnf, `
-                  
-        
-      `));
-    });
-
-    it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
-      assert.isTrue(checkParentNodes(node));
-
-      assert.isTrue(checkDescendentNodes(node));
-
-      assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                    
-             
-      `));
-    });
-  });
-
-  describe.skip("<TEMPLATE>", () => {
-    let bnf = `
-  
-    `;
-
-    const content = `
-`;
-
-    let node,
-      rules,
-      tokens;
-
-    before(() => {
-      rules = rulesFromBNF(bnf);
-
-      rules = eliminateLeftRecursion(rules);  ///
-
-      const adjustedBNF = adjustedBNFFromRules(rules);
-
-      bnf = adjustedBNF;  ///
-
-      tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
-
-      node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
-    });
-
-    it("is rewritten", () => {
-      assert.isTrue(compareParseTreeStrings(bnf, `
-                  
-        
-      `));
-    });
-
-    it("results in the requisite parse tree" , () => {
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
-      assert.isTrue(checkParentNodes(node));
-
-      assert.isTrue(checkDescendentNodes(node));
-
-      assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                    
-             
-      `));
-    });
-  });
-
   describe("a cycle only reachable by way of non-left recursive edges", () => {
-    const bnf = `
+    let bnf = `
 
       S ::= T... <END_OF_LINE> ;
       
@@ -1669,11 +1521,30 @@ describe("Rewrites", () => {
     
     `;
 
-    it("is rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
+    const content = `agf
+`;
 
-      assert.isTrue(compareParseTreeStrings(adjustedBNF, `
-              
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+
+      tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+      node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                  
         S   ::= T... <END_OF_LINE> ;
         
         T   ::= "a" E
@@ -1695,23 +1566,19 @@ describe("Rewrites", () => {
         E~  ::= A~E A~* E~A ;
         
         A~  ::= E~A E~* A~E ;
-              
+
       `));
     });
 
     it("results in the requisite parse tree" , () => {
-      const content = `agf
-`,
-            tokens = tokensFromContent(content),
-            node = nodeFromBNFAndTokens(bnf, tokens),
-            parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
       assert.isTrue(checkParentNodes(node));
 
       assert.isTrue(checkDescendentNodes(node));
 
+      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
       assert.isTrue(compareParseTreeStrings(parseTreeString, `
-      
+                    
                                                    S [0]                         
                                                      |                           
                                 -------------------------------------------      
@@ -1727,181 +1594,7 @@ describe("Rewrites", () => {
                                    A [0]        "f"[unassigned] [0]              
                                      |                                           
                             "g"[unassigned] [0]                                  
-    
-      `));
-    });
-  });
 
-  describe("a cycle of length two together with ambiguity", () => {
-    const bnf = `
-
-      S ::= T... <END_OF_LINE> ;
-      
-      T ::= "-"<NO_WHITESPACE>A
-       
-          | A "-" A 
-              
-          | "z"
-          
-          ;
-      
-      A ::= T ( ) 
-      
-          | U
-      
-          ;
-          
-      U ::= . ;
-    
-    `;
-
-    it("is rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compareParseTreeStrings(adjustedBNF, `
-              
-        S   ::= T... <END_OF_LINE> ;
-        
-        T   ::= T_ T~*
-        
-              | A_ A~* T~A
-        
-              ;
-        
-        A   ::= A_ A~*
-        
-              | T_ T~* A~T
-        
-              ;
-        
-        U   ::= . ;
-        
-        T_  ::= "-" <NO_WHITESPACE> A
-        
-              | "z"
-        
-              ;
-        
-        A_  ::= U ;
-        
-        T~A ::= "-" A ;
-        
-        A~T ::= ε ( ) ;
-        
-        T~  ::= A~T A~* T~A ;
-        
-        A~  ::= T~A T~* A~T ;
-                      
-      `));
-    });
-
-    it("results in the requisite parse tree" , () => {
-      const content = `--z
-`,
-            tokens = tokensFromContent(content),
-            node = nodeFromBNFAndTokens(bnf, tokens),
-            parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
-      assert.isTrue(checkParentNodes(node));
-
-      assert.isTrue(checkDescendentNodes(node));
-
-      assert.isTrue(compareParseTreeStrings(parseTreeString, `
-          
-                                                                     S [0]                                   
-                                                                       |                                     
-                                        ---------------------------------------------------------------      
-                                        |                                                             |      
-                                      T [0]                                                     <END_OF_LINE>
-                                        |                                                                    
-             -------------------------------------------------------                                         
-             |                 |                                   |                                         
-    "-"[unassigned] [0] <NO_WHITESPACE>                        A [0] ( )                                     
-                                                                   |                                         
-                                                                 T [0]                                       
-                                                                   |                                         
-                                                 -------------------------------------                       
-                                                 |                 |                 |                       
-                                        "-"[unassigned] [0] <NO_WHITESPACE>        A [0]                     
-                                                                                     |                       
-                                                                                   U [0]                     
-                                                                                     |                       
-                                                                            "z"[unassigned] [0]              
-    
-      `));
-    });
-  });
-
-  describe("an indirectly recursive rule with precedence", () => {
-    const bnf = `
-      
-      S    ::= T... <END_OF_LINE> ;
-      
-      T    ::= ( "1" | "2" | "3" | "4" )
-      
-             | T<NO_WHITESPACE>T (100)
-      
-             | "1" "+" T (12)
-      
-             ;
-                        
-    `;
-
-    it("is rewritten", () => {
-      const adjustedBNF = adjustedBNFFromBNF(bnf);
-
-      assert.isTrue(compareParseTreeStrings(adjustedBNF, `
-              
-        S   ::= T... <END_OF_LINE> ;
-        
-        T   ::= T_ T~* ;
-        
-        T_  ::= ( "1" | "2" | "3" | "4" )
-            
-              | "1" "+" T (12)
-        
-              ;
-        
-        T~T ::= <NO_WHITESPACE> T (100) ;
-        
-        T~  ::= T~T ;
-                      
-      `));
-    });
-
-    it("results in the requisite parse tree" , () => {
-      const content = `1+234
-`,
-            tokens = tokensFromContent(content),
-            node = nodeFromBNFAndTokens(bnf, tokens),
-            parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
-      assert.isTrue(checkParentNodes(node));
-
-      assert.isTrue(checkDescendentNodes(node));
-
-      assert.isTrue(compareParseTreeStrings(parseTreeString, `
-          
-                                                                     S [0]                                   
-                                                                       |                                     
-                                        ---------------------------------------------------------------      
-                                        |                                                             |      
-                                      T [0]                                                     <END_OF_LINE>
-                                        |                                                                    
-             -------------------------------------------------------                                         
-             |                 |                                   |                                         
-    "-"[unassigned] [0] <NO_WHITESPACE>                        A [0] ( )                                     
-                                                                   |                                         
-                                                                 T [0]                                       
-                                                                   |                                         
-                                                 -------------------------------------                       
-                                                 |                 |                 |                       
-                                        "-"[unassigned] [0] <NO_WHITESPACE>        A [0]                     
-                                                                                     |                       
-                                                                                   U [0]                     
-                                                                                     |                       
-                                                                            "z"[unassigned] [0]              
-    
       `));
     });
   });

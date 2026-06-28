@@ -36,7 +36,7 @@ describe("Exceptions", () => {
     
     `;
 
-    it.only("does throw an exception", () => {
+    it("does throw an exception", () => {
       assert.throws(() => {
         adjustedBNFFromBNF(bnf);
       });

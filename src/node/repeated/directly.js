@@ -6,7 +6,7 @@ import { rewriteDirectlyRepeatedNodes } from "../../utilities/rewrite";
 
 export default class DirectlyRepeatedNode extends NonTerminalNode {
   rewrite(context) {
-    const nonTerminalNode = this; ///
+    const nonTerminalNode = this.clone(); ///
 
     rewriteDirectlyRepeatedNodes(nonTerminalNode, context);
 

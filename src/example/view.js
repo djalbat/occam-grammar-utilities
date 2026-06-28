@@ -123,16 +123,17 @@ class View extends Element {
     this.update();
   }
 
-  static initialBNF = `S ::= A... <END_OF_LINE> ;
+  static initialBNF = `S ::= T... <END_OF_LINE> ;
 
-A ::= A "g"
+T ::= T "+" T (1) 
 
-    | "e"
-    
-    ;
+    | T "*" T (2)
+
+    | . ;
+
 `;
 
-  static initialContent = `egg
+  static initialContent = `1*2+3
 `;
 
   static initialStartRuleName = "";

@@ -9,7 +9,7 @@ import { ruleNameFromReducedRuleName, ruleNameFromIndirectlyRepeatedRuleName, le
 
 const { push } = arrayUtilities;
 
-export function rewriteReducedNode(nonTerminalNode, context) {
+export function rewriteReducedChildNode(nonTerminalNode, context) {
   let reducedChildNode;
 
   nonTerminalNode.someChildNode((childNode, index) => {
@@ -37,7 +37,7 @@ export function rewriteReducedNode(nonTerminalNode, context) {
   if (ruleName === parentRuleName) {
     replacementChildNodes = childNodes;  ///
 
-    // parentNode.setPrecedence(precedence);
+    parentNode.setPrecedence(precedence);
   } else {
     const NonTerminalNode = context.NonTerminalNodeFromRuleName(ruleName),
           nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence),
@@ -67,15 +67,21 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode, context) {
   const indirectlyRepeatedNodes = findIndirectlyRepeatedNodes(nonTerminalNode);
 
   indirectlyRepeatedNodes.forEach((indirectlyRepeatedNode) => {
-    const leftRecursiveNode = leftRecursiveNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode, context),
-          childNodes = childNodesFromLeftRecursiveNodeNodeAndIndirectlyRepeatedNode(leftRecursiveNode, indirectlyRepeatedNode);
-
-    // adjustParentNodePrecedence(parentNode, indirectlyRepeatedNode);
-
-    parentNode.setChildNodes(childNodes);
-
-    parentNode = leftRecursiveNode; ///
+    parentNode = rewriteIndirectlyRepeatedNode(indirectlyRepeatedNode, parentNode, context);
   });
+
+  return parentNode;
+}
+
+function rewriteIndirectlyRepeatedNode(indirectlyRepeatedNode, parentNode, context) {
+  const leftRecursiveNode = leftRecursiveNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode, context),
+        childNodes = childNodesFromLeftRecursiveNodeNodeAndIndirectlyRepeatedNode(leftRecursiveNode, indirectlyRepeatedNode);
+
+  adjustParentNodePrecedence(parentNode, indirectlyRepeatedNode);
+
+  parentNode.setChildNodes(childNodes);
+
+  parentNode = leftRecursiveNode; ///
 
   return parentNode;
 }

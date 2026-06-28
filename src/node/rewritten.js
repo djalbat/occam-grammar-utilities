@@ -2,15 +2,17 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
-import { rewriteReducedNode, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRepeatedNodes } from "../utilities/rewrite";
+import { rewriteReducedChildNode, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRepeatedNodes } from "../utilities/rewrite";
 
 export default class RewrittenNode extends NonTerminalNode {
   rewrite(context) {
     let nonTerminalNode;
 
-    nonTerminalNode = this; ///
+    nonTerminalNode = this.clone(); ///
 
     nonTerminalNode = nonTerminalNodeFromNonTerminalNode(nonTerminalNode, context); ///
+
+    consoleLogNodeAsString(nonTerminalNode, context);
 
     rewriteDirectlyRepeatedNodes(nonTerminalNode, context);
 
@@ -19,8 +21,10 @@ export default class RewrittenNode extends NonTerminalNode {
     {
       const nonTerminalNode = parentNode; ///
 
-      rewriteReducedNode(nonTerminalNode, context);
+      rewriteReducedChildNode(nonTerminalNode, context);
     }
+
+    consoleLogNodeAsString(nonTerminalNode, context);
 
     return nonTerminalNode;
   }
@@ -38,4 +42,12 @@ function nonTerminalNodeFromNonTerminalNode(nonTerminalNode, context) {
   nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence);  ///
 
   return nonTerminalNode;
+}
+
+function consoleLogNodeAsString(node, context) {
+  const tokens = context.getTokens(),
+        parseTree = node.asParseTree(tokens),
+        parseTreeString = parseTree.asString();
+
+  console.log(parseTreeString);
 }
