@@ -73,19 +73,6 @@ export function rewriteIndirectlyRepeatedNodes(nonTerminalNode, context) {
   return parentNode;
 }
 
-function rewriteIndirectlyRepeatedNode(indirectlyRepeatedNode, parentNode, context) {
-  const leftRecursiveNode = leftRecursiveNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode, context),
-        childNodes = childNodesFromLeftRecursiveNodeNodeAndIndirectlyRepeatedNode(leftRecursiveNode, indirectlyRepeatedNode);
-
-  adjustParentNodePrecedence(parentNode, indirectlyRepeatedNode);
-
-  parentNode.setChildNodes(childNodes);
-
-  parentNode = leftRecursiveNode; ///
-
-  return parentNode;
-}
-
 function findRepeatedNodes(nonTerminalNode, RepeatedNode) {
   let repeatedNodes = [];
 
@@ -117,15 +104,6 @@ function findRepeatedNodes(nonTerminalNode, RepeatedNode) {
   }
 
   return repeatedNodes;
-}
-
-function removeFrontChildNodes(parentNode) {
-  const multiplicity = parentNode.getMultiplicity(),
-        start = 0,
-        deleteCount = multiplicity - 1,
-        removedFrontChildNodes = parentNode.spliceChildNodes(start, deleteCount);
-
-  return removedFrontChildNodes;
 }
 
 function findDirectlyRepeatedNodes(nonTerminalNode) {
@@ -167,6 +145,15 @@ function replaceDirectlyRepeatedNodes(nonTerminalNode) {
   return directlyRepeatedNodesReplaced;
 }
 
+function removeFrontChildNodes(parentNode) {
+  const multiplicity = parentNode.getMultiplicity(),
+        start = 0,
+        deleteCount = multiplicity - 1,
+        removedFrontChildNodes = parentNode.spliceChildNodes(start, deleteCount);
+
+  return removedFrontChildNodes;
+}
+
 function adjustParentNodePrecedence(parentNode, indirectlyRepeatedNode) {
   const indirectlyRepeatedNodeRuleName = indirectlyRepeatedNode.getRuleName(),
         indirectlyRepeatedRuleName = indirectlyRepeatedNodeRuleName,  ///
@@ -178,6 +165,19 @@ function adjustParentNodePrecedence(parentNode, indirectlyRepeatedNode) {
 
     parentNode.setPrecedence(precedence);
   }
+}
+
+function rewriteIndirectlyRepeatedNode(indirectlyRepeatedNode, parentNode, context) {
+  const leftRecursiveNode = leftRecursiveNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode, context),
+        childNodes = childNodesFromLeftRecursiveNodeNodeAndIndirectlyRepeatedNode(leftRecursiveNode, indirectlyRepeatedNode);
+
+  adjustParentNodePrecedence(parentNode, indirectlyRepeatedNode);
+
+  parentNode.setChildNodes(childNodes);
+
+  parentNode = leftRecursiveNode; ///
+
+  return parentNode;
 }
 
 function leftRecursiveNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, indirectlyRepeatedNode, context) {

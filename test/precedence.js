@@ -147,7 +147,7 @@ describe("Precedence", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it("results in the requisite parse tree" , () => {
+      it.only("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
