@@ -133,7 +133,7 @@ T ::= T "+" T (1)
 
 `;
 
-  static initialContent = `1*2+3
+  static initialContent = `1*2+3*4
 `;
 
   static initialStartRuleName = "";

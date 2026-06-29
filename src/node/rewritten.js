@@ -12,8 +12,6 @@ export default class RewrittenNode extends NonTerminalNode {
 
     nonTerminalNode = nonTerminalNodeFromNonTerminalNode(nonTerminalNode, context); ///
 
-    consoleLogNodeAsString(nonTerminalNode, context);
-
     rewriteDirectlyRepeatedNodes(nonTerminalNode, context);
 
     const parentNode = rewriteIndirectlyRepeatedNodes(nonTerminalNode, context);
@@ -23,8 +21,6 @@ export default class RewrittenNode extends NonTerminalNode {
 
       rewriteReducedChildNode(nonTerminalNode, context);
     }
-
-    consoleLogNodeAsString(nonTerminalNode, context);
 
     return nonTerminalNode;
   }
@@ -42,12 +38,4 @@ function nonTerminalNodeFromNonTerminalNode(nonTerminalNode, context) {
   nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence);  ///
 
   return nonTerminalNode;
-}
-
-function consoleLogNodeAsString(node, context) {
-  const tokens = context.getTokens(),
-        parseTree = node.asParseTree(tokens),
-        parseTreeString = parseTree.asString();
-
-  console.log(parseTreeString);
 }

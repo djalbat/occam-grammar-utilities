@@ -20,25 +20,25 @@ describe("Precedence", () => {
   describe("a cycle of length two", () => {
     let bnf = `
   
-            S ::= T... <END_OF_LINE> ;
-            
-            T ::= "-"<NO_WHITESPACE>A
-             
-                | A "-" A 
-                    
-                | "z"
-                
-                ;
-            
-            A ::= T ( ) 
-            
-                | U
-            
-                ;
-                
-            U ::= . ;
-      
-          `,
+          S ::= T... <END_OF_LINE> ;
+          
+          T ::= "-"<NO_WHITESPACE>A
+           
+              | A "-" A 
+                  
+              | "z"
+              
+              ;
+          
+          A ::= T ( ) 
+          
+              | U
+          
+              ;
+              
+          U ::= . ;
+    
+        `,
         node,
         rules,
         tokens;
@@ -290,6 +290,44 @@ describe("Precedence", () => {
                    |                                       |                                                               
           "1"[unassigned] [0]                     "2"[unassigned] [0]
                                                                 
+      `));
+      });
+    });
+
+    describe("content with three operators", () => {
+      const content = `1*2+3*4
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                    S [0]                                          
+                                                                                                                      |                                            
+                                                                               ------------------------------------------------------------------------------      
+                                                                               |                                                                            |      
+                                                                           T [0] (1)                                                                  <END_OF_LINE>
+                                                                               |                                                                                   
+                                       ---------------------------------------------------------------------------------                                           
+                                       |                                       |                                       |                                           
+                                   T [0] (2)                          "+"[unassigned] [0]                          T [0] (2)                                       
+                                       |                                                                               |                                           
+                   -----------------------------------------                                       -----------------------------------------                       
+                   |                   |                   |                                       |                   |                   |                       
+                 T [0]        "*"[unassigned] [0]        T [0]                                   T [0]        "*"[unassigned] [0]        T [0]                     
+                   |                                       |                                       |                                       |                       
+          "1"[unassigned] [0]                     "2"[unassigned] [0]                     "3"[unassigned] [0]                     "4"[unassigned] [0]              
+                                                                  
       `));
       });
     });
