@@ -17,7 +17,125 @@ describe("Precedence", () => {
     }
   ];
 
-  describe("a cycle of length one together with ambiguity", () => {
+  describe("a cycle of length two", () => {
+    let bnf = `
+  
+            S ::= T... <END_OF_LINE> ;
+            
+            T ::= "-"<NO_WHITESPACE>A
+             
+                | A "-" A 
+                    
+                | "z"
+                
+                ;
+            
+            A ::= T ( ) 
+            
+                | U
+            
+                ;
+                
+            U ::= . ;
+      
+          `,
+        node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                  
+        S   ::= T... <END_OF_LINE> ;
+        
+        T   ::= T_ T~*
+        
+              | A_ A~* T~A
+        
+              ;
+        
+        A   ::= A_ A~*
+        
+              | T_ T~* A~T
+        
+              ;
+        
+        U   ::= . ;
+        
+        T_  ::= "-" <NO_WHITESPACE> A
+        
+              | "z"
+        
+              ;
+        
+        A_  ::= U ;
+        
+        T~A ::= "-" A ;
+        
+        A~T ::= ε ( ) ;
+        
+        T~  ::= A~T A~* T~A ;
+        
+        A~  ::= T~A T~* A~T ;
+        
+      `));
+    });
+
+    describe("contenxt with two operators", () => {
+      const content = `--z
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                    
+                                                                     S [0]                                   
+                                                                       |                                     
+                                        ---------------------------------------------------------------      
+                                        |                                                             |      
+                                      T [0]                                                     <END_OF_LINE>
+                                        |                                                                    
+             -------------------------------------------------------                                         
+             |                 |                                   |                                         
+    "-"[unassigned] [0] <NO_WHITESPACE>                        A [0] ( )                                     
+                                                                   |                                         
+                                                                 T [0]                                       
+                                                                   |                                         
+                                                 -------------------------------------                       
+                                                 |                 |                 |                       
+                                        "-"[unassigned] [0] <NO_WHITESPACE>        A [0]                     
+                                                                                     |                       
+                                                                                   U [0]                     
+                                                                                     |                       
+                                                                            "z"[unassigned] [0]              
+             
+      `));
+      });
+    });
+  });
+
+  describe("a cycle of length one with precedence", () => {
     let bnf = `
   
           S ::= T... <END_OF_LINE> ;
@@ -63,7 +181,7 @@ describe("Precedence", () => {
       `));
     });
 
-    describe("for content with one operator", () => {
+    describe("content with one operator", () => {
       const content = `1+2
 `;
 
@@ -98,7 +216,7 @@ describe("Precedence", () => {
       });
     });
 
-    describe("for content with two operators", () => {
+    describe("content with two operators", () => {
       const content = `1+2*3
 `;
 
@@ -137,7 +255,7 @@ describe("Precedence", () => {
       });
     });
 
-    describe("for content with two operators reversed", () => {
+    describe("content with two operators reversed", () => {
       const content = `1*2+3
 `;
 
@@ -147,7 +265,7 @@ describe("Precedence", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it.only("results in the requisite parse tree" , () => {
+      it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
@@ -177,140 +295,21 @@ describe("Precedence", () => {
     });
   });
 
-  describe.skip("a cycle of length two together with ambiguity", () => {
+  describe("another cycle of length one with precedence", () => {
     let bnf = `
   
-      S ::= T... <END_OF_LINE> ;
-      
-      T ::= "-"<NO_WHITESPACE>A
-       
-          | A "-" A 
-              
-          | "z"
+          S    ::= T... <END_OF_LINE> ;
           
-          ;
-      
-      A ::= T ( ) 
-      
-          | U
-      
-          ;
+          T    ::= ( "1" | "2" | "3" | "4" )
           
-      U ::= . ;
-
-    `;
-
-    const content = `--z
-`;
-
-    let node,
-      rules,
-      tokens;
-
-    before(() => {
-      rules = rulesFromBNF(bnf);
-
-      rules = eliminateLeftRecursion(rules);  ///
-
-      const adjustedBNF = adjustedBNFFromRules(rules);
-
-      bnf = adjustedBNF;  ///
-
-      tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
-
-      node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
-    });
-
-    it("is rewritten", () => {
-      assert.isTrue(compareParseTreeStrings(bnf, `
-                  
-        S   ::= T... <END_OF_LINE> ;
-        
-        T   ::= T_ T~*
-        
-              | A_ A~* T~A
-        
-              ;
-        
-        A   ::= A_ A~*
-        
-              | T_ T~* A~T
-        
-              ;
-        
-        U   ::= . ;
-        
-        T_  ::= "-" <NO_WHITESPACE> A
-        
-              | "z"
-        
-              ;
-        
-        A_  ::= U ;
-        
-        T~A ::= "-" A ;
-        
-        A~T ::= ε ( ) ;
-        
-        T~  ::= A~T A~* T~A ;
-        
-        A~  ::= T~A T~* A~T ;
-        
-      `));
-    });
-
-    it("results in the requisite parse tree" , () => {
-      assert.isTrue(checkParentNodes(node));
-
-      assert.isTrue(checkDescendentNodes(node));
-
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
-      assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                    
-                                                                     S [0]                                   
-                                                                       |                                     
-                                        ---------------------------------------------------------------      
-                                        |                                                             |      
-                                      T [0]                                                     <END_OF_LINE>
-                                        |                                                                    
-             -------------------------------------------------------                                         
-             |                 |                                   |                                         
-    "-"[unassigned] [0] <NO_WHITESPACE>                        A [0] ( )                                     
-                                                                   |                                         
-                                                                 T [0]                                       
-                                                                   |                                         
-                                                 -------------------------------------                       
-                                                 |                 |                 |                       
-                                        "-"[unassigned] [0] <NO_WHITESPACE>        A [0]                     
-                                                                                     |                       
-                                                                                   U [0]                     
-                                                                                     |                       
-                                                                            "z"[unassigned] [0]              
-             
-      `));
-    });
-  });
-
-  describe.skip("an indirectly recursive rule with precedence", () => {
-    let bnf = `
-  
-      S    ::= T... <END_OF_LINE> ;
-      
-      T    ::= ( "1" | "2" | "3" | "4" )
-      
-             | T<NO_WHITESPACE>T (100)
-      
-             | "1" "+" T (12)
-      
-             ;
-                        
-    `;
-
-    const content = `1+234
-`;
-
-    let node,
+                 | T<NO_WHITESPACE>T (100)
+          
+                 | "1" "+" T (12)
+          
+                 ;
+                            
+        `,
+        node,
         rules,
         tokens;
 
@@ -322,10 +321,6 @@ describe("Precedence", () => {
       const adjustedBNF = adjustedBNFFromRules(rules);
 
       bnf = adjustedBNF;  ///
-
-      tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
-
-      node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
     });
 
     it("is rewritten", () => {
@@ -348,36 +343,47 @@ describe("Precedence", () => {
       `));
     });
 
-    it("results in the requisite parse tree" , () => {
-      assert.isTrue(checkParentNodes(node));
+    describe("content with an operator and concatenations", () => {
+      const content = `1+234
+`;
 
-      assert.isTrue(checkDescendentNodes(node));
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
 
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
 
-      assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                    
-                                                                     S [0]                                   
-                                                                       |                                     
-                                        ---------------------------------------------------------------      
-                                        |                                                             |      
-                                      T [0]                                                     <END_OF_LINE>
-                                        |                                                                    
-             -------------------------------------------------------                                         
-             |                 |                                   |                                         
-    "-"[unassigned] [0] <NO_WHITESPACE>                        A [0] ( )                                     
-                                                                   |                                         
-                                                                 T [0]                                       
-                                                                   |                                         
-                                                 -------------------------------------                       
-                                                 |                 |                 |                       
-                                        "-"[unassigned] [0] <NO_WHITESPACE>        A [0]                     
-                                                                                     |                       
-                                                                                   U [0]                     
-                                                                                     |                       
-                                                                            "z"[unassigned] [0]              
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                              
+                                                                                                   S [0]                                                   
+                                                                                                     |                                                     
+                                                     ------------------------------------------------------------------------------------------------      
+                                                     |                                                                                              |      
+                                                T [0] (12)                                                                                    <END_OF_LINE>
+                                                     |                                                                                                     
+                   --------------------------------------------------------------------                                                                    
+                   |                   |                                              |                                                                    
+          "1"[unassigned] [0] "+"[unassigned] [0]                                T [0] (100)                                                               
+                                                                                      |                                                                    
+                                                           -------------------------------------------------------                                         
+                                                           |                 |                                   |                                         
+                                                         T [0]        <NO_WHITESPACE>                       T [0] (100)                                    
+                                                           |                                                     |                                         
+                                                  "2"[unassigned] [0]                          -------------------------------------                       
+                                                                                               |                 |                 |                       
+                                                                                             T [0]        <NO_WHITESPACE>        T [0]                     
+                                                                                               |                                   |                       
+                                                                                      "3"[unassigned] [0]                 "4"[unassigned] [0]              
              
       `));
+      });
     });
   });
 });
