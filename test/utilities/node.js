@@ -69,7 +69,7 @@ function checkDescendentNode(descendantNode) {
     checked = true;
   } else {
     checked = NonTerminalNodes.some((NonTerminalNode) => {
-      const nodeNonTerminalNode = (node instanceof NonTerminalNode);
+      const nodeNonTerminalNode = NonTerminalNode.prototype.isPrototypeOf(node);
 
       if (nodeNonTerminalNode) {
         return true;
