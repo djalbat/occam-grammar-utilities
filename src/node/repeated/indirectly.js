@@ -1,6 +1,6 @@
 "use strict";
 
-import { EpsilonNode, NonTerminalNode } from "occam-parsers";
+import { NonTerminalNode } from "occam-parsers";
 
 export default class IndirectlyRepeatedNode extends NonTerminalNode {
   isNullary() {
@@ -10,8 +10,15 @@ export default class IndirectlyRepeatedNode extends NonTerminalNode {
 
     if (singular) {
       nullary = this.everyChildNode((childNode) => {
-        if (childNode instanceof EpsilonNode) {
-          return true;
+        const childNodeTerminalNode = childNode.isTerminalNode();
+
+        if (childNodeTerminalNode) {
+          const terminalNode = childNode, ///
+                terminalNodeEpsilonNode = terminalNode.isEpsilonNode();
+
+          if (terminalNodeEpsilonNode) {
+            return true;
+          }
         }
       });
     }

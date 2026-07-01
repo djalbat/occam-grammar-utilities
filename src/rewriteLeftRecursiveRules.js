@@ -56,7 +56,7 @@ function rulesFromRule(Rule, ruleMap) {
   const rules = Object.values(ruleMap); ///
 
   filter(rules, (rule) => {
-    const ruleRule = (rule instanceof Rule);
+    const ruleRule =  Rule.prototype.isPrototypeOf(rule);
 
     if (ruleRule) {
       return true;

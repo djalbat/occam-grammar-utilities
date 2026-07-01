@@ -80,7 +80,7 @@ function findRepeatedNodes(nonTerminalNode, RepeatedNode) {
       startIndex = null;
 
   nonTerminalNode.backwardsSomeChildNode((childNode, index) => {
-    const childNodeRepeatedNode = (childNode instanceof RepeatedNode);
+    const childNodeRepeatedNode = RepeatedNode.prototype.isPrototypeOf(childNode);
 
     if (endIndex === null) {
       if (childNodeRepeatedNode) {
