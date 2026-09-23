@@ -3,8 +3,9 @@
 import { partTypes } from "occam-parsers";
 import { specialSymbols } from "occam-lexers";
 
-const { epsilon, noWhitespace, startOfContent } = specialSymbols,
+const { epsilon, backtick, noWhitespace, startOfContent } = specialSymbols,
       { RuleNamePartType,
+        IsolatedPartPartType,
         OptionalPartPartType,
         ChoiceOfPartsPartType,
         OneOrMorePartsPartType,
@@ -91,6 +92,7 @@ function isTerminalPartNonConsuming(terminalPart) {
 
   switch (terminalPartString) {
     case epsilon:
+    case backtick:
     case noWhitespace:
     case startOfContent: {
       terminalPartNonConsuming = true;
@@ -169,6 +171,15 @@ function isNonTerminalPartNonConsuming(nonTerminalPart, ruleMap, ruleNames) {
             })
 
       partNonConsuming = partsNonConsuming; ///
+
+      break;
+    }
+
+    case IsolatedPartPartType: {
+      const isolatedPartPart = nonTerminalPart,  ///
+            part = isolatedPartPart.getPart();
+
+      partNonConsuming = isPartNonConsuming(part, ruleMap, ruleNames);
 
       break;
     }

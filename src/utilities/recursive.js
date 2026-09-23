@@ -3,6 +3,7 @@
 import { partTypes } from "occam-parsers";
 
 const { RuleNamePartType,
+        IsolatedPartPartType,
         OptionalPartPartType,
         ChoiceOfPartsPartType,
         OneOrMorePartsPartType,
@@ -102,6 +103,15 @@ function recursiveRuleNamesFromPart(part, recursiveRuleNames) {
         parts.forEach((part) => {
           recursiveRuleNamesFromPart(part, recursiveRuleNames)
         });
+
+        break;
+      }
+
+      case IsolatedPartPartType: {
+        const isolatedPartPart = nonTerminalPart,  ///
+              part = isolatedPartPart.getPart();
+
+        recursiveRuleNamesFromPart(part, recursiveRuleNames);
 
         break;
       }

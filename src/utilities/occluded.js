@@ -1,7 +1,7 @@
 "use strict";
 
 import { arrayUtilities } from "necessary";
-import {isPartNonConsuming} from "./nonConsuming";
+import { isPartNonConsuming } from "./nonConsuming";
 
 const { first } = arrayUtilities;
 

@@ -5,6 +5,7 @@ import { arrayUtilities } from "necessary";
 
 const { first } = arrayUtilities,
       { RuleNamePartType,
+        IsolatedPartPartType,
         OptionalPartPartType,
         ChoiceOfPartsPartType,
         OneOrMorePartsPartType,
@@ -63,9 +64,23 @@ function isPartComplex(part) {
         break;
       }
 
-      case SequenceOfPartsPartType:
+      case SequenceOfPartsPartType:{
+        partComplex = true;
+
+        break;
+      }
+
       case ChoiceOfPartsPartType: {
         partComplex = true;
+
+        break;
+      }
+
+      case IsolatedPartPartType: {
+        const isolatedPartPart = nonTerminalPart,  ///
+              part = isolatedPartPart.getPart();
+
+        partComplex = isPartComplex(part);
 
         break;
       }

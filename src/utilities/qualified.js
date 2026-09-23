@@ -30,7 +30,6 @@ export function isPartQualified(part) {
   return partQualified;
 }
 
-
 export function isDefinitionQualified(definition) {
   const parts = definition.getParts(),
         firstPart = first(parts),

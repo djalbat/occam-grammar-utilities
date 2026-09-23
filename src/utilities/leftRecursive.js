@@ -7,6 +7,7 @@ import { isPartNonConsuming } from "../utilities/nonConsuming";
 
 const { first } = arrayUtilities,
       { RuleNamePartType,
+        IsolatedPartPartType,
         OptionalPartPartType,
         ChoiceOfPartsPartType,
         OneOrMorePartsPartType,
@@ -114,6 +115,15 @@ function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames) {
         parts.forEach((part) => {
           leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames)
         });
+
+        break;
+      }
+
+      case IsolatedPartPartType: {
+        const isolatedPartPart = nonTerminalPart,  ///
+              part = isolatedPartPart.getPart();
+
+        leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         break;
       }

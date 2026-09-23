@@ -4,6 +4,7 @@ import { partTypes } from "occam-parsers";
 
 const { RuleNamePartType,
         OptionalPartPartType,
+        IsolatedPartPartType,
         ChoiceOfPartsPartType,
         OneOrMorePartsPartType,
         ZeroOrMorePartsPartType,
@@ -149,6 +150,15 @@ function isNonTerminalPartNonProducing(nonTerminalPart, ruleMap, ruleNames) {
             })
 
       partNonProducing = partsNonProducing; ///
+
+      break;
+    }
+
+    case IsolatedPartPartType: {
+      const isolatedPartPart = nonTerminalPart,  ///
+            part = isolatedPartPart.getPart();
+
+      partNonProducing = isPartNonProducing(part, ruleMap, ruleNames);
 
       break;
     }
