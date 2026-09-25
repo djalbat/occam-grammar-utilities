@@ -3,13 +3,13 @@
 import { arrayUtilities } from "necessary";
 import { rulesUtilities } from "occam-parsers";
 
-import DirectedGraph from "./directedGraph";
+import Graph from "./graph";
 import createReducedRules from "./createReducedRules";
 import rewriteLeftRecursiveRules from "./rewriteLeftRecursiveRules";
 import createDirectlyRepeatedRules from "./createDirectlyRepeatedRules";
 import createIndirectlyRepeatedRules from "./createIndirectlyRepeatedRules";
 
-import { edgesFromStartRule } from "./utilities/directedGraph";
+import { edgesFromStartRule } from "./utilities/graph";
 import { LEFT_RECURSIVE_LABEL } from "./labels";
 import { leftRecursiveRuleNamesFromRule } from "./utilities/definition";
 
@@ -35,13 +35,13 @@ export default function eliminateLeftRecursion(rules) {
   return rules;
 }
 
-function directedGraphFromStartRule(startRule, ruleMap, ruleNamesMap) {
+function graphFromStartRule(startRule, ruleMap, ruleNamesMap) {
   const startRuleName = startRule.getName(),
         edges = edgesFromStartRule(startRule, ruleMap, ruleNamesMap),
         startVertex = startRuleName,  ///
-        directedGraph = DirectedGraph.fromEdgesAndStartVertex(edges, startVertex);
+        graph = Graph.fromEdgesAndStartVertex(edges, startVertex);
 
-  return directedGraph;
+  return graph;
 }
 
 function ruleNamesMapFromNothing(ruleMap) {
@@ -74,8 +74,8 @@ function isCycleLeftRecursive(cycle) {
 }
 
 function cyclesFromStartRule(startRule, ruleMap, ruleNamesMap) {
-  const directedGraph = directedGraphFromStartRule(startRule, ruleMap, ruleNamesMap),
-        cycles = directedGraph.findCycles();
+  const graph = graphFromStartRule(startRule, ruleMap, ruleNamesMap),
+        cycles = graph.findCycles();
 
   filter(cycles, (cycle) => {
     const cycleLeftRecursive = isCycleLeftRecursive(cycle);

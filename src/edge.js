@@ -26,7 +26,7 @@ export default class Edge {
   }
 
   match(edge) {
-    const label = this.getLabel(),
+    const label = edge.getLabel(),
           sourceVertex = edge.getSourceVertex(),
           targetVertex = edge.getTargetVertex(),
           matches = this.matchLabelSourceVertexAndTargetVertex(label, sourceVertex, targetVertex);
@@ -63,4 +63,18 @@ export default class Edge {
 
     return edge;
   }
+}
+
+export function edgesMatchEdge(edges, edge) {
+  const edgeA = edge, ///
+        matches = edges.some((edge) => {
+          const edgeB = edge, ///
+            edgeAMatchesEdgeB = edgeA.match(edgeB);
+
+          if (edgeAMatchesEdgeB) {
+            return true;
+          }
+        });
+
+  return matches;
 }

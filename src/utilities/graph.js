@@ -2,7 +2,7 @@
 
 import Edge from "../edge";
 
-import { edgesMatchEdge } from "../directedGraph";
+import { edgesMatchEdge } from "../edge";
 import { recursiveRuleNamesFromRule } from "../utilities/recursive";
 import { RECURSIVE_LABEL, LEFT_RECURSIVE_LABEL } from "../labels";
 

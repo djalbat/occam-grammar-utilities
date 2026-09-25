@@ -4,11 +4,11 @@ import { Rule } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
 
-import { edgesMatchEdge } from "../directedGraph";
+import { edgesMatchEdge } from "../edge";
 import { ruleNamesFromCycle } from "../utilities/cycle";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 import { leftRecursiveRuleNamesFromDefinition } from "../utilities/definition";
-import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/directedGraph";
+import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/graph";
 
 export default class ReducedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, context) {

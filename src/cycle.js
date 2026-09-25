@@ -1,8 +1,9 @@
 "use strict";
 
-import { characters } from "necessary";
+import { characters, arrayUtilities } from "necessary";
 
-const { COMMA_CHARACTER } = characters;
+const { last } = arrayUtilities,
+      { COMMA_CHARACTER } = characters;
 
 export default class Cycle {
   constructor(edges) {
@@ -96,4 +97,65 @@ export default class Cycle {
 
     return cycle;
   }
+
+  static fromGraphAndVertexes(graph, vertexes) {
+    const lastVertex = last(vertexes),
+          index = vertexes.indexOf(lastVertex),
+          start = index;  ///
+
+    vertexes = vertexes.slice(start); ///
+
+    vertexes.pop();
+
+    const length = vertexes.length,
+          edges = vertexes.map((vertex, index) => {
+            const nextIndex = (index + 1) % length,
+                  nextVertex = vertexes[nextIndex],
+                  sourceVertex = vertex,  ///
+                  targetVertex = nextVertex, ///
+                  edge = graph.findEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex);
+
+            return edge;
+          }),
+          cycle = new Cycle(edges);
+
+    return cycle;
+  }
+}
+
+export function areCyclesCoincident(cycleA, cycleB) {
+  let cyclesCoincident = false;
+
+  const cycleALength = cycleA.getLength(),
+        cycleBLength = cycleB.getLength();
+
+  if (cycleALength === cycleBLength) {
+    cyclesCoincident = someCyclePermutation(cycleA, (cycleA) => {
+      const cycleAEqualTo = cycleA.isEqualTo(cycleB);
+
+      if (cycleAEqualTo) {
+        return true;
+      }
+    });
+  }
+
+  return cyclesCoincident;
+}
+
+function someCyclePermutation(cycle, callback) {
+  let result = false;
+
+  const length = cycle.getLength();
+
+  for (let offset = 0; offset < length; offset++) {
+    result = callback(cycle);
+
+    if (result) {
+      break;
+    }
+
+    cycle = cycle.permuted();
+  }
+
+  return result;
 }
