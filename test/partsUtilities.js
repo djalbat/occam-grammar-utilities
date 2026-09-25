@@ -6,604 +6,1011 @@ const { arrayUtilities } = require("necessary"),
 
 const { first } = arrayUtilities,
       { rulesFromBNF } = parserUtilities,
-      { retrieveLeftRecursiveRuleNames } = partsUtilities;
+      { leftRecursiveRuleNamesFromPart, leftRecursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromRule } = partsUtilities;
 
-describe.only("retrieveLeftRecursiveRuleNames", () => {
-  describe("a terminal part", () => {
-    const bnf = `
+describe("partsUtilities", () => {
+  describe("leftRecursiveRuleNamesFromPart", () => {
+    describe("a terminal part", () => {
+      const bnf = `
   
-      S ::= "e" ;
-        
-    `;
+        S ::= "e" ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveNames);
+      });
     });
 
-    it("returns true with an empty array", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.isEmpty(leftRecursiveNames);
-    });
-  });
-
-  describe("a rule name part", () => {
-    const bnf = `
+    describe("a rule name part", () => {
+      const bnf = `
   
-      S ::= A ;
-        
-    `;
+        S ::= A ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
 
-    it("returns true with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A"]);
-    });
-  });
-
-  describe("a nullified terminal part", () => {
-    const bnf = `
+    describe("a nullified terminal part", () => {
+      const bnf = `
   
-      S ::= "e"* ;
-        
-    `;
+        S ::= "e"* ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns false with an empty array", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.isEmpty(leftRecursiveNames);
+      });
     });
 
-    it("returns false with an empty array", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isFalse(terminate);
-
-      assert.isEmpty(leftRecursiveNames);
-    });
-  });
-
-  describe("a nullified rule name part", () => {
-    const bnf = `
+    describe("a nullified rule name part", () => {
+      const bnf = `
   
-      S ::= A? ;
-        
-    `;
+        S ::= A? ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
 
-    it("returns false with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isFalse(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A"]);
-    });
-  });
-
-  describe("an isolated terminal part part", () => {
-    const bnf = `
+    describe("an isolated terminal part part", () => {
+      const bnf = `
   
-      S ::= ("a") ;
-        
-    `;
+        S ::= ("a") ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveNames);
+      });
     });
 
-    it("returns true with an empty array", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.isEmpty(leftRecursiveNames);
-    });
-  });
-
-  describe("an isolated rule name part part ", () => {
-    const bnf = `
+    describe("an isolated rule name part part ", () => {
+      const bnf = `
   
-      S ::= (A) ;
-        
-    `;
+        S ::= (A) ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
 
-    it("returns true with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A"]);
-    });
-  });
-
-  describe("an committed terminal part part", () => {
-    const bnf = `
+    describe("an committed terminal part part", () => {
+      const bnf = `
   
-      S ::= \`"a" ;
-        
-    `;
+        S ::= \`"a" ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveNames);
+      });
     });
 
-    it("returns true with an empty array", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.isEmpty(leftRecursiveNames);
-    });
-  });
-
-  describe("an committed rule name part part ", () => {
-    const bnf = `
+    describe("an committed rule name part part ", () => {
+      const bnf = `
   
-      S ::= \`A ;
-        
-    `;
+        S ::= \`A ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
 
-    it("returns true with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A"]);
-    });
-  });
-
-  describe("a one or more terminal parts part", () => {
-    const bnf = `
+    describe("a one or more terminal parts part", () => {
+      const bnf = `
   
-      S ::= "a"+ ;
-        
-    `;
+        S ::= "a"+ ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveNames);
+      });
     });
 
-    it("returns true with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.isEmpty(leftRecursiveNames);
-    });
-  });
-
-  describe("a one or more rule name parts part", () => {
-    const bnf = `
+    describe("a one or more rule name parts part", () => {
+      const bnf = `
   
-      S ::= A+ ;
-        
-    `;
+        S ::= A+ ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
 
-    it("returns true with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A"]);
-    });
-  });
-
-  describe("a squence of two terminal parts", () => {
-    const bnf = `
+    describe("a squence of two terminal parts", () => {
+      const bnf = `
   
-      S ::= ( "a" "b" ) ;
-        
-    `;
+        S ::= ( "a" "b" ) ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveNames);
+      });
     });
 
-    it("returns true with an empty array", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.isEmpty(leftRecursiveNames);
-    });
-  });
-
-  describe("a squence of two rule name parts", () => {
-    const bnf = `
+    describe("a squence of two rule name parts", () => {
+      const bnf = `
   
-      S ::= ( A B ) ;
-        
-    `;
+        S ::= ( A B ) ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
 
-    it("returns true with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A"]);
-    });
-  });
-
-  describe("a squence of one terminal part followed by one rule name part", () => {
-    const bnf = `
+    describe("a squence of one terminal part followed by one rule name part", () => {
+      const bnf = `
   
-      S ::= ( "e" A ) ;
-        
-    `;
+        S ::= ( "e" A ) ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveNames);
+      });
     });
 
-    it("returns true with an empty array", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.isEmpty(leftRecursiveNames);
-    });
-  });
-
-  describe("a squence of one rule name part followed by one terminal part", () => {
-    const bnf = `
+    describe("a squence of one rule name part followed by one terminal part", () => {
+      const bnf = `
   
-      S ::= ( A "e" ) ;
-        
-    `;
+        S ::= ( A "e" ) ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
 
-    it("returns true with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A"]);
-    });
-  });
-
-  describe("a squence of two nullified rule name parts", () => {
-    const bnf = `
+    describe("a squence of two nullified rule name parts", () => {
+      const bnf = `
   
-      S ::= ( A? B? ) ;
-        
-    `;
+        S ::= ( A? B? ) ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns false with an array of length two", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+      });
     });
 
-    it("returns false with an array of length two", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isFalse(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A", "B"]);
-    });
-  });
-
-  describe("a squence of one nullified terminal part followed by one rule name part", () => {
-    const bnf = `
+    describe("a squence of one nullified terminal part followed by one rule name part", () => {
+      const bnf = `
   
-      S ::= ( "e"? A ) ;
-        
-    `;
+        S ::= ( "e"? A ) ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
 
-    it("returns true with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A"]);
-    });
-  });
-
-  describe("a squence of one nullified rule name part followed by one rule name part", () => {
-    const bnf = `
+    describe("a squence of one nullified rule name part followed by one rule name part", () => {
+      const bnf = `
   
-      S ::= ( A? B ) ;
-        
-    `;
+        S ::= ( A? B ) ;
+          
+      `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an array of length two", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+      });
     });
 
-    it("returns true with an array of length two", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A", "B"]);
-    });
-  });
-
-  describe("a squence of one nullified terminal part followed by one nullified rule name part", () => {
-    const bnf = `
+    describe("a squence of one nullified terminal part followed by one nullified rule name part", () => {
+      const bnf = `
   
       S ::= ( "e"? A? ) ;
         
     `;
 
-    let part;
+      let part;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
 
-    it("returns false with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
+    describe("a choice of two terminal parts", () => {
+      const bnf = `
+  
+        S ::= ( "a" | "b" ) ;
+          
+      `;
 
-      assert.isFalse(terminate);
+      let part;
 
-      assert.deepEqual(leftRecursiveNames, ["A"]);
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveNames);
+      });
+    });
+
+    describe("a choice of two rule name parts", () => {
+      const bnf = `
+  
+        S ::= ( A | B ) ;
+          
+      `;
+
+      let part;
+
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an array of length two", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+      });
+    });
+
+    describe("a choice of one terminal part and one rule name part", () => {
+      const bnf = `
+  
+        S ::= ( "e" | A ) ;
+          
+      `;
+
+      let part;
+
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
+    });
+
+    describe("a choice of one rule name part and  one terminal part", () => {
+      const bnf = `
+  
+        S ::= ( A | "e" ) ;
+          
+      `;
+
+      let part;
+
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
+    });
+
+    describe("a choice of two nullified rule name parts", () => {
+      const bnf = `
+  
+        S ::= ( A? | B? ) ;
+          
+      `;
+
+      let part;
+
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns false with an array of length two", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+      });
+    });
+
+    describe("a choice of one nullified terminal part and one rule name part", () => {
+      const bnf = `
+  
+        S ::= ( "e"? | A ) ;
+          
+      `;
+
+      let part;
+
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
+    });
+
+    describe("a choice of one nullified rule name part and one rule name part", () => {
+      const bnf = `
+  
+        S ::= ( A? | B ) ;
+          
+      `;
+
+      let part;
+
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns false with an array of length two", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+      });
+    });
+
+    describe("a choice of one nullified terminal part and one nullified rule name part", () => {
+      const bnf = `
+  
+        S ::= ( "e"? | A? ) ;
+          
+      `;
+
+      let part;
+
+      before(() => {
+        part = partFromBNF(bnf);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
   });
 
-  describe("a choice of two terminal parts", () => {
-    const bnf = `
+  describe("leftRecursiveRuleNamesFromDefinition", () => {
+    describe("two terminal parts", () => {
+      const bnf = `
   
-      S ::= ( "a" | "b" ) ;
-        
-    `;
+        S ::= "a" "b" ;
+          
+      `;
 
-    let part;
+      let definition;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        definition = definitionFromBNF(bnf);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveNames);
+      });
     });
 
-    it("returns true with an empty array", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
+    describe("two rule name parts", () => {
+      const bnf = `
+  
+        S ::= A B ;
+          
+      `;
 
-      assert.isTrue(terminate);
+      let definition;
 
-      assert.isEmpty(leftRecursiveNames);
+      before(() => {
+        definition = definitionFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
+    });
+
+    describe("one terminal part followed by one rule name part", () => {
+      const bnf = `
+  
+        S ::= "e" A ;
+          
+      `;
+
+      let definition;
+
+      before(() => {
+        definition = definitionFromBNF(bnf);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveNames);
+      });
+    });
+
+    describe("one rule name part followed by one terminal part", () => {
+      const bnf = `
+  
+        S ::= A "e" ;
+          
+      `;
+
+      let definition;
+
+      before(() => {
+        definition = definitionFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
+    });
+
+    describe("two nullified rule name parts", () => {
+      const bnf = `
+  
+        S ::= A? B? ;
+          
+      `;
+
+      let definition;
+
+      before(() => {
+        definition = definitionFromBNF(bnf);
+      });
+
+      it("returns false with an array of length two", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+      });
+    });
+
+    describe("one nullified terminal part followed by one rule name part", () => {
+      const bnf = `
+  
+        S ::= "e"? A ;
+          
+      `;
+
+      let definition;
+
+      before(() => {
+        definition = definitionFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
+    });
+
+    describe("one nullified rule name part followed by one rule name part", () => {
+      const bnf = `
+  
+        S ::= A? B ;
+          
+      `;
+
+      let definition;
+
+      before(() => {
+        definition = definitionFromBNF(bnf);
+      });
+
+      it("returns true with an array of length two", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+      });
+    });
+
+    describe("one nullified terminal part followed by one nullified rule name part", () => {
+      const bnf = `
+  
+        S ::= "e"? A? ;
+          
+      `;
+
+      let definition;
+
+      before(() => {
+        definition = definitionFromBNF(bnf);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
   });
 
-  describe("a choice of two rule name parts", () => {
-    const bnf = `
+  describe("leftRecursiveRuleNamesFromRule", () => {
+    describe("two definitinos with two terminal parts", () => {
+      const bnf = `
   
-      S ::= ( A | B ) ;
+        S ::= "a" 
         
-    `;
+            | "b"
+             
+            ;
+          
+      `;
 
-    let part;
+      let rule;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        rule = ruleFromBNF(bnf);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveNames);
+      });
     });
 
-    it("returns true with an array of length two", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A", "B"]);
-    });
-  });
-
-  describe("a choice of one terminal part and one rule name part", () => {
-    const bnf = `
+    describe("two definitinos with two rule name parts", () => {
+      const bnf = `
   
-      S ::= ( "e" | A ) ;
+        S ::= A 
         
-    `;
+            | B 
+            
+            ;           
+          
+      `;
 
-    let part;
+      let rule;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        rule = ruleFromBNF(bnf);
+      });
+
+      it("returns true with an array of length two", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+      });
     });
 
-    it("returns false with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A"]);
-    });
-  });
-
-  describe("a choice of one rule name part and  one terminal part", () => {
-    const bnf = `
+    describe("two definitinos with one terminal part and one rule name part", () => {
+      const bnf = `
   
-      S ::= ( A | "e" ) ;
+        S ::= "e" 
         
-    `;
+            | A 
+            
+            ;
+          
+      `;
 
-    let part;
+      let rule;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        rule = ruleFromBNF(bnf);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
 
-    it("returns true with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isTrue(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A"]);
-    });
-  });
-
-  describe("a choice of two nullified rule name parts", () => {
-    const bnf = `
+    describe("two definitinos with one rule name part and  one terminal part", () => {
+      const bnf = `
   
-      S ::= ( A? | B? ) ;
+        S ::=  A 
         
-    `;
+            | "e"
+             
+            ;
+          
+      `;
 
-    let part;
+      let rule;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        rule = ruleFromBNF(bnf);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
 
-    it("returns false with an array of length two", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isFalse(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A", "B"]);
-    });
-  });
-
-  describe("a choice of one nullified terminal part and one rule name part", () => {
-    const bnf = `
+    describe("two definitinos with two nullified rule name parts", () => {
+      const bnf = `
   
-      S ::= ( "e"? | A ) ;
+        S ::= A? 
         
-    `;
+            | B? 
+            
+            ;
+          
+      `;
 
-    let part;
+      let rule;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        rule = ruleFromBNF(bnf);
+      });
+
+      it("returns false with an array of length two", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+      });
     });
 
-    it("returns false with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isFalse(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A"]);
-    });
-  });
-
-  describe("a choice of one nullified rule name part and one rule name part", () => {
-    const bnf = `
+    describe("two definitinos with one nullified terminal part and one rule name part", () => {
+      const bnf = `
   
-      S ::= ( A? | B ) ;
+        S ::= "e"? 
         
-    `;
+            | A 
+            
+            ;
+            
+          
+      `;
 
-    let part;
+      let rule;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        rule = ruleFromBNF(bnf);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
 
-    it("returns false with an array of length two", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
-
-      assert.isFalse(terminate);
-
-      assert.deepEqual(leftRecursiveNames, ["A", "B"]);
-    });
-  });
-
-  describe("a choice of one nullified terminal part and one nullified rule name part", () => {
-    const bnf = `
+    describe("two definitinos with one nullified rule name part and one rule name part", () => {
+      const bnf = `
   
-      S ::= ( "e"? | A? ) ;
+        S ::=  A? 
         
-    `;
+            | B 
+            
+            ;
+          
+      `;
 
-    let part;
+      let rule;
 
-    before(() => {
-      part = partFromBNF(bnf);
+      before(() => {
+        rule = ruleFromBNF(bnf);
+      });
+
+      it("returns false with an array of length two", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+      });
     });
 
-    it("returns false with an array of length one", () => {
-      const leftRecursiveNames = [],
-            terminate = retrieveLeftRecursiveRuleNames(part, leftRecursiveNames);
+    describe("two definitinos with one nullified terminal part and one nullified rule name part", () => {
+      const bnf = `
+  
+        S ::= "e"? 
+        
+            | A? 
+            
+            ;
+          
+      `;
 
-      assert.isFalse(terminate);
+      let rule;
 
-      assert.deepEqual(leftRecursiveNames, ["A"]);
+      before(() => {
+        rule = ruleFromBNF(bnf);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
     });
   });
 });
@@ -618,12 +1025,18 @@ function partFromBNF(bnf) {
 }
 
 function definitionFromBNF(bnf) {
-  const rules = rulesFromBNF(bnf),
-        firstRule = first(rules),
-        rule = firstRule, ///
+  const rule = ruleFromBNF(bnf),
         definitions = rule.getDefinitions(),
         firstDefinition = first(definitions),
         definition = firstDefinition; ///
 
   return definition;
+}
+
+function ruleFromBNF(bnf) {
+  const rules = rulesFromBNF(bnf),
+        firstRule = first(rules),
+        rule = firstRule; ///
+
+  return rule;
 }

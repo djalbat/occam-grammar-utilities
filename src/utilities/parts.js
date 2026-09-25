@@ -3,6 +3,7 @@
 import { partTypes } from "occam-parsers";
 
 import { arrayUtilities } from "necessary";
+import {terminator} from "occam-lexers/lib/specialSymbols";
 
 const { first } = arrayUtilities,
       { RuleNamePartType,
@@ -29,7 +30,7 @@ export function arePartsEqual(parts) {
   return partsEqual;
 }
 
-export function retrieveLeftRecursiveRuleNames(part, leftRecursiveRuleNames) {
+export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
   const terminate = retrieveSimpleParts(part, (simplePart, nullified) => {
     let terminate = false;
 
@@ -50,6 +51,31 @@ export function retrieveLeftRecursiveRuleNames(part, leftRecursiveRuleNames) {
     }
 
     return terminate;
+  });
+
+  return terminate;
+}
+
+export function leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveRuleNames) {
+  const parts = definition.getParts(),
+        terminate = parts.some((part) => {
+          const terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
+
+          if (terminate) {
+            return true;
+          }
+        });
+
+  return terminate;
+}
+
+export function leftRecursiveRuleNamesFromRule(rule, leftRecursiveRuleNames) {
+  let terminate = true;
+
+  const definitions = rule.getDefinitions();
+
+  definitions.forEach((definition) => {
+    terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveRuleNames) && terminate;
   });
 
   return terminate;
@@ -163,11 +189,7 @@ function retrieveParts(part, nullified, callback) {
           terminate = true;
 
           parts.forEach((part) => {
-            if (!terminate) {
-              retrieveParts(part, nullified, callback);
-            } else {
-              terminate = retrieveParts(part, nullified, callback);
-            }
+            terminate = retrieveParts(part, nullified, callback) && terminate;
           });
 
           break;
@@ -200,5 +222,7 @@ function isPartSimplePart(part) {
 
 export default {
   arePartsEqual,
-  retrieveLeftRecursiveRuleNames
+  leftRecursiveRuleNamesFromPart,
+  leftRecursiveRuleNamesFromDefinition,
+  leftRecursiveRuleNamesFromRule
 };
