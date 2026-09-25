@@ -11,7 +11,7 @@ import createIndirectlyRepeatedRules from "./createIndirectlyRepeatedRules";
 
 import { edgesFromStartRule } from "./utilities/directedGraph";
 import { LEFT_RECURSIVE_LABEL } from "./labels";
-import { leftRecursiveRuleNamesFromRule } from "./utilities/leftRecursive";
+import { leftRecursiveRuleNamesFromRule } from "./utilities/definition";
 
 const { filter } = arrayUtilities,
       { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;

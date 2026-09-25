@@ -53,6 +53,13 @@ export function isPartNonConsuming(part, ruleMap, ruleNames = []) {
   return partNonConsuming;
 }
 
+export function isPartConsuming(part, ruleMap) {
+  const partNonConsuming = isPartNonConsuming(part, ruleMap),
+        partConsuming = !partNonConsuming;
+
+  return partConsuming;
+}
+
 function areDefinitionsNonConsuming(definitions, ruleMap, ruleNames) {
   const definitionsNonConsuming = definitions.some((definition) => {
     const definitionNonConsuming = isDefinitionNonConsuming(definition, ruleMap, ruleNames);

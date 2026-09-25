@@ -3,12 +3,13 @@
 import { partTypes } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
-import { isPartNonConsuming } from "../utilities/nonConsuming";
+import { isPartConsuming } from "../utilities/nonConsuming";
 
 const { first } = arrayUtilities,
       { RuleNamePartType,
         IsolatedPartPartType,
         OptionalPartPartType,
+        CommittedPartPartType,
         ChoiceOfPartsPartType,
         OneOrMorePartsPartType,
         ZeroOrMorePartsPartType,
@@ -22,6 +23,24 @@ export function isDefinitionLeftRecursive(definition, ruleMap) {
   return definitionLeftRecursive;
 }
 
+export function isDefinitionsFirstPartConsuming(definition, ruleMap) {
+  const parts = definition.getParts(),
+        firstPart = first(parts),
+        firstPartConsuming = isPartConsuming(firstPart, ruleMap),
+        definitionsFirstPartConsuming = firstPartConsuming;  ///
+
+  return definitionsFirstPartConsuming;
+}
+
+export function isDefinitionsFirstPartNakedRuleNamePart(definition) {
+  const parts = definition.getParts(),
+        firstPart = first(parts),
+        firstPartNakedRuleNamePart = isPartNakedRuleNamePart(firstPart),
+        definitionsFirstPartNakedRuleNamePart = firstPartNakedRuleNamePart;  ///
+
+  return definitionsFirstPartNakedRuleNamePart;
+}
+
 export function leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames = []) {
   const definitions = rule.getDefinitions();
 
@@ -30,6 +49,21 @@ export function leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleN
   });
 
   return leftRecursiveRuleNames;
+}
+
+export function leftRecursiveRuleNameFromDefinition(definition, ruleMap) {
+  let leftRecursiveRuleName = null;
+
+  const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition, ruleMap),
+        leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length;
+
+  if (leftRecursiveRuleNamesLength === 1) {
+    const firstLeftRecursiveRuleName = first(leftRecursiveRuleNames);
+
+    leftRecursiveRuleName = firstLeftRecursiveRuleName; ///
+  }
+
+  return leftRecursiveRuleName;
 }
 
 export function leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames = []) {
@@ -46,6 +80,28 @@ function arePartsLeftRecursive(parts, ruleMap) {
         partsLeftRecursive = (leftRecursiveRuleNamesLength > 0);
 
   return partsLeftRecursive;
+}
+
+function isPartNakedRuleNamePart(part) {
+  let partNakedRuleNamePart = false;
+
+  const partNonTerminalPart = part.isNonTerminalPart();
+
+  if (partNonTerminalPart) {
+    const nonTerminalPart = part, ///
+          type = nonTerminalPart.getType();
+
+    if (type === RuleNamePartType) {
+      const ruleNamePart = nonTerminalPart, ///
+            continuation = ruleNamePart.isContinuation();
+
+      if (!continuation) {
+        partNakedRuleNamePart = true;
+      }
+    }
+  }
+
+  return partNakedRuleNamePart;
 }
 
 function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames) {
@@ -119,9 +175,18 @@ function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames) {
         break;
       }
 
+      case CommittedPartPartType: {
+        const committedPartPart = nonTerminalPart,  ///
+              part = committedPartPart.getPart();
+
+        leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        break;
+      }
+
       case IsolatedPartPartType: {
         const isolatedPartPart = nonTerminalPart,  ///
-              part = isolatedPartPart.getPart();
+            part = isolatedPartPart.getPart();
 
         leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
@@ -132,12 +197,12 @@ function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames) {
 }
 
 function leftRecursiveRuleNamesFromParts(parts, ruleMap, leftRecursiveRuleNames = []) {
-  parts.every((part) => {
-    const partNonConsuming = isPartNonConsuming(part, ruleMap);
+  parts.some((part) => {
+    const partConsuming = isPartConsuming(part, ruleMap);
 
-    if (!partNonConsuming) {
+    if (partConsuming) {
       leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
-    } else {
+
       return true;
     }
   });

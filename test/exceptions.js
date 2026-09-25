@@ -151,7 +151,7 @@ describe("Exceptions", () => {
     });
   });
 
-  describe("the first part of a left recursive definition is look-ahead", () => {
+  describe("the first part of a left recursive definition is a continuation", () => {
     const bnf = `
    
       A ::= A... "h"
