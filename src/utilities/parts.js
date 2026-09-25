@@ -3,7 +3,6 @@
 import { partTypes } from "occam-parsers";
 
 import { arrayUtilities } from "necessary";
-import {terminator} from "occam-lexers/lib/specialSymbols";
 
 const { first } = arrayUtilities,
       { RuleNamePartType,
@@ -79,6 +78,74 @@ export function leftRecursiveRuleNamesFromRule(rule, leftRecursiveRuleNames) {
   });
 
   return terminate;
+}
+
+export function isPartConsuming(part, ruleMap, visitedRules = []) {
+  let partConsuming = false;
+
+  const terminate = retrieveSimpleParts(part, (simplePart, nullified) => {
+    let terminate = false;
+
+    if (!nullified) {
+      const simplePartTerminalPart = simplePart.isTerminalPart();
+
+      if (simplePartTerminalPart) {
+        terminate = true;
+      } else {
+        const ruleNamePart = simplePart,  ///
+              ruleName = ruleNamePart.getRuleName(),
+              rule = ruleMap[ruleName] || null;
+
+        if (rule !== null) {
+          const visitedRulesIncludesRule = visitedRules.includes(rule);
+
+          if (!visitedRulesIncludesRule) {
+            const visitedRule = rule, ///
+                  ruleConsuming = isRuleConsuming(rule, ruleMap, [
+                    ...visitedRules,
+                    visitedRule
+                  ]);
+
+            terminate = ruleConsuming;  ///
+          }
+        }
+      }
+    }
+
+    return terminate;
+  });
+
+  if (terminate) {
+    partConsuming = true;
+  }
+
+  return partConsuming;
+}
+
+export function isDefinitionConsuming(definition, ruleMap, visitedRules = []) {
+  const parts = definition.getParts(),
+        definitionConsuming = parts.some((part) => {
+          const partConsuming = isPartConsuming(part, ruleMap, visitedRules);
+
+          if (partConsuming) {
+            return true;
+          }
+        });
+
+  return definitionConsuming;
+}
+
+export function isRuleConsuming(rule, ruleMap, visitedRules = []) {
+  const definitions = rule.getDefinitions(),
+        ruleConsuming = definitions.every((definition) => {
+          const definitionConsuming = isDefinitionConsuming(definition, ruleMap, visitedRules);
+
+          if (definitionConsuming) {
+            return true;
+          }
+        });
+
+  return ruleConsuming;
 }
 
 function retrieveSimpleParts(part, callback) {
@@ -224,5 +291,8 @@ export default {
   arePartsEqual,
   leftRecursiveRuleNamesFromPart,
   leftRecursiveRuleNamesFromDefinition,
-  leftRecursiveRuleNamesFromRule
+  leftRecursiveRuleNamesFromRule,
+  isPartConsuming,
+  isDefinitionConsuming,
+  isRuleConsuming,
 };

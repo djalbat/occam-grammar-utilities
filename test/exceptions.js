@@ -46,20 +46,6 @@ describe("Exceptions", () => {
   describe("a directly repeated rule is non-consuming", () => {
     const bnf = `
 
-      A ::= A "c"
-      
-          | B C
-      
-          | "e"
-      
-          ;
-  
-      B ::= A "f"?
-      
-          | "g"
-      
-          ;
-        
       C ::= "f"? D ;
 
       D ::= "g"? C ;
