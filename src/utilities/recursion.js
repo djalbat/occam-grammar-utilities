@@ -15,14 +15,16 @@ export function recursiveRuleNamesFromPart(part, ruleMap, recursiveRuleNames = [
             ruleName = ruleNamePart.getRuleName(),
             rule = ruleMap[ruleName] || null;
 
-      if (rule !== null) {
-        const recursiveRuleNamesInclucesRuleName = recursiveRuleNames.includes(ruleName);
+      if (rule == null) {
+        throw new Error(`The  '${ruleName}' rule is missing.`);
+      }
 
-        if (!recursiveRuleNamesInclucesRuleName) {
-          const recursiveRuleName = ruleName; ///
+      const recursiveRuleNamesInclucesRuleName = recursiveRuleNames.includes(ruleName);
 
-          recursiveRuleNames.push(recursiveRuleName);
-        }
+      if (!recursiveRuleNamesInclucesRuleName) {
+        const recursiveRuleName = ruleName; ///
+
+        recursiveRuleNames.push(recursiveRuleName);
       }
     }
 

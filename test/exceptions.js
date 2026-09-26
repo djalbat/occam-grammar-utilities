@@ -3,6 +3,20 @@
 const { adjustedBNFFromBNF } = require("./helpers/bnf");
 
 describe("Exceptions", () => {
+  describe("no corresponding rule for a rule name part", () => {
+    const bnf = `
+  
+      S ::= A ;
+      
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
   describe("a left recursive definition is occluded", () => {
     const bnf = `
     

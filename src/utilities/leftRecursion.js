@@ -57,23 +57,25 @@ export function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleN
             ruleName = ruleNamePart.getRuleName(),
             rule = ruleMap[ruleName] || null;
 
-      if (rule !== null) {
-        const leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
+      if (rule == null) {
+        throw new Error(`The  '${ruleName}' rule is missing.`);
+      }
 
-        if (!leftRecursiveRuleNamesIncludesRuleName) {
-          const leftRecursiveRuleName = ruleName; ///
+      const leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
 
-          leftRecursiveRuleNames.push(leftRecursiveRuleName);
-        }
+      if (!leftRecursiveRuleNamesIncludesRuleName) {
+        const leftRecursiveRuleName = ruleName; ///
 
-        if (!nullified) {
-          terminate = true;
+        leftRecursiveRuleNames.push(leftRecursiveRuleName);
+      }
 
-          const ruleConsuming = isRuleConsuming(rule, ruleMap);
+      if (!nullified) {
+        terminate = true;
 
-          if (!ruleConsuming) {
-            terminate = false;
-          }
+        const ruleConsuming = isRuleConsuming(rule, ruleMap);
+
+        if (!ruleConsuming) {
+          terminate = false;
         }
       }
     }

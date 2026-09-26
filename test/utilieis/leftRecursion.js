@@ -41,35 +41,7 @@ describe("utiliies/leftReursion", () => {
       });
     });
 
-    describe("a rule name part with no corresponding rule", () => {
-      const bnf = `
-  
-        S ::= A ;
-        
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules);
-      });
-
-      it("returns false with an empty array", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
-
-        assert.isFalse(terminate);
-
-        assert.isEmpty(leftRecursiveNames);
-      });
-    });
-
-    describe("a rule name part with a corresponding consuming rule", () => {
+    describe("a rule name part with a consuming rule", () => {
       const bnf = `
   
         S ::= A ;
@@ -99,7 +71,7 @@ describe("utiliies/leftReursion", () => {
       });
     });
 
-    describe("a rule name part with a corresponding non-consuming rule", () => {
+    describe("a rule name part with a non-consuming rule", () => {
       const bnf = `
   
         S ::= A ;

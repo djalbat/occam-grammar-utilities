@@ -38,32 +38,7 @@ describe("utiliies/recursion", () => {
       });
     });
 
-    describe("a rule name part with no corresponding rule", () => {
-      const bnf = `
-  
-        S ::= A ;
-        
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules);
-      });
-
-      it("returns an empty array", () => {
-        const recursiveNames = recursiveRuleNamesFromPart(part, ruleMap);
-
-        assert.isEmpty(recursiveNames);
-      });
-    });
-
-    describe("a rule name part with a corresponding rule", () => {
+    describe("a rule name part", () => {
       const bnf = `
   
         S ::= A ;
