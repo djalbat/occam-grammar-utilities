@@ -4,9 +4,10 @@ import { partTypes } from "occam-parsers";
 
 import { arrayUtilities } from "necessary";
 
+import { isPartSimplePart } from "../utilities/part";
+
 const { first } = arrayUtilities,
-      { RuleNamePartType,
-        IsolatedPartPartType,
+      { IsolatedPartPartType,
         OptionalPartPartType,
         ChoiceOfPartsPartType,
         CommittedPartPartType,
@@ -134,31 +135,12 @@ export function retrieveParts(part, nullified, callback) {
   return terminate;
 }
 
-export function isPartSimplePart(part) {
-  let partSimplePart = false;
-
-  const partTerminalPart = part.isTerminalPart();
-
-  if (partTerminalPart) {
-    partSimplePart = true;
-  } else {
-    const nonTerminalPart = part, ///
-         type = nonTerminalPart.getType();
-
-    if (type === RuleNamePartType) {
-      partSimplePart = true;
-    }
-  }
-
-  return partSimplePart;
-}
-
 export function arePartsEqual(parts) {
   const firstPart = first(parts),
         firstPartString = firstPart.asString(),
         partsEqual = parts.every((part) => {
           const partString = part.asString(),
-            partStringFirstPartString = (partString === firstPartString);
+                partStringFirstPartString = (partString === firstPartString);
 
           if (partStringFirstPartString) {
             return true;

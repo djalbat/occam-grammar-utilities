@@ -8,8 +8,8 @@ import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { arePartsEqual } from "../../utilities/parts";
 import { isRuleProducing } from "../../utilities/production";
-import { isDefinitionsFirstPartConsuming } from "../../utilities/consumption";
-import { isDefinitionsFirstPartNakedRuleNamePart } from "../../utilities/part";
+import { isPartConsuming } from "../../utilities/consumption";
+import { isPartNakedRuleNamePart } from "../../utilities/part";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 import { isDefinitionLeftRecursive, leftRecursiveRuleNameFromDefinition } from "../../utilities/leftRecursion";
 
@@ -65,12 +65,12 @@ export default class IndirectlyRepeatedRule extends Rule {
 
 function areFirstPartsEqual(definitions) {
   const firstParts = definitions.map((definition) => {
-          const parts = definition.getParts(),
-                firstPart = first(parts);
+      const parts = definition.getParts(),
+            firstPart = first(parts);
 
-          return firstPart;
-        }),
-        firstPartsEqual = arePartsEqual(firstParts);
+      return firstPart;
+    }),
+    firstPartsEqual = arePartsEqual(firstParts);
 
   return firstPartsEqual;
 }
@@ -100,17 +100,19 @@ function leftRecursiveDefinitionsFromRuleDefinitionsAndLeftRecursiveRuleName(rul
           const definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleMap);
 
           if (definitionLeftRecursive) {
-            const definitionsFirstPartConsuming = isDefinitionsFirstPartConsuming(definition, ruleMap);
+            const parts = definition.getParts(),
+                  firstPart = first(parts),
+                  firstPartConsuming = isPartConsuming(firstPart, ruleMap);
 
-            if (!definitionsFirstPartConsuming) {
+            if (!firstPartConsuming) {
               const definitionString = definition.asString();
 
               throw new Error(`The first part of the '${definitionString}' left recursive-definition is not a consuming part.`);
             }
 
-            const definitionsFirstPartNakedRuleNamePart = isDefinitionsFirstPartNakedRuleNamePart(definition);
+            const firstPartNakedRuleNamePart = isPartNakedRuleNamePart(firstPart);
 
-            if (!definitionsFirstPartNakedRuleNamePart) {
+            if (!firstPartNakedRuleNamePart) {
               const definitionString = definition.asString();
 
               throw new Error(`The first part of the '${definitionString}' left recursive-definition is not a naked rule name part.`);

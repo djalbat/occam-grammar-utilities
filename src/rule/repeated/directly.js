@@ -18,7 +18,7 @@ export default class DirectlyRepeatedRule extends Rule {
     const ruleName = rule.getName(),
           definitions = [];
 
-    cycles.map((cycle) => {
+    cycles.forEach((cycle) => {
       const directlyRepeatedDefinition = DirectlyRepeatedDefinition.fromRuleAndCycle(rule, cycle);
 
       if (directlyRepeatedDefinition !== null) {

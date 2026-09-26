@@ -1,20 +1,9 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
 import { Parts, partTypes } from "occam-parsers";
 
-const { first } = arrayUtilities,
-      { RuleNamePartType } = partTypes,
+const { RuleNamePartType } = partTypes,
       { RuleNamePart, ZeroOrMorePartsPart } = Parts;
-
-export function isDefinitionsFirstPartNakedRuleNamePart(definition) {
-  const parts = definition.getParts(),
-    firstPart = first(parts),
-    firstPartNakedRuleNamePart = isPartNakedRuleNamePart(firstPart),
-    definitionsFirstPartNakedRuleNamePart = firstPartNakedRuleNamePart;  ///
-
-  return definitionsFirstPartNakedRuleNamePart;
-}
 
 export function zeroOrMorePartsPartFromPart(part) {
   const zeroOrMorePartsPart = ZeroOrMorePartsPart.fromPart(part);
@@ -28,7 +17,7 @@ export function ruleNamePartFromRuleName(ruleName) {
   return ruleNamePart;
 }
 
-function isPartNakedRuleNamePart(part) {
+export function isPartNakedRuleNamePart(part) {
   let partNakedRuleNamePart = false;
 
   const partNonTerminalPart = part.isNonTerminalPart();
@@ -48,4 +37,23 @@ function isPartNakedRuleNamePart(part) {
   }
 
   return partNakedRuleNamePart;
+}
+
+export function isPartSimplePart(part) {
+  let partSimplePart = false;
+
+  const partTerminalPart = part.isTerminalPart();
+
+  if (partTerminalPart) {
+    partSimplePart = true;
+  } else {
+    const nonTerminalPart = part, ///
+          type = nonTerminalPart.getType();
+
+    if (type === RuleNamePartType) {
+      partSimplePart = true;
+    }
+  }
+
+  return partSimplePart;
 }

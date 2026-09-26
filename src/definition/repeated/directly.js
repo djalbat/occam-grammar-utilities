@@ -2,8 +2,8 @@
 
 import { Definition } from "occam-parsers";
 import { ruleNamesFromCycle } from "../../utilities/cycle";
-import { permuteRuleNames, forEachRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleNames";
 import { ruleNamePartFromRuleName, zeroOrMorePartsPartFromPart } from "../../utilities/part";
+import { permuteRuleNames, forEachRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleNames";
 import { directlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyRepeatedDefinition extends Definition {
@@ -12,9 +12,9 @@ export default class DirectlyRepeatedDefinition extends Definition {
 
     const ruleName = rule.getName(),
           ruleNames = ruleNamesFromCycle(cycle),
-          ruleNameIncludesRuleName = ruleNames.includes(ruleName);
+          ruleNamesIncludesRuleName = ruleNames.includes(ruleName);
 
-    if (ruleNameIncludesRuleName) {
+    if (ruleNamesIncludesRuleName) {
       const permutedRuleNames = permuteRuleNames(ruleNames, ruleName),
             path = permutedRuleNames, ///
             parts = partsFromPath(path),
@@ -51,7 +51,7 @@ function partsFromPath(path) {
 
     ruleName = temporaryRuleName;  ///
 
-    const indirectlyRepeatedPart = indirectlyRepeatedPartFromRuleNameAndLeftReucrsiveRuleName(ruleName, leftRecursiveRuleName),
+    const indirectlyRepeatedPart = indirectlyRepeatedPartFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
           directlyRepeatedPart = directlyRepeatedPartFromRuleName(ruleName);
 
     parts.push(indirectlyRepeatedPart);
@@ -73,7 +73,7 @@ function directlyRepeatedPartFromRuleName(ruleName) {
   return directlyRepeatedPart;
 }
 
-function indirectlyRepeatedPartFromRuleNameAndLeftReucrsiveRuleName(ruleName, leftRecursiveRuleName) {
+function indirectlyRepeatedPartFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {
   const indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
         indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName),
         indirectlyRepeatedPart = indirectlyRepeatedRuleNamePart;  ///
