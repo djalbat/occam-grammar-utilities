@@ -4,8 +4,8 @@ const { testUtilities } = require("occam-parsers"),
       { parserUtilities } = require("occam-parsers"),
       { BasicLexer, BasicParser, eliminateLeftRecursion } = require("../lib/index");  ///
 
-const { adjustedBNFFromRules } = require("./utilities/bnf"),
-      { checkParentNodes, checkDescendentNodes } = require("./utilities/node");
+const { adjustedBNFFromRules } = require("./helpers/bnf"),
+      { checkParentNodes, checkDescendentNodes } = require("./helpers/node");
 
 const { rulesFromBNF } = parserUtilities,
       { nodeFromRulesAndTokens, compareParseTreeStrings, tokensFromEntriesAndContent, parseTreeStringFromNodeAndTokens } = testUtilities;

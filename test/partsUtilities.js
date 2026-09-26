@@ -19,15 +19,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an empty array", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -42,15 +47,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -65,15 +75,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an empty array", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -88,15 +103,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -111,15 +131,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an empty array", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -134,15 +159,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -157,15 +187,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an empty array", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -180,15 +215,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -203,15 +243,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -226,15 +271,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -249,15 +299,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an empty array", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -272,15 +327,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -295,15 +355,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an empty array", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -318,15 +383,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -341,15 +411,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length two", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -364,15 +439,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -387,15 +467,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length two", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -410,15 +495,20 @@ describe("partsUtilities", () => {
         
     `;
 
-      let part;
+      let part,
+        ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -433,15 +523,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an empty array", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -456,15 +551,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length two", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -479,15 +579,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -502,15 +607,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -525,15 +635,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length two", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -548,15 +663,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -571,15 +691,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length two", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -594,15 +719,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let part;
+      let part,
+          ruleMap;
 
       before(() => {
-        part = partFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -619,15 +749,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let definition;
+      let definition,
+          ruleMap;
 
       before(() => {
-        definition = definitionFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        definition = definitionFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an empty array", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -642,15 +777,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let definition;
+      let definition,
+          ruleMap;
 
       before(() => {
-        definition = definitionFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        definition = definitionFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -665,15 +805,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let definition;
+      let definition,
+          ruleMap;
 
       before(() => {
-        definition = definitionFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        definition = definitionFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an empty array", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -688,15 +833,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let definition;
+      let definition,
+          ruleMap;
 
       before(() => {
-        definition = definitionFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        definition = definitionFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -711,15 +861,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let definition;
+      let definition,
+          ruleMap;
 
       before(() => {
-        definition = definitionFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        definition = definitionFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length two", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -734,15 +889,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let definition;
+      let definition,
+          ruleMap;
 
       before(() => {
-        definition = definitionFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        definition = definitionFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -757,15 +917,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let definition;
+      let definition,
+          ruleMap;
 
       before(() => {
-        definition = definitionFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        definition = definitionFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length two", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -780,15 +945,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let definition;
+      let definition,
+          ruleMap;
 
       before(() => {
-        definition = definitionFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        definition = definitionFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -809,15 +979,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let rule;
+      let rule,
+          ruleMap;
 
       before(() => {
-        rule = ruleFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        rule = ruleFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an empty array", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -836,15 +1011,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let rule;
+      let rule,
+          ruleMap;
 
       before(() => {
-        rule = ruleFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        rule = ruleFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length two", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -863,15 +1043,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let rule;
+      let rule,
+          ruleMap;
 
       before(() => {
-        rule = ruleFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        rule = ruleFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -890,15 +1075,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let rule;
+      let rule,
+          ruleMap;
 
       before(() => {
-        rule = ruleFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        rule = ruleFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns true with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
 
@@ -917,15 +1107,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let rule;
+      let rule,
+          ruleMap;
 
       before(() => {
-        rule = ruleFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        rule = ruleFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length two", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -945,15 +1140,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let rule;
+      let rule,
+          ruleMap;
 
       before(() => {
-        rule = ruleFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        rule = ruleFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -972,15 +1172,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let rule;
+      let rule,
+          ruleMap;
 
       before(() => {
-        rule = ruleFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        rule = ruleFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length two", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -999,15 +1204,20 @@ describe("partsUtilities", () => {
           
       `;
 
-      let rule;
+      let rule,
+          ruleMap;
 
       before(() => {
-        rule = ruleFromBNF(bnf);
+        const rules = rulesFromBNF(bnf);
+
+        rule = ruleFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
       });
 
       it("returns false with an array of length one", () => {
         const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, leftRecursiveNames);
+              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.isFalse(terminate);
 
@@ -1039,6 +1249,56 @@ describe("partsUtilities", () => {
         const consuming = isPartConsuming(part, ruleMap);
 
         assert.isTrue(consuming);
+      });
+    });
+
+    describe("an epsilon part", () => {
+      const bnf = `
+  
+        S ::= ε ;
+          
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules)
+      });
+
+      it("returns false", () => {
+        const consuming = isPartConsuming(part, ruleMap);
+
+        assert.isFalse(consuming);
+      });
+    });
+
+    describe("a no-whitespace part", () => {
+      const bnf = `
+  
+        S ::= <NO_WHITESPACE> ;
+          
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules)
+      });
+
+      it("returns false", () => {
+        const consuming = isPartConsuming(part, ruleMap);
+
+        assert.isFalse(consuming);
       });
     });
 

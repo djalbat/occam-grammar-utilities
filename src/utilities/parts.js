@@ -29,7 +29,7 @@ export function arePartsEqual(parts) {
   return partsEqual;
 }
 
-export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
+export function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames) {
   const terminate = retrieveSimpleParts(part, (simplePart, nullified) => {
     let terminate = false;
 
@@ -59,10 +59,10 @@ export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
   return terminate;
 }
 
-export function leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveRuleNames) {
+export function leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames) {
   const parts = definition.getParts(),
         terminate = parts.some((part) => {
-          const terminate = leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames);
+          const terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
           if (terminate) {
             return true;
@@ -72,13 +72,13 @@ export function leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveRu
   return terminate;
 }
 
-export function leftRecursiveRuleNamesFromRule(rule, leftRecursiveRuleNames) {
+export function leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames) {
   let terminate = true;
 
   const definitions = rule.getDefinitions();
 
   definitions.forEach((definition) => {
-    terminate = leftRecursiveRuleNamesFromDefinition(definition, leftRecursiveRuleNames) && terminate;
+    terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames) && terminate;
   });
 
   return terminate;

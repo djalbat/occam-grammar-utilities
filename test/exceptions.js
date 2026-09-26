@@ -1,6 +1,6 @@
 "use strict";
 
-const { adjustedBNFFromBNF } = require("./utilities/bnf");
+const { adjustedBNFFromBNF } = require("./helpers/bnf");
 
 describe("Exceptions", () => {
   describe("a left recursive definition is occluded", () => {
