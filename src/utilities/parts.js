@@ -36,21 +36,39 @@ export function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleN
     const simplePartTerminalPart = simplePart.isTerminalPart();
 
     if (simplePartTerminalPart) {
-      ///
+      if (!nullified) {
+        terminate = true;
+
+        const simplePartConsuming = isPartConsuming(simplePart, ruleMap);
+
+        if (!simplePartConsuming) {
+          terminate = false;
+        }
+      }
     } else {
       const ruleNamePart = simplePart,  ///
             ruleName = ruleNamePart.getRuleName(),
-            leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
+            rule = ruleMap[ruleName] || null;
 
-      if (!leftRecursiveRuleNamesIncludesRuleName) {
-        const leftRecursiveRuleName = ruleName; ///
+      if (rule !== null) {
+        const leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
 
-        leftRecursiveRuleNames.push(leftRecursiveRuleName);
+        if (!leftRecursiveRuleNamesIncludesRuleName) {
+          const leftRecursiveRuleName = ruleName; ///
+
+          leftRecursiveRuleNames.push(leftRecursiveRuleName);
+        }
+
+        if (!nullified) {
+          terminate = true;
+
+          const ruleConsuming = isRuleConsuming(rule, ruleMap);
+
+          if (!ruleConsuming) {
+            terminate = false;
+          }
+        }
       }
-    }
-
-    if (!nullified) {
-      terminate = true;
     }
 
     return terminate;
@@ -116,7 +134,9 @@ export function isPartConsuming(part, ruleMap, visitedRules = []) {
                     visitedRule
                   ]);
 
-            terminate = ruleConsuming;  ///
+            if (ruleConsuming) {
+              terminate = true;
+            }
           }
         }
       }

@@ -40,10 +40,40 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("a rule name part", () => {
+    describe("a rule name part with no conrresponding rule", () => {
       const bnf = `
   
         S ::= A ;
+        
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an empty array", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+
+        assert.isFalse(terminate);
+
+        assert.isEmpty(leftRecursiveNames);
+      });
+    });
+
+    describe("a rule name part with a conrresponding consuming rule", () => {
+      const bnf = `
+  
+        S ::= A ;
+        
+        A ::= "a" ;
           
       `;
 
@@ -63,6 +93,36 @@ describe("partsUtilities", () => {
               terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
         assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveNames, ["A"]);
+      });
+    });
+
+    describe("a rule name part with a conrresponding non-consuming rule", () => {
+      const bnf = `
+  
+        S ::= A ;
+        
+        A ::= "a"? ;
+          
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+
+        assert.isFalse(terminate);
 
         assert.deepEqual(leftRecursiveNames, ["A"]);
       });
@@ -100,6 +160,8 @@ describe("partsUtilities", () => {
       const bnf = `
   
         S ::= A? ;
+          
+        A ::= "a" ;
           
       `;
 
@@ -157,6 +219,8 @@ describe("partsUtilities", () => {
   
         S ::= (A) ;
           
+        A ::= "a" ;
+          
       `;
 
       let part,
@@ -180,7 +244,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("an committed terminal part part", () => {
+    describe("n committed terminal part part", () => {
       const bnf = `
   
         S ::= \`"a" ;
@@ -208,10 +272,12 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("an committed rule name part part ", () => {
+    describe("n committed rule name part part ", () => {
       const bnf = `
   
         S ::= \`A ;
+          
+        A ::= "a" ;
           
       `;
 
@@ -269,6 +335,8 @@ describe("partsUtilities", () => {
   
         S ::= A+ ;
           
+        A ::= "a" ;
+          
       `;
 
       let part,
@@ -325,6 +393,8 @@ describe("partsUtilities", () => {
   
         S ::= ( A B ) ;
           
+        A ::= "a" ;
+          
       `;
 
       let part,
@@ -352,6 +422,8 @@ describe("partsUtilities", () => {
       const bnf = `
   
         S ::= ( "e" A ) ;
+          
+        A ::= "a" ;
           
       `;
 
@@ -381,6 +453,8 @@ describe("partsUtilities", () => {
   
         S ::= ( A "e" ) ;
           
+        A ::= "a" ;
+          
       `;
 
       let part,
@@ -408,6 +482,10 @@ describe("partsUtilities", () => {
       const bnf = `
   
         S ::= ( A? B? ) ;
+          
+        A ::= "a" ;
+          
+        B ::= "b" ;
           
       `;
 
@@ -437,6 +515,8 @@ describe("partsUtilities", () => {
   
         S ::= ( "e"? A ) ;
           
+        A ::= "a" ;
+          
       `;
 
       let part,
@@ -464,6 +544,10 @@ describe("partsUtilities", () => {
       const bnf = `
   
         S ::= ( A? B ) ;
+          
+        A ::= "a" ;
+          
+        B ::= "b" ;
           
       `;
 
@@ -493,10 +577,12 @@ describe("partsUtilities", () => {
   
       S ::= ( "e"? A? ) ;
         
+        A ::= "a" ;
+          
     `;
 
       let part,
-        ruleMap;
+          ruleMap;
 
       before(() => {
         const rules = rulesFromBNF(bnf);
@@ -549,6 +635,10 @@ describe("partsUtilities", () => {
   
         S ::= ( A | B ) ;
           
+        A ::= "a" ;
+          
+        B ::= "b" ;
+          
       `;
 
       let part,
@@ -576,6 +666,8 @@ describe("partsUtilities", () => {
       const bnf = `
   
         S ::= ( "e" | A ) ;
+          
+        A ::= "a" ;
           
       `;
 
@@ -605,6 +697,8 @@ describe("partsUtilities", () => {
   
         S ::= ( A | "e" ) ;
           
+        A ::= "a" ;
+          
       `;
 
       let part,
@@ -632,6 +726,10 @@ describe("partsUtilities", () => {
       const bnf = `
   
         S ::= ( A? | B? ) ;
+          
+        A ::= "a" ;
+          
+        B ::= "b" ;
           
       `;
 
@@ -661,6 +759,8 @@ describe("partsUtilities", () => {
   
         S ::= ( "e"? | A ) ;
           
+        A ::= "a" ;
+          
       `;
 
       let part,
@@ -689,6 +789,10 @@ describe("partsUtilities", () => {
   
         S ::= ( A? | B ) ;
           
+        A ::= "a" ;
+                    
+        B ::= "b" ;
+        
       `;
 
       let part,
@@ -716,6 +820,8 @@ describe("partsUtilities", () => {
       const bnf = `
   
         S ::= ( "e"? | A? ) ;
+          
+        A ::= "a" ;
           
       `;
 
@@ -775,6 +881,10 @@ describe("partsUtilities", () => {
   
         S ::= A B ;
           
+        A ::= "a" ;
+          
+        B ::= "b" ;
+
       `;
 
       let definition,
@@ -802,7 +912,8 @@ describe("partsUtilities", () => {
       const bnf = `
   
         S ::= "e" A ;
-          
+                    
+        A ::= "a" ;
       `;
 
       let definition,
@@ -830,6 +941,8 @@ describe("partsUtilities", () => {
       const bnf = `
   
         S ::= A "e" ;
+          
+        A ::= "a" ;
           
       `;
 
@@ -859,6 +972,10 @@ describe("partsUtilities", () => {
   
         S ::= A? B? ;
           
+        A ::= "a" ;
+          
+        B ::= "b" ;
+          
       `;
 
       let definition,
@@ -886,6 +1003,8 @@ describe("partsUtilities", () => {
       const bnf = `
   
         S ::= "e"? A ;
+          
+        A ::= "a" ;
           
       `;
 
@@ -915,6 +1034,10 @@ describe("partsUtilities", () => {
   
         S ::= A? B ;
           
+        A ::= "a" ;
+          
+        B ::= "b" ;
+          
       `;
 
       let definition,
@@ -942,6 +1065,8 @@ describe("partsUtilities", () => {
       const bnf = `
   
         S ::= "e"? A? ;
+          
+        A ::= "a" ;
           
       `;
 
@@ -1009,6 +1134,10 @@ describe("partsUtilities", () => {
             
             ;           
           
+        A ::= "a" ;
+          
+        B ::= "b" ;
+          
       `;
 
       let rule,
@@ -1041,6 +1170,8 @@ describe("partsUtilities", () => {
             
             ;
           
+        A ::= "a" ;
+          
       `;
 
       let rule,
@@ -1064,7 +1195,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("two definitinos with one rule name part and  one terminal part", () => {
+    describe("two definitinos with one rule name part and one terminal part", () => {
       const bnf = `
   
         S ::=  A 
@@ -1072,6 +1203,8 @@ describe("partsUtilities", () => {
             | "e"
              
             ;
+          
+        A ::= "a" ;
           
       `;
 
@@ -1105,6 +1238,10 @@ describe("partsUtilities", () => {
             
             ;
           
+        A ::= "a" ;
+          
+        B ::= "b" ;
+          
       `;
 
       let rule,
@@ -1136,7 +1273,8 @@ describe("partsUtilities", () => {
             | A 
             
             ;
-            
+          
+        A ::= "a" ;
           
       `;
 
@@ -1164,11 +1302,15 @@ describe("partsUtilities", () => {
     describe("two definitinos with one nullified rule name part and one rule name part", () => {
       const bnf = `
   
-        S ::=  A? 
+        S ::= A? 
         
             | B 
             
             ;
+          
+        A ::= "a" ;
+          
+        B ::= "b" ;
           
       `;
 
@@ -1201,6 +1343,8 @@ describe("partsUtilities", () => {
             | A? 
             
             ;
+          
+        A ::= "a" ;
           
       `;
 
@@ -2040,22 +2184,13 @@ describe("partsUtilities", () => {
   });
 });
 
-function partFromBNF(bnf) {
-  const definition = definitionFromBNF(bnf),
+function partFromRules(rules) {
+  const definition = definitionFromRules(rules),
         parts = definition.getParts(),
         firstPart = first(parts),
-        part = firstPart;
+        part = firstPart; ///
 
   return part;
-}
-
-function definitionFromBNF(bnf) {
-  const rule = ruleFromBNF(bnf),
-        definitions = rule.getDefinitions(),
-        firstDefinition = first(definitions),
-        definition = firstDefinition; ///
-
-  return definition;
 }
 
 function definitionFromRules(rules) {
@@ -2070,23 +2205,6 @@ function definitionFromRules(rules) {
 function ruleFromRules(rules) {
   const firstRule = first(rules),
         rule = firstRule; ///
-
-  return rule;
-}
-
-function partFromRules(rules) {
-  const definition = definitionFromRules(rules),
-        parts = definition.getParts(),
-        firstPart = first(parts),
-        part = firstPart; ///
-
-  return part;
-}
-
-function ruleFromBNF(bnf) {
-  const rules = rulesFromBNF(bnf),
-    firstRule = first(rules),
-    rule = firstRule; ///
 
   return rule;
 }
