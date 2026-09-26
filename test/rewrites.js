@@ -1,8 +1,9 @@
 "use strict";
 
 const { testUtilities } = require("occam-parsers"),
-      { parserUtilities } = require("occam-parsers"),
-      { BasicLexer, BasicParser, eliminateLeftRecursion } = require("../lib/index");  ///
+      { parserUtilities } = require("occam-parsers");
+
+const { BasicLexer, BasicParser, eliminateLeftRecursion } = require("../lib");  ///
 
 const { adjustedBNFFromRules } = require("./helpers/bnf"),
       { checkParentNodes, checkDescendentNodes } = require("./helpers/node");

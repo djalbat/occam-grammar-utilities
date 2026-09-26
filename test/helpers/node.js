@@ -1,6 +1,6 @@
 "use strict";
 
-const { BasicParser } = require("../../lib/index");  ///
+const { BasicParser } = require("../../lib");  ///
 
 const { NonTerminalNodeMap } = BasicParser,
       NonTerminalNodes = Object.values(NonTerminalNodeMap);

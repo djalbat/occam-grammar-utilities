@@ -1,9 +1,11 @@
 "use strict";
 
 const { rulesUtilities } = require("occam-parsers"),
-      { parserUtilities } = require("occam-parsers"),
-      { leftRecursionUtilities } = require("../../lib/index"),  ///
-      { partFromRules, definitionFromRules, ruleFromRules } = require("../helpers/rules");
+      { parserUtilities } = require("occam-parsers");
+
+const { leftRecursionUtilities } = require("../../lib");  ///
+
+const { partFromRules, definitionFromRules, ruleFromRules } = require("../helpers/rules");
 
 const { rulesFromBNF } = parserUtilities,
       { ruleMapFromRules } = rulesUtilities,

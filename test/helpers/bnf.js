@@ -1,7 +1,8 @@
 "use strict";
 
-const { eliminateLeftRecursion } = require("../../lib/index"),  ///
-      { rulesUtilities, parserUtilities } = require("occam-parsers");
+const { rulesUtilities, parserUtilities } = require("occam-parsers");
+
+const { eliminateLeftRecursion } = require("../../lib");  ///
 
 const { rulesFromBNF } = parserUtilities,
       { rulesAsString } = rulesUtilities;
