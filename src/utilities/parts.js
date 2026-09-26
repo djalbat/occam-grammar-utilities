@@ -40,9 +40,13 @@ export function leftRecursiveRuleNamesFromPart(part, leftRecursiveRuleNames) {
     } else {
       const ruleNamePart = simplePart,  ///
             ruleName = ruleNamePart.getRuleName(),
-            leftRecursiveRuleName = ruleName; ///
+            leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
 
-      leftRecursiveRuleNames.push(leftRecursiveRuleName);
+      if (!leftRecursiveRuleNamesIncludesRuleName) {
+        const leftRecursiveRuleName = ruleName; ///
+
+        leftRecursiveRuleNames.push(leftRecursiveRuleName);
+      }
     }
 
     if (!nullified) {
@@ -90,7 +94,13 @@ export function isPartConsuming(part, ruleMap, visitedRules = []) {
       const simplePartTerminalPart = simplePart.isTerminalPart();
 
       if (simplePartTerminalPart) {
-        terminate = true;
+        const terminalPart = simplePart,  ///
+              terminalPartEpsilonPart = terminalPart.isEpsilonPart(),
+              terminalPartNonWhitespacePart = terminalPart.isNoWhitespacePart();
+
+        if (!terminalPartEpsilonPart && !terminalPartNonWhitespacePart) {
+          terminate = true;
+        }
       } else {
         const ruleNamePart = simplePart,  ///
               ruleName = ruleNamePart.getRuleName(),
@@ -146,6 +156,52 @@ export function isRuleConsuming(rule, ruleMap, visitedRules = []) {
         });
 
   return ruleConsuming;
+}
+
+export function recursiveRuleNamesFromPart(part, recursiveRuleNames = []) {
+  retrieveSimpleParts(part, (simplePart) => {
+    let terminate = false;
+
+    const simplePartTerminalPart = simplePart.isTerminalPart();
+
+    if (simplePartTerminalPart) {
+      ///
+    } else {
+      const ruleNamePart = simplePart,  ///
+            ruleName = ruleNamePart.getRuleName(),
+            recursiveRuleNamesInclucesRuleName = recursiveRuleNames.includes(ruleName);
+
+      if (!recursiveRuleNamesInclucesRuleName) {
+        const recursiveRuleName = ruleName; ///
+
+        recursiveRuleNames.push(recursiveRuleName);
+      }
+    }
+
+    return terminate;
+  });
+
+  return recursiveRuleNames;
+}
+
+export function recursiveRuleNamesFromDefinition(definition, recursiveRuleNames = []) {
+  const parts = definition.getParts();
+
+  parts.forEach((part) => {
+    recursiveRuleNamesFromPart(part, recursiveRuleNames);
+  });
+
+  return recursiveRuleNames;
+}
+
+export function recursiveRuleNamesFromRule(rule, recursiveRuleNames = []) {
+  const definitions = rule.getDefinitions();
+
+  definitions.forEach((definition) => {
+    recursiveRuleNamesFromDefinition(definition, recursiveRuleNames);
+  });
+
+  return recursiveRuleNames;
 }
 
 function retrieveSimpleParts(part, callback) {
@@ -295,4 +351,7 @@ export default {
   isPartConsuming,
   isDefinitionConsuming,
   isRuleConsuming,
+  recursiveRuleNamesFromPart,
+  recursiveRuleNamesFromDefinition,
+  recursiveRuleNamesFromRule
 };

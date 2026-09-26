@@ -9,7 +9,7 @@ import rewriteLeftRecursiveRules from "./rewriteLeftRecursiveRules";
 import createDirectlyRepeatedRules from "./createDirectlyRepeatedRules";
 import createIndirectlyRepeatedRules from "./createIndirectlyRepeatedRules";
 
-import { edgesFromStartRule } from "./utilities/graph";
+import { edgesFromStartRule } from "./utilities/edge";
 import { LEFT_RECURSIVE_LABEL } from "./labels";
 import { leftRecursiveRuleNamesFromRule } from "./utilities/definition";
 

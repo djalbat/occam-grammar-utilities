@@ -8,7 +8,7 @@ import { edgesMatchEdge } from "../edge";
 import { ruleNamesFromCycle } from "../utilities/cycle";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 import { leftRecursiveRuleNamesFromDefinition } from "../utilities/definition";
-import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/graph";
+import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/edge";
 
 export default class ReducedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, context) {

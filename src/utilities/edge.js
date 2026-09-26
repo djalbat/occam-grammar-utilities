@@ -3,7 +3,7 @@
 import Edge from "../edge";
 
 import { edgesMatchEdge } from "../edge";
-import { recursiveRuleNamesFromRule } from "../utilities/recursive";
+import { recursiveRuleNamesFromRule } from "../utilities/parts";
 import { RECURSIVE_LABEL, LEFT_RECURSIVE_LABEL } from "../labels";
 
 export function edgesFromRuleNames(ruleNames) {
