@@ -3,7 +3,7 @@
 import { partTypes } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
-import { isPartConsuming } from "../utilities/nonConsuming";
+import { isPartConsuming } from "../utilities/consumption";
 
 const { first } = arrayUtilities,
       { RuleNamePartType,

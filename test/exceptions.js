@@ -5,17 +5,15 @@ const { adjustedBNFFromBNF } = require("./helpers/bnf");
 describe("Exceptions", () => {
   describe("a left recursive definition is occluded", () => {
     const bnf = `
-  
-      A  ::=  B
+    
+      A  ::=  C? A
       
-           |  C
+           |  "a"
       
            ;
       
-      B  ::=  C? A ;
-      
       C  ::=  . ;
-        
+            
     `;
 
     it("does throw an exception", () => {

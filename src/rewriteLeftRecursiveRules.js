@@ -5,7 +5,7 @@ import { arrayUtilities } from "necessary";
 import RewrittenRule from "./rule/rewritten";
 import DirectlyRepeatedRule from "./rule/repeated/directly";
 
-import { isRuleNonConsuming } from "./utilities/nonConsuming";
+import { isRuleConsuming } from "./utilities/consumption";
 import { ruleNamesFromCycles } from "./utilities/cycle";
 import { isCycleIrreducible, ruleCyclesFromRuleNameAndCycles } from "./utilities/cycle";
 
@@ -27,9 +27,9 @@ export default function rewriteLeftRecursiveRules(cycles, ruleMap, ruleNamesMap)
   const directlyRepeatedRules = rulesFromRule(DirectlyRepeatedRule, ruleMap);
 
   directlyRepeatedRules.forEach((directlyRepeatedRule) => {
-    const directlyRepeatedRuleNonConsuming = isRuleNonConsuming(directlyRepeatedRule, ruleMap);
+    const directlyRepeatedRuleConsuming = isRuleConsuming(directlyRepeatedRule, ruleMap);
 
-    if (directlyRepeatedRuleNonConsuming) {
+    if (!directlyRepeatedRuleConsuming) {
       const directlyRepeatedRuleName = directlyRepeatedRule.getName();
 
       throw new Error(`The directly repeated '${directlyRepeatedRuleName}' rule is non-consuming.`);

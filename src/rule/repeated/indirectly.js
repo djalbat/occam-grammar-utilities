@@ -7,9 +7,10 @@ import EpsilonDefinition from "../../definition/epsilon";
 import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { arePartsEqual } from "../../utilities/parts";
-import { isRuleNonProducing } from "../../utilities/nonProducing";
+import { isRuleProducing } from "../../utilities/production";
+import { isPartConsuming } from "../../utilities/consumption";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
-import { isDefinitionLeftRecursive, leftRecursiveRuleNameFromDefinition, isDefinitionsFirstPartConsuming, isDefinitionsFirstPartNakedRuleNamePart } from "../../utilities/definition";
+import { isDefinitionLeftRecursive, leftRecursiveRuleNameFromDefinition, isDefinitionsFirstPartNakedRuleNamePart } from "../../utilities/definition";
 
 const { first } = arrayUtilities;
 
@@ -49,9 +50,9 @@ export default class IndirectlyRepeatedRule extends Rule {
     definitions = definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions);
 
     const indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions),
-          indirectlyRepeatedRuleNonProducing = isRuleNonProducing(indirectlyRepeatedRule, ruleMap);
+          indirectlyRepeatedRuleProducing = isRuleProducing(indirectlyRepeatedRule, ruleMap);
 
-    if (indirectlyRepeatedRuleNonProducing) {
+    if (!indirectlyRepeatedRuleProducing) {
       const epsilonDefinition = EpsilonDefinition.fromPrecedence(precedence);
 
       definitions.push(epsilonDefinition);
@@ -71,6 +72,15 @@ function areFirstPartsEqual(definitions) {
         firstPartsEqual = arePartsEqual(firstParts);
 
   return firstPartsEqual;
+}
+
+function isDefinitionsFirstPartConsuming(definition, ruleMap) {
+  const parts = definition.getParts(),
+        firstPart = first(parts),
+        firstPartConsuming = isPartConsuming(firstPart, ruleMap),
+        definitionsFirstPartConsuming = firstPartConsuming;  ///
+
+  return definitionsFirstPartConsuming;
 }
 
 function definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions) {
@@ -103,7 +113,7 @@ function leftRecursiveDefinitionsFromRuleDefinitionsAndLeftRecursiveRuleName(rul
             if (!definitionsFirstPartConsuming) {
               const definitionString = definition.asString();
 
-              throw new Error(`The first part of the '${definitionString}' left recursive-definition is not a consuming  part.`);
+              throw new Error(`The first part of the '${definitionString}' left recursive-definition is not a consuming part.`);
             }
 
             const definitionsFirstPartNakedRuleNamePart = isDefinitionsFirstPartNakedRuleNamePart(definition);

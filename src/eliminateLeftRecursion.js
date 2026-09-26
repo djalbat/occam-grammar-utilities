@@ -11,7 +11,7 @@ import createIndirectlyRepeatedRules from "./createIndirectlyRepeatedRules";
 
 import { edgesFromStartRule } from "./utilities/edge";
 import { LEFT_RECURSIVE_LABEL } from "./labels";
-import { leftRecursiveRuleNamesFromRule } from "./utilities/definition";
+import { leftRecursiveRuleNamesFromRule } from "./utilities/leftRecursion";
 
 const { filter } = arrayUtilities,
       { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
@@ -50,8 +50,11 @@ function ruleNamesMapFromNothing(ruleMap) {
 
   ruleNames.forEach((ruleName) => {
     const rule = ruleMap[ruleName],
-          leftRecursiveRuleNames = leftRecursiveRuleNamesFromRule(rule, ruleMap),
-          ruleNames = leftRecursiveRuleNames; ///
+          leftRecursiveRuleNames = [];
+
+    leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames);
+
+    const ruleNames = leftRecursiveRuleNames; ///
 
     ruleNamesMap[ruleName] = ruleNames;
   });

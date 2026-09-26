@@ -1,17 +1,15 @@
 "use strict";
 
-const { arrayUtilities } = require("necessary"),
-      { rulesUtilities } = require("occam-parsers"),
+const { rulesUtilities } = require("occam-parsers"),
       { parserUtilities } = require("occam-parsers"),
-      { recursionUtilities, consumptionUtilities, leftRecursionUtilities } = require("../lib/index");  ///
+      { leftRecursionUtilities } = require("../../lib/index"),  ///
+      { partFromRules, definitionFromRules, ruleFromRules } = require("../helpers/rules");
 
-const { first } = arrayUtilities,
-      { rulesFromBNF } = parserUtilities,
+const { rulesFromBNF } = parserUtilities,
       { ruleMapFromRules } = rulesUtilities,
-      { isPartConsuming, isDefinitionConsuming, isRuleConsuming } = consumptionUtilities,
       { leftRecursiveRuleNamesFromPart, leftRecursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromRule } = leftRecursionUtilities;
 
-describe("partsUtilities", () => {
+describe("utiliies/leftReursion", () => {
   describe("leftRecursiveRuleNamesFromPart", () => {
     describe("a terminal part", () => {
       const bnf = `
@@ -41,7 +39,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("a rule name part with no conrresponding rule", () => {
+    describe("a rule name part with no corresponding rule", () => {
       const bnf = `
   
         S ::= A ;
@@ -69,7 +67,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("a rule name part with a conrresponding consuming rule", () => {
+    describe("a rule name part with a corresponding consuming rule", () => {
       const bnf = `
   
         S ::= A ;
@@ -99,7 +97,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("a rule name part with a conrresponding non-consuming rule", () => {
+    describe("a rule name part with a corresponding non-consuming rule", () => {
       const bnf = `
   
         S ::= A ;
@@ -321,7 +319,7 @@ describe("partsUtilities", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns true with an array of length one", () => {
+      it("returns true with an empty array", () => {
         const leftRecursiveNames = [],
               terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
 
@@ -361,7 +359,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("a squence of two terminal parts", () => {
+    describe("a sequence of two terminal parts", () => {
       const bnf = `
   
         S ::= ( "a" "b" ) ;
@@ -389,12 +387,14 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("a squence of two rule name parts", () => {
+    describe("a sequence of two rule name parts", () => {
       const bnf = `
   
         S ::= ( A B ) ;
           
         A ::= "a" ;
+          
+        B ::= "b" ;
           
       `;
 
@@ -419,7 +419,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("a squence of one terminal part followed by one rule name part", () => {
+    describe("a sequence of one terminal part followed by one rule name part", () => {
       const bnf = `
   
         S ::= ( "e" A ) ;
@@ -449,7 +449,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("a squence of one rule name part followed by one terminal part", () => {
+    describe("a sequence of one rule name part followed by one terminal part", () => {
       const bnf = `
   
         S ::= ( A "e" ) ;
@@ -479,7 +479,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("a squence of two nullified rule name parts", () => {
+    describe("a sequence of two nullified rule name parts", () => {
       const bnf = `
   
         S ::= ( A? B? ) ;
@@ -511,7 +511,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("a squence of one nullified terminal part followed by one rule name part", () => {
+    describe("a sequence of one nullified terminal part followed by one rule name part", () => {
       const bnf = `
   
         S ::= ( "e"? A ) ;
@@ -541,7 +541,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("a squence of one nullified rule name part followed by one rule name part", () => {
+    describe("a sequence of one nullified rule name part followed by one rule name part", () => {
       const bnf = `
   
         S ::= ( A? B ) ;
@@ -573,7 +573,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("a squence of one nullified terminal part followed by one nullified rule name part", () => {
+    describe("a sequence of one nullified terminal part followed by one nullified rule name part", () => {
       const bnf = `
   
       S ::= ( "e"? A? ) ;
@@ -1094,7 +1094,7 @@ describe("partsUtilities", () => {
   });
 
   describe("leftRecursiveRuleNamesFromRule", () => {
-    describe("two definitinos with two terminal parts", () => {
+    describe("two definitions with two terminal parts", () => {
       const bnf = `
   
         S ::= "a" 
@@ -1126,7 +1126,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("two definitinos with two rule name parts", () => {
+    describe("two definitions with two rule name parts", () => {
       const bnf = `
   
         S ::= A 
@@ -1162,7 +1162,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("two definitinos with one terminal part and one rule name part", () => {
+    describe("two definitions with one terminal part and one rule name part", () => {
       const bnf = `
   
         S ::= "e" 
@@ -1196,7 +1196,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("two definitinos with one rule name part and one terminal part", () => {
+    describe("two definitions with one rule name part and one terminal part", () => {
       const bnf = `
   
         S ::=  A 
@@ -1230,7 +1230,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("two definitinos with two nullified rule name parts", () => {
+    describe("two definitions with two nullified rule name parts", () => {
       const bnf = `
   
         S ::= A? 
@@ -1266,7 +1266,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("two definitinos with one nullified terminal part and one rule name part", () => {
+    describe("two definitions with one nullified terminal part and one rule name part", () => {
       const bnf = `
   
         S ::= "e"? 
@@ -1300,7 +1300,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("two definitinos with one nullified rule name part and one rule name part", () => {
+    describe("two definitions with one nullified rule name part and one rule name part", () => {
       const bnf = `
   
         S ::= A? 
@@ -1336,7 +1336,7 @@ describe("partsUtilities", () => {
       });
     });
 
-    describe("two definitinos with one nullified terminal part and one nullified rule name part", () => {
+    describe("two definitions with one nullified terminal part and one nullified rule name part", () => {
       const bnf = `
   
         S ::= "e"? 
@@ -1370,842 +1370,4 @@ describe("partsUtilities", () => {
       });
     });
   });
-
-  describe("isPartConsuming", () => {
-    describe("a terminal part", () => {
-      const bnf = `
-  
-        S ::= "a" ;
-          
-      `;
-
-      let part,
-        ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-
-    describe("an epsilon part", () => {
-      const bnf = `
-  
-        S ::= ε ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a no-whitespace part", () => {
-      const bnf = `
-  
-        S ::= <NO_WHITESPACE> ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a nullified terminal part", () => {
-      const bnf = `
-  
-        S ::= "a"? ;
-          
-      `;
-
-      let part,
-        ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a isolated terminal part", () => {
-      const bnf = `
-  
-        S ::= ( "a" ) ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-
-    describe("a commited terminal part", () => {
-      const bnf = `
-  
-        S ::= \`"a" ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-
-    describe("a choice part with two terminal parts", () => {
-      const bnf = `
-  
-        S ::= ( "a" | "b" ) ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-
-    describe("a choice part with two nullifid partsterminal parts", () => {
-      const bnf = `
-  
-        S ::= ( "a"* | "b"? ) ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a choice part with one terminal part and one nullified terminal part", () => {
-      const bnf = `
-  
-        S ::= ( "a" | "b"* ) ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a sequence part with two terminal parts", () => {
-      const bnf = `
-  
-        S ::= ( "a" "b" ) ;
-          
-      `;
-
-      let part,
-        ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-
-    describe("a sequence part with two nullifid partsterminal parts", () => {
-      const bnf = `
-  
-        S ::= ( "a"* "b"? ) ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a sequence part with one terminal part and one nullified terminal part", () => {
-      const bnf = `
-  
-        S ::= ( "a" "b"* ) ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-
-    describe("a sequence part with one nullified terminal part and one terminal part", () => {
-      const bnf = `
-  
-        S ::= ( "a"* "b" ) ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-
-    describe("a rule name part without a corresponding rule", () => {
-      const bnf = `
-  
-        S ::= A ;
-          
-      `;
-
-      let part,
-        ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a nullified rule name part without a corresponding rule", () => {
-      const bnf = `
-  
-        S ::= A? ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a rule name part with a corresponding consuming rule", () => {
-      const bnf = `
-  
-        S ::= A ;
-          
-        A ::= "a" ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-
-    describe("a nullified rule name part with a corresponding consuming rule", () => {
-      const bnf = `
-  
-        S ::= A? ;
-          
-        A ::= "a" ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a rule name part with a corresponding non-consuming rule", () => {
-      const bnf = `
-  
-        S ::= A ;
-          
-        A ::= "a"? ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a nullified rule name part with a corresponding non-consuming rule", () => {
-      const bnf = `
-  
-        S ::= A? ;
-          
-        A ::= "a"* ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a rule name part with a corresponding directly cyclic rule", () => {
-      const bnf = `
-  
-        S ::= A ;
-          
-        A ::= S ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a nullified rule name part with a corresponding directly cyclic rule", () => {
-      const bnf = `
-  
-        S ::= A? ;
-          
-        A ::= S ;
-          
-      `;
-
-      let part,
-        ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a rule name part with a corresponding indirectly cyclic rule", () => {
-      const bnf = `
-  
-        S ::= A ;
-          
-        A ::= B ;
-
-        B ::= S ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a nullified rule name part with a corresponding indirectly cyclic rule", () => {
-      const bnf = `
-  
-        S ::= A? ;
-          
-        A ::= B ;
-
-        B ::= S ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-  });
-
-  describe("isDefinitinoConsuming", () => {
-    describe("a definition with a consuming part", () => {
-      const bnf = `
-  
-        S ::= "a" ;
-          
-      `;
-
-      let definition,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        definition = definitionFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isDefinitionConsuming(definition, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-
-    describe("a definition with a non-consuming part", () => {
-      const bnf = `
-  
-        S ::= "a"* ;
-          
-      `;
-
-      let definition,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        definition = definitionFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isDefinitionConsuming(definition, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a definition with a non-consuming part followed by a consuming part", () => {
-      const bnf = `
-  
-        S ::= "a"* "b" ;
-          
-      `;
-
-      let definition,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        definition = definitionFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isDefinitionConsuming(definition, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-  });
-
-  describe("isRuleConsuming", () => {
-    describe("a rule with a consuming definition", () => {
-      const bnf = `
-
-        S ::= "a" ;
-          
-      `;
-
-      let rule,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        rule = ruleFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isRuleConsuming(rule, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-
-    describe("a rule with a non-consuming definition", () => {
-      const bnf = `
-
-        S ::= "a"* ;
-          
-      `;
-
-      let rule,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        rule = ruleFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isRuleConsuming(rule, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a rule with two consuming definitions", () => {
-      const bnf = `
-
-        S ::= "a" 
-        
-            | "b"
-            
-            ;
-          
-      `;
-
-      let rule,
-        ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        rule = ruleFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isRuleConsuming(rule, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-
-    describe("a rule with two non-consuming definitions", () => {
-      const bnf = `
-
-        S ::= "a"*
-        
-            | "b"?
-            
-            ;
-          
-      `;
-
-      let rule,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        rule = ruleFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isRuleConsuming(rule, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-
-    describe("a rule with a consuming definition and a non-consuming definition", () => {
-      const bnf = `
-
-        S ::= "a" 
-        
-            | "b"* 
-            
-            ;
-          
-      `;
-
-      let rule,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        rule = ruleFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns false", () => {
-        const consuming = isRuleConsuming(rule, ruleMap);
-
-        assert.isFalse(consuming);
-      });
-    });
-  });
 });
-
-function partFromRules(rules) {
-  const definition = definitionFromRules(rules),
-        parts = definition.getParts(),
-        firstPart = first(parts),
-        part = firstPart; ///
-
-  return part;
-}
-
-function definitionFromRules(rules) {
-  const rule = ruleFromRules(rules),
-        defintions = rule.getDefinitions(),
-        firstDefinition = first(defintions),
-        definition = firstDefinition; ///
-
-  return definition;
-}
-
-function ruleFromRules(rules) {
-  const firstRule = first(rules),
-        rule = firstRule; ///
-
-  return rule;
-}

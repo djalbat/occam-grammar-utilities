@@ -2,8 +2,8 @@
 
 import { retrieveSimpleParts } from "../utilities/parts";
 
-export function isPartConsuming(part, ruleMap, visitedRules = []) {
-  let partConsuming = false;
+export function isPartProducing(part, ruleMap, visitedRules = []) {
+  let partProducing = false;
 
   const terminate = retrieveSimpleParts(part, (simplePart, nullified) => {
     let terminate = false;
@@ -12,13 +12,7 @@ export function isPartConsuming(part, ruleMap, visitedRules = []) {
       const simplePartTerminalPart = simplePart.isTerminalPart();
 
       if (simplePartTerminalPart) {
-        const terminalPart = simplePart,  ///
-              terminalPartEpsilonPart = terminalPart.isEpsilonPart(),
-              terminalPartNonWhitespacePart = terminalPart.isNoWhitespacePart();
-
-        if (!terminalPartEpsilonPart && !terminalPartNonWhitespacePart) {
-          terminate = true;
-        }
+        terminate = true;
       } else {
         const ruleNamePart = simplePart,  ///
               ruleName = ruleNamePart.getRuleName(),
@@ -31,12 +25,12 @@ export function isPartConsuming(part, ruleMap, visitedRules = []) {
             terminate = true;
           } else {
             const visitedRule = rule, ///
-                  ruleConsuming = isRuleConsuming(rule, ruleMap, [
+                  ruleProducing = isRuleProducing(rule, ruleMap, [
                     ...visitedRules,
                     visitedRule
                   ]);
 
-            if (ruleConsuming) {
+            if (ruleProducing) {
               terminate = true;
             }
           }
@@ -48,42 +42,42 @@ export function isPartConsuming(part, ruleMap, visitedRules = []) {
   });
 
   if (terminate) {
-    partConsuming = true;
+    partProducing = true;
   }
 
-  return partConsuming;
+  return partProducing;
 }
 
-export function isDefinitionConsuming(definition, ruleMap, visitedRules = []) {
+export function isDefinitionProducing(definition, ruleMap, visitedRules = []) {
   const parts = definition.getParts(),
-        definitionConsuming = parts.some((part) => {
-          const partConsuming = isPartConsuming(part, ruleMap, visitedRules);
+        definitionProducing = parts.some((part) => {
+          const partProducing = isPartProducing(part, ruleMap, visitedRules);
 
-          if (partConsuming) {
+          if (partProducing) {
             return true;
           }
         });
 
-  return definitionConsuming;
+  return definitionProducing;
 }
 
-export function isRuleConsuming(rule, ruleMap, visitedRules = []) {
+export function isRuleProducing(rule, ruleMap, visitedRules = []) {
   const definitions = rule.getDefinitions(),
-        ruleConsuming = each(definitions, (definition) => {
-          const definitionConsuming = isDefinitionConsuming(definition, ruleMap, visitedRules);
+        ruleProducing = each(definitions, (definition) => {
+          const definitionProducing = isDefinitionProducing(definition, ruleMap, visitedRules);
 
-          if (definitionConsuming) {
+          if (definitionProducing) {
             return true;
           }
         });
 
-  return ruleConsuming;
+  return ruleProducing;
 }
 
 export default {
-  isPartConsuming,
-  isDefinitionConsuming,
-  isRuleConsuming
+  isPartProducing,
+  isDefinitionProducing,
+  isRuleProducing
 };
 
 function each(array, callback) {
