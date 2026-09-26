@@ -3,12 +3,13 @@
 const { arrayUtilities } = require("necessary"),
       { rulesUtilities } = require("occam-parsers"),
       { parserUtilities } = require("occam-parsers"),
-      { partsUtilities } = require("../lib/index");  ///
+      { recursionUtilities, consumptionUtilities, leftRecursionUtilities } = require("../lib/index");  ///
 
 const { first } = arrayUtilities,
       { rulesFromBNF } = parserUtilities,
       { ruleMapFromRules } = rulesUtilities,
-      { isPartConsuming, isDefinitionConsuming, isRuleConsuming, leftRecursiveRuleNamesFromPart, leftRecursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromRule } = partsUtilities;
+      { isPartConsuming, isDefinitionConsuming, isRuleConsuming } = consumptionUtilities,
+      { leftRecursiveRuleNamesFromPart, leftRecursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromRule } = leftRecursionUtilities;
 
 describe("partsUtilities", () => {
   describe("leftRecursiveRuleNamesFromPart", () => {

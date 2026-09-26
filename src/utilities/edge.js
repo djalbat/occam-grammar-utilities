@@ -3,7 +3,7 @@
 import Edge from "../edge";
 
 import { edgesMatchEdge } from "../edge";
-import { recursiveRuleNamesFromRule } from "../utilities/parts";
+import { recursiveRuleNamesFromRule } from "../utilities/recursion";
 import { RECURSIVE_LABEL, LEFT_RECURSIVE_LABEL } from "../labels";
 
 export function edgesFromRuleNames(ruleNames) {
@@ -54,7 +54,7 @@ function edgesFromRule(rule, edges, vertexes, ruleMap, ruleNamesMap) {
   ];
 
   const ruleNames = ruleNamesMap[ruleName],
-        recursiveRuleNames = recursiveRuleNamesFromRule(rule),
+        recursiveRuleNames = recursiveRuleNamesFromRule(rule, ruleMap),
         leftRecursiveRuleNames = ruleNames; ///
 
   recursiveRuleNames.forEach((recursiveRuleName) => {

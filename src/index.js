@@ -5,4 +5,6 @@ export { default as BasicParser } from "./basic/parser";
 export { default as NonTerminalNode } from "./nonTerminalNode";
 export { default as eliminateLeftRecursion } from "./eliminateLeftRecursion";
 
-export { default as partsUtilities } from "./utilities/parts";
+export { default as recursionUtilities } from "./utilities/recursion";
+export { default as consumptionUtilities } from "./utilities/consumption";
+export { default as leftRecursionUtilities } from "./utilities/leftRecursion";

@@ -14,217 +14,7 @@ const { first } = arrayUtilities,
         ZeroOrMorePartsPartType,
         SequenceOfPartsPartType } = partTypes;
 
-export function arePartsEqual(parts) {
-  const firstPart = first(parts),
-        firstPartString = firstPart.asString(),
-        partsEqual = parts.every((part) => {
-          const partString = part.asString(),
-                partStringFirstPartString = (partString === firstPartString);
-
-          if (partStringFirstPartString) {
-            return true;
-          }
-        });
-
-  return partsEqual;
-}
-
-export function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames) {
-  const terminate = retrieveSimpleParts(part, (simplePart, nullified) => {
-    let terminate = false;
-
-    const simplePartTerminalPart = simplePart.isTerminalPart();
-
-    if (simplePartTerminalPart) {
-      if (!nullified) {
-        terminate = true;
-
-        const simplePartConsuming = isPartConsuming(simplePart, ruleMap);
-
-        if (!simplePartConsuming) {
-          terminate = false;
-        }
-      }
-    } else {
-      const ruleNamePart = simplePart,  ///
-            ruleName = ruleNamePart.getRuleName(),
-            rule = ruleMap[ruleName] || null;
-
-      if (rule !== null) {
-        const leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
-
-        if (!leftRecursiveRuleNamesIncludesRuleName) {
-          const leftRecursiveRuleName = ruleName; ///
-
-          leftRecursiveRuleNames.push(leftRecursiveRuleName);
-        }
-
-        if (!nullified) {
-          terminate = true;
-
-          const ruleConsuming = isRuleConsuming(rule, ruleMap);
-
-          if (!ruleConsuming) {
-            terminate = false;
-          }
-        }
-      }
-    }
-
-    return terminate;
-  });
-
-  return terminate;
-}
-
-export function leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames) {
-  const parts = definition.getParts(),
-        terminate = parts.some((part) => {
-          const terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
-
-          if (terminate) {
-            return true;
-          }
-        });
-
-  return terminate;
-}
-
-export function leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames) {
-  let terminate = true;
-
-  const definitions = rule.getDefinitions();
-
-  definitions.forEach((definition) => {
-    terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames) && terminate;
-  });
-
-  return terminate;
-}
-
-export function isPartConsuming(part, ruleMap, visitedRules = []) {
-  let partConsuming = false;
-
-  const terminate = retrieveSimpleParts(part, (simplePart, nullified) => {
-    let terminate = false;
-
-    if (!nullified) {
-      const simplePartTerminalPart = simplePart.isTerminalPart();
-
-      if (simplePartTerminalPart) {
-        const terminalPart = simplePart,  ///
-              terminalPartEpsilonPart = terminalPart.isEpsilonPart(),
-              terminalPartNonWhitespacePart = terminalPart.isNoWhitespacePart();
-
-        if (!terminalPartEpsilonPart && !terminalPartNonWhitespacePart) {
-          terminate = true;
-        }
-      } else {
-        const ruleNamePart = simplePart,  ///
-              ruleName = ruleNamePart.getRuleName(),
-              rule = ruleMap[ruleName] || null;
-
-        if (rule !== null) {
-          const visitedRulesIncludesRule = visitedRules.includes(rule);
-
-          if (!visitedRulesIncludesRule) {
-            const visitedRule = rule, ///
-                  ruleConsuming = isRuleConsuming(rule, ruleMap, [
-                    ...visitedRules,
-                    visitedRule
-                  ]);
-
-            if (ruleConsuming) {
-              terminate = true;
-            }
-          }
-        }
-      }
-    }
-
-    return terminate;
-  });
-
-  if (terminate) {
-    partConsuming = true;
-  }
-
-  return partConsuming;
-}
-
-export function isDefinitionConsuming(definition, ruleMap, visitedRules = []) {
-  const parts = definition.getParts(),
-        definitionConsuming = parts.some((part) => {
-          const partConsuming = isPartConsuming(part, ruleMap, visitedRules);
-
-          if (partConsuming) {
-            return true;
-          }
-        });
-
-  return definitionConsuming;
-}
-
-export function isRuleConsuming(rule, ruleMap, visitedRules = []) {
-  const definitions = rule.getDefinitions(),
-        ruleConsuming = definitions.every((definition) => {
-          const definitionConsuming = isDefinitionConsuming(definition, ruleMap, visitedRules);
-
-          if (definitionConsuming) {
-            return true;
-          }
-        });
-
-  return ruleConsuming;
-}
-
-export function recursiveRuleNamesFromPart(part, recursiveRuleNames = []) {
-  retrieveSimpleParts(part, (simplePart) => {
-    let terminate = false;
-
-    const simplePartTerminalPart = simplePart.isTerminalPart();
-
-    if (simplePartTerminalPart) {
-      ///
-    } else {
-      const ruleNamePart = simplePart,  ///
-            ruleName = ruleNamePart.getRuleName(),
-            recursiveRuleNamesInclucesRuleName = recursiveRuleNames.includes(ruleName);
-
-      if (!recursiveRuleNamesInclucesRuleName) {
-        const recursiveRuleName = ruleName; ///
-
-        recursiveRuleNames.push(recursiveRuleName);
-      }
-    }
-
-    return terminate;
-  });
-
-  return recursiveRuleNames;
-}
-
-export function recursiveRuleNamesFromDefinition(definition, recursiveRuleNames = []) {
-  const parts = definition.getParts();
-
-  parts.forEach((part) => {
-    recursiveRuleNamesFromPart(part, recursiveRuleNames);
-  });
-
-  return recursiveRuleNames;
-}
-
-export function recursiveRuleNamesFromRule(rule, recursiveRuleNames = []) {
-  const definitions = rule.getDefinitions();
-
-  definitions.forEach((definition) => {
-    recursiveRuleNamesFromDefinition(definition, recursiveRuleNames);
-  });
-
-  return recursiveRuleNames;
-}
-
-function retrieveSimpleParts(part, callback) {
+export function retrieveSimpleParts(part, callback) {
   const terminate = retrieveParts(part, (part, nullified) => {
     let terminate = false;
 
@@ -242,7 +32,7 @@ function retrieveSimpleParts(part, callback) {
   return terminate;
 }
 
-function retrieveParts(part, nullified, callback) {
+export function retrieveParts(part, nullified, callback) {
   if (callback === undefined) {
     callback = nullified; ///
 
@@ -344,7 +134,7 @@ function retrieveParts(part, nullified, callback) {
   return terminate;
 }
 
-function isPartSimplePart(part) {
+export function isPartSimplePart(part) {
   let partSimplePart = false;
 
   const partTerminalPart = part.isTerminalPart();
@@ -363,15 +153,17 @@ function isPartSimplePart(part) {
   return partSimplePart;
 }
 
-export default {
-  arePartsEqual,
-  leftRecursiveRuleNamesFromPart,
-  leftRecursiveRuleNamesFromDefinition,
-  leftRecursiveRuleNamesFromRule,
-  isPartConsuming,
-  isDefinitionConsuming,
-  isRuleConsuming,
-  recursiveRuleNamesFromPart,
-  recursiveRuleNamesFromDefinition,
-  recursiveRuleNamesFromRule
-};
+export function arePartsEqual(parts) {
+  const firstPart = first(parts),
+        firstPartString = firstPart.asString(),
+        partsEqual = parts.every((part) => {
+          const partString = part.asString(),
+            partStringFirstPartString = (partString === firstPartString);
+
+          if (partStringFirstPartString) {
+            return true;
+          }
+        });
+
+  return partsEqual;
+}
