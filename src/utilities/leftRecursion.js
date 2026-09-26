@@ -1,7 +1,40 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
+
 import { retrieveSimpleParts } from "../utilities/parts";
 import { isPartConsuming, isRuleConsuming } from "../utilities/consumption";
+
+const { first } = arrayUtilities;
+
+export function isDefinitionLeftRecursive(definition, ruleMap) {
+  const leftRecursiveRuleNames = [];
+
+  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
+
+  const leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length,
+        definitionLeftRecursive = (leftRecursiveRuleNamesLength > 0);
+
+  return definitionLeftRecursive;
+}
+
+export function leftRecursiveRuleNameFromDefinition(definition, ruleMap) {
+  let leftRecursiveRuleName = null;
+
+  const leftRecursiveRuleNames = [];
+
+  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
+
+  const leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length;
+
+  if (leftRecursiveRuleNamesLength === 1) {
+    const firstLeftRecursiveRuleName = first(leftRecursiveRuleNames);
+
+    leftRecursiveRuleName = firstLeftRecursiveRuleName; ///
+  }
+
+  return leftRecursiveRuleName;
+}
 
 export function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames) {
   const terminate = retrieveSimpleParts(part, (simplePart, nullified) => {

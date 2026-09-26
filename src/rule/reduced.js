@@ -7,7 +7,7 @@ import ReducedNode from "../node/reduced";
 import { edgesMatchEdge } from "../edge";
 import { ruleNamesFromCycle } from "../utilities/cycle";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
-import { leftRecursiveRuleNamesFromDefinition } from "../utilities/definition";
+import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursion";
 import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/edge";
 
 export default class ReducedRule extends Rule {
@@ -47,20 +47,23 @@ export default class ReducedRule extends Rule {
 }
 
 function isDefinitionReducible(definition, ruleName, cycles, ruleMap) {
-  const leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition, ruleMap),
-        definitionReducible = leftRecursiveRuleNames.every((leftRecursiveRuleName) => {
-          const cyclesIncludeRuleNameAndLeftRecursiveRuleName = cycles.some((cycle) => {
-            const cycleIncludesRuleNameAndLeftRecursiveRuleName = doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName);
+  const leftRecursiveRuleNames = [];
 
-            if (cycleIncludesRuleNameAndLeftRecursiveRuleName) {
-              return true;
-            }
-          });
+  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
 
-          if (!cyclesIncludeRuleNameAndLeftRecursiveRuleName) {
-            return true;
-          }
-        });
+  const definitionReducible = leftRecursiveRuleNames.every((leftRecursiveRuleName) => {
+    const cyclesIncludeRuleNameAndLeftRecursiveRuleName = cycles.some((cycle) => {
+      const cycleIncludesRuleNameAndLeftRecursiveRuleName = doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName);
+
+      if (cycleIncludesRuleNameAndLeftRecursiveRuleName) {
+        return true;
+      }
+    });
+
+    if (!cyclesIncludeRuleNameAndLeftRecursiveRuleName) {
+      return true;
+    }
+  });
 
   return definitionReducible;
 }

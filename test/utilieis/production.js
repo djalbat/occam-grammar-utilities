@@ -9,7 +9,7 @@ const { rulesFromBNF } = parserUtilities,
       { ruleMapFromRules } = rulesUtilities,
       { isPartProducing, isDefinitionProducing, isRuleProducing } = productionUtilities;
 
-describe.skip("utiliies/production", () => {
+describe("utiliies/production", () => {
   describe("isPartProducing", () => {
     describe("a terminal part", () => {
       const bnf = `
@@ -514,10 +514,10 @@ describe.skip("utiliies/production", () => {
         ruleMap = ruleMapFromRules(rules)
       });
 
-      it("returns false", () => {
+      it("returns true", () => {
         const producing = isPartProducing(part, ruleMap);
 
-        assert.isFalse(producing);
+        assert.isTrue(producing);
       });
     });
 
@@ -570,10 +570,10 @@ describe.skip("utiliies/production", () => {
         ruleMap = ruleMapFromRules(rules)
       });
 
-      it("returns false", () => {
+      it("returns true", () => {
         const producing = isPartProducing(part, ruleMap);
 
-        assert.isFalse(producing);
+        assert.isTrue(producing);
       });
     });
 

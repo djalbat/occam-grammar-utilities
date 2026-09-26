@@ -9,7 +9,7 @@ const { rulesFromBNF } = parserUtilities,
       { ruleMapFromRules } = rulesUtilities,
       { isPartConsuming, isDefinitionConsuming, isRuleConsuming } = consumptionUtilities;
 
-describe.skip("utiliies/consumption", () => {
+describe("utiliies/consumption", () => {
   describe("isPartConsuming", () => {
     describe("a terminal part", () => {
       const bnf = `
@@ -514,10 +514,10 @@ describe.skip("utiliies/consumption", () => {
         ruleMap = ruleMapFromRules(rules)
       });
 
-      it("returns false", () => {
+      it("returns true", () => {
         const consuming = isPartConsuming(part, ruleMap);
 
-        assert.isFalse(consuming);
+        assert.isTrue(consuming);
       });
     });
 
@@ -570,10 +570,10 @@ describe.skip("utiliies/consumption", () => {
         ruleMap = ruleMapFromRules(rules)
       });
 
-      it("returns false", () => {
+      it("returns true", () => {
         const consuming = isPartConsuming(part, ruleMap);
 
-        assert.isFalse(consuming);
+        assert.isTrue(consuming);
       });
     });
 

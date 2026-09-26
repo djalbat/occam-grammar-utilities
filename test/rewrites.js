@@ -591,53 +591,53 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                  
+                          
         S   ::= A... <END_OF_LINE> ;
         
         A   ::= A_ A~*
-        
+            
               | B_ B~* A~B
-        
+            
               | C_ C~* B~C B~* A~B
-        
+            
               | D_ D~* C~D C~* B~C B~* A~B
         
               ;
         
         B   ::= B_ B~*
-        
+            
               | C_ C~* B~C
-        
+            
               | A_ A~* B~A
-        
+            
               | D_ D~* C~D C~* B~C
-        
+            
               | A_ A~* D~A D~* C~D C~* B~C
         
               ;
         
         C   ::= C_ C~*
-        
+            
               | D_ D~* C~D
-        
-              | A_ A~* D~A D~* C~D
-        
+            
               | B_ B~* D~B D~* C~D
-        
+            
+              | A_ A~* D~A D~* C~D
+            
               | B_ B~* A~B A~* D~A D~* C~D
         
               ;
         
         D   ::= D_ D~*
-        
-              | A_ A~* D~A
-        
+            
               | B_ B~* D~B
-        
+            
+              | A_ A~* D~A
+            
               | C_ C~* B~C B~* D~B
-        
+            
               | B_ B~* A~B A~* D~A
-        
+            
               | C_ C~* B~C B~* A~B A~* D~A
         
               ;
@@ -665,33 +665,33 @@ describe("Rewrites", () => {
         B~A ::= "h" ;
         
         A~  ::= A~A
-        
+            
               | D~A D~* C~D C~* B~C B~* A~B
-        
+            
               | B~A B~* A~B
         
               ;
         
         B~  ::= D~B D~* C~D C~* B~C
-        
+            
               | A~B A~* D~A D~* C~D C~* B~C
-        
+            
               | A~B A~* B~A
         
               ;
         
         C~  ::= B~C B~* D~B D~* C~D
-        
+            
               | B~C B~* A~B A~* D~A D~* C~D
         
               ;
         
         D~  ::= C~D C~* B~C B~* D~B
-        
+            
               | C~D C~* B~C B~* A~B A~* D~A
         
               ;
-        
+                      
       `));
     });
 
@@ -807,9 +807,9 @@ describe("Rewrites", () => {
         
         C   ::= C_ C~*
         
-              | B_ B~* C~B
-        
               | A_ A~* C~A
+        
+              | B_ B~* C~B
         
               ;
         
@@ -1144,25 +1144,25 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                  
+                          
         S   ::= A... <END_OF_LINE> ;
         
         A   ::= A_ A~*
-        
-              | C_ C~* A~C
-        
+            
               | B_ B~* A~B
+            
+              | C_ C~* A~C
         
               ;
         
         B   ::= B_ B~*
-        
+            
               | A_ A~* B~A
         
               ;
         
         C   ::= C_ C~*
-        
+            
               | A_ A~* C~A
         
               ;
@@ -1182,7 +1182,7 @@ describe("Rewrites", () => {
         C~A ::= "e" ;
         
         A~  ::= B~A B~* A~B
-        
+            
               | C~A C~* A~C
         
               ;
@@ -1287,42 +1287,41 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                  
-                                              
+                                                                        
         S   ::= T... <END_OF_LINE> ;
         
         T   ::= T_ T~*
-        
-              | C_ C~* T~C
-        
+            
               | B_ B~* T~B
-        
+            
+              | C_ C~* T~C
+            
               | C_ C~* B~C B~* T~B
         
               ;
         
         A   ::= T_ T~* A~T
-        
+            
               | B_ B~* T~B T~* A~T
-        
+            
               | C_ C~* T~C T~* A~T
-        
+            
               | C_ C~* B~C B~* T~B T~* A~T
         
               ;
         
         B   ::= B_ B~*
-        
+            
               | C_ C~* B~C
-        
+            
               | T_ T~* A~T A~* C~A C~* B~C
         
               ;
         
         C   ::= C_ C~*
-        
+            
               | T_ T~* A~T A~* C~A
-        
+            
               | B_ B~* T~B T~* A~T A~* C~A
         
               ;
@@ -1332,7 +1331,7 @@ describe("Rewrites", () => {
         T_  ::= V ;
         
         B_  ::= "-" A
-        
+            
               | V
         
               ;
@@ -1350,7 +1349,7 @@ describe("Rewrites", () => {
         T~C ::= ε ;
         
         T~  ::= A~T A~* C~A C~* B~C B~* T~B
-        
+            
               | A~T A~* C~A C~* T~C
         
               ;
@@ -1358,17 +1357,17 @@ describe("Rewrites", () => {
         B~  ::= T~B T~* A~T A~* C~A C~* B~C ;
         
         C~  ::= B~C B~* T~B T~* A~T A~* C~A
-        
+            
               | T~C T~* A~T A~* C~A
         
               ;
         
         A~  ::= C~A C~* B~C B~* T~B T~* A~T
-        
+            
               | C~A C~* T~C T~* A~T
         
               ;
-
+              
       `));
     });
 

@@ -1,6 +1,19 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
+
 import { retrieveSimpleParts } from "../utilities/parts";
+
+const { first } = arrayUtilities;
+
+export function isDefinitionsFirstPartConsuming(definition, ruleMap) {
+  const parts = definition.getParts(),
+        firstPart = first(parts),
+        firstPartConsuming = isPartConsuming(firstPart, ruleMap),
+        definitionsFirstPartConsuming = firstPartConsuming;  ///
+
+  return definitionsFirstPartConsuming;
+}
 
 export function isPartConsuming(part, ruleMap, visitedRules = []) {
   let partConsuming = false;

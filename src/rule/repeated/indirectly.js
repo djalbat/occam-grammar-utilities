@@ -8,9 +8,10 @@ import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { arePartsEqual } from "../../utilities/parts";
 import { isRuleProducing } from "../../utilities/production";
-import { isPartConsuming } from "../../utilities/consumption";
+import { isDefinitionsFirstPartConsuming } from "../../utilities/consumption";
+import { isDefinitionsFirstPartNakedRuleNamePart } from "../../utilities/part";
 import { indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName } from "../../utilities/ruleName";
-import { isDefinitionLeftRecursive, leftRecursiveRuleNameFromDefinition, isDefinitionsFirstPartNakedRuleNamePart } from "../../utilities/definition";
+import { isDefinitionLeftRecursive, leftRecursiveRuleNameFromDefinition } from "../../utilities/leftRecursion";
 
 const { first } = arrayUtilities;
 
@@ -72,15 +73,6 @@ function areFirstPartsEqual(definitions) {
         firstPartsEqual = arePartsEqual(firstParts);
 
   return firstPartsEqual;
-}
-
-function isDefinitionsFirstPartConsuming(definition, ruleMap) {
-  const parts = definition.getParts(),
-        firstPart = first(parts),
-        firstPartConsuming = isPartConsuming(firstPart, ruleMap),
-        definitionsFirstPartConsuming = firstPartConsuming;  ///
-
-  return definitionsFirstPartConsuming;
 }
 
 function definitionsFromLeftRecursiveDefinitions(leftRecursiveDefinitions) {
