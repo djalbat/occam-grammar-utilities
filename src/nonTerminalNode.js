@@ -23,11 +23,18 @@ function isUnprecedented(node) {
           precedence = nonTerminalNode.getPrecedence();
 
     if (!unprecedented) {
-      if (precedence !== null) {
-        const ruleName = nonTerminalNode.getRuleName();
+      const multiplicity = node.getMultiplicity(),
+            lastIndex = (multiplicity - 1),
+            firstIndex = 0,
+            strength = Math.abs(precedence),
+            associativity = Math.sign(precedence);
 
-        unprecedented = nonTerminalNode.someChildNode((childNode) => {
-          const childNodeLowerPrecedence = childNode.isLowerPrecedence(ruleName, precedence);
+
+      if ((precedence !== null) && (precedence !== Infinity)) {
+        unprecedented = nonTerminalNode.someChildNode((childNode, index) => {
+          const last = (index === lastIndex),
+                first = (index === firstIndex),
+                childNodeLowerPrecedence = childNode.isLowerPrecedence(associativity, strength, first, last);
 
           if (childNodeLowerPrecedence) {
             return true;
