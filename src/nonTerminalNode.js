@@ -5,7 +5,8 @@ import { NonTerminalNode as NonTerminalNodeBase } from "occam-parsers";
 export default class NonTerminalNode extends NonTerminalNodeBase {
   isUnprecedented() {
     const node = this,  ///
-          unprecedented = isUnprecedented(node);
+          nodeUnprecedented = isNodeUnprecedented(node),
+          unprecedented = nodeUnprecedented;  ///
 
     return unprecedented;
   }
@@ -13,48 +14,32 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
   static fromRuleNameChildNodesOpacityAndPrecedence(Class, ruleName, childNodes, opacity, precedence) { return NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(Class, ruleName, childNodes, opacity, precedence); }
 }
 
-function isUnprecedented(node) {
-  let unprecedented = false;
+function isNodeUnprecedented(node) {
+  let nodeUnprecedented = false;
 
   const nodeNonTerminalNode = node.isNonTerminalNode();
 
   if (nodeNonTerminalNode) {
-    const nonTerminalNode = node, ///
-          precedence = nonTerminalNode.getPrecedence();
+    const nonTerminalNode = node; ///
 
-    if (!unprecedented) {
-      const multiplicity = node.getMultiplicity(),
-            lastIndex = (multiplicity - 1),
-            firstIndex = 0,
-            strength = Math.abs(precedence),
-            associativity = Math.sign(precedence);
+    if (!nodeUnprecedented) {
+      const childNodesLowerPrecedence = node.areChildNodesLowerPrecedence();
 
-
-      if ((precedence !== null) && (precedence !== Infinity)) {
-        unprecedented = nonTerminalNode.someChildNode((childNode, index) => {
-          const last = (index === lastIndex),
-                first = (index === firstIndex),
-                childNodeLowerPrecedence = childNode.isLowerPrecedence(associativity, strength, first, last);
-
-          if (childNodeLowerPrecedence) {
-            return true;
-          }
-        });
+      if (childNodesLowerPrecedence) {
+        nodeUnprecedented = true;
       }
     }
 
-    if (!unprecedented) {
-      nonTerminalNode.someChildNode((childNode) => {
-        const node = childNode; ///
+    if (!nodeUnprecedented) {
+      nodeUnprecedented = nonTerminalNode.someChildNode((childNode) => {
+        const childNodeUnprecedented = isNodeUnprecedented(childNode);
 
-        unprecedented = isUnprecedented(node);
-
-        if (unprecedented) {
+        if (childNodeUnprecedented) {
           return true;
         }
       });
     }
   }
 
-  return unprecedented;
+  return nodeUnprecedented;
 }
