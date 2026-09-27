@@ -426,21 +426,23 @@ describe("Precedence", () => {
     });
   });
 
-  describe("a cycle of length one with precedence strength and left associativity", () => {
+  describe("a cycle of length two with precedence strength and left associativity", () => {
     let bnf = `
   
         S ::= T... <END_OF_LINE> ;
         
-        T ::= T "+" T (-1) 
+        T ::= A "+" A (-1) 
                 
             | .
             
             ;
     
+        A ::= T ( );
+
       `,
-      node,
-      rules,
-      tokens;
+        node,
+        rules,
+        tokens;
 
     before(() => {
       rules = rulesFromBNF(bnf);
@@ -459,11 +461,17 @@ describe("Precedence", () => {
         
         T   ::= T_ T~* ;
         
+        A   ::= T_ T~* A~T ;
+        
         T_  ::= . ;
         
-        T~T ::= "+" T (-1) ;
+        T~A ::= "+" A (-1) ;
         
-        T~  ::= T~T ;
+        A~T ::= ε ( ) ;
+        
+        T~  ::= A~T A~* T~A ;
+        
+        A~  ::= T~A T~* A~T ;
         
       `));
     });
@@ -486,43 +494,49 @@ describe("Precedence", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                              
-                                                                                           S [0]                           
-                                                                                             |                             
-                                                                     ------------------------------------------------      
-                                                                     |                                              |      
-                                                                T [0] (-1)                                    <END_OF_LINE>
-                                                                     |                                                     
-                                       -------------------------------------------------------------                       
-                                       |                                       |                   |                       
-                                  T [0] (-1)                          "+"[unassigned] [0]        T [0]                     
-                                       |                                                           |                       
-                   -----------------------------------------                              "z"[unassigned] [0]              
-                   |                   |                   |                                                               
-                 T [0]        "+"[unassigned] [0]        T [0]                                                             
-                   |                                       |                                                               
-          "x"[unassigned] [0]                     "y"[unassigned] [0]                                                      
+                                                  
+                                                                                         S [0]                           
+                                                                                           |                             
+                                                                   ------------------------------------------------      
+                                                                   |                                              |      
+                                                              T [0] (-1)                                    <END_OF_LINE>
+                                                                   |                                                     
+                                     -------------------------------------------------------------                       
+                                     |                                       |                   |                       
+                                 A [0] ( )                          "+"[unassigned] [0]      A [0] ( )                   
+                                     |                                                           |                       
+                                T [0] (-1)                                                     T [0]                     
+                                     |                                                           |                       
+                 -----------------------------------------                              "z"[unassigned] [0]              
+                 |                   |                   |                                                               
+             A [0] ( )      "+"[unassigned] [0]      A [0] ( )                                                           
+                 |                                       |                                                               
+               T [0]                                   T [0]                                                             
+                 |                                       |                                                               
+        "x"[unassigned] [0]                     "y"[unassigned] [0]                                                      
              
       `));
       });
     });
   });
 
-  describe("a cycle of length one with precedence strength and right associativity", () => {
+  describe("a cycle of length two with precedence strength and right associativity", () => {
     let bnf = `
   
         S ::= T... <END_OF_LINE> ;
         
-        T ::= T "+" T (1) 
+        T ::= A "+" A (1) 
                 
             | .
             
             ;
     
-      `,
-      node,
-      rules,
-      tokens;
+        A ::= T ( );
+    
+        `,
+        node,
+        rules,
+        tokens;
 
     before(() => {
       rules = rulesFromBNF(bnf);
@@ -536,16 +550,22 @@ describe("Precedence", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                  
+                          
         S   ::= T... <END_OF_LINE> ;
         
         T   ::= T_ T~* ;
         
+        A   ::= T_ T~* A~T ;
+        
         T_  ::= . ;
         
-        T~T ::= "+" T (-1) ;
+        T~A ::= "+" A (1) ;
         
-        T~  ::= T~T ;
+        A~T ::= ε ( ) ;
+        
+        T~  ::= A~T A~* T~A ;
+        
+        A~  ::= T~A T~* A~T ;
         
       `));
     });
@@ -568,24 +588,28 @@ describe("Precedence", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                              
-                                                                                           S [0]                           
-                                                                                             |                             
-                                                                     ------------------------------------------------      
-                                                                     |                                              |      
-                                                                T [0] (-1)                                    <END_OF_LINE>
-                                                                     |                                                     
-                                       -------------------------------------------------------------                       
-                                       |                                       |                   |                       
-                                  T [0] (-1)                          "+"[unassigned] [0]        T [0]                     
-                                       |                                                           |                       
-                   -----------------------------------------                              "z"[unassigned] [0]              
-                   |                   |                   |                                                               
-                 T [0]        "+"[unassigned] [0]        T [0]                                                             
-                   |                                       |                                                               
-          "x"[unassigned] [0]                     "y"[unassigned] [0]                                                      
-             
-      `));
+                                                                      
+                                                                                 S [0]                                     
+                                                                                   |                                       
+                                                 --------------------------------------------------------------------      
+                                                 |                                                                  |      
+                                             T [0] (1)                                                        <END_OF_LINE>
+                                                 |                                                                         
+                   -------------------------------------------------------------                                           
+                   |                   |                                       |                                           
+               A [0] ( )      "+"[unassigned] [0]                          A [0] ( )                                       
+                   |                                                           |                                           
+                 T [0]                                                     T [0] (1)                                       
+                   |                                                           |                                           
+          "x"[unassigned] [0]                              -----------------------------------------                       
+                                                           |                   |                   |                       
+                                                       A [0] ( )      "+"[unassigned] [0]      A [0] ( )                   
+                                                           |                                       |                       
+                                                         T [0]                                   T [0]                     
+                                                           |                                       |                       
+                                                  "y"[unassigned] [0]                     "z"[unassigned] [0]              
+
+       `));
       });
     });
   });
