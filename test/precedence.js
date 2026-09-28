@@ -429,17 +429,17 @@ describe("Precedence", () => {
   describe("a cycle of length two with precedence strength and left associativity", () => {
     let bnf = `
   
-        S ::= T... <END_OF_LINE> ;
-        
-        T ::= A "+" A (-1) 
-                
-            | .
-            
-            ;
-    
-        A ::= T ( );
-
-      `,
+          S ::= T... <END_OF_LINE> ;
+          
+          T ::= A "+" A (-1) 
+                  
+              | .
+              
+              ;
+      
+          A ::= T ( );
+  
+        `,
         node,
         rules,
         tokens;
@@ -523,15 +523,15 @@ describe("Precedence", () => {
   describe("a cycle of length two with precedence strength and right associativity", () => {
     let bnf = `
   
-        S ::= T... <END_OF_LINE> ;
-        
-        T ::= A "+" A (1) 
-                
-            | .
-            
-            ;
-    
-        A ::= T ( );
+          S ::= T... <END_OF_LINE> ;
+          
+          T ::= A "+" A (1) 
+                  
+              | .
+              
+              ;
+      
+          A ::= T ( );
     
         `,
         node,
