@@ -117,58 +117,6 @@ describe("utiliies/recursion", () => {
       });
     });
 
-    describe("n committed terminal part part", () => {
-      const bnf = `
-  
-        S ::= \`"a" ;
-          
-      `;
-
-      let part,
-        ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules);
-      });
-
-      it("returns an empty array", () => {
-        const recursiveNames = recursiveRuleNamesFromPart(part, ruleMap);
-
-        assert.isEmpty(recursiveNames);
-      });
-    });
-
-    describe("n committed rule name part part ", () => {
-      const bnf = `
-  
-        S ::= \`A ;
-          
-        A ::= "a" ;
-          
-      `;
-
-      let part,
-        ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules);
-      });
-
-      it("returns an array of length one", () => {
-        const recursiveNames = recursiveRuleNamesFromPart(part, ruleMap);
-
-        assert.deepEqual(recursiveNames, ["A"]);
-      });
-    });
-
     describe("a one or more terminal parts part", () => {
       const bnf = `
   

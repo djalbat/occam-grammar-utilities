@@ -10,7 +10,6 @@ const { first } = arrayUtilities,
       { IsolatedPartPartType,
         OptionalPartPartType,
         ChoiceOfPartsPartType,
-        CommittedPartPartType,
         OneOrMorePartsPartType,
         ZeroOrMorePartsPartType,
         SequenceOfPartsPartType } = partTypes;
@@ -86,15 +85,6 @@ export function retrieveParts(part, nullified, callback) {
         case IsolatedPartPartType: {
           const isolatedPartPart = nonTerminalPart,  ///
                 part = isolatedPartPart.getPart();
-
-          terminate = retrieveParts(part, nullified, callback);
-
-          break;
-        }
-
-        case CommittedPartPartType: {
-          const committedPartPart = nonTerminalPart,  ///
-                part = committedPartPart.getPart();
 
           terminate = retrieveParts(part, nullified, callback);
 

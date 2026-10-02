@@ -25,7 +25,7 @@ export default class RewrittenNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(RewrittenNode, ruleName, childNodes, opacity, precedence); }
+  static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RewrittenNode, ruleName, childNodes, precedence, opacity); }
 }
 
 function nonTerminalNodeFromNonTerminalNode(nonTerminalNode, context) {
@@ -35,7 +35,7 @@ function nonTerminalNodeFromNonTerminalNode(nonTerminalNode, context) {
         childNodes = nonTerminalNode.removeChildNodes(),
         NonTerminalNode = context.NonTerminalNodeFromRuleName(ruleName);
 
-  nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence);  ///
+  nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity);  ///
 
   return nonTerminalNode;
 }

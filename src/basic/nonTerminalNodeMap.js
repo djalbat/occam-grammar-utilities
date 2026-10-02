@@ -4,31 +4,31 @@ import { NonTerminalNode as NonTerminalNodeBase } from "occam-parsers";
 
 import NonTerminalNode from "../nonTerminalNode";
 
-class S extends NonTerminalNode { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(S, ruleName, childNodes, opacity, precedence); } }
+class S extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(S, ruleName, childNodes, precedence, opacity); } }
 
-class T extends NonTerminalNode { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(T, ruleName, childNodes, opacity, precedence); } }
+class T extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(T, ruleName, childNodes, precedence, opacity); } }
 
-class A extends NonTerminalNodeBase { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(A, ruleName, childNodes, opacity, precedence); } }
+class A extends NonTerminalNodeBase { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(A, ruleName, childNodes, precedence, opacity); } }
 
-class B extends NonTerminalNodeBase { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(B, ruleName, childNodes, opacity, precedence); } }
+class B extends NonTerminalNodeBase { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(B, ruleName, childNodes, precedence, opacity); } }
 
-class C extends NonTerminalNodeBase { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(C, ruleName, childNodes, opacity, precedence); } }
+class C extends NonTerminalNodeBase { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(C, ruleName, childNodes, precedence, opacity); } }
 
-class D extends NonTerminalNodeBase { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(D, ruleName, childNodes, opacity, precedence); } }
+class D extends NonTerminalNodeBase { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(D, ruleName, childNodes, precedence, opacity); } }
 
-class E extends NonTerminalNodeBase { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(E, ruleName, childNodes, opacity, precedence); } }
+class E extends NonTerminalNodeBase { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(E, ruleName, childNodes, precedence, opacity); } }
 
-class F extends NonTerminalNodeBase { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(F, ruleName, childNodes, opacity, precedence); } }
+class F extends NonTerminalNodeBase { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(F, ruleName, childNodes, precedence, opacity); } }
 
-class U extends NonTerminalNodeBase { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(T, ruleName, childNodes, opacity, precedence); } }
+class U extends NonTerminalNodeBase { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(T, ruleName, childNodes, precedence, opacity); } }
 
-class V extends NonTerminalNodeBase { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(V, ruleName, childNodes, opacity, precedence); } }
+class V extends NonTerminalNodeBase { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(V, ruleName, childNodes, precedence, opacity); } }
 
-class X extends NonTerminalNodeBase { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(X, ruleName, childNodes, opacity, precedence); } }
+class X extends NonTerminalNodeBase { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(X, ruleName, childNodes, precedence, opacity); } }
 
-class Y extends NonTerminalNodeBase { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(Y, ruleName, childNodes, opacity, precedence); } }
+class Y extends NonTerminalNodeBase { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(Y, ruleName, childNodes, precedence, opacity); } }
 
-class Z extends NonTerminalNodeBase { static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(Z, ruleName, childNodes, opacity, precedence); } }
+class Z extends NonTerminalNodeBase { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(Z, ruleName, childNodes, precedence, opacity); } }
 
 const NonTerminalNodeMap = {
   T,

@@ -38,6 +38,31 @@ describe("utiliies/production", () => {
       });
     });
 
+    describe("a cut part", () => {
+      const bnf = `
+  
+        S ::= \` ;
+          
+      `;
+
+      let part,
+            ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules)
+      });
+
+      it("returns false", () => {
+        const producing = isPartProducing(part, ruleMap);
+
+        assert.isFalse(producing);
+      });
+    });
+
     describe("an epsilon part", () => {
       const bnf = `
   
@@ -113,35 +138,10 @@ describe("utiliies/production", () => {
       });
     });
 
-    describe("a isolated terminal part", () => {
+    describe("an isolated terminal part", () => {
       const bnf = `
   
         S ::= ( "a" ) ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const producing = isPartProducing(part, ruleMap);
-
-        assert.isTrue(producing);
-      });
-    });
-
-    describe("a committed terminal part", () => {
-      const bnf = `
-  
-        S ::= \`"a" ;
           
       `;
 

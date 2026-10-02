@@ -40,7 +40,7 @@ export function rewriteReducedChildNode(nonTerminalNode, context) {
     parentNode.setPrecedence(precedence);
   } else {
     const NonTerminalNode = context.NonTerminalNodeFromRuleName(ruleName),
-          nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence),
+          nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity),
           replacementChildNode = nonTerminalNode; ///
 
     replacementChildNodes = [
@@ -195,7 +195,7 @@ function leftRecursiveNodeFromParentNodeAndIndirectlyRepeatedNode(parentNode, in
         precedence = null,
         childNodes = removedFrontChildNodes,  ///
         NonTerminalNode = context.NonTerminalNodeFromRuleName(ruleName),
-        nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence),
+        nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity),
         leftRecursiveNode = nonTerminalNode;  ///
 
   return leftRecursiveNode;

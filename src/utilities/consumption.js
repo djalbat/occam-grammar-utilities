@@ -13,10 +13,11 @@ export function isPartConsuming(part, ruleMap, visitedRules = []) {
 
       if (simplePartTerminalPart) {
         const terminalPart = simplePart,  ///
+              terminalPartCutPart = terminalPart.isCutPart(),
               terminalPartEpsilonPart = terminalPart.isEpsilonPart(),
-              terminalPartNonWhitespacePart = terminalPart.isNoWhitespacePart();
+              terminalPartNoWhitespacePart = terminalPart.isNoWhitespacePart();
 
-        if (!terminalPartEpsilonPart && !terminalPartNonWhitespacePart) {
+        if (!terminalPartCutPart && !terminalPartEpsilonPart && !terminalPartNoWhitespacePart) {
           terminate = true;
         }
       } else {

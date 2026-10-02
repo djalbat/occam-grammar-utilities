@@ -13,6 +13,31 @@ const { rulesFromBNF } = parserUtilities,
 
 describe("utiliies/consumption", () => {
   describe("isPartConsuming", () => {
+    describe("a cut part", () => {
+      const bnf = `
+  
+        S ::= \` ;
+          
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules)
+      });
+
+      it("returns false", () => {
+        const consuming = isPartConsuming(part, ruleMap);
+
+        assert.isFalse(consuming);
+      });
+    });
+
     describe("a terminal part", () => {
       const bnf = `
   
@@ -113,35 +138,10 @@ describe("utiliies/consumption", () => {
       });
     });
 
-    describe("a isolated terminal part", () => {
+    describe("an isolated terminal part", () => {
       const bnf = `
   
         S ::= ( "a" ) ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules)
-      });
-
-      it("returns true", () => {
-        const consuming = isPartConsuming(part, ruleMap);
-
-        assert.isTrue(consuming);
-      });
-    });
-
-    describe("a committed terminal part", () => {
-      const bnf = `
-  
-        S ::= \`"a" ;
           
       `;
 

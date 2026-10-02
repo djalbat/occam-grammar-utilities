@@ -217,64 +217,6 @@ describe("utiliies/leftReursion", () => {
       });
     });
 
-    describe("n committed terminal part part", () => {
-      const bnf = `
-  
-        S ::= \`"a" ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules);
-      });
-
-      it("returns true with an empty array", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
-
-        assert.isTrue(terminate);
-
-        assert.isEmpty(leftRecursiveNames);
-      });
-    });
-
-    describe("n committed rule name part part ", () => {
-      const bnf = `
-  
-        S ::= \`A ;
-          
-        A ::= "a" ;
-          
-      `;
-
-      let part,
-          ruleMap;
-
-      before(() => {
-        const rules = rulesFromBNF(bnf);
-
-        part = partFromRules(rules);
-
-        ruleMap = ruleMapFromRules(rules);
-      });
-
-      it("returns true with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
-
-        assert.isTrue(terminate);
-
-        assert.deepEqual(leftRecursiveNames, ["A"]);
-      });
-    });
-
     describe("a one or more terminal parts part", () => {
       const bnf = `
   

@@ -12,7 +12,12 @@ export function isPartProducing(part, ruleMap, visitedRules = []) {
       const simplePartTerminalPart = simplePart.isTerminalPart();
 
       if (simplePartTerminalPart) {
-        terminate = true;
+        const terminalPart = simplePart,  ///
+              terminalPartCutPart = terminalPart.isCutPart();
+
+        if (!terminalPartCutPart) {
+          terminate = true;
+        }
       } else {
         const ruleNamePart = simplePart,  ///
               ruleName = ruleNamePart.getRuleName(),

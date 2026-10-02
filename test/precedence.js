@@ -40,9 +40,9 @@ describe("Precedence", () => {
           U ::= . ;
     
         `,
-      node,
-      rules,
-      tokens;
+        node,
+        rules,
+        tokens;
 
     before(() => {
       rules = rulesFromBNF(bnf);
@@ -614,12 +614,12 @@ describe("Precedence", () => {
     });
   });
 
-  describe("a cycle of length two with precedence strength, left associativity and an committed part", () => {
+  describe("a cycle of length two with precedence strength, left associativity and a cut", () => {
     let bnf = `
   
           S ::= T... <END_OF_LINE> ;
           
-          T ::= A \`"+" A (-1) 
+          T ::= A "+" \` A (-1) 
                   
               | .
               
@@ -628,9 +628,9 @@ describe("Precedence", () => {
           A ::= T ( );
   
         `,
-      node,
-      rules,
-      tokens;
+        node,
+        rules,
+        tokens;
 
     before(() => {
       rules = rulesFromBNF(bnf);
@@ -653,7 +653,7 @@ describe("Precedence", () => {
         
         T_  ::= . ;
         
-        T~A ::= \`"+" A (-1) ;
+        T~A ::= "+" \` A (-1) ;
         
         A~T ::= ε ( ) ;
         
@@ -682,38 +682,38 @@ describe("Precedence", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                            
-                                                                                             S [0]                           
-                                                                                               |                             
-                                                                       ------------------------------------------------      
-                                                                       |                                              |      
-                                                                  T [0] (-1)                                    <END_OF_LINE>
-                                                                       |                                                     
-                                        --------------------------------------------------------------                       
-                                        |                                        |                   |                       
-                                    A [0] ( )                          \`"+"[unassigned] [0]      A [0] ( )                   
-                                        |                                                            |                       
-                                   T [0] (-1)                                                      T [0]                     
-                                        |                                                            |                       
-                   ------------------------------------------                               "z"[unassigned] [0]              
-                   |                    |                   |                                                                
-               A [0] ( )      \`"+"[unassigned] [0]      A [0] ( )                                                            
-                   |                                        |                                                                
-                 T [0]                                    T [0]                                                              
-                   |                                        |                                                                
-          "x"[unassigned] [0]                      "y"[unassigned] [0]                                                       
+                                                                      
+                                                                                           S [0]                           
+                                                                                             |                             
+                                                                     ------------------------------------------------      
+                                                                     |                                              |      
+                                                                T [0] (-1)                                    <END_OF_LINE>
+                                                                     |                                                     
+                                       -------------------------------------------------------------                       
+                                       |                                       |                   |                       
+                                   A [0] ( )                          "+"[unassigned] [0]      A [0] ( )                   
+                                       |                                                           |                       
+                                  T [0] (-1)                                                     T [0]                     
+                                       |                                                           |                       
+                   -----------------------------------------                              "z"[unassigned] [0]              
+                   |                   |                   |                                                               
+               A [0] ( )      "+"[unassigned] [0]      A [0] ( )                                                           
+                   |                                       |                                                               
+                 T [0]                                   T [0]                                                             
+                   |                                       |                                                               
+          "x"[unassigned] [0]                     "y"[unassigned] [0]                                                      
              
       `));
       });
     });
   });
 
-  describe("a cycle of length two with precedence strength, right associativity and an committed part", () => {
+  describe("a cycle of length two with precedence strength, right associativity and a cut part", () => {
     let bnf = `
   
           S ::= T... <END_OF_LINE> ;
           
-          T ::= A \`"+" A (1) 
+          T ::= A "+" \` A (1) 
                   
               | .
               
@@ -738,7 +738,7 @@ describe("Precedence", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                  
+                                          
         S   ::= T... <END_OF_LINE> ;
         
         T   ::= T_ T~* ;
@@ -747,7 +747,7 @@ describe("Precedence", () => {
         
         T_  ::= . ;
         
-        T~A ::= \`"+" A (1) ;
+        T~A ::= "+" \` A (1) ;
         
         A~T ::= ε ( ) ;
         
@@ -776,25 +776,27 @@ describe("Precedence", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                                  S [0]                                      
-                                                                                    |                                        
-                                                  ---------------------------------------------------------------------      
-                                                  |                                                                   |      
-                                              T [0] (1)                                                         <END_OF_LINE>
-                                                  |                                                                          
-                   ---------------------------------------------------------------                                           
-                   |                    |                                        |                                           
-               A [0] ( )      \`"+"[unassigned] [0]                           A [0] ( )                                       
-                   |                                                             |                                           
-                 T [0]                                                       T [0] (1)                                       
-                   |                                                             |                                           
-          "x"[unassigned] [0]                               ------------------------------------------                       
-                                                            |                    |                   |                       
-                                                        A [0] ( )      \`"+"[unassigned] [0]      A [0] ( )                   
-                                                            |                                        |                       
-                                                          T [0]                                    T [0]                     
-                                                            |                                        |                       
-                                                   "y"[unassigned] [0]                      "z"[unassigned] [0]              
+
+                                                                                   S [0]                                     
+                                                                                     |                                       
+                                                   --------------------------------------------------------------------      
+                                                   |                                                                  |      
+                                               T [0] (1)                                                        <END_OF_LINE>
+                                                   |                                                                         
+                     -------------------------------------------------------------                                           
+                     |                   |                                       |                                           
+                 A [0] ( )      "+"[unassigned] [0]                          A [0] ( )                                       
+                     |                                                           |                                           
+                   T [0]                                                     T [0] (1)                                       
+                     |                                                           |                                           
+            "x"[unassigned] [0]                              -----------------------------------------                       
+                                                             |                   |                   |                       
+                                                         A [0] ( )      "+"[unassigned] [0]      A [0] ( )                   
+                                                             |                                       |                       
+                                                           T [0]                                   T [0]                     
+                                                             |                                       |                       
+                                                    "y"[unassigned] [0]                     "z"[unassigned] [0]
+                                                                  
        `));
       });
     });
