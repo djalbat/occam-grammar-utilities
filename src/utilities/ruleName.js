@@ -14,26 +14,14 @@ export function ruleNameFromReducedRuleName(reducedRuleName) {
   return ruleName;
 }
 
-export function directlyRepeatedRuleNameFromRuleName(ruleName) {
-  const directlyRepeatedRuleName = `${ruleName}~`;
+export function repeatedRuleNameFromRuleName(ruleName) {
+  const repeatedRuleName = `${ruleName}~`;
 
-  return directlyRepeatedRuleName;
+  return repeatedRuleName;
 }
 
-export function ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName) {
-  const ruleName = indirectlyRepeatedRuleName.replace(/~.+$/g, EMPTY_STRING);
+export function ruleNameFromRepeatedRuleName(repeatedRuleName) {
+  const ruleName = repeatedRuleName.replace(/~$/g, EMPTY_STRING);
 
   return ruleName;
-}
-
-export function leftRecursiveRuleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName) {
-  const leftRecursiveRuleName = indirectlyRepeatedRuleName.replace(/^[^~]+~/g, EMPTY_STRING);
-
-  return leftRecursiveRuleName;
-}
-
-export function indirectlyRepeatedRuleNameFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName) {
-  const indirectlyRepeatedRuleName = `${ruleName}~${leftRecursiveRuleName}`;
-
-  return indirectlyRepeatedRuleName;
 }

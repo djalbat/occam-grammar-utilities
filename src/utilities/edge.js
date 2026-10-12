@@ -22,10 +22,9 @@ export function edgesFromRuleNames(ruleNames) {
 
 export function edgesFromStartRule(startRule, ruleMap, ruleNamesMap) {
   const rule = startRule, ///
-        edges = [],
-        vertexes = [];
+        edges = [];
 
-  edgesFromRule(rule, edges, vertexes, ruleMap, ruleNamesMap);
+  edgesFromRule(rule, edges, ruleMap, ruleNamesMap);
 
   return edges;
 }
@@ -39,46 +38,36 @@ export function edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursive
   return edge;
 }
 
-function edgesFromRule(rule, edges, vertexes, ruleMap, ruleNamesMap) {
+function edgesFromRule(rule, edges, ruleMap, ruleNamesMap) {
   const ruleName = rule.getName(),
-        vertex = ruleName,  ///
-        vertexesIncludesVertex = vertexes.includes(vertex);
-
-  if (vertexesIncludesVertex) {
-    return;
-  }
-
-  vertexes = [
-    ...vertexes,
-    vertex
-  ];
-
-  const ruleNames = ruleNamesMap[ruleName],
+        ruleNames = ruleNamesMap[ruleName],
         recursiveRuleNames = recursiveRuleNamesFromRule(rule, ruleMap),
         leftRecursiveRuleNames = ruleNames; ///
 
   recursiveRuleNames.forEach((recursiveRuleName) => {
-    const leftRecursiveRuleNamesIncludesRecursiveRuleName = leftRecursiveRuleNames.includes(recursiveRuleName),
-          leftRecursiveRuleName = recursiveRuleName,  ///
-          label = leftRecursiveRuleNamesIncludesRecursiveRuleName ?
-                    LEFT_RECURSIVE_LABEL :
-                      RECURSIVE_LABEL,
-          sourceVertex = ruleName,  ///
-          targetVertex = leftRecursiveRuleName, ///
-          edge = Edge.fromLabelSourceVertexAndTargetVertex(label, sourceVertex, targetVertex),
+    const edge = edgeFromRuleNameRecursiveRuleNameAndLeftRecursiveRuleNames(ruleName, recursiveRuleName, leftRecursiveRuleNames),
           matches = edgesMatchEdge(edges, edge);
 
     if (!matches) {
       edges.push(edge);
-    }
 
-    const recursiveRule = ruleMap[recursiveRuleName] || null;
+      const ruleName = recursiveRuleName, ///
+            rule = ruleMap[ruleName];
 
-    if (recursiveRule !== null) {
-      const rule = recursiveRule; ///
-
-      edgesFromRule(rule, edges, vertexes, ruleMap, ruleNamesMap);
+      edgesFromRule(rule, edges, ruleMap, ruleNamesMap);
     }
   });
 }
 
+function edgeFromRuleNameRecursiveRuleNameAndLeftRecursiveRuleNames(ruleName, recursiveRuleName, leftRecursiveRuleNames) {
+  const leftRecursiveRuleNamesIncludesRecursiveRuleName = leftRecursiveRuleNames.includes(recursiveRuleName),
+        leftRecursiveRuleName = recursiveRuleName,  ///
+        label = leftRecursiveRuleNamesIncludesRecursiveRuleName ?
+                  LEFT_RECURSIVE_LABEL :
+                    RECURSIVE_LABEL,
+        sourceVertex = ruleName,  ///
+        targetVertex = leftRecursiveRuleName, ///
+        edge = Edge.fromLabelSourceVertexAndTargetVertex(label, sourceVertex, targetVertex);
+
+  return edge;
+}

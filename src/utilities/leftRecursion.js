@@ -1,48 +1,16 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
-
 import { partTypes } from "occam-parsers";
 
 import { isPartSimplePart } from "../utilities/part";
 
-const { first } = arrayUtilities,
-      { IsolatedPartPartType,
+const { IsolatedPartPartType,
         OptionalPartPartType,
         ChoiceOfPartsPartType,
         BranchingPartsPartType,
         OneOrMorePartsPartType,
         ZeroOrMorePartsPartType,
         SequenceOfPartsPartType } = partTypes;
-
-export function isDefinitionLeftRecursive(definition, ruleMap) {
-  const leftRecursiveRuleNames = [];
-
-  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
-
-  const leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length,
-        definitionLeftRecursive = (leftRecursiveRuleNamesLength > 0);
-
-  return definitionLeftRecursive;
-}
-
-export function leftRecursiveRuleNameFromDefinition(definition, ruleMap) {
-  let leftRecursiveRuleName = null;
-
-  const leftRecursiveRuleNames = [];
-
-  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
-
-  const leftRecursiveRuleNamesLength = leftRecursiveRuleNames.length;
-
-  if (leftRecursiveRuleNamesLength === 1) {
-    const firstLeftRecursiveRuleName = first(leftRecursiveRuleNames);
-
-    leftRecursiveRuleName = firstLeftRecursiveRuleName; ///
-  }
-
-  return leftRecursiveRuleName;
-}
 
 export function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames) {
   const terminate = retrieveSimpleParts(part, (simplePart) => {

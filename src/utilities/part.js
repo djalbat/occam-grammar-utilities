@@ -2,14 +2,8 @@
 
 import { Parts, partTypes } from "occam-parsers";
 
-const { RuleNamePartType } = partTypes,
-      { RuleNamePart, ZeroOrMorePartsPart } = Parts;
-
-export function zeroOrMorePartsPartFromPart(part) {
-  const zeroOrMorePartsPart = ZeroOrMorePartsPart.fromPart(part);
-
-  return zeroOrMorePartsPart;
-}
+const { RuleNamePart } = Parts,
+      { RuleNamePartType } = partTypes;
 
 export function ruleNamePartFromRuleName(ruleName) {
   const ruleNamePart = RuleNamePart.fromRuleName(ruleName);

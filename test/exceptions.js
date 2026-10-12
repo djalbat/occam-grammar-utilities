@@ -3,6 +3,69 @@
 const { adjustedBNFFromBNF } = require("./helpers/bnf");
 
 describe("Exceptions", () => {
+  describe("the first part of a repeating definition is not a rule name part", () => {
+    const bnf = `
+  
+      S ::= ( A ... <END_OF_LINE> ) ;
+      
+      A ::= A? "g"
+      
+          | "e"
+          
+          ;
+          
+      
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
+  describe("the first part of a repeating definition hides the rule name part", () => {
+    const bnf = `
+  
+      S ::= ( A ... <END_OF_LINE> ) ;
+      
+      A ::= B? A "g"
+      
+          | "e"
+          
+          ;
+          
+      B ::= "b" ;
+      
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
+  describe("the tail of a repeating definition is empty", () => {
+    const bnf = `
+  
+      S ::= ( A ... <END_OF_LINE> ) ;
+      
+      A ::= A
+      
+          | "e"
+          
+          ;
+          
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
   describe("no corresponding rule for a rule name part", () => {
     const bnf = `
   

@@ -4,14 +4,11 @@ import { Rule } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
 
-import { edgesMatchEdge } from "../edge";
-import { ruleNamesFromCycle } from "../utilities/cycle";
+import { isDefinitionReducible } from "../utilities/definition";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
-import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursion";
-import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/edge";
 
 export default class ReducedRule extends Rule {
-  NonTerminalNodeFromRuleName(ruleName, context) {
+  NonTerminalNodeFromRuleName(ruleName, state) {
     const NonTerminalNode = ReducedNode;  ///
 
     return NonTerminalNode;
@@ -20,60 +17,37 @@ export default class ReducedRule extends Rule {
   static fromRuleAndCycles(rule, cycles, ruleMap) {
     const ruleName = rule.getName();
 
-    let reducedRule = null,
-        definitions = rule.getDefinitions();
+    let definitions;
 
-    definitions = definitions.filter((definition) => {
-      const definitionLeftReducible = isDefinitionReducible(definition, ruleName, cycles, ruleMap);
+    definitions = rule.getDefinitions();
 
-      if (definitionLeftReducible) {
-        return true;
-      }
-    });
+    definitions = filterDefinitions(definitions, ruleName, cycles, ruleMap);
 
     const definitionsLength = definitions.length;
 
-    if (definitionsLength > 0) {
-      const ruleName = rule.getName(),
-            reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-            name = reducedRuleName, ///
-            opacity = rule.getOpacity();
+    if (definitionsLength === 0) {
+      const ruleString = rule.asString();
 
-      reducedRule = new ReducedRule(name, opacity, definitions);
+      throw new Error(`The '${ruleString}' rule has no reduced definitions.`);
     }
+
+    const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+          name = reducedRuleName, ///
+          opacity = rule.getOpacity(),
+          reducedRule = new ReducedRule(name, opacity, definitions);
 
     return reducedRule;
   }
 }
 
-function isDefinitionReducible(definition, ruleName, cycles, ruleMap) {
-  const leftRecursiveRuleNames = [];
+function filterDefinitions(definitions, ruleName, cycles, ruleMap) {
+  definitions = definitions.filter((definition) => {
+    const definitionLeftReducible = isDefinitionReducible(definition, ruleName, cycles, ruleMap);
 
-  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
-
-  const definitionReducible = leftRecursiveRuleNames.every((leftRecursiveRuleName) => {
-    const cyclesIncludeRuleNameAndLeftRecursiveRuleName = cycles.some((cycle) => {
-      const cycleIncludesRuleNameAndLeftRecursiveRuleName = doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName);
-
-      if (cycleIncludesRuleNameAndLeftRecursiveRuleName) {
-        return true;
-      }
-    });
-
-    if (!cyclesIncludeRuleNameAndLeftRecursiveRuleName) {
+    if (definitionLeftReducible) {
       return true;
     }
   });
 
-  return definitionReducible;
-}
-
-function doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName) {
-  const ruleNames = ruleNamesFromCycle(cycle),
-        edge = edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
-        edges = edgesFromRuleNames(ruleNames),
-        matches = edgesMatchEdge(edges, edge),
-        cycleIncludesRuleNameAndLeftRecursiveRuleName = matches;  ///
-
-  return cycleIncludesRuleNameAndLeftRecursiveRuleName;
+  return definitions;
 }

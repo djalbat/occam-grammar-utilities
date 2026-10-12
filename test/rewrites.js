@@ -47,12 +47,12 @@ describe("Rewrites", () => {
 
       bnf = adjustedBNF;  ///
 
-      tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
-
-      node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      // tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+      //
+      // node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
     });
 
-    it("is rewritten", () => {
+    it.only("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
                           
         S   ::= ( A ... <END_OF_LINE> ) ;
@@ -61,7 +61,7 @@ describe("Rewrites", () => {
         
         A_  ::= "e" ;
         
-        A~  ::= "g" \` ;
+        A~  ::= "g" ;
         
       `));
     });

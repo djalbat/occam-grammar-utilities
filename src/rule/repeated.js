@@ -2,37 +2,67 @@
 
 import { Rule } from "occam-parsers";
 
-import DirectlyRepeatedNode from "../node/repeated/directly";
-import DirectlyRepeatedDefinition from "../definition/repeated/directly"
+import RepeatedNode from "../node/repeated";
+import RepeatedDefinition from "../definition/repeated";
 
-import { directlyRepeatedRuleNameFromRuleName } from "../utilities/ruleName";
+import { isDefinitionRepeatable } from "../utilities/definition";
+import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 
 export default class RepeatedRule extends Rule {
-  NonTerminalNodeFromRuleName(ruleName, context) {
-    const NonTerminalNode = DirectlyRepeatedNode; ///
+  NonTerminalNodeFromRuleName(ruleName, state) {
+    const NonTerminalNode = RepeatedNode; ///
 
     return NonTerminalNode;
   }
 
-  static fromRuleAndCycles(rule, cycles) {
-    const ruleName = rule.getName(),
-          definitions = [];
+  static fromRuleAndCycles(rule, cycles, ruleMap) {
+    const ruleName = rule.getName();
 
-    cycles.forEach((cycle) => {
-      const directlyRepeatedDefinition = DirectlyRepeatedDefinition.fromRuleAndCycle(rule, cycle);
+    let definitions;
 
-      if (directlyRepeatedDefinition !== null) {
-        const definition = directlyRepeatedDefinition;  ///
+    definitions = rule.getDefinitions();
 
-        definitions.push(definition);
-      }
-    });
+    definitions = filterDefinitions(definitions, ruleName, cycles, ruleMap);
 
-    const directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
-          name = directlyRepeatedRuleName, ///
-          opacity = rule.getOpacity(),
-          repeatedRule = new RepeatedRule(name, opacity, definitions);
+    const definitionsLength = definitions.length;
+
+    if (definitionsLength === 0) {
+      const ruleString = rule.asString();
+
+      throw new Error(`The '${ruleString}' rule has no repeated definitions.`);
+    }
+
+    const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+          repeatedDefinitions = rewrittenDefinitionsFromDefintiions(definitions),
+          name = repeatedRuleName, ///
+          opacity = rule.getOpacity();
+
+    definitions = repeatedDefinitions;  ///
+
+    const repeatedRule = new RepeatedRule(name, opacity, definitions);
 
     return repeatedRule;
   }
+}
+
+function filterDefinitions(definitions, ruleName, cycles, ruleMap) {
+  definitions = definitions.filter((definition) => {
+    const definitionLeftRepeatable = isDefinitionRepeatable(definition, ruleName, cycles, ruleMap);
+
+    if (definitionLeftRepeatable) {
+      return true;
+    }
+  });
+
+  return definitions;
+}
+
+function rewrittenDefinitionsFromDefintiions(definitions) {
+  const repeatedDefinitions = definitions.map((definition) => {
+    const repeatedDefinition = RepeatedDefinition.fromDefinition(definition);
+
+    return repeatedDefinition;
+  });
+
+  return repeatedDefinitions;
 }
