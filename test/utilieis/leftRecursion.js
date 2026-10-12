@@ -783,11 +783,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns true with an empty array", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+      it("returns an empty array", () => {
+        const leftRecursiveNames = [];
 
-        assert.isTrue(terminate);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.isEmpty(leftRecursiveNames);
       });
@@ -815,11 +814,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns true with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+      it("returns an array of length one", () => {
+        const leftRecursiveNames = [];
 
-        assert.isTrue(terminate);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A"]);
       });
@@ -844,11 +842,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns true with an empty array", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+      it("returns an empty array", () => {
+        const leftRecursiveNames = [];
 
-        assert.isTrue(terminate);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.isEmpty(leftRecursiveNames);
       });
@@ -874,11 +871,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns true with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+      it("returns an array of length one", () => {
+        const leftRecursiveNames = [];
 
-        assert.isTrue(terminate);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A"]);
       });
@@ -906,11 +902,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns false with an array of length two", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+      it("returns an array of length two", () => {
+        const leftRecursiveNames = [];
 
-        assert.isFalse(terminate);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A", "B"]);
       });
@@ -936,11 +931,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns true with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+      it("returns an array of length one", () => {
+        const leftRecursiveNames = [];
 
-        assert.isTrue(terminate);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A"]);
       });
@@ -968,11 +962,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns true with an array of length two", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+      it("returns an array of length two", () => {
+        const leftRecursiveNames = [];
 
-        assert.isTrue(terminate);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A", "B"]);
       });
@@ -998,11 +991,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns false with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+      it("returns an array of length one", () => {
+        const leftRecursiveNames = [];
 
-        assert.isFalse(terminate);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A"]);
       });
@@ -1032,11 +1024,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns true with an empty array", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+      it("returns an empty array", () => {
+        const leftRecursiveNames = [];
 
-        assert.isTrue(terminate);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.isEmpty(leftRecursiveNames);
       });
@@ -1068,11 +1059,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns true with an array of length two", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+      it("returns an array of length two", () => {
+        const leftRecursiveNames = [];
 
-        assert.isTrue(terminate);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A", "B"]);
       });
@@ -1102,11 +1092,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns false with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+      it("returns an array of length one", () => {
+        const leftRecursiveNames = [];
 
-        assert.isTrue(terminate);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A"]);
       });
@@ -1136,11 +1125,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns true with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+      it("returns an array of length one", () => {
+        const leftRecursiveNames = [];
 
-        assert.isTrue(terminate);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A"]);
       });
@@ -1172,11 +1160,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns false with an array of length two", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+      it("returns an array of length two", () => {
+        const leftRecursiveNames = [];
 
-        assert.isFalse(terminate);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A", "B"]);
       });
@@ -1206,11 +1193,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns false with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+      it("returns an array of length one", () => {
+        const leftRecursiveNames = [];
 
-        assert.isFalse(terminate);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A"]);
       });
@@ -1242,11 +1228,10 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns false with an array of length two", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+      it("returns an array of length two", () => {
+        const leftRecursiveNames = [];
 
-        assert.isFalse(terminate);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A", "B"]);
       });
@@ -1277,10 +1262,9 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns false with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+        const leftRecursiveNames = [];
 
-        assert.isFalse(terminate);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
 
         assert.deepEqual(leftRecursiveNames, ["A"]);
       });

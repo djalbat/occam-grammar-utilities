@@ -2,12 +2,12 @@
 
 import { Rule } from "occam-parsers";
 
-import DirectlyRepeatedNode from "../../node/repeated/directly";
-import DirectlyRepeatedDefinition from "../../definition/repeated/directly"
+import DirectlyRepeatedNode from "../node/repeated/directly";
+import DirectlyRepeatedDefinition from "../definition/repeated/directly"
 
-import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
+import { directlyRepeatedRuleNameFromRuleName } from "../utilities/ruleName";
 
-export default class DirectlyRepeatedRule extends Rule {
+export default class RepeatedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, context) {
     const NonTerminalNode = DirectlyRepeatedNode; ///
 
@@ -31,8 +31,8 @@ export default class DirectlyRepeatedRule extends Rule {
     const directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
           name = directlyRepeatedRuleName, ///
           opacity = rule.getOpacity(),
-          directlyRepeatedRule = new DirectlyRepeatedRule(name, opacity, definitions);
+          repeatedRule = new RepeatedRule(name, opacity, definitions);
 
-    return directlyRepeatedRule;
+    return repeatedRule;
   }
 }

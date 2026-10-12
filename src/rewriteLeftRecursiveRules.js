@@ -2,10 +2,9 @@
 
 import { arrayUtilities } from "necessary";
 
+import RepeatedRule from "./rule/repeated";
 import RewrittenRule from "./rule/rewritten";
-import DirectlyRepeatedRule from "./rule/repeated/directly";
 
-import { isRuleConsuming } from "./utilities/consumption";
 import { ruleNamesFromCycles } from "./utilities/cycle";
 import { isCycleIrreducible, ruleCyclesFromRuleNameAndCycles } from "./utilities/cycle";
 
@@ -15,7 +14,11 @@ export default function rewriteLeftRecursiveRules(cycles, ruleMap, ruleNamesMap)
   const ruleNames = ruleNamesFromCycles(cycles);
 
   ruleNames.forEach((ruleName) => {
-    let rule = ruleMap[ruleName];
+    let rule = ruleMap[ruleName] || null
+
+    if (rule == null) {
+      throw new Error(`The  '${ruleName}' rule is missing.`);
+    }
 
     const rewrittenRule = RewrittenRule.fromRuleAndCycles(rule, cycles, ruleMap, ruleNamesMap);
 
@@ -24,15 +27,15 @@ export default function rewriteLeftRecursiveRules(cycles, ruleMap, ruleNamesMap)
     ruleMap[ruleName] = rule;
   });
 
-  const directlyRepeatedRules = rulesFromRule(DirectlyRepeatedRule, ruleMap);
+  const repeatedRules = rulesFromRule(RepeatedRule, ruleMap);
 
-  directlyRepeatedRules.forEach((directlyRepeatedRule) => {
-    const directlyRepeatedRuleConsuming = isRuleConsuming(directlyRepeatedRule, ruleMap);
+  repeatedRules.forEach((repeatedRule) => {
+    const repeatedRuleConsuming = repeatedRule.isConsuming(ruleMap);
 
-    if (!directlyRepeatedRuleConsuming) {
-      const directlyRepeatedRuleName = directlyRepeatedRule.getName();
+    if (!repeatedRuleConsuming) {
+      const repeatedRuleName = repeatedRule.getName();
 
-      throw new Error(`The directly repeated '${directlyRepeatedRuleName}' rule is non-consuming.`);
+      throw new Error(`The directly repeated '${repeatedRuleName}' rule is non-consuming.`);
     }
   });
 

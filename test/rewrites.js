@@ -21,7 +21,7 @@ describe("Rewrites", () => {
   describe("a cycle of length one", () => {
     let bnf = `
   
-      S ::= A... <END_OF_LINE> ;
+      S ::= ( A ... <END_OF_LINE> ) ;
       
       A ::= A "g"
       
@@ -54,16 +54,14 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                  
-        S   ::= A... <END_OF_LINE> ;
+                          
+        S   ::= ( A ... <END_OF_LINE> ) ;
         
         A   ::= A_ A~* ;
         
         A_  ::= "e" ;
         
-        A~A ::= "g" ;
-        
-        A~  ::= A~A ;
+        A~  ::= "g" \` ;
         
       `));
     });

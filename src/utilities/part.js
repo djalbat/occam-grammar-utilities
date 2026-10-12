@@ -17,28 +17,6 @@ export function ruleNamePartFromRuleName(ruleName) {
   return ruleNamePart;
 }
 
-export function isPartNakedRuleNamePart(part) {
-  let partNakedRuleNamePart = false;
-
-  const partNonTerminalPart = part.isNonTerminalPart();
-
-  if (partNonTerminalPart) {
-    const nonTerminalPart = part, ///
-          type = nonTerminalPart.getType();
-
-    if (type === RuleNamePartType) {
-      const ruleNamePart = nonTerminalPart, ///
-            continuation = ruleNamePart.isContinuation();
-
-      if (!continuation) {
-        partNakedRuleNamePart = true;
-      }
-    }
-  }
-
-  return partNakedRuleNamePart;
-}
-
 export function isPartSimplePart(part) {
   let partSimplePart = false;
 

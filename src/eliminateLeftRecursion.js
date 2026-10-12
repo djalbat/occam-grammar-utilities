@@ -5,9 +5,8 @@ import { rulesUtilities } from "occam-parsers";
 
 import Graph from "./graph";
 import createReducedRules from "./createReducedRules";
+import createRepeatedRules from "./createRepeatedRules";
 import rewriteLeftRecursiveRules from "./rewriteLeftRecursiveRules";
-import createDirectlyRepeatedRules from "./createDirectlyRepeatedRules";
-import createIndirectlyRepeatedRules from "./createIndirectlyRepeatedRules";
 
 import { edgesFromStartRule } from "./utilities/edge";
 import { LEFT_RECURSIVE_LABEL } from "./labels";
@@ -24,9 +23,7 @@ export default function eliminateLeftRecursion(rules) {
 
   createReducedRules(cycles, ruleMap);
 
-  createIndirectlyRepeatedRules(cycles, ruleMap);
-
-  createDirectlyRepeatedRules(cycles, ruleMap);
+  createRepeatedRules(cycles, ruleMap);
 
   rewriteLeftRecursiveRules(cycles, ruleMap, ruleNamesMap);
 
@@ -49,8 +46,13 @@ function ruleNamesMapFromNothing(ruleMap) {
         ruleNames = Object.keys(ruleMap);
 
   ruleNames.forEach((ruleName) => {
-    const rule = ruleMap[ruleName],
-          leftRecursiveRuleNames = [];
+    const rule = ruleMap[ruleName] || null;
+
+    if (rule == null) {
+      throw new Error(`The  '${ruleName}' rule is missing.`);
+    }
+
+    const leftRecursiveRuleNames = [];
 
     leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames);
 

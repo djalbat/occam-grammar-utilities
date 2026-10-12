@@ -2,10 +2,18 @@
 
 import { arrayUtilities } from "necessary";
 
-import { retrieveSimpleParts } from "../utilities/parts";
-import { isPartConsuming, isRuleConsuming } from "../utilities/consumption";
+import { partTypes } from "occam-parsers";
 
-const { first } = arrayUtilities;
+import { isPartSimplePart } from "../utilities/part";
+
+const { first } = arrayUtilities,
+      { IsolatedPartPartType,
+        OptionalPartPartType,
+        ChoiceOfPartsPartType,
+        BranchingPartsPartType,
+        OneOrMorePartsPartType,
+        ZeroOrMorePartsPartType,
+        SequenceOfPartsPartType } = partTypes;
 
 export function isDefinitionLeftRecursive(definition, ruleMap) {
   const leftRecursiveRuleNames = [];
@@ -37,20 +45,18 @@ export function leftRecursiveRuleNameFromDefinition(definition, ruleMap) {
 }
 
 export function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames) {
-  const terminate = retrieveSimpleParts(part, (simplePart, nullified) => {
+  const terminate = retrieveSimpleParts(part, (simplePart) => {
     let terminate = false;
 
     const simplePartTerminalPart = simplePart.isTerminalPart();
 
     if (simplePartTerminalPart) {
-      if (!nullified) {
-        terminate = true;
+      terminate = true;
 
-        const simplePartConsuming = isPartConsuming(simplePart, ruleMap);
+      const simplePartConsuming = simplePart.isConsuming(ruleMap);
 
-        if (!simplePartConsuming) {
-          terminate = false;
-        }
+      if (!simplePartConsuming) {
+        terminate = false;
       }
     } else {
       const ruleNamePart = simplePart,  ///
@@ -69,14 +75,12 @@ export function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleN
         leftRecursiveRuleNames.push(leftRecursiveRuleName);
       }
 
-      if (!nullified) {
-        terminate = true;
+      terminate = true;
 
-        const ruleConsuming = isRuleConsuming(rule, ruleMap);
+      const ruleConsuming = rule.isConsuming(ruleMap);
 
-        if (!ruleConsuming) {
-          terminate = false;
-        }
+      if (!ruleConsuming) {
+        terminate = false;
       }
     }
 
@@ -87,28 +91,23 @@ export function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleN
 }
 
 export function leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames) {
-  const parts = definition.getParts(),
-        terminate = parts.some((part) => {
-          const terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+  const parts = definition.getParts();
 
-          if (terminate) {
-            return true;
-          }
-        });
+  parts.some((part) => {
+    const terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
-  return terminate;
+    if (terminate) {
+      return true;
+    }
+  });
 }
 
 export function leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames) {
-  let terminate = true;
-
   const definitions = rule.getDefinitions();
 
   definitions.forEach((definition) => {
-    terminate = leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames) && terminate;
+    leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
   });
-
-  return terminate;
 }
 
 export default {
@@ -116,3 +115,123 @@ export default {
   leftRecursiveRuleNamesFromDefinition,
   leftRecursiveRuleNamesFromRule
 };
+
+function retrieveSimpleParts(part, callback) {
+  const terminate = retrieveParts(part, (part) => {
+    let terminate = false;
+
+    const partSimplePart = isPartSimplePart(part);
+
+    if (partSimplePart) {
+      const simplePart = part;  ///
+
+      terminate = callback(simplePart);
+    }
+
+    return terminate;
+  });
+
+  return terminate;
+}
+
+function retrieveParts(part, callback) {
+  let terminate;
+
+  terminate = callback(part);
+
+  if (!terminate) {
+    const partNonTerminalPart = part.isNonTerminalPart();
+
+    if (partNonTerminalPart) {
+      const nonTerminalPart = part,
+            type = nonTerminalPart.getType();
+
+      switch (type) {
+        case OptionalPartPartType: {
+          const optionalPart = nonTerminalPart, ///
+                part = optionalPart.getPart();
+
+          terminate = retrieveParts(part, callback);
+
+          terminate = false;
+
+          break;
+        }
+
+        case ZeroOrMorePartsPartType: {
+          const zeroOfMorePartsPart = nonTerminalPart, ///
+                part = zeroOfMorePartsPart.getPart();
+
+          terminate = retrieveParts(part, callback);
+
+          terminate = false;
+
+          break;
+        }
+
+        case OneOrMorePartsPartType: {
+          const oneOrMorePartsPart = nonTerminalPart,  ///
+                part = oneOrMorePartsPart.getPart();
+
+          terminate = retrieveParts(part, callback);
+
+          break;
+        }
+
+        case IsolatedPartPartType: {
+          const isolatedPartPart = nonTerminalPart,  ///
+                part = isolatedPartPart.getPart();
+
+          terminate = retrieveParts(part, callback);
+
+          break;
+        }
+
+        case SequenceOfPartsPartType: {
+          const sequenceOfPartsPart = nonTerminalPart, ///
+                parts = sequenceOfPartsPart.getParts();
+
+          parts.some((part) => {
+            terminate = retrieveParts(part, callback);
+
+            if (terminate) {
+              return true;
+            }
+          });
+
+          break;
+        }
+
+        case BranchingPartsPartType: {
+          const branchingPartsPart = nonTerminalPart, ///
+                parts = branchingPartsPart.getParts();
+
+          parts.some((part) => {
+            terminate = retrieveParts(part, callback);
+
+            if (terminate) {
+              return true;
+            }
+          });
+
+          break;
+        }
+
+        case ChoiceOfPartsPartType: {
+          const choiceOfPartsPart = nonTerminalPart, ///
+                parts = choiceOfPartsPart.getParts();
+
+          terminate = true;
+
+          parts.forEach((part) => {
+            terminate = retrieveParts(part, callback) && terminate;
+          });
+
+          break;
+        }
+      }
+    }
+  }
+
+  return terminate;
+}

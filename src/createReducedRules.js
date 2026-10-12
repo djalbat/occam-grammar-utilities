@@ -8,8 +8,13 @@ export default function createReducedRules(cycles, ruleMap) {
   const ruleNames = ruleNamesFromCycles(cycles);
 
   ruleNames.forEach((ruleName) => {
-    const rule = ruleMap[ruleName],
-          reducedRule = ReducedRule.fromRuleAndCycles(rule, cycles, ruleMap);
+    const rule = ruleMap[ruleName] || null;
+
+    if (rule == null) {
+      throw new Error(`The  '${ruleName}' rule is missing.`);
+    }
+
+    const reducedRule = ReducedRule.fromRuleAndCycles(rule, cycles, ruleMap);
 
     if (reducedRule !== null) {
       const reducedRuleName = reducedRule.getName();
