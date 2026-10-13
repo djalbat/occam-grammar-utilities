@@ -4,9 +4,11 @@ import { NonTerminalNode as NonTerminalNodeBase } from "occam-parsers";
 
 export default class NonTerminalNode extends NonTerminalNodeBase {
   isUnprecedented() {
-    const node = this,  ///
-          nodeUnprecedented = isNodeUnprecedented(node),
-          unprecedented = nodeUnprecedented;  ///
+    // const node = this,  ///
+    //       nodeUnprecedented = isNodeUnprecedented(node),
+    //       unprecedented = nodeUnprecedented;  ///
+
+    const unprecedented = false;
 
     return unprecedented;
   }

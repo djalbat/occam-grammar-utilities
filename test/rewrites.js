@@ -21,18 +21,15 @@ describe("Rewrites", () => {
   describe("a cycle of length one", () => {
     let bnf = `
   
-      S ::= ( A ... <END_OF_LINE> ) ;
+      S ::= ( T ... <END_OF_LINE> ) ;
       
-      A ::= A "g"
+      T ::= T "g"
       
           | "e"
           
           ;
         
     `;
-
-    const content = `egg
-`;
 
     let node,
         rules,
@@ -46,53 +43,203 @@ describe("Rewrites", () => {
       const adjustedBNF = adjustedBNFFromRules(rules);
 
       bnf = adjustedBNF;  ///
-
-      // tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
-      //
-      // node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
     });
 
-    it.only("is rewritten", () => {
+    it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                          
-        S   ::= ( A ... <END_OF_LINE> ) ;
+                                  
+        S  ::= ( T ... <END_OF_LINE> ) ;
         
-        A   ::= A_ A~* ;
+        T  ::= T_ T~* ;
         
-        A_  ::= "e" ;
+        T~ ::= "g" ;
         
-        A~  ::= "g" ;
+        T_ ::= "e" ;
         
       `));
     });
 
-    it("results in the requisite parse tree" , () => {
-      assert.isTrue(checkParentNodes(node));
+    describe("content with two tokens", () => {
+      const content = `eg
+`;
 
-      assert.isTrue(checkDescendentNodes(node));
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
 
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
 
-      assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                    
-                                                        S [0]                    
-                                                          |                      
-                                          ---------------------------------      
-                                          |                               |      
-                                        A [0]                       <END_OF_LINE>
-                                          |                                      
-                           -------------------------------                       
-                           |                             |                       
-                         A [0]                  "g"[unassigned] [0]              
-                           |                                                     
-                 ---------------------                                           
-                 |                   |                                           
-               A [0]        "g"[unassigned] [0]                                  
-                 |                                                               
-        "e"[unassigned] [0]                                                      
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+
+                                       S [0]                 
+                                         |                   
+                           ----------------------------      
+                           |                          |      
+                         T [0]                  <END_OF_LINE>
+                           |                                 
+                 ---------------------                       
+                 |                   |                       
+               T [0]        "g"[unassigned] [0]              
+                 |                                           
+        "e"[unassigned] [0]
+                                          
+      `));
+      });
+    })
+  });
+
+  describe.only("a cycle of length one with precedence", () => {
+    let bnf = `
+  
+      S ::= ( T ... <END_OF_LINE> ) ;
+      
+      T ::= T "g" (1)
+      
+          | "e"   (2)
+          
+          ;
+        
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                                  
+        S  ::= ( T ... <END_OF_LINE> ) ;
+        
+        T  ::= T_ T~* ;
+        
+        T~ ::= "g" (1) ;
+        
+        T_ ::= "e" (2) ;
+        
+      `));
+    });
+
+    describe("content with one token", () => {
+      const content = `e
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+               T [0] (2)      <END_OF_LINE>
+                   |                       
+          "e"[unassigned] [0]              
              
       `));
-    });
+      });
+    })
+
+    describe("content with two tokens", () => {
+      const content = `eg
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                
+                                         S [0]                 
+                                           |                   
+                             ----------------------------      
+                             |                          |      
+                         T [0] (1)                <END_OF_LINE>
+                             |                                 
+                   ---------------------                       
+                   |                   |                       
+               T [0] (2)      "g"[unassigned] [0]              
+                   |                                           
+          "e"[unassigned] [0]                                  
+             
+      `));
+      });
+    })
+
+    describe("content with three tokens", () => {
+      const content = `egg
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                          
+                                                          S [0]                    
+                                                            |                      
+                                            ---------------------------------      
+                                            |                               |      
+                                        T [0] (1)                     <END_OF_LINE>
+                                            |                                      
+                             -------------------------------                       
+                             |                             |                       
+                         T [0] (1)                "g"[unassigned] [0]              
+                             |                                                     
+                   ---------------------                                           
+                   |                   |                                           
+               T [0] (2)      "g"[unassigned] [0]                                  
+                   |                                                               
+          "e"[unassigned] [0]                                                      
+             
+      `));
+      });
+    })
   });
 
   describe("a cycle of length two", () => {

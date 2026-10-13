@@ -4,13 +4,11 @@ import { arrayUtilities } from "necessary";
 import { rulesUtilities } from "occam-parsers";
 
 import Graph from "./graph";
-import createReducedRules from "./createReducedRules";
-import createRepeatedRules from "./createRepeatedRules";
-import createRewrittenRules from "./createRewrittenRules";
 
 import { edgesFromStartRule } from "./utilities/edge";
 import { LEFT_RECURSIVE_LABEL } from "./labels";
 import { leftRecursiveRuleNamesFromRule } from "./utilities/leftRecursion";
+import { rewriteRules, createReducedRules, createRepeatedRules } from "./utilities/rules";
 
 const { filter } = arrayUtilities,
       { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
@@ -21,11 +19,11 @@ export default function eliminateLeftRecursion(rules) {
         ruleNamesMap = ruleNamesMapFromNothing(ruleMap),
         cycles = cyclesFromStartRule(startRule, ruleMap, ruleNamesMap);
 
-  createReducedRules(cycles, ruleMap);
-
   createRepeatedRules(cycles, ruleMap);
 
-  createRewrittenRules(cycles, ruleMap);
+  createReducedRules(cycles, ruleMap);
+
+  rewriteRules(cycles, ruleMap);
 
   rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap); ///
 
@@ -39,6 +37,35 @@ function graphFromStartRule(startRule, ruleMap, ruleNamesMap) {
         graph = Graph.fromEdgesAndStartVertex(edges, startVertex);
 
   return graph;
+}
+
+function cyclesFromStartRule(startRule, ruleMap, ruleNamesMap) {
+  const graph = graphFromStartRule(startRule, ruleMap, ruleNamesMap),
+        cycles = graph.findCycles();
+
+  filter(cycles, (cycle) => {
+    const cycleLeftRecursive = isCycleLeftRecursive(cycle);
+
+    if (cycleLeftRecursive) {
+      return true;
+    }
+  });
+
+  return cycles;
+}
+
+function isCycleLeftRecursive(cycle) {
+  const cycleLeftRecursive = cycle.everyEdge((edge) => {
+    const label = edge.getLabel(),
+          labelLeftRecursiveLabel = (label === LEFT_RECURSIVE_LABEL),
+          edgeLeftRecursive = labelLeftRecursiveLabel;  ///
+
+    if (edgeLeftRecursive) {
+      return true;
+    }
+  });
+
+  return cycleLeftRecursive;
 }
 
 function ruleNamesMapFromNothing(ruleMap) {
@@ -57,34 +84,5 @@ function ruleNamesMapFromNothing(ruleMap) {
   });
 
   return ruleNamesMap;
-}
-
-function isCycleLeftRecursive(cycle) {
-  const cycleLeftRecursive = cycle.everyEdge((edge) => {
-    const label = edge.getLabel(),
-          labelLeftRecursiveLabel = (label === LEFT_RECURSIVE_LABEL),
-          edgeLeftRecursive = labelLeftRecursiveLabel;  ///
-
-    if (edgeLeftRecursive) {
-      return true;
-    }
-  });
-
-  return cycleLeftRecursive;
-}
-
-function cyclesFromStartRule(startRule, ruleMap, ruleNamesMap) {
-  const graph = graphFromStartRule(startRule, ruleMap, ruleNamesMap),
-        cycles = graph.findCycles();
-
-  filter(cycles, (cycle) => {
-    const cycleLeftRecursive = isCycleLeftRecursive(cycle);
-
-    if (cycleLeftRecursive) {
-      return true;
-    }
-  });
-
-  return cycles;
 }
 

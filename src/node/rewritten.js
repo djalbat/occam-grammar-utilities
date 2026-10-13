@@ -2,7 +2,7 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
-import { rewriteReducedChildNode, rewriteDirectlyRepeatedNodes, rewriteIndirectlyRepeatedNodes } from "../utilities/rewrite";
+import { rewriteNonTerminalNode } from "../utilities/node";
 
 export default class RewrittenNode extends NonTerminalNode {
   rewrite(state) {
@@ -12,15 +12,7 @@ export default class RewrittenNode extends NonTerminalNode {
 
     nonTerminalNode = nonTerminalNodeFromNonTerminalNode(nonTerminalNode, state); ///
 
-    rewriteDirectlyRepeatedNodes(nonTerminalNode, state);
-
-    const parentNode = rewriteIndirectlyRepeatedNodes(nonTerminalNode, state);
-
-    {
-      const nonTerminalNode = parentNode; ///
-
-      rewriteReducedChildNode(nonTerminalNode, state);
-    }
+    rewriteNonTerminalNode(nonTerminalNode, state);
 
     return nonTerminalNode;
   }
