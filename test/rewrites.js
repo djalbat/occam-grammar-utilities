@@ -95,7 +95,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe.only("a cycle of length one with precedence", () => {
+  describe("a cycle of length one with precedence", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -237,6 +237,300 @@ describe("Rewrites", () => {
                    |                                                               
           "e"[unassigned] [0]                                                      
              
+      `));
+      });
+    })
+  });
+
+  describe("a cycle of length one with right recursion", () => {
+    let bnf = `
+  
+      S ::= ( T ... <END_OF_LINE> ) ;
+      
+      T ::= T "+" T?
+      
+          | .
+          
+          ;
+        
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                                          
+        S  ::= ( T ... <END_OF_LINE> ) ;
+        
+        T  ::= T_ T~* ;
+        
+        T~ ::= "+" T? ;
+        
+        T_ ::= . ;
+        
+      `));
+    });
+
+    describe("content with one token", () => {
+      const content = `x
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                          
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+                 T [0]        <END_OF_LINE>
+                   |                       
+          "x"[unassigned] [0]              
+             
+      `));
+      });
+    })
+
+    describe("content with three tokens", () => {
+      const content = `x + x
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                          
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                     T [0]                            <END_OF_LINE>
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+                 T [0]        "+"[unassigned] [0]        T [0]                     
+                   |                                       |                       
+          "x"[unassigned] [0]                     "x"[unassigned] [0]              
+             
+      `));
+      });
+    })
+
+    describe("content with five tokens", () => {
+      const content = `x + x + x
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+
+                                                                                 S [0]                                     
+                                                                                   |                                       
+                                                 --------------------------------------------------------------------      
+                                                 |                                                                  |      
+                                               T [0]                                                          <END_OF_LINE>
+                                                 |                                                                         
+                   -------------------------------------------------------------                                           
+                   |                   |                                       |                                           
+                 T [0]        "+"[unassigned] [0]                            T [0]                                         
+                   |                                                           |                                           
+          "x"[unassigned] [0]                              -----------------------------------------                       
+                                                           |                   |                   |                       
+                                                         T [0]        "+"[unassigned] [0]        T [0]                     
+                                                           |                                       |                       
+                                                  "x"[unassigned] [0]                     "x"[unassigned] [0]
+                                                                
+      `));
+      });
+    })
+  });
+
+  describe("a cycle of length one with a cut", () => {
+    let bnf = `
+  
+      S ::= ( T ... <END_OF_LINE> ) ;
+      
+      T ::= T "+" \` T?
+      
+          | .
+          
+          ;
+        
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                                                  
+        S  ::= ( T ... <END_OF_LINE> ) ;
+        
+        T  ::= T_ T~* ;
+        
+        T~ ::= "+" \`\` T? ;
+        
+        T_ ::= . ;
+        
+      `));
+    });
+
+    describe("content with one token", () => {
+      const content = `x
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                    
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+                 T [0]        <END_OF_LINE>
+                   |                       
+          "x"[unassigned] [0]              
+             
+      `));
+      });
+    })
+
+    describe("content with three tokens", () => {
+      const content = `x + x
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                    
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                     T [0]                            <END_OF_LINE>
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+                 T [0]        "+"[unassigned] [0]        T [0]                     
+                   |                                       |                       
+          "x"[unassigned] [0]                     "x"[unassigned] [0]
+                        
+      `));
+      });
+    })
+
+    describe("content with five tokens", () => {
+      const content = `x + x + x
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it.only("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+          
+                                                                                 S [0]                                     
+                                                                                   |                                       
+                                                 --------------------------------------------------------------------      
+                                                 |                                                                  |      
+                                               T [0]                                                          <END_OF_LINE>
+                                                 |                                                                         
+                   -------------------------------------------------------------                                           
+                   |                   |                                       |                                           
+                 T [0]        "+"[unassigned] [0]                            T [0]                                         
+                   |                                                           |                                           
+          "x"[unassigned] [0]                              -----------------------------------------                       
+                                                           |                   |                   |                       
+                                                         T [0]        "+"[unassigned] [0]        T [0]                     
+                                                           |                                       |                       
+                                                  "x"[unassigned] [0]                     "x"[unassigned] [0]              
+                                                                
       `));
       });
     })

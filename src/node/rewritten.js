@@ -2,17 +2,17 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
-import { rewriteNonTerminalNode } from "../utilities/node";
+import { rewriteRewrittenNode } from "../utilities/node";
 
 export default class RewrittenNode extends NonTerminalNode {
   rewrite(state) {
-    let nonTerminalNode;
+    let rewrittenNode;
 
-    nonTerminalNode = this.clone(); ///
+    rewrittenNode = this.clone(); ///
 
-    nonTerminalNode = nonTerminalNodeFromNonTerminalNode(nonTerminalNode, state); ///
+    rewriteRewrittenNode(rewrittenNode, state);
 
-    rewriteNonTerminalNode(nonTerminalNode, state);
+    const nonTerminalNode = nonTerminalNodeFromRewrittenNode(rewrittenNode, state); ///
 
     return nonTerminalNode;
   }
@@ -20,14 +20,13 @@ export default class RewrittenNode extends NonTerminalNode {
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RewrittenNode, ruleName, childNodes, precedence, opacity); }
 }
 
-function nonTerminalNodeFromNonTerminalNode(nonTerminalNode, state) {
-  const opacity = nonTerminalNode.getOpacity(),
-        ruleName = nonTerminalNode.getRuleName(),
-        precedence = nonTerminalNode.getPrecedence(),
-        childNodes = nonTerminalNode.removeChildNodes(),
-        NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName);
-
-  nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity);  ///
+function nonTerminalNodeFromRewrittenNode(rewrittenNode, state) {
+  const opacity = rewrittenNode.getOpacity(),
+        ruleName = rewrittenNode.getRuleName(),
+        precedence = rewrittenNode.getPrecedence(),
+        childNodes = rewrittenNode.removeChildNodes(),
+        NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName),
+        nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity);
 
   return nonTerminalNode;
 }
