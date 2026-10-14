@@ -1,13 +1,10 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
-
 import Cycle from "./cycle";
 
 import { edgesMatchEdge } from "./edge";
+import { find, compress } from "./utilities/array";
 import { areCyclesCoincident } from "./cycle";
-
-const { find, compress } = arrayUtilities;
 
 export default class Graph {
   constructor(edges, startVertex) {

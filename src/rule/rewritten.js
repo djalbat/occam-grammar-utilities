@@ -16,7 +16,7 @@ export default class RewrittenRule extends Rule {
     const rewrittenDefinition = RewrittenDefinition.fromRule(rule),
           definition = rewrittenDefinition, ///
           name = rule.getName(),
-          opacity = rule.getOpacity(),
+          opacity = null,
           definitions = [
             definition
           ],

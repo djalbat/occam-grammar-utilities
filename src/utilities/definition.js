@@ -1,13 +1,32 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
-
+import { first, tail } from "../utilities/array";
 import { edgesMatchEdge } from "../edge";
 import { ruleNamesFromCycle } from "../utilities/cycle";
 import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursion";
 import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/edge";
 
-const { first, tail } = arrayUtilities;
+export function isDefinitionReducible(definition, ruleName, cycles, ruleMap) {
+  const leftRecursiveRuleNames = [];
+
+  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
+
+  const definitionReducible = leftRecursiveRuleNames.every((leftRecursiveRuleName) => {
+    const cyclesIncludeRuleNameAndLeftRecursiveRuleName = cycles.some((cycle) => {
+      const cycleIncludesRuleNameAndLeftRecursiveRuleName = doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName);
+
+      if (cycleIncludesRuleNameAndLeftRecursiveRuleName) {
+        return true;
+      }
+    });
+
+    if (!cyclesIncludeRuleNameAndLeftRecursiveRuleName) {
+      return true;
+    }
+  });
+
+  return definitionReducible;
+}
 
 export function isDefinitionRepeatable(definition, ruleName, cycles, ruleMap) {
   const definitionReducible = isDefinitionReducible(definition, ruleName, cycles, ruleMap),
@@ -45,28 +64,6 @@ export function isDefinitionRepeatable(definition, ruleName, cycles, ruleMap) {
   }
 
   return definitionRepeatable;
-}
-
-export function isDefinitionReducible(definition, ruleName, cycles, ruleMap) {
-  const leftRecursiveRuleNames = [];
-
-  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
-
-  const definitionReducible = leftRecursiveRuleNames.every((leftRecursiveRuleName) => {
-    const cyclesIncludeRuleNameAndLeftRecursiveRuleName = cycles.some((cycle) => {
-      const cycleIncludesRuleNameAndLeftRecursiveRuleName = doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName);
-
-      if (cycleIncludesRuleNameAndLeftRecursiveRuleName) {
-        return true;
-      }
-    });
-
-    if (!cyclesIncludeRuleNameAndLeftRecursiveRuleName) {
-      return true;
-    }
-  });
-
-  return definitionReducible;
 }
 
 function doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName) {

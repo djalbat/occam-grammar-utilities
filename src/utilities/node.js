@@ -1,39 +1,61 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
+import { first, tail, move, separate } from "../utilities/array";
 
-const { first, tail } = arrayUtilities;
+function foldChildNodes(leadingChildNodes, trailingChildNodes, ruleName, precedence, opacity, state) {
+  let childNodes;
 
-export function rewriteRewrittenNode(rewrittenNode, state) {
-  let childNodes,
-      precedence;
+  const trailingChildNodesLength = trailingChildNodes.length;
 
-  childNodes = rewrittenNode.removeChildNodes();
+  if (trailingChildNodesLength === 0) {
+    childNodes = leadingChildNodes; ///
+  } else {
+    let rewrittenNodeIndex;
 
-  precedence = rewrittenNode.getPrecedence();
+    rewrittenNodeIndex = findNodeIndex(trailingChildNodes, ruleName);
 
-  const opacity = rewrittenNode.getOpacity(),
-        ruleName = rewrittenNode.getRuleName(),
-        foldedNonTerminalNode = foldNonTerminalNode(ruleName, childNodes, precedence, opacity, state);
+    if (rewrittenNodeIndex === -1) {
+      childNodes = [
+        ...leadingChildNodes,
+        ...trailingChildNodes
+      ];
+    } else {
+      move(leadingChildNodes, trailingChildNodes, rewrittenNodeIndex);
 
-  childNodes = foldedNonTerminalNode.removeChildNodes();
+      const rewrittenNode = trailingChildNodes.shift();
 
-  precedence = foldedNonTerminalNode.getPrecedence();
+      rewrittenNodeIndex = findNodeIndex(rewrittenNode, ruleName);
 
-  rewrittenNode.addChildNodes(childNodes);
+      if (rewrittenNodeIndex === -1) {
+        leadingChildNodes.push(rewrittenNode);
+      } else {
+        const rewrittenNodeChildNodes = rewrittenNode.removeChildNodes(),
+              firstRewrittenNodeChildNode = first(rewrittenNodeChildNodes),
+              tailRewrittenNodeChildNodesTail = tail(rewrittenNodeChildNodes);
 
-  rewrittenNode.setPrecedence(precedence);
-}
+        trailingChildNodes = [  ///
+          ...tailRewrittenNodeChildNodesTail,
+          ...trailingChildNodes
+        ];
 
-function foldNonTerminalNode(ruleName, childNodes, precedence, opacity, state) {
-  const firstChildNode = first(childNodes),
-        childNodesTail = tail(childNodes),
-        reducedNode = firstChildNode, ///
-        repeatedNodes = childNodesTail,
-        accumulatorNode = accumulatorNodeFromReducedNode(reducedNode, ruleName, state),
-        foldedNonTerminalNode = foldRepeatedNodes(accumulatorNode, repeatedNodes, ruleName, opacity, state);
+        childNodes = [  ///
+          ...leadingChildNodes,
+          firstRewrittenNodeChildNode
+        ];
 
-  return foldedNonTerminalNode;
+        const NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName),
+              nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity);
+
+        leadingChildNodes = [ ///
+          nonTerminalNode
+        ];
+      }
+
+      childNodes = foldChildNodes(leadingChildNodes, trailingChildNodes, ruleName, precedence, opacity, state);
+    }
+  }
+
+  return childNodes;
 }
 
 function foldRepeatedNodes(accumulatorNode, repeatedNodes, ruleName, opacity, state) {
@@ -46,14 +68,33 @@ function foldRepeatedNodes(accumulatorNode, repeatedNodes, ruleName, opacity, st
   } else {
     const firstRepeatedNode = first(repeatedNodes),
           repeatedNode = firstRepeatedNode, ///
-          repeateNodeCut = isRepeatedNodeCut(repeatedNode),
-          repeatedNodeChildNodes = repeatedNode.removeChildNodes(),
-          childNodes = [
-            accumulatorNode,
-            ...repeatedNodeChildNodes
-          ],
-          precedence = firstRepeatedNode.getPrecedence(),
-          NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName),
+          precedence = repeatedNode.getPrecedence(),
+          cutNodeIndex = findCutNodeIndex(repeatedNode),
+          repeatedNodeChildNodes = repeatedNode.removeChildNodes();
+
+    let childNodes;
+
+    if (cutNodeIndex > -1) {
+      const leadingRepeatedNodeChildNodes = [],
+            treilingRepeatedNodeChildNodes = [];
+
+      separate(repeatedNodeChildNodes, leadingRepeatedNodeChildNodes, treilingRepeatedNodeChildNodes, cutNodeIndex);
+
+      const leadingChildNodes = [
+              accumulatorNode,
+              ...leadingRepeatedNodeChildNodes
+            ],
+            trailingChildNodes = treilingRepeatedNodeChildNodes;  ///
+
+      childNodes = foldChildNodes(leadingChildNodes, trailingChildNodes, ruleName, precedence, opacity, state);
+    } else {
+      childNodes = [
+        accumulatorNode,
+        ...repeatedNodeChildNodes
+      ];
+    }
+
+    const NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName),
           nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity);
 
     accumulatorNode = nonTerminalNode; ///
@@ -68,38 +109,54 @@ function foldRepeatedNodes(accumulatorNode, repeatedNodes, ruleName, opacity, st
   return foldedNonTerminalNode;
 }
 
-function accumulatorNodeFromReducedNode(reducedNode, ruleName, state) {
-  const opacity = reducedNode.getOpacity(),
-        precedence = reducedNode.getPrecedence(),
-        childNodes = reducedNode.removeChildNodes(),
-        NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName),
-        nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity),
-        accumulatorNode = nonTerminalNode; ///
+function findNodeIndex(nodeOrNodes, ruleName) {
+  let nodeIndex;
 
-  return accumulatorNode;
-}
+  const nodeOrNodesArray = Array.isArray(nodeOrNodes);
 
-function isRepeatedNodeCut(repeatedNode) {
-  const cutNodes = repeatedNode.filterChildNode((childNode) => {
-          const childNodeTerminalNode = childNode.isTerminalNode();
+  if (nodeOrNodesArray) {
+    const nodes = nodeOrNodes;  ///
 
-          if (childNodeTerminalNode) {
-            const terminalNode = childNode, ///
-                  terminalNodeCutNode = terminalNode.isCutNode();
+    nodeIndex = nodes.findIndex((node) => {
+      const ruleNameMatches = matchRuleName(node, ruleName);
 
-            if (terminalNodeCutNode) {
-              return true;
-            }
-          }
-        }),
-        cutNodesLength = cutNodes.length,
-        repeatedNodeCut = (cutNodesLength > 0);
+      if (ruleNameMatches) {
+        return true;
+      }
+    });
+  } else {
+    const node = nodeOrNodes; ///
 
-  cutNodes.forEach((cutNode) => {
-    const childNode = cutNode;  ///
+    nodeIndex = -1;
 
-    repeatedNode.removeChildNode(childNode);
-  });
+    node.someChildNode((childNode, index) => {
+      const node = childNode, ///
+            ruleNameMatches = matchRuleName(node, ruleName);
 
-  return repeatedNodeCut;
+      if (ruleNameMatches) {
+        nodeIndex = 1;
+
+        return true;
+      }
+    });
+  }
+
+  return nodeIndex;
+
+  function matchRuleName(node) {
+    let ruleNameMatches = false;
+
+    const nodeNonTerminalNode = node.isNonTerminalNode();
+
+    if (nodeNonTerminalNode) {
+      const nonTerminalNode = node, ///
+            nonTerminalNodeRuleName = nonTerminalNode.getRuleName();
+
+      if (nonTerminalNodeRuleName === ruleName) {
+        ruleNameMatches = true;
+      }
+    }
+
+    return ruleNameMatches;
+  }
 }

@@ -33,7 +33,7 @@ export default class ReducedRule extends Rule {
 
     const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           name = reducedRuleName, ///
-          opacity = rule.getOpacity(),
+          opacity = null,
           reducedRule = new ReducedRule(name, opacity, definitions);
 
     return reducedRule;

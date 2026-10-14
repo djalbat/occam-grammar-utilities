@@ -136,7 +136,7 @@ describe("Rewrites", () => {
       `));
     });
 
-    describe("content with one token", () => {
+    describe.only("content with one token", () => {
       const content = `e
 `;
 
@@ -276,7 +276,7 @@ describe("Rewrites", () => {
         
         T  ::= T_ T~* ;
         
-        T~ ::= "+" T? ;
+        T~ ::= "+" T ;
         
         T_ ::= . ;
         
@@ -315,7 +315,7 @@ describe("Rewrites", () => {
     })
 
     describe("content with three tokens", () => {
-      const content = `x + x
+      const content = `x + y
 `;
 
       before(() => {
@@ -343,14 +343,14 @@ describe("Rewrites", () => {
                    |                   |                   |                       
                  T [0]        "+"[unassigned] [0]        T [0]                     
                    |                                       |                       
-          "x"[unassigned] [0]                     "x"[unassigned] [0]              
+          "x"[unassigned] [0]                     "y"[unassigned] [0]              
              
       `));
       });
     })
 
     describe("content with five tokens", () => {
-      const content = `x + x + x
+      const content = `x + y + z
 `;
 
       before(() => {
@@ -382,7 +382,7 @@ describe("Rewrites", () => {
                                                            |                   |                   |                       
                                                          T [0]        "+"[unassigned] [0]        T [0]                     
                                                            |                                       |                       
-                                                  "x"[unassigned] [0]                     "x"[unassigned] [0]
+                                                  "y"[unassigned] [0]                     "z"[unassigned] [0]
                                                                 
       `));
       });
@@ -394,7 +394,7 @@ describe("Rewrites", () => {
   
       S ::= ( T ... <END_OF_LINE> ) ;
       
-      T ::= T "+" \` T?
+      T ::= T "+" \` T
       
           | .
           
@@ -423,7 +423,7 @@ describe("Rewrites", () => {
         
         T  ::= T_ T~* ;
         
-        T~ ::= "+" \`\` T? ;
+        T~ ::= "+" \`\` T ;
         
         T_ ::= . ;
         
@@ -462,7 +462,7 @@ describe("Rewrites", () => {
     })
 
     describe("content with three tokens", () => {
-      const content = `x + x
+      const content = `x + y
 `;
 
       before(() => {
@@ -490,14 +490,14 @@ describe("Rewrites", () => {
                    |                   |                   |                       
                  T [0]        "+"[unassigned] [0]        T [0]                     
                    |                                       |                       
-          "x"[unassigned] [0]                     "x"[unassigned] [0]
+          "x"[unassigned] [0]                     "y"[unassigned] [0]
                         
       `));
       });
     })
 
     describe("content with five tokens", () => {
-      const content = `x + x + x
+      const content = `x + y + z
 `;
 
       before(() => {
@@ -506,7 +506,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it.only("results in the requisite parse tree" , () => {
+      it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
@@ -514,23 +514,62 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                          
+                                                                                           S [0]                           
+                                                                                             |                             
+                                                                     ------------------------------------------------      
+                                                                     |                                              |      
+                                                                   T [0]                                      <END_OF_LINE>
+                                                                     |                                                     
+                                       -------------------------------------------------------------                       
+                                       |                                       |                   |                       
+                                     T [0]                            "+"[unassigned] [0]        T [0]                     
+                                       |                                                           |                       
+                   -----------------------------------------                              "z"[unassigned] [0]              
+                   |                   |                   |                                                               
+                 T [0]        "+"[unassigned] [0]        T [0]                                                             
+                   |                                       |                                                               
+          "x"[unassigned] [0]                     "y"[unassigned] [0]                                                      
           
-                                                                                 S [0]                                     
-                                                                                   |                                       
-                                                 --------------------------------------------------------------------      
-                                                 |                                                                  |      
-                                               T [0]                                                          <END_OF_LINE>
-                                                 |                                                                         
-                   -------------------------------------------------------------                                           
-                   |                   |                                       |                                           
-                 T [0]        "+"[unassigned] [0]                            T [0]                                         
-                   |                                                           |                                           
-          "x"[unassigned] [0]                              -----------------------------------------                       
-                                                           |                   |                   |                       
-                                                         T [0]        "+"[unassigned] [0]        T [0]                     
-                                                           |                                       |                       
-                                                  "x"[unassigned] [0]                     "x"[unassigned] [0]              
-                                                                
+      `));
+      });
+    })
+
+    describe("content with seven tokens", () => {
+      const content = `x + y + z + w
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        // assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                          
+                                                                                           S [0]                           
+                                                                                             |                             
+                                                                     ------------------------------------------------      
+                                                                     |                                              |      
+                                                                   T [0]                                      <END_OF_LINE>
+                                                                     |                                                     
+                                       -------------------------------------------------------------                       
+                                       |                                       |                   |                       
+                                     T [0]                            "+"[unassigned] [0]        T [0]                     
+                                       |                                                           |                       
+                   -----------------------------------------                              "z"[unassigned] [0]              
+                   |                   |                   |                                                               
+                 T [0]        "+"[unassigned] [0]        T [0]                                                             
+                   |                                       |                                                               
+          "x"[unassigned] [0]                     "y"[unassigned] [0]                                                      
+          
       `));
       });
     })
