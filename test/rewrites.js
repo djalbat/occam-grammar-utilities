@@ -136,7 +136,7 @@ describe("Rewrites", () => {
       `));
     });
 
-    describe.only("content with one token", () => {
+    describe("content with one token", () => {
       const content = `e
 `;
 
@@ -242,12 +242,12 @@ describe("Rewrites", () => {
     })
   });
 
-  describe("a cycle of length one with right recursion", () => {
+  describe.only("a cycle of length one with right recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
       
-      T ::= T "+" T?
+      T ::= T "+" T
       
           | .
           

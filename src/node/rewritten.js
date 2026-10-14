@@ -5,6 +5,13 @@ import { NonTerminalNode } from "occam-parsers";
 import { first, tail } from "../utilities/array";
 
 export default class RewrittenNode extends NonTerminalNode {
+  isSingular() {
+    const multiplicity = this.getMultiplicity(),
+          singular = (multiplicity === 1);
+
+    return singular;
+  }
+
   rewrite(state) {
     let rewrittenNode;
 
@@ -20,10 +27,18 @@ export default class RewrittenNode extends NonTerminalNode {
   }
 
   rewriteChildNodes(state) {
-    const childNodes = this.getChildNodes(),
+    const singular = this.isSingular(),
+          childNodes = this.getChildNodes(),
           firstChildNode = first(childNodes),
-          tailChildNodes = tail(childNodes),
-          reducedNode = firstChildNode, ///
+          reducedNode = firstChildNode; ///
+
+    if (singular) {
+      reducedNode.lift(state);
+
+      return;
+    }
+
+    const tailChildNodes = tail(childNodes),
           repeatedNodes = tailChildNodes, ///
           rewrittenNode = this; ///
 
@@ -31,8 +46,10 @@ export default class RewrittenNode extends NonTerminalNode {
 
     accumulatorNode = reducedNode.accumulate(rewrittenNode, state);
 
-    repeatedNodes.forEach((repeatedNode) => {
-      accumulatorNode = repeatedNode.lift(accumulatorNode, rewrittenNode, state);
+    repeatedNodes.forEach((repeatedNode, index) => {
+      const initial = (index === 0);
+
+      accumulatorNode = repeatedNode.lift(accumulatorNode, rewrittenNode, initial, state);
     });
   }
 
