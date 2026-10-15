@@ -1,9 +1,11 @@
 "use strict";
 
 import { Definition } from "occam-parsers";
+import { arrayUtilities } from "necessary";
 
-import { tail } from "../utilities/array";
 import { retrieveSimpleParts } from "../utilities/recursion";
+
+const { tail } = arrayUtilities;
 
 export default class RepeatedDefinition extends Definition {
   static fromDefinition(definition) {

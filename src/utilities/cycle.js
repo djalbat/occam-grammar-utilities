@@ -1,6 +1,8 @@
 "use strict";
 
-import { push, compress } from "../utilities/array";
+import { arrayUtilities } from "necessary";
+
+const { push, compress } = arrayUtilities;
 
 export function ruleNamesFromCycle(cycle, ruleNames = []) {
   const cycleVertexes = cycle.getVertexes(),

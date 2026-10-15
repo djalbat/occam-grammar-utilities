@@ -1,10 +1,13 @@
 "use strict";
 
-import { first, tail } from "../utilities/array";
+import { arrayUtilities } from "necessary";
+
 import { edgesMatchEdge } from "../edge";
 import { ruleNamesFromCycle } from "../utilities/cycle";
 import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursion";
 import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/edge";
+
+const { first, tail } = arrayUtilities;
 
 export function isDefinitionReducible(definition, ruleName, cycles, ruleMap) {
   const leftRecursiveRuleNames = [];

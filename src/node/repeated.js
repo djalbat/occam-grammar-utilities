@@ -38,40 +38,12 @@ export default class RepeatedNode extends NonTerminalNode {
     return accumulatorNode;
   }
 
-  isCut() {
-    const cutIndex = this.findCutIndex(),
-          cut = (cutIndex > -1);
-
-    return cut;
-  }
-
   getIndex() {
     const childNode = this,  ///
           parentNode = this.getParentNode(),
           index = parentNode.indexOfChildNode(childNode);
 
     return index;
-  }
-
-  findCutIndex() {
-    let cutIndex = -1;
-
-    this.findChildNode((childNode, index) => {
-      const childNodeTerminalNode = childNode.isTerminalNode();
-
-      if (childNodeTerminalNode) {
-        const terminalNode = childNode, ///
-              terminalNodeCutNode = terminalNode.isCutNode();
-
-        if (terminalNodeCutNode) {
-          cutIndex = index; ///
-
-          return true;
-        }
-      }
-    });
-
-    return cutIndex;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RepeatedNode, ruleName, childNodes, precedence, opacity); }

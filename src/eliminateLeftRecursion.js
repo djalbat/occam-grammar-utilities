@@ -1,16 +1,17 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
 import { rulesUtilities } from "occam-parsers";
 
 import Graph from "./graph";
 
-import { filter } from "./utilities/array";
 import { edgesFromStartRule } from "./utilities/edge";
 import { LEFT_RECURSIVE_LABEL } from "./labels";
 import { leftRecursiveRuleNamesFromRule } from "./utilities/leftRecursion";
 import { rewriteRules, createReducedRules, createRepeatedRules } from "./utilities/rules";
 
-const { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
+const { filter } = arrayUtilities,
+      { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
 export default function eliminateLeftRecursion(rules) {
   const ruleMap = ruleMapFromRules(rules),

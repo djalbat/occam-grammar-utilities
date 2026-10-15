@@ -1,10 +1,10 @@
 "use strict";
 
 import { characters } from "necessary";
+import { arrayUtilities } from "necessary";
 
-import { last } from "./utilities/array";
-
-const { COMMA_CHARACTER } = characters;
+const { last } = arrayUtilities,
+      { COMMA_CHARACTER } = characters;
 
 export default class Cycle {
   constructor(edges) {

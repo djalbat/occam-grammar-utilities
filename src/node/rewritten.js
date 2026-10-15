@@ -1,8 +1,9 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
 import { NonTerminalNode } from "occam-parsers";
 
-import { first, tail } from "../utilities/array";
+const { first, tail } = arrayUtilities;
 
 export default class RewrittenNode extends NonTerminalNode {
   isSingular() {
@@ -22,6 +23,8 @@ export default class RewrittenNode extends NonTerminalNode {
     const precedence = rewrittenNode.getPrecedence(),
           childNodes = rewrittenNode.removeChildNodes(),
           nonTerminalNode = this.createNonTerminalNode(childNodes, precedence, state);
+
+    nonTerminalNode.resolveCuts(rewrittenNode, state);
 
     return nonTerminalNode;
   }
