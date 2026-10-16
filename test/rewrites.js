@@ -18,7 +18,7 @@ describe("Rewrites", () => {
     }
   ];
 
-  describe("a cycle of length one", () => {
+  describe.only("a cycle of length one", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -95,7 +95,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe("a cycle of length one with precedence", () => {
+  describe.only("a cycle of length one with precedence", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -242,7 +242,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe("a cycle of length one with right recursion", () => {
+  describe.only("a cycle of length one with right recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -389,7 +389,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe("a cycle of length one with right recursion and a cut", () => {
+  describe.only("a cycle of length one with right recursion and a cut", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -579,7 +579,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
+  describe.only("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;

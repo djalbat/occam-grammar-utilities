@@ -24,7 +24,7 @@ export default class RewrittenNode extends NonTerminalNode {
           childNodes = rewrittenNode.removeChildNodes(),
           nonTerminalNode = this.createNonTerminalNode(childNodes, precedence, state);
 
-    nonTerminalNode.resolveCuts(rewrittenNode, state);
+    nonTerminalNode.resolve(rewrittenNode, state);
 
     return nonTerminalNode;
   }
