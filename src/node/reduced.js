@@ -3,6 +3,12 @@
 import { NonTerminalNode } from "occam-parsers";
 
 export default class ReducedNode extends NonTerminalNode {
+  isUnprecedented() {
+    const unprecedented = false;
+
+    return unprecedented;
+  }
+
   lift(state) {
     const parentNode = this.getParentNode(),
           precedence = this.getPrecedence(),

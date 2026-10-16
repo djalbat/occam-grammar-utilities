@@ -33,7 +33,7 @@ export default class RepeatedRule extends Rule {
     }
 
     const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
-          repeatedDefinitions = rewrittenDefinitionsFromDefintiions(definitions),
+          repeatedDefinitions = repeatedDefinitionsFromDefintiions(definitions, ruleMap),
           name = repeatedRuleName, ///
           opacity = rule.getOpacity();
 
@@ -57,9 +57,9 @@ function filterDefinitions(definitions, ruleName, cycles, ruleMap) {
   return definitions;
 }
 
-function rewrittenDefinitionsFromDefintiions(definitions) {
+function repeatedDefinitionsFromDefintiions(definitions, ruleMap) {
   const repeatedDefinitions = definitions.map((definition) => {
-    const repeatedDefinition = RepeatedDefinition.fromDefinition(definition);
+    const repeatedDefinition = RepeatedDefinition.fromDefinition(definition, ruleMap);
 
     return repeatedDefinition;
   });

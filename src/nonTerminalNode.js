@@ -3,6 +3,46 @@
 import { NonTerminalNode as NonTerminalNodeBase } from "occam-parsers";
 
 export default class NonTerminalNode extends NonTerminalNodeBase {
+  isCut() {
+    const cutNode = this.findCutNode(),
+          cut = (cutNode !== null);
+
+    return cut;
+  }
+
+  isLeftLeadning() {
+    const leftLeadningNode = this.findLeftLeadningNode(),
+          leftLeadning = (leftLeadningNode !== null);
+
+    return leftLeadning;
+  }
+
+  isRightLeaning() {
+    const rightLeadningNode = this.findRightLeadningNode(),
+          rightLeaning = (rightLeadningNode !== null);
+
+    return rightLeaning;
+  }
+
+  isUnprecedented(shallow = false) {
+    let unprecedented;
+
+    if (shallow) {
+      unprecedented = super.isUnprecedented();
+    } else {
+      unprecedented = false;
+
+      const node = this,  ///
+            nodeUnprecedented = isNodeUnprecedented(node);
+
+      if (nodeUnprecedented) {
+        unprecedented = true;
+      }
+    }
+
+    return unprecedented;
+  }
+
   findCutNode() {
     let cutNode = null;
 
@@ -54,65 +94,37 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
 
     const ruleName = this.getRuleName();
 
-    this.someChildNode((childNode, index) => {
-      if (index > 0) {
-        const childNodeNonTerminalNode = childNode.isNonTerminalNode();
+    this.backwardsSomeChildNode((childNode, index) => {
+      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
 
-        if (childNodeNonTerminalNode) {
-          const nonTerminalNode = childNode,  ///
-                nonTerminalNodeRuleName = nonTerminalNode.getRuleName();
+      if (childNodeNonTerminalNode) {
+        const nonTerminalNode = childNode,  ///
+              nonTerminalNodeRuleName = nonTerminalNode.getRuleName();
 
-          if (nonTerminalNodeRuleName === ruleName) {
-            rightLeadningNode = nonTerminalNode;  ///
-
-            return true;
-          }
+        if (nonTerminalNodeRuleName === ruleName) {
+          rightLeadningNode = nonTerminalNode;  ///
         }
       }
+
+      return true;
     });
 
     return rightLeadningNode;
   }
 
-  removeChildNodesLeftOfNode(node) {
-    const childNode = node, ///
-          cutIndex = this.indexOfChildNode(childNode),
-          startIndex = 0,
-          deleteCount = cutIndex, ///
-          removedChildNodesLeftOfCut = this.spliceChildNodes(startIndex, deleteCount);
+  transform(transformation) {
+    const nonTerminalNode = this.clone(),
+          childNodes = nonTerminalNode.removeChildNodes(),
+          precedence = nonTerminalNode.getPrecedence(),
+          rollback = transformation();
 
-    return removedChildNodesLeftOfCut;
-  }
+    if (rollback) {
+      this.removeChildNodes();
 
-  isCut() {
-    const cutNode = this.findCutNode(),
-          cut = (cutNode !== null);
+      this.addChildNodes(childNodes);
 
-    return cut;
-  }
-
-  isLeftLeadning() {
-    const leftLeadningNode = this.findLeftLeadningNode(),
-          leftLeadning = (leftLeadningNode !== null);
-
-    return leftLeadning;
-  }
-
-  isRightLeaning() {
-    const rightLeadningNode = this.findRightLeadningNode(),
-          rightLeaning = (rightLeadningNode !== null);
-
-    return rightLeaning;
-  }
-
-  isUnprecedented() {
-    // const node = this,  ///
-    //       nodeUnprecedented = isNodeUnprecedented(node),
-    //       unprecedented = nodeUnprecedented;  ///
-
-    const unprecedented = false;
-
-    return unprecedented;
+      this.setPrecedence(precedence);
+    }
   }
 
   lift() {
@@ -132,58 +144,81 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
   }
 
   tiltLeft(rewrittenNode, state) {
-    const rightLeaningNode = this.findRightLeadningNode();
+    let nonTerminalNode = null;
 
-    if (rightLeaningNode === null) {
-      return;
+    const rightLeaningNode = this.findRightLeadningNode(),
+          leftLeaningNode = (rightLeaningNode !== null) ?
+                              rightLeaningNode.findLeftLeadningNode() :
+                                null;
+
+    if (leftLeaningNode !== null) {
+      this.transform(() => {
+        let rollback = false;
+
+        leftLeaningNode.remove();
+
+        const removedChildNodesLeftOfRightLeadningNode = this.removeChildNodesLeftOfNode(rightLeaningNode);
+
+        rightLeaningNode.lift();
+
+        const childNodes = [
+          ...removedChildNodesLeftOfRightLeadningNode,
+          leftLeaningNode
+        ];
+
+        let precedence;
+
+        precedence = this.getPrecedence();
+
+        nonTerminalNode = rewrittenNode.createNonTerminalNode(childNodes, precedence, state);
+
+        precedence = rightLeaningNode.getPrecedence();
+
+        this.setPrecedence(precedence);
+
+        const childNode = nonTerminalNode,  ///
+              startIndex = 0;
+
+        this.addChildNode(childNode, startIndex);
+
+        const shallow = true,
+              unprecedented = this.isUnprecedented(shallow);
+
+        if (unprecedented) {
+          nonTerminalNode = null;
+
+          rollback = true;
+        }
+
+        return rollback;
+      });
     }
 
-    const leftLeaningNode = rightLeaningNode.findLeftLeadningNode();
-
-    if (leftLeaningNode === null) {
-      return;
-    }
-
-    leftLeaningNode.remove();
-
-    const precedence = this.getPrecedence(),
-          removedChildNodesLeftOfRightLeadningNode = this.removeChildNodesLeftOfNode(rightLeaningNode);
-
-    rightLeaningNode.lift();
-
-    const childNodes = [
-            ...removedChildNodesLeftOfRightLeadningNode,
-            leftLeaningNode
-          ],
-          nonTerminalNode = rewrittenNode.createNonTerminalNode(childNodes, precedence, state),
-          childNode = nonTerminalNode,  ///
-          startIndex = 0;
-
-    this.addChildNode(childNode, startIndex);
-
-    childNode.tiltLeft(rewrittenNode, state);
+    return nonTerminalNode;
   }
 
   resolveCuts(rewrittenNode, state) {
-    const cut = this.isCut();
+    // const cut = this.isCut();
+    //
+    // if (!cut) {
+    //   return;
+    // }
 
-    if (!cut) {
-      return;
+    const nonTerminalNode = this.tiltLeft(rewrittenNode, state);
+
+    if (nonTerminalNode !== null) {
+      nonTerminalNode.resolveCuts(rewrittenNode, state);
     }
-
-    this.removeCutNode();
-
-    this.tiltLeft(rewrittenNode, state);
   }
 
-  removeCutNode() {
-    const cutNode = this.findCutNode();
+  removeChildNodesLeftOfNode(node) {
+    const childNode = node, ///
+          cutIndex = this.indexOfChildNode(childNode),
+          startIndex = 0,
+          deleteCount = cutIndex, ///
+          removedChildNodesLeftOfCut = this.spliceChildNodes(startIndex, deleteCount);
 
-    if (cutNode !== null) {
-      const removedChildNode = cutNode;  ///
-
-      this.removeChildNode(removedChildNode);
-    }
+    return removedChildNodesLeftOfCut;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity); }
@@ -198,9 +233,9 @@ function isNodeUnprecedented(node) {
     const nonTerminalNode = node; ///
 
     if (!nodeUnprecedented) {
-      const childNodesLowerPrecedence = node.areChildNodesLowerPrecedence();
+      const childNodesPrecedenceCompares = node.compareChildNodesPrecedence();
 
-      if (childNodesLowerPrecedence) {
+      if (childNodesPrecedenceCompares) {
         nodeUnprecedented = true;
       }
     }

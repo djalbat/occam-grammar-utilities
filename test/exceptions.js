@@ -3,6 +3,27 @@
 const { adjustedBNFFromBNF } = require("./helpers/bnf");
 
 describe("Exceptions", () => {
+  describe("there are no concumsing parts before a cut", () => {
+    const bnf = `
+  
+      S ::= ( A ... <END_OF_LINE> ) ;
+      
+      A ::= A A? \` "g"
+      
+          | "e"
+          
+          ;
+          
+      
+    `;
+
+    it("does throw an exception", () => {
+      assert.throws(() => {
+        adjustedBNFFromBNF(bnf);
+      });
+    });
+  });
+
   describe("the first part of a repeating definition is not a rule name part", () => {
     const bnf = `
   

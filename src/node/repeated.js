@@ -3,6 +3,12 @@
 import { NonTerminalNode } from "occam-parsers";
 
 export default class RepeatedNode extends NonTerminalNode {
+  isUnprecedented() {
+    const unprecedented = false;
+
+    return unprecedented;
+  }
+
   lift(accumulatorNode, rewrittenNode, initial, state) {
     const parentNode = this.getParentNode(),
           precedence = this.getPrecedence();
