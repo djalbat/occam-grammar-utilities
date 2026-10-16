@@ -66,7 +66,7 @@ export default {
   recursiveRuleNamesFromRule
 };
 
-export function retrieveSimpleParts(part, callback) {
+function retrieveSimpleParts(part, callback) {
   retrieveParts(part, (part) => {
     const partSimplePart = isPartSimplePart(part);
 

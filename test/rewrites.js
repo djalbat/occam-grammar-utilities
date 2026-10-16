@@ -418,12 +418,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                  
+                                                          
         S  ::= ( T ... <END_OF_LINE> ) ;
         
         T  ::= T_ T~* ;
         
-        T~ ::= "+" \`\` T ;
+        T~ ::= "+" \` T ;
         
         T_ ::= . ;
         
@@ -479,18 +479,18 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                              
-                                                         S [0]                       
-                                                           |                         
-                                        ---------------------------------------      
-                                        |                                     |      
-                                      T [0]                             <END_OF_LINE>
-                                        |                                            
-                   -------------------------------------------                       
-                   |                   |          |          |                       
-                 T [0]        "+"[unassigned] [0] \`        T [0]                     
-                   |                                         |                       
-          "x"[unassigned] [0]                       "y"[unassigned] [0]              
+                                        
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                     T [0]                            <END_OF_LINE>
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+                 T [0]        "+"[unassigned] [0]        T [0]                     
+                   |                                       |                       
+          "x"[unassigned] [0]                     "y"[unassigned] [0]              
                         
       `));
       });
@@ -514,23 +514,23 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                                    
-                                                                                              S [0]                            
-                                                                                                |                              
-                                                                        -------------------------------------------------      
-                                                                        |                                               |      
-                                                                      T [0]                                       <END_OF_LINE>
-                                                                        |                                                      
-                                        ----------------------------------------------------------------                       
-                                        |                                        |          |          |                       
-                                      T [0]                             "+"[unassigned] [0] \`        T [0]                     
-                                        |                                                              |                       
-                   -------------------------------------------                                "z"[unassigned] [0]              
-                   |                   |          |          |                                                                 
-                 T [0]        "+"[unassigned] [0] \`        T [0]                                                               
-                   |                                         |                                                                 
-          "x"[unassigned] [0]                       "y"[unassigned] [0]                                                        
-          
+                                                                                                        
+                                                                                           S [0]                           
+                                                                                             |                             
+                                                                     ------------------------------------------------      
+                                                                     |                                              |      
+                                                                   T [0]                                      <END_OF_LINE>
+                                                                     |                                                     
+                                       -------------------------------------------------------------                       
+                                       |                                       |                   |                       
+                                     T [0]                            "+"[unassigned] [0]        T [0]                     
+                                       |                                                           |                       
+                   -----------------------------------------                              "z"[unassigned] [0]              
+                   |                   |                   |                                                               
+                 T [0]        "+"[unassigned] [0]        T [0]                                                             
+                   |                                       |                                                               
+          "x"[unassigned] [0]                     "y"[unassigned] [0]                                                      
+         
       `));
       });
     })
@@ -553,26 +553,26 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                                              
-                                                                                                                                      S [0]                              
-                                                                                                                                        |                                
-                                                                                                             ------------------------------------------------------      
-                                                                                                             |                                                    |      
-                                                                                                           T [0]                                            <END_OF_LINE>
-                                                                                                             |                                                           
-                                                                        --------------------------------------------------------------------------                       
-                                                                        |                                                  |          |          |                       
-                                                                      T [0]                                       "+"[unassigned] [0] \`        T [0]                     
-                                                                        |                                                                        |                       
-                                        ----------------------------------------------------------------                                "w"[unassigned] [0]              
-                                        |                                        |          |          |                                                                 
-                                      T [0]                             "+"[unassigned] [0] \`        T [0]                                                               
-                                        |                                                              |                                                                 
-                   -------------------------------------------                                "z"[unassigned] [0]                                                        
-                   |                   |          |          |                                                                                                           
-                 T [0]        "+"[unassigned] [0] \`        T [0]                                                                                                         
-                   |                                         |                                                                                                           
-          "x"[unassigned] [0]                       "y"[unassigned] [0]                                                                                                  
+                                                                                                        
+                                                                                                                                S [0]                              
+                                                                                                                                  |                                
+                                                                                                        -----------------------------------------------------      
+                                                                                                        |                                                   |      
+                                                                                                      T [0]                                           <END_OF_LINE>
+                                                                                                        |                                                          
+                                                                     -----------------------------------------------------------------------                       
+                                                                     |                                                 |                   |                       
+                                                                   T [0]                                      "+"[unassigned] [0]        T [0]                     
+                                                                     |                                                                     |                       
+                                       -------------------------------------------------------------                              "w"[unassigned] [0]              
+                                       |                                       |                   |                                                               
+                                     T [0]                            "+"[unassigned] [0]        T [0]                                                             
+                                       |                                                           |                                                               
+                   -----------------------------------------                              "z"[unassigned] [0]                                                      
+                   |                   |                   |                                                                                                       
+                 T [0]        "+"[unassigned] [0]        T [0]                                                                                                     
+                   |                                       |                                                                                                       
+          "x"[unassigned] [0]                     "y"[unassigned] [0]                                                                                              
           
       `));
       });
@@ -608,12 +608,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                  
+                                                                          
         S  ::= ( T ... <END_OF_LINE> ) ;
         
         T  ::= T_ T~* ;
         
-        T~ ::= "?" \`\` T ":" T ;
+        T~ ::= "?" \` T ":" T ;
         
         T_ ::= . ;
         
@@ -669,22 +669,22 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                                              
-                                                                                                                                                               S [0]                                           
-                                                                                                                                                                 |                                             
-                                                                                                                          -------------------------------------------------------------------------------      
-                                                                                                                          |                                                                             |      
-                                                                                                                        T [0]                                                                     <END_OF_LINE>
-                                                                                                                          |                                                                                    
-                                                            ----------------------------------------------------------------------------------------------------------------------------                       
-                                                            |                                                            |          |          |                   |                   |                       
-                                                          T [0]                                                 "?"[unassigned] [0] \`        T [0]        ":"[unassigned] [0]        T [0]                     
-                                                            |                                                                                  |                                       |                       
-                   -----------------------------------------------------------------------------------                                "u"[unassigned] [0]                     "w"[unassigned] [0]              
-                   |                   |          |          |                   |                   |                                                                                                         
-                 T [0]        "?"[unassigned] [0] \`        T [0]        ":"[unassigned] [0]        T [0]                                                                                                       
-                   |                                         |                                       |                                                                                                         
-          "x"[unassigned] [0]                       "y"[unassigned] [0]                     "z"[unassigned] [0]                                                                                                
+                                                                                                        
+                                                                                                                                                            S [0]                                          
+                                                                                                                                                              |                                            
+                                                                                                                       ------------------------------------------------------------------------------      
+                                                                                                                       |                                                                            |      
+                                                                                                                     T [0]                                                                    <END_OF_LINE>
+                                                                                                                       |                                                                                   
+                                                           -------------------------------------------------------------------------------------------------------------------------                       
+                                                           |                                                           |                   |                   |                   |                       
+                                                         T [0]                                                "?"[unassigned] [0]        T [0]        ":"[unassigned] [0]        T [0]                     
+                                                           |                                                                               |                                       |                       
+                   ---------------------------------------------------------------------------------                              "u"[unassigned] [0]                     "w"[unassigned] [0]              
+                   |                   |                   |                   |                   |                                                                                                       
+                 T [0]        "?"[unassigned] [0]        T [0]        ":"[unassigned] [0]        T [0]                                                                                                     
+                   |                                       |                                       |                                                                                                       
+          "x"[unassigned] [0]                     "y"[unassigned] [0]                     "z"[unassigned] [0]                                                                                              
           
       `));
       });
@@ -722,12 +722,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                  
+                                                                          
         S  ::= ( T ... <END_OF_LINE> ) ;
         
         T  ::= T_ T~* ;
         
-        T~ ::= "+" \`\` T (-10)
+        T~ ::= "+" \` T (-10)
             
              | "^" T (20)
         
@@ -787,18 +787,18 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                        
-                                                         S [0]                       
-                                                           |                         
-                                        ---------------------------------------      
-                                        |                                     |      
-                                   T [0] (-10)                          <END_OF_LINE>
-                                        |                                            
-                   -------------------------------------------                       
-                   |                   |          |          |                       
-                 T [0]        "+"[unassigned] [0] \`        T [0]                     
-                   |                                         |                       
-          "x"[unassigned] [0]                       "y"[unassigned] [0]              
+                                                  
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                  T [0] (-10)                         <END_OF_LINE>
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+                 T [0]        "+"[unassigned] [0]        T [0]                     
+                   |                                       |                       
+          "x"[unassigned] [0]                     "y"[unassigned] [0]              
                         
       `));
       });
@@ -822,7 +822,7 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                        
+                                                  
                                                         S [0]                      
                                                           |                        
                                        --------------------------------------      
@@ -857,22 +857,22 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-          
-                                                                                  S [0]                                      
-                                                                                    |                                        
-                                                  ---------------------------------------------------------------------      
-                                                  |                                                                   |      
-                                             T [0] (-10)                                                        <END_OF_LINE>
-                                                  |                                                                          
-                   ---------------------------------------------------------------                                           
-                   |                   |          |                              |                                           
-                 T [0]        "+"[unassigned] [0] \`                         T [0] (20)                                       
-                   |                                                             |                                           
-          "x"[unassigned] [0]                                -----------------------------------------                       
-                                                             |                   |                   |                       
-                                                           T [0]        "^"[unassigned] [0]        T [0]                     
-                                                             |                                       |                       
-                                                    "y"[unassigned] [0]                     "z"[unassigned] [0]                                                                                                            
+                    
+                                                                                 S [0]                                     
+                                                                                   |                                       
+                                                 --------------------------------------------------------------------      
+                                                 |                                                                  |      
+                                            T [0] (-10)                                                       <END_OF_LINE>
+                                                 |                                                                         
+                   -------------------------------------------------------------                                           
+                   |                   |                                       |                                           
+                 T [0]        "+"[unassigned] [0]                         T [0] (20)                                       
+                   |                                                           |                                           
+          "x"[unassigned] [0]                              -----------------------------------------                       
+                                                           |                   |                   |                       
+                                                         T [0]        "^"[unassigned] [0]        T [0]                     
+                                                           |                                       |                       
+                                                  "y"[unassigned] [0]                     "z"[unassigned] [0]              
                     
       `));
       });
@@ -896,22 +896,22 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                                                        
-                                                                                            S [0]                            
-                                                                                              |                              
-                                                                      -------------------------------------------------      
-                                                                      |                                               |      
-                                                                 T [0] (-10)                                    <END_OF_LINE>
-                                                                      |                                                      
-                                       ---------------------------------------------------------------                       
-                                       |                                       |          |          |                       
-                                  T [0] (20)                          "+"[unassigned] [0] \`        T [0]                     
-                                       |                                                             |                       
-                   -----------------------------------------                                "z"[unassigned] [0]              
-                   |                   |                   |                                                                 
-                 T [0]        "^"[unassigned] [0]        T [0]                                                               
-                   |                                       |                                                                 
-          "x"[unassigned] [0]                     "y"[unassigned] [0]                                                        
+                                                                                                                  
+                                                                                           S [0]                           
+                                                                                             |                             
+                                                                     ------------------------------------------------      
+                                                                     |                                              |      
+                                                                T [0] (-10)                                   <END_OF_LINE>
+                                                                     |                                                     
+                                       -------------------------------------------------------------                       
+                                       |                                       |                   |                       
+                                  T [0] (20)                          "+"[unassigned] [0]        T [0]                     
+                                       |                                                           |                       
+                   -----------------------------------------                              "z"[unassigned] [0]              
+                   |                   |                   |                                                               
+                 T [0]        "^"[unassigned] [0]        T [0]                                                             
+                   |                                       |                                                               
+          "x"[unassigned] [0]                     "y"[unassigned] [0]                                                      
           
       `));
       });
