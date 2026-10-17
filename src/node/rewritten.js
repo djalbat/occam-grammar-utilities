@@ -1,7 +1,7 @@
 "use strict";
 
 import { arrayUtilities } from "necessary";
-import {NonTerminalNode as NonTerminalNodeBase, NonTerminalNode} from "occam-parsers";
+import { NonTerminalNode } from "occam-parsers";
 
 const { first, tail } = arrayUtilities;
 
@@ -259,7 +259,7 @@ export default class RewrittenNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  static fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity); }
+  static fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity); }
 }
 
 function isNodeUnprecedented(node) {
