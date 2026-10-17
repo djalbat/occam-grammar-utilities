@@ -3,41 +3,35 @@
 import { NonTerminalNode as NonTerminalNodeBase } from "occam-parsers";
 
 export default class NonTerminalNode extends NonTerminalNodeBase {
-  isUnprecedented(shallow = false) {
-    let unprecedented;
+  isUnprecedented() {
+    let unprecedented = false;
 
-    if (shallow) {
-      unprecedented = super.isUnprecedented();
-    } else {
-      unprecedented = false;
+    const node = this,  ///
+          nodeUnprecedented = isNodeUnprecedented(node);
 
-      const node = this,  ///
-            nodeUnprecedented = isNodeUnprecedented(node);
-
-      if (nodeUnprecedented) {
-        unprecedented = true;
-      }
+    if (nodeUnprecedented) {
+      unprecedented = true;
     }
 
     return unprecedented;
   }
 
-  isLeftLeadning() {
-    const leftLeadningNode = this.findLeftLeadningNode(),
-          leftLeadning = (leftLeadningNode !== null);
+  isLeftLeaning() {
+    const leftLeaningNode = this.findLeftLeaningNode(),
+          leftLeaning = (leftLeaningNode !== null);
 
-    return leftLeadning;
+    return leftLeaning;
   }
 
   isRightLeaning() {
-    const rightLeadningNode = this.findRightLeadningNode(),
-          rightLeaning = (rightLeadningNode !== null);
+    const rightLeaningNode = this.findRightLeaningNode(),
+          rightLeaning = (rightLeaningNode !== null);
 
     return rightLeaning;
   }
 
-  findLeftLeadningNode() {
-    let leftLeadningNode = null;
+  findLeftLeaningNode() {
+    let leftLeaningNode = null;
 
     const ruleName = this.getRuleName();
 
@@ -50,7 +44,7 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
                 nonTerminalNodeRuleName = nonTerminalNode.getRuleName();
 
           if (nonTerminalNodeRuleName === ruleName) {
-            leftLeadningNode = nonTerminalNode;  ///
+            leftLeaningNode = nonTerminalNode;  ///
 
             return true;
           }
@@ -58,11 +52,11 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
       }
     });
 
-    return leftLeadningNode;
+    return leftLeaningNode;
   }
 
-  findRightLeadningNode() {
-    let rightLeadningNode = null;
+  findRightLeaningNode() {
+    let rightLeaningNode = null;
 
     const ruleName = this.getRuleName();
 
@@ -74,21 +68,14 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
               nonTerminalNodeRuleName = nonTerminalNode.getRuleName();
 
         if (nonTerminalNodeRuleName === ruleName) {
-          rightLeadningNode = nonTerminalNode;  ///
+          rightLeaningNode = nonTerminalNode;  ///
         }
       }
 
       return true;
     });
 
-    return rightLeadningNode;
-  }
-
-  remove() {
-    const parentNode = this.getParentNode(),
-          removedChildNode = this;  ///
-
-    parentNode.removeChildNode(removedChildNode);
+    return rightLeaningNode;
   }
 
   lift() {
@@ -100,88 +87,117 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
     parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
   }
 
-  rotate(rewrittenNode, state) {
-    let nonTerminalNode = null;
+  remove() {
+    const parentNode = this.getParentNode(),
+          removedChildNode = this;  ///
 
-    const rightLeaningNode = this.findRightLeadningNode(),
-          leftLeaningNode = (rightLeaningNode !== null) ?
-                              rightLeaningNode.findLeftLeadningNode() :
-                                null;
-
-    if (leftLeaningNode !== null) {
-      this.transform(() => {
-        let success = true;
-
-        leftLeaningNode.remove();
-
-        const removedChildNodes = this.removeChildNodesLeftOfNode(rightLeaningNode);
-
-        rightLeaningNode.lift();
-
-        const childNodes = [
-          ...removedChildNodes,
-          leftLeaningNode
-        ];
-
-        let precedence;
-
-        precedence = this.getPrecedence();
-
-        nonTerminalNode = rewrittenNode.createNonTerminalNode(childNodes, precedence, state);
-
-        precedence = rightLeaningNode.getPrecedence();
-
-        this.setPrecedence(precedence);
-
-        const childNode = nonTerminalNode,  ///
-              startIndex = 0;
-
-        this.addChildNode(childNode, startIndex);
-
-        const shallow = true,
-              unprecedented = this.isUnprecedented(shallow);
-
-        if (unprecedented) {
-          nonTerminalNode = null;
-
-          success = false;
-        }
-
-        return success;
-      });
-    }
-
-    return nonTerminalNode;
+    parentNode.removeChildNode(removedChildNode);
   }
 
   resolve(rewrittenNode, state) {
-    const nonTerminalNode = this.rotate(rewrittenNode, state);
+    const rightLeaningNode = this.findRightLeaningNode(),
+          rightLeftLeaningNode = (rightLeaningNode !== null) ?
+                                   rightLeaningNode.findLeftLeaningNode() :  ///
+                                     null;
 
-    if (nonTerminalNode !== null) {
-      nonTerminalNode.resolve(rewrittenNode, state);
+    if (rightLeftLeaningNode === null) {
+      return;
     }
+
+    const leftLeaningNode = this.rotateLeft(rightLeftLeaningNode, rightLeaningNode, rewrittenNode, state),
+          childNodesPrecedenceCompares = this.compareChildNodesPrecedence();
+
+    if (!childNodesPrecedenceCompares) {
+      this.rotateRight(rightLeftLeaningNode, rightLeaningNode, leftLeaningNode)
+
+      return;
+    }
+
+    const nonTerminalNode = leftLeaningNode;  ///
+
+    nonTerminalNode.resolve(rewrittenNode, state);
   }
 
-  transform(callback) {
-    const nonTerminalNode = this.clone(),
-          childNodes = nonTerminalNode.removeChildNodes(),
-          precedence = nonTerminalNode.getPrecedence(),
-          success = callback();
+  rotateLeft(rightLeftLeaningNode, rightLeaningNode, rewrittenNode, state) {
+    let leftLeaningNode;
 
-    if (!success) {
-      this.removeChildNodes();
+    rightLeftLeaningNode.remove();
 
-      this.addChildNodes(childNodes);
+    const removedChildNodes = this.removeAllButLastChildNode();
 
-      this.setPrecedence(precedence);
-    }
+    rightLeaningNode.lift();
+
+    const childNodes = [
+      ...removedChildNodes,
+      rightLeftLeaningNode
+    ];
+
+    let precedence;
+
+    precedence = this.getPrecedence();
+
+    const nonTerminalNode = rewrittenNode.createNonTerminalNode(childNodes, precedence, state);
+
+    leftLeaningNode = nonTerminalNode; ///
+
+    precedence = rightLeaningNode.getPrecedence();
+
+    this.setPrecedence(precedence);
+
+    const childNode = leftLeaningNode,  ///
+          startIndex = 0;
+
+    this.addChildNode(childNode, startIndex);
+
+    return leftLeaningNode;
   }
 
-  removeChildNodesLeftOfNode(node) {
-    const childNode = node, ///
-          cutIndex = this.indexOfChildNode(childNode),
+  rotateRight(rightLeftLeaningNode, rightLeaningNode, leftLeaningNode) {
+    let childNodes;
+
+    childNodes = this.removeAllButFirstChildNode();
+
+    rightLeftLeaningNode.remove();
+
+    leftLeaningNode.lift();
+
+    let precedence;
+
+    precedence = this.getPrecedence();
+
+    rightLeaningNode.setPrecedence(precedence);
+
+    precedence = leftLeaningNode.getPrecedence();
+
+    this.setPrecedence(precedence);
+
+    childNodes = [  ///
+      rightLeftLeaningNode,
+      ...childNodes
+    ];
+
+    rightLeaningNode.addChildNodes(childNodes);
+
+    const childNode = rightLeaningNode,  ///
+          multiplicity = this.getMultiplicity(),
+          startIndex = multiplicity;  ///
+
+    this.addChildNode(childNode, startIndex);
+  }
+
+  removeAllButLastChildNode() {
+    const multiplicity = this.getMultiplicity(),
           startIndex = 0,
-          deleteCount = cutIndex, ///
+          deleteCount = (multiplicity - 1),
+          removedChildNodes = this.spliceChildNodes(startIndex, deleteCount);
+
+    return removedChildNodes;
+  }
+
+  removeAllButFirstChildNode() {
+    const multiplicity = this.getMultiplicity(),
+          startIndex = 1,
+          deleteCount = (multiplicity - 1),
           removedChildNodes = this.spliceChildNodes(startIndex, deleteCount);
 
     return removedChildNodes;
@@ -201,7 +217,7 @@ function isNodeUnprecedented(node) {
     if (!nodeUnprecedented) {
       const childNodesPrecedenceCompares = node.compareChildNodesPrecedence();
 
-      if (childNodesPrecedenceCompares) {
+      if (!childNodesPrecedenceCompares) {
         nodeUnprecedented = true;
       }
     }
