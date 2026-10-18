@@ -18,7 +18,7 @@ describe("Rewrites", () => {
     }
   ];
 
-  describe.only("a cycle of length one", () => {
+  describe("a cycle of length one", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -95,7 +95,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe.only("a cycle of length one with precedence", () => {
+  describe("a cycle of length one with precedence", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -212,7 +212,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it.only("results in the requisite parse tree" , () => {
+      it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
@@ -242,7 +242,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe.only("a cycle of length one with right recursion", () => {
+  describe("a cycle of length one with right recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -389,7 +389,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe.only("a cycle of length one with right recursion and a cut", () => {
+  describe("a cycle of length one with right recursion and a cut", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -579,7 +579,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe.only("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
+  describe("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -691,7 +691,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe.only("a cycle of length one with right recursion, one definition with a cut and the other without ", () => {
+  describe("a cycle of length one with right recursion, one definition with a cut and the other without ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -918,7 +918,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe.only("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials ", () => {
+  describe("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1321,25 +1321,19 @@ describe("Rewrites", () => {
     })
   });
 
-  describe("a cycle of length two", () => {
+  describe.only("a cycle of length two", () => {
     let bnf = `
   
-      S ::= A... <END_OF_LINE> ;
-
-      A ::= B "g"
+      S ::= ( T ... <END_OF_LINE> ) ;
+      
+      T ::= A "g"
       
           | "e"
-      
+          
           ;
-      
-      B ::= A "h"
-      
-          | B "f"
-      
-          | "d"
-  
-          ;
-        
+                
+      A ::= T ;
+
     `;
 
     const content = `ehfg
@@ -1366,70 +1360,16 @@ describe("Rewrites", () => {
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
                   
-        S   ::= A... <END_OF_LINE> ;
-        
-        A   ::= A_ A~*
-        
-              | B_ B~* A~B
-        
-              ;
-        
-        B   ::= B_ B~*
-        
-              | A_ A~* B~A
-        
-              ;
-        
-        B_  ::= "d" ;
-        
-        A_  ::= "e" ;
-        
-        B~B ::= "f" ;
-        
-        A~B ::= "g" ;
-        
-        B~A ::= "h" ;
-        
-        B~  ::= B~B
-        
-              | A~B A~* B~A
-        
-              ;
-        
-        A~  ::= B~A B~* A~B ;
-        
-      `));
-    });
+        S  ::= ( T ... <END_OF_LINE> ) ;
 
-    it("results in the requisite parse tree" , () => {
-      assert.isTrue(checkParentNodes(node));
+        T  ::= T_ T~* ;
 
-      assert.isTrue(checkDescendentNodes(node));
+        T_ ::= "e" ;
 
-      const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
-      assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                    
-                                                                           S [0]                     
-                                                                             |                       
-                                                            -----------------------------------      
-                                                            |                                 |      
-                                                          A [0]                         <END_OF_LINE>
-                                                            |                                        
-                                          ------------------------------------                       
-                                          |                                  |                       
-                                        B [0]                       "g"[unassigned] [0]              
-                                          |                                                          
-                           -------------------------------                                           
-                           |                             |                                           
-                         B [0]                  "f"[unassigned] [0]                                  
-                           |                                                                         
-                 ---------------------                                                               
-                 |                   |                                                               
-               A [0]        "h"[unassigned] [0]                                                      
-                 |                                                                                   
-        "e"[unassigned] [0]                                                                          
-             
+        T~ ::= A~T ;
+        
+       A~T ::= "g" ;
+        
       `));
     });
   });

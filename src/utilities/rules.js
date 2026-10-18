@@ -2,32 +2,22 @@
 
 import ReducedRule from "../rule/reduced";
 import RepeatedRule from "../rule/repeated";
+import IndirectRule from "../rule/indirect";
 import RewrittenRule from "../rule/rewritten";
 
-import { ruleNamesFromCycles } from "../utilities/cycle";
-
 export function rewriteRules(cycles, ruleMap) {
-  const ruleNames = ruleNamesFromCycles(cycles);
-
-  ruleNames.forEach((ruleName) => {
-    let rule;
-
-    rule = ruleMap[ruleName];
-
-    const rewrittenRule = RewrittenRule.fromRule(rule);
-
-    rule = rewrittenRule; ///
+  cycles.forEach((cycle) => {
+    const rewrittenRule = RewrittenRule.fromCycle(cycle, ruleMap),
+          rule = rewrittenRule, ///
+          ruleName = rule.getName();
 
     ruleMap[ruleName] = rule;
   });
 }
 
 export function createReducedRules(cycles, ruleMap) {
-  const ruleNames = ruleNamesFromCycles(cycles);
-
-  ruleNames.forEach((ruleName) => {
-    const rule = ruleMap[ruleName],
-          reducedRule = ReducedRule.fromRuleAndCycles(rule, cycles, ruleMap);
+  cycles.forEach((cycle) => {
+    const reducedRule = ReducedRule.fromCycleAndCycles(cycle, cycles, ruleMap);
 
     if (reducedRule !== null) {
       const reducedRuleName = reducedRule.getName();
@@ -38,13 +28,22 @@ export function createReducedRules(cycles, ruleMap) {
 }
 
 export function createRepeatedRules(cycles, ruleMap) {
-  const ruleNames = ruleNamesFromCycles(cycles);
-
-  ruleNames.forEach((ruleName) => {
-    const rule = ruleMap[ruleName],
-          repeatedRule = RepeatedRule.fromRuleAndCycles(rule, cycles, ruleMap),
+  cycles.forEach((cycle) => {
+    const repeatedRule = RepeatedRule.fromCycleAndCycles(cycle, cycles, ruleMap),
           repeatedRuleName = repeatedRule.getName();
 
     ruleMap[repeatedRuleName] = repeatedRule;
+  });
+}
+
+export function createIndirectRules(cycles, ruleMap) {
+  cycles.forEach((cycle) => {
+    const indirectRule = IndirectRule.fromCycle(cycle, ruleMap);
+
+    if (indirectRule !== null) {
+      const indirectdRuleName = indirectRule.getName();
+
+      ruleMap[indirectdRuleName] = indirectRule;
+    }
   });
 }

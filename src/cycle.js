@@ -3,7 +3,7 @@
 import { characters } from "necessary";
 import { arrayUtilities } from "necessary";
 
-const { last } = arrayUtilities,
+const { first, last } = arrayUtilities,
       { COMMA_CHARACTER } = characters;
 
 export default class Cycle {
@@ -36,6 +36,13 @@ export default class Cycle {
     });
 
     return vertexes;
+  }
+
+  getFirstVertex() {
+    const vertexes = this.getVertexes(),
+          firstVertex = first(vertexes);
+
+    return firstVertex; ///
   }
 
   mapEdge(callback) { return this.edges.map(callback); }

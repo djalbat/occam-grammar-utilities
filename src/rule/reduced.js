@@ -4,6 +4,7 @@ import { Rule } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
 
+import { ruleNameFromCycle } from "../utilities/cycle";
 import { isDefinitionReducible } from "../utilities/definition";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
@@ -14,8 +15,9 @@ export default class ReducedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromRuleAndCycles(rule, cycles, ruleMap) {
-    const ruleName = rule.getName();
+  static fromCycleAndCycles(cycle, cycles, ruleMap) {
+    const ruleName = ruleNameFromCycle(cycle),
+          rule = ruleMap[ruleName];
 
     let definitions;
 

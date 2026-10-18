@@ -2,27 +2,20 @@
 
 import { arrayUtilities } from "necessary";
 
-const { push, compress } = arrayUtilities;
+const { push } = arrayUtilities;
 
-export function ruleNamesFromCycle(cycle, ruleNames = []) {
-  const cycleVertexes = cycle.getVertexes(),
-        cycleRuleNames = cycleVertexes; ///
+export function ruleNameFromCycle(cycle) {
+  const firstVertex = cycle.getFirstVertex(),
+        ruleName = firstVertex; ///
 
-  push(ruleNames, cycleRuleNames);
-
-  return ruleNames;
+  return ruleName;
 }
 
-export function ruleNamesFromCycles(cycles, ruleNames = []) {
-  cycles.forEach((cycle) => {
-    ruleNamesFromCycle(cycle, ruleNames);
-  });
+export function ruleNamesFromCycle(cycle, ruleNames = []) {
+  const vertexes = cycle.getVertexes(),
+        cycleRuleNames = vertexes; ///
 
-  compress(ruleNames, (ruleNameA, ruleNameB) => {
-    if (ruleNameA !== ruleNameB) {
-      return true;
-    }
-  });
+  push(ruleNames, cycleRuleNames);
 
   return ruleNames;
 }

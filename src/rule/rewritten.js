@@ -4,9 +4,13 @@ import { Rule } from "occam-parsers";
 
 import RewrittenDefinition from "../definition/rewritten";
 
+import { ruleNameFromCycle } from "../utilities/cycle";
+
 export default class RewrittenRule extends Rule {
-  static fromRule(rule) {
-    const rewrittenDefinition = RewrittenDefinition.fromRule(rule),
+  static fromCycle(cycle, ruleMap) {
+    const ruleName = ruleNameFromCycle(cycle),
+          rule = ruleMap[ruleName],
+          rewrittenDefinition = RewrittenDefinition.fromRule(rule),
           definition = rewrittenDefinition, ///
           name = rule.getName(),
           opacity = null,

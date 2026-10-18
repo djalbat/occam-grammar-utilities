@@ -5,6 +5,7 @@ import { Rule } from "occam-parsers";
 import RepeatedNode from "../node/repeated";
 import RepeatedDefinition from "../definition/repeated";
 
+import { ruleNameFromCycle } from "../utilities/cycle";
 import { isDefinitionRepeatable } from "../utilities/definition";
 import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 
@@ -15,8 +16,9 @@ export default class RepeatedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromRuleAndCycles(rule, cycles, ruleMap) {
-    const ruleName = rule.getName();
+  static fromCycleAndCycles(cucle, cycles, ruleMap) {
+    const ruleName = ruleNameFromCycle(cucle),
+          rule = ruleMap[ruleName];
 
     let definitions;
 
