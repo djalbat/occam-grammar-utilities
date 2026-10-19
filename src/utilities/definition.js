@@ -47,15 +47,6 @@ export function isDefinitionRepeatable(definition, ruleName, cycles, ruleMap) {
       throw new Error(`The '${firstPartString}' first part of the '${definitionString}' definition is not a rule name part.`);
     }
 
-    const ruleNamePart = firstPart, ///
-          ruleNamePartRuleName = ruleNamePart.getRuleName();
-
-    if (ruleNamePartRuleName !== ruleName) {
-      const definitionString = definition.asString();
-
-      throw new Error(`The '${ruleNamePartRuleName}' rule name of the '${definitionString}' definition's first part is not '${ruleName}'.`);
-    }
-
     const tailParts = tail(parts),
           tailPartsLength = tailParts.length;
 

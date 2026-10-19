@@ -1321,7 +1321,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe.only("a cycle of length two", () => {
+  describe("a cycle of length two", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1357,7 +1357,7 @@ describe("Rewrites", () => {
       node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
     });
 
-    it("is rewritten", () => {
+    it.only("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
                   
         S  ::= ( T ... <END_OF_LINE> ) ;

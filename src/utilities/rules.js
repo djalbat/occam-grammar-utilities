@@ -2,8 +2,8 @@
 
 import ReducedRule from "../rule/reduced";
 import RepeatedRule from "../rule/repeated";
-import IndirectRule from "../rule/indirect";
 import RewrittenRule from "../rule/rewritten";
+import IntermediateRule from "../rule/intermediate";
 
 export function rewriteRules(cycles, ruleMap) {
   cycles.forEach((cycle) => {
@@ -36,14 +36,14 @@ export function createRepeatedRules(cycles, ruleMap) {
   });
 }
 
-export function createIndirectRules(cycles, ruleMap) {
+export function createIntermediateRules(cycles, ruleMap) {
   cycles.forEach((cycle) => {
-    const indirectRule = IndirectRule.fromCycle(cycle, ruleMap);
+    const intermediateRule = IntermediateRule.fromCycleAndCycles(cycle, cycles, ruleMap);
 
-    if (indirectRule !== null) {
-      const indirectdRuleName = indirectRule.getName();
+    if (intermediateRule !== null) {
+      const intermediatedRuleName = intermediateRule.getName();
 
-      ruleMap[indirectdRuleName] = indirectRule;
+      ruleMap[intermediatedRuleName] = intermediateRule;
     }
   });
 }
