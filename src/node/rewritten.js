@@ -6,17 +6,10 @@ import { NonTerminalNode } from "occam-parsers";
 const { first, tail } = arrayUtilities;
 
 export default class RewrittenNode extends NonTerminalNode {
-  isUnprecedented() {
-    let unprecedented = false;
+  isMutable() {
+    const mutable = true;
 
-    const node = this,  ///
-          nodeUnprecedented = isNodeUnprecedented(node);
-
-    if (nodeUnprecedented) {
-      unprecedented = true;
-    }
-
-    return unprecedented;
+    return mutable;
   }
 
   isSingular() {
@@ -40,7 +33,7 @@ export default class RewrittenNode extends NonTerminalNode {
     return rightLeaning;
   }
 
-  findLeftLeaningNode() {
+  findLeftLeaningNode(rewrittenNode, state) {
     let leftLeaningNode = null;
 
     const ruleName = this.getRuleName();
@@ -60,10 +53,22 @@ export default class RewrittenNode extends NonTerminalNode {
       return true;
     });
 
+    if (leftLeaningNode !== null) {
+      const mutable = leftLeaningNode.isMutable();
+
+      if (!mutable) {
+        const nonTerminalNode = leftLeaningNode; ///
+
+        rewrittenNode = rewrittenNode.replaceNonTerminalNode(nonTerminalNode, state); ///
+
+        leftLeaningNode = rewrittenNode; ///
+      }
+    }
+
     return leftLeaningNode;
   }
 
-  findRightLeaningNode() {
+  findRightLeaningNode(rewrittenNode, state) {
     let rightLeaningNode = null;
 
     const ruleName = this.getRuleName();
@@ -82,6 +87,18 @@ export default class RewrittenNode extends NonTerminalNode {
 
       return true;
     });
+
+    if (rightLeaningNode !== null) {
+      const mutable = rightLeaningNode.isMutable();
+
+      if (!mutable) {
+        const nonTerminalNode = rightLeaningNode; ///
+
+        rewrittenNode = rewrittenNode.replaceNonTerminalNode(nonTerminalNode, state); ///
+
+        rightLeaningNode = rewrittenNode; ///
+      }
+    }
 
     return rightLeaningNode;
   }
@@ -109,9 +126,85 @@ export default class RewrittenNode extends NonTerminalNode {
 
     rewrittenNode.simplify(state);
 
-    rewrittenNode.resolve(state);
+    rewrittenNode = rewrittenNode.resolve(state); ///
+
+    const nonTerminalNode = (rewrittenNode !== null) ?
+                              rewrittenNode.restore(rewrittenNode, state) :
+                                null;
+
+    return nonTerminalNode;
+  }
+
+  resolve(state) {
+    let rewrittenNode = this;
+
+    const rightLeaningNode = this.findRightLeaningNode(rewrittenNode, state),
+          rightLeftLeaningNode = (rightLeaningNode !== null) ?
+                                   rightLeaningNode.findLeftLeaningNode(rewrittenNode, state) :  ///
+                                     null;
+
+    if (rightLeftLeaningNode !== null) {
+      let leftLeaningNode = this.rotateLeft(rightLeftLeaningNode, rightLeaningNode, state);
+
+      const unprecedented = this.isUnprecedented(),  ///
+            leftLeaningNodeUnprecedented = leftLeaningNode.isUnprecedented();
+
+      if (unprecedented || leftLeaningNodeUnprecedented) {
+        this.rotateRight(rightLeftLeaningNode, rightLeaningNode, leftLeaningNode)
+      } else {
+        leftLeaningNode = leftLeaningNode.resolve(state); ///
+
+        if (leftLeaningNode === null) {
+          rewrittenNode = null;
+        }
+      }
+    }
+
+    if (rewrittenNode !== null) {
+      const unprecedented = this.isUnprecedented();
+
+      if (unprecedented) {
+        rewrittenNode = null;
+      }
+    }
 
     return rewrittenNode;
+  }
+
+  restore(rewrittenNode, state) {
+    let nonTerminalNode;
+
+    const mutableChildNodes = this.reduceChildNode((mutableChildNodes, childNode) => {
+      const childNodeMutable = childNode.isMutable();
+
+      if (childNodeMutable) {
+        const mutableChildNode = childNode; ///
+
+        mutableChildNodes.push(mutableChildNode);
+      }
+
+      return mutableChildNodes;
+    }, []);
+
+    mutableChildNodes.forEach((mutableChildNode) => {
+      mutableChildNode.restore(rewrittenNode, state);
+    });
+
+    nonTerminalNode = this.createNonTerminalNode(state);
+
+    const parentNode = this.getParentNode();
+
+    if (parentNode !== null) {
+      const replacedNode = this,  ///
+            replacementChildNode = nonTerminalNode, ///
+            replacementChildNodes = [
+              replacementChildNode
+            ];
+
+      parentNode.replaceChildNode(replacedNode, replacementChildNodes);
+    }
+
+    return nonTerminalNode;
   }
 
   simplify(state) {
@@ -141,30 +234,6 @@ export default class RewrittenNode extends NonTerminalNode {
     });
   }
 
-  resolve(state) {
-    const rightLeaningNode = this.findRightLeaningNode(),
-          rightLeftLeaningNode = (rightLeaningNode !== null) ?
-                                   rightLeaningNode.findLeftLeaningNode() :  ///
-                                     null;
-
-    if (rightLeftLeaningNode === null) {
-      return;
-    }
-
-    const leftLeaningNode = this.rotateLeft(rightLeftLeaningNode, rightLeaningNode, state),
-          childNodesPrecedenceCompares = this.compareChildNodesPrecedence();
-
-    if (!childNodesPrecedenceCompares) {
-      this.rotateRight(rightLeftLeaningNode, rightLeaningNode, leftLeaningNode)
-
-      return;
-    }
-
-    const nonTerminalNode = leftLeaningNode;  ///
-
-    nonTerminalNode.resolve(state);
-  }
-
   rotateLeft(rightLeftLeaningNode, rightLeaningNode, state) {
     let leftLeaningNode;
 
@@ -183,9 +252,9 @@ export default class RewrittenNode extends NonTerminalNode {
 
     precedence = this.getPrecedence();
 
-    const nonTerminalNode = this.createNonTerminalNode(childNodes, precedence, state);
+    const rewrittenNode = this.createRewrittenNode(childNodes, precedence, state);
 
-    leftLeaningNode = nonTerminalNode; ///
+    leftLeaningNode = rewrittenNode; ///
 
     precedence = rightLeaningNode.getPrecedence();
 
@@ -250,7 +319,43 @@ export default class RewrittenNode extends NonTerminalNode {
     return removedChildNodes;
   }
 
+  replaceNonTerminalNode(nonTerminalNode, state) {
+    let rewrittenNode;
+
+    const parentNode = nonTerminalNode.getParentNode(),
+          precedence = nonTerminalNode.getPrecedence(),
+          childNodes = nonTerminalNode.removeChildNodes(),
+          replacedChildNode = nonTerminalNode;  ///
+
+    rewrittenNode = this.createRewrittenNode(childNodes, precedence, state);
+
+    const replacementChildNode = rewrittenNode, ///
+          replacementChildNodes = [
+            replacementChildNode
+          ];
+
+    parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+
+    return rewrittenNode;
+  }
+
+  createRewrittenNode(childNodes, precedence, state) {
+    const opacity = this.getOpacity(),
+          ruleName = this.getRuleName(),
+          rewrittenNode = RewrittenNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity);
+
+    return rewrittenNode;
+  }
+
   createNonTerminalNode(childNodes, precedence, state) {
+    if (state === undefined) {
+      state = childNodes; ///
+
+      precedence = this.getPrecedence();
+
+      childNodes = this.removeChildNodes();
+    }
+
     const opacity = this.getOpacity(),
           ruleName = this.getRuleName(),
           NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName),
@@ -259,35 +364,5 @@ export default class RewrittenNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  static fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity); }
-}
-
-function isNodeUnprecedented(node) {
-  let nodeUnprecedented = false;
-
-  const nodeNonTerminalNode = node.isNonTerminalNode();
-
-  if (nodeNonTerminalNode) {
-    const nonTerminalNode = node; ///
-
-    if (!nodeUnprecedented) {
-      const childNodesPrecedenceCompares = node.compareChildNodesPrecedence();
-
-      if (!childNodesPrecedenceCompares) {
-        nodeUnprecedented = true;
-      }
-    }
-
-    if (!nodeUnprecedented) {
-      nodeUnprecedented = nonTerminalNode.someChildNode((childNode) => {
-        const childNodeUnprecedented = isNodeUnprecedented(childNode);
-
-        if (childNodeUnprecedented) {
-          return true;
-        }
-      });
-    }
-  }
-
-  return nodeUnprecedented;
+  static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RewrittenNode, ruleName, childNodes, precedence, opacity); }
 }

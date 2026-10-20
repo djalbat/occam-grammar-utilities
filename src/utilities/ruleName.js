@@ -2,22 +2,10 @@
 
 import { EMPTY_STRING } from "../constants";
 
-export function reducedRuleNameFromRuleName(ruleName) {
-  const reducedRuleName = `${ruleName}_`;
-
-  return reducedRuleName;
-}
-
 export function ruleNameFromReducedRuleName(reducedRuleName) {
   const ruleName = reducedRuleName.replace(/_$/g, EMPTY_STRING);
 
   return ruleName;
-}
-
-export function repeatedRuleNameFromRuleName(ruleName) {
-  const repeatedRuleName = `${ruleName}~`;
-
-  return repeatedRuleName;
 }
 
 export function ruleNameFromRepeatedRuleName(repeatedRuleName) {
@@ -32,6 +20,18 @@ export function ruleNameFromIntermediateRuleName(intermediateRuleName) {
   return ruleName;
 }
 
+export function reducedRuleNameFromRuleName(ruleName) {
+  const reducedRuleName = `${ruleName}_`;
+
+  return reducedRuleName;
+}
+
+export function repeatedRuleNameFromRuleName(ruleName) {
+  const repeatedRuleName = `${ruleName}~`;
+
+  return repeatedRuleName;
+}
+
 export function indirectRuleNameFromIntermediateRuleName(intermediateRuleName) {
   const indirectRuleName = intermediateRuleName.replace(/~.+$/g, EMPTY_STRING);
 
@@ -42,4 +42,10 @@ export function intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, in
   const intermediateRuleName = `${indirectRuleName}~${ruleName}`;
 
   return intermediateRuleName;
+}
+
+export function isRuleNameIntermedaiteRuleName(ruleName) {
+  const ruleNameIntermediateRuleName = /^.+~.+$/.test(ruleName);
+
+  return ruleNameIntermediateRuleName;
 }

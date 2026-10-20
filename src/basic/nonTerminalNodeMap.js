@@ -2,9 +2,7 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
-import RewrittenNode from "../node/rewritten";
-
-class T extends RewrittenNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return RewrittenNode.fromRuleNameChildNodesPrecedenceAndOpacity(T, ruleName, childNodes, precedence, opacity); } }
+class T extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(T, ruleName, childNodes, precedence, opacity); } }
 
 class S extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(S, ruleName, childNodes, precedence, opacity); } }
 

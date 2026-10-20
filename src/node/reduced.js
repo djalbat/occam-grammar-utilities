@@ -3,6 +3,12 @@
 import { NonTerminalNode } from "occam-parsers";
 
 export default class ReducedNode extends NonTerminalNode {
+  isMutable() {
+    const mutable = true;
+
+    return mutable;
+  }
+
   isUnprecedented() {
     const unprecedented = false;
 
@@ -21,20 +27,20 @@ export default class ReducedNode extends NonTerminalNode {
     parentNode.setPrecedence(precedence);
   }
 
+  restore(rewrittenNode, state) {
+    const nonTerminalNode = this; ///
+
+    rewrittenNode.replaceNonTerminalNode(nonTerminalNode, state);
+  }
+
   accumulate(rewrittenNode, state) {
-    const parentNode = this.getParentNode(),
-          precedence = this.getPrecedence(),
-          childNodes = this.removeChildNodes(),
-          nonTerminalNode = rewrittenNode.createNonTerminalNode(childNodes, precedence, state),
-          replacedChildNode = this,  ///
-          replacementChildNode = nonTerminalNode, ///
-          replacementChildNodes = [
-            replacementChildNode
-          ];
+    let accumulatorNode;
 
-    parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+    const nonTerminalNode = this; ///
 
-    const accumulatorNode = replacementChildNode; ///
+    rewrittenNode = rewrittenNode.replaceNonTerminalNode(nonTerminalNode, state);
+
+    accumulatorNode = rewrittenNode; ///
 
     return accumulatorNode;
   }

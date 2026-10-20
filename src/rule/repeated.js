@@ -4,6 +4,7 @@ import { Rule } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
 import RepeatedNode from "../node/repeated";
+import IndirectDefinition from "../definition/indirect";
 import RepeatedDefinition from "../definition/repeated";
 
 import { ruleNameFromCycle } from "../utilities/cycle";
@@ -19,15 +20,37 @@ export default class RepeatedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromCycleAndCycles(cucle, cycles, ruleMap) {
-    const ruleName = ruleNameFromCycle(cucle),
+  static fromCycleAndCycles(cycle, cycles, ruleMap) {
+    const ruleName = ruleNameFromCycle(cycle),
           rule = ruleMap[ruleName],
-          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
-          indirectRuleName = ruleName,  ///
-          repeatedDefinitions = repeatedDefinitionsFromRuleCyclesAndIndirectRuleName(rule, cycles, indirectRuleName, ruleMap),
-          name = repeatedRuleName, ///
+          cycleLength = cycle.getLength(),
+          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
+
+    let definitions;
+
+    switch (cycleLength) {
+      case 1: {
+        const indirectRuleName = ruleName,  ///
+              repeatedDefinitions = repeatedDefinitionsFromRuleCyclesAndIndirectRuleName(rule, cycles, indirectRuleName, ruleMap);
+
+        definitions = repeatedDefinitions;  ///
+
+        break;
+      }
+
+      case 2: {
+        const indirectDefinition = IndirectDefinition.fromCycle(cycle, ruleMap);
+
+        definitions = [
+          indirectDefinition
+        ];
+
+        break;
+      }
+    }
+
+    const name = repeatedRuleName, ///
           opacity = rule.getOpacity(),
-          definitions = repeatedDefinitions,  ///
           repeatedRule = new RepeatedRule(name, opacity, definitions);
 
     return repeatedRule;

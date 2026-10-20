@@ -3,6 +3,12 @@
 import { NonTerminalNode } from "occam-parsers";
 
 export default class RepeatedNode extends NonTerminalNode {
+  isMutable() {
+    const mutable = true;
+
+    return mutable;
+  }
+
   isUnprecedented() {
     const unprecedented = false;
 
@@ -24,12 +30,12 @@ export default class RepeatedNode extends NonTerminalNode {
 
       childNodes = parentNode.spliceChildNodes(startIndex, endIndex);
 
-      const nonTerminalNode = rewrittenNode.createNonTerminalNode(childNodes, precedence, state);
+      rewrittenNode = rewrittenNode.createRewrittenNode(childNodes, precedence, state);
 
       childNodes = this.removeChildNodes();
 
       childNodes = [  ///
-        nonTerminalNode,
+        rewrittenNode,
         ...childNodes
       ];
     }

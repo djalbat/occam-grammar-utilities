@@ -90,7 +90,7 @@ describe("Rewrites", () => {
                  |                                           
         "e"[unassigned] [0]
                                           
-      `));
+       `));
       });
     })
   });
@@ -700,7 +700,7 @@ describe("Rewrites", () => {
       
           | T "^" T     (20)
       
-          | .
+          | /[a-z0-9]/
           
           ;
         
@@ -733,7 +733,7 @@ describe("Rewrites", () => {
         
              ;
         
-        T_ ::= . ;
+        T_ ::= /[a-z0-9]/ ;
         
       `));
     });
@@ -1269,7 +1269,7 @@ describe("Rewrites", () => {
                                                        |                                       |                                                                                                   
                                               "x"[unassigned] [0]                     "2"[unassigned] [0]                                                                                          
              
-      `));
+       `));
       });
     })
 
@@ -1283,7 +1283,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it("results in the requisite parse tree" , () => {
+      it.only("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
@@ -1316,7 +1316,7 @@ describe("Rewrites", () => {
                                                        |                                       |                                                                                                                                           
                                               "x"[unassigned] [0]                     "2"[unassigned] [0]                                                                                                                                  
              
-      `));
+       `));
       });
     })
   });
@@ -1357,21 +1357,58 @@ describe("Rewrites", () => {
       node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
     });
 
-    it.only("is rewritten", () => {
+    it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                  
-        S  ::= ( T ... <END_OF_LINE> ) ;
-
-        T  ::= T_ T~* ;
-
-        T_ ::= "e" ;
-
-        T~ ::= A~T ;
+                          
+        S   ::= ( T ... <END_OF_LINE> ) ;
         
-       A~T ::= "g" ;
+        T   ::= T_ T~* ;
+        
+        A   ::= T ;
+        
+        A~T ::= "g" ;
+        
+        T~  ::= A~T ;
+        
+        T_  ::= "e" ;
         
       `));
     });
+
+    describe("content with two tokens", () => {
+      const content = `eg
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+            
+                                         S [0]                 
+                                           |                   
+                             ----------------------------      
+                             |                          |      
+                           T [0]                  <END_OF_LINE>
+                             |                                 
+                   ---------------------                       
+                   |                   |                       
+                 T [0]               A [0]                     
+                   |                   |                       
+          "e"[unassigned] [0] "g"[unassigned] [0]              
+                                            
+      `));
+      });
+    })
   });
 
   describe("a cycle of length three", () => {
