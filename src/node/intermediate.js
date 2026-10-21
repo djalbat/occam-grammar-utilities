@@ -3,23 +3,10 @@
 import { NonTerminalNode } from "occam-parsers";
 
 export default class IntermediateNode extends NonTerminalNode {
-  isMutable() {
-    const mutable = true;
+  rewrite() {
+    const nonTerminalNode = this; ///
 
-    return mutable;
-  }
-
-  isUnprecedented() {
-    const unprecedented = false;
-
-    return unprecedented;
-  }
-
-  getIntermediateRuleName() {
-    const ruleName = this.getRuleName(),
-          intermediateRuleName = ruleName;  ///
-
-    return intermediateRuleName;
+    return nonTerminalNode;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(IntermediateNode, ruleName, childNodes, precedence, opacity); }

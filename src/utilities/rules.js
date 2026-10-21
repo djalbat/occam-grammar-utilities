@@ -3,15 +3,16 @@
 import ReducedRule from "../rule/reduced";
 import RepeatedRule from "../rule/repeated";
 import RewrittenRule from "../rule/rewritten";
+import ReplacementRule from "../rule/replacement";
 import IntermediateRule from "../rule/intermediate";
 
-export function rewriteRules(cycles, ruleMap) {
+export function replaceRules(cycles, ruleMap) {
   cycles.forEach((cycle) => {
-    const rewrittenRule = RewrittenRule.fromCycle(cycle, ruleMap),
-          rule = rewrittenRule, ///
-          ruleName = rule.getName();
+    const replacementRule = ReplacementRule.fromCycle(cycle, ruleMap),
+          replacementRuleName = replacementRule.getName(),
+          ruleName = replacementRuleName; ///
 
-    ruleMap[ruleName] = rule;
+    ruleMap[ruleName] = replacementRule;
   });
 }
 
@@ -33,6 +34,15 @@ export function createRepeatedRules(cycles, ruleMap) {
           repeatedRuleName = repeatedRule.getName();
 
     ruleMap[repeatedRuleName] = repeatedRule;
+  });
+}
+
+export function createRewrittenRules(cycles, ruleMap) {
+  cycles.forEach((cycle) => {
+    const rewrittenRule = RewrittenRule.fromCycle(cycle, ruleMap),
+          rewrittenRuleName = rewrittenRule.getName();
+
+    ruleMap[rewrittenRuleName] = rewrittenRule;
   });
 }
 

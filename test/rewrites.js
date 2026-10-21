@@ -50,7 +50,9 @@ describe("Rewrites", () => {
                                   
         S  ::= ( T ... <END_OF_LINE> ) ;
         
-        T  ::= T_ T~* ;
+        T  ::= _T ;
+        
+       _T  ::= T_ T~* ;
         
         T~ ::= "g" ;
         
@@ -58,6 +60,37 @@ describe("Rewrites", () => {
         
       `));
     });
+
+    describe("content with one token", () => {
+      const content = `e
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+          
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+                 T [0]        <END_OF_LINE>
+                   |                       
+          "e"[unassigned] [0]              
+                                          
+       `));
+      });
+    })
 
     describe("content with two tokens", () => {
       const content = `eg
@@ -100,7 +133,7 @@ describe("Rewrites", () => {
   
       S ::= ( T ... <END_OF_LINE> ) ;
       
-      T ::= T "g" (-1)
+      T ::= T "g" (1)
       
           | "e"   (2)
           
@@ -124,12 +157,14 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                          
+                                                  
         S  ::= ( T ... <END_OF_LINE> ) ;
         
-        T  ::= T_ T~* ;
+        T  ::= _T ;
         
-        T~ ::= "g" (-1) ;
+        _T ::= T_ T~* ;
+        
+        T~ ::= "g" (1) ;
         
         T_ ::= "e" (2) ;
         
@@ -185,12 +220,12 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                          
+                                                                    
                                          S [0]                 
                                            |                   
                              ----------------------------      
                              |                          |      
-                        T [0] (-1)                <END_OF_LINE>
+                         T [0] (1)                <END_OF_LINE>
                              |                                 
                    ---------------------                       
                    |                   |                       
@@ -198,7 +233,7 @@ describe("Rewrites", () => {
                    |                                           
           "e"[unassigned] [0]                                  
              
-      `));
+        `));
       });
     })
 
@@ -212,7 +247,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it("results in the requisite parse tree" , () => {
+      it.only("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
@@ -954,17 +989,17 @@ describe("Rewrites", () => {
                                                                                           
         S  ::= ( T ... <END_OF_LINE> ) ;
         
-        T  ::= T_ T~* ;
+        T  ::= _T ;
         
-        T~ ::= "+" \` T (-10)
+       _T  ::= T_ T~* ;
+        
+        T~ ::= "+" \` _T (-10)
             
-             | <NO_WHITESPACE> T (-20)
+             | <NO_WHITESPACE> _T (-20)
             
-             | "^" T (30)
+             | "^" _T (30)
         
              ;
-        
-        T_ ::= /[a-z0-9]/ ;
         
       `));
     });
@@ -1283,7 +1318,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it.only("results in the requisite parse tree" , () => {
+      it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));

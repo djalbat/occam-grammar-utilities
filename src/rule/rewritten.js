@@ -6,6 +6,7 @@ import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
 
 import { ruleNameFromCycle } from "../utilities/cycle";
+import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
 
 export default class RewrittenRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -16,10 +17,10 @@ export default class RewrittenRule extends Rule {
 
   static fromCycle(cycle, ruleMap) {
     const ruleName = ruleNameFromCycle(cycle),
-          rule = ruleMap[ruleName],
-          rewrittenDefinition = RewrittenDefinition.fromRule(rule),
+          rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName),
+          rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           definition = rewrittenDefinition, ///
-          name = rule.getName(),
+          name = rewrittenRuleName, ///
           opacity = null,
           definitions = [
             definition

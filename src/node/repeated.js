@@ -3,19 +3,21 @@
 import { NonTerminalNode } from "occam-parsers";
 
 export default class RepeatedNode extends NonTerminalNode {
-  isMutable() {
-    const mutable = true;
+  rewrite() {
+    const nonTerminalNode = this; ///
 
-    return mutable;
+    return nonTerminalNode;
   }
 
-  isUnprecedented() {
-    const unprecedented = false;
+  getIndex() {
+    const childNode = this,  ///
+          parentNode = this.getParentNode(),
+          index = parentNode.indexOfChildNode(childNode);
 
-    return unprecedented;
+    return index;
   }
 
-  lift(accumulatorNode, rewrittenNode, initial, state) {
+  lift(accumulatorNode, replacementNode, initial, state) {
     const parentNode = this.getParentNode(),
           precedence = this.getPrecedence();
 
@@ -30,32 +32,24 @@ export default class RepeatedNode extends NonTerminalNode {
 
       childNodes = parentNode.spliceChildNodes(startIndex, endIndex);
 
-      rewrittenNode = rewrittenNode.createRewrittenNode(childNodes, precedence, state);
+      const nonTerminalNode = replacementNode.createNonTerminalNode(childNodes, precedence, state);
 
       childNodes = this.removeChildNodes();
 
       childNodes = [  ///
-        rewrittenNode,
+        nonTerminalNode,
         ...childNodes
       ];
     }
 
-    const replacedNode = this,  ///
-          replacementNodes = childNodes;  ///
+    const replacedChildNode = this,  ///
+          replacementChildNodes = childNodes;  ///
 
-    parentNode.replaceChildNode(replacedNode, replacementNodes);
+    parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 
     parentNode.setPrecedence(precedence);
 
     return accumulatorNode;
-  }
-
-  getIndex() {
-    const childNode = this,  ///
-          parentNode = this.getParentNode(),
-          index = parentNode.indexOfChildNode(childNode);
-
-    return index;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RepeatedNode, ruleName, childNodes, precedence, opacity); }
