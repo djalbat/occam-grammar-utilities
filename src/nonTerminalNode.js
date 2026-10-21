@@ -169,7 +169,7 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
 
     const removedChildNodes = this.removeAllButLastChildNode();
 
-    rightLeaningNode.lift();
+    rightLeaningNode.lift(state);
 
     const childNodes = [
       ...removedChildNodes,
@@ -180,7 +180,7 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
 
     precedence = this.getPrecedence();
 
-    const nonTerminalNode = this.createNonTerminalNode(childNodes, precedence, state);
+    const nonTerminalNode = state.createNonTerminalNode(childNodes, precedence);
 
     leftLeaningNode = nonTerminalNode; ///
 
@@ -203,7 +203,7 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
 
     const removedChildNodes = this.removeAllButFirstChildNode();
 
-    leftLeaningNode.lift();
+    leftLeaningNode.lift(state);
 
     const childNodes = [
       leftRightLeaningNode,
@@ -214,7 +214,7 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
 
     precedence = this.getPrecedence();
 
-    const nonTerminalNode = this.createNonTerminalNode(childNodes, precedence, state);
+    const nonTerminalNode = state.createNonTerminalNode(childNodes, precedence);
 
     rightLeadningNode = nonTerminalNode; ///
 
