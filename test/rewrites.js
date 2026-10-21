@@ -133,7 +133,7 @@ describe("Rewrites", () => {
   
       S ::= ( T ... <END_OF_LINE> ) ;
       
-      T ::= T "g" (1)
+      T ::= T "g" (-1)
       
           | "e"   (2)
           
@@ -164,7 +164,7 @@ describe("Rewrites", () => {
         
         _T ::= T_ T~* ;
         
-        T~ ::= "g" (1) ;
+        T~ ::= "g" (-1) ;
         
         T_ ::= "e" (2) ;
         
@@ -220,12 +220,12 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                    
+                                                                              
                                          S [0]                 
                                            |                   
                              ----------------------------      
                              |                          |      
-                         T [0] (1)                <END_OF_LINE>
+                        T [0] (-1)                <END_OF_LINE>
                              |                                 
                    ---------------------                       
                    |                   |                       
@@ -247,7 +247,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it.only("results in the requisite parse tree" , () => {
+      it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
@@ -255,7 +255,7 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                    
+                                                                              
                                                           S [0]                    
                                                             |                      
                                             ---------------------------------      
@@ -272,12 +272,12 @@ describe("Rewrites", () => {
                    |                                                               
           "e"[unassigned] [0]                                                      
              
-      `));
+       `));
       });
-    })
+    });
   });
 
-  describe("a cycle of length one with right recursion", () => {
+  describe.only("a cycle of length one with right recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
