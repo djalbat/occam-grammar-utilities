@@ -111,7 +111,7 @@ function retrieveParts(part, callback) {
     const partNonTerminalPart = part.isNonTerminalPart();
 
     if (partNonTerminalPart) {
-      const nonTerminalPart = part,
+      const nonTerminalPart = part, ///
             type = nonTerminalPart.getType();
 
       switch (type) {

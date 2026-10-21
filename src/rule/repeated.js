@@ -87,14 +87,14 @@ export function repeatedDefinitionsFromRuleCyclesAndIndirectRuleName(rule, cycle
     throw new Error(`The '${ruleString}' rule has no repeated definitions.`);
   }
 
-  const repeatedDefinitions = repeatedDefinitionsFromDefintiions(definitions, ruleMap);
+  const repeatedDefinitions = repeatedDefinitionsFromDefintiionsAndRuleName(definitions, ruleName, ruleMap);
 
   return repeatedDefinitions;
 }
 
-function repeatedDefinitionsFromDefintiions(definitions, ruleMap) {
+function repeatedDefinitionsFromDefintiionsAndRuleName(definitions, ruleName, ruleMap) {
   const repeatedDefinitions = definitions.map((definition) => {
-    const repeatedDefinition = RepeatedDefinition.fromDefinition(definition, ruleMap);
+    const repeatedDefinition = RepeatedDefinition.fromDefinitionAndRuleName(definition, ruleName, ruleMap);
 
     return repeatedDefinition;
   });

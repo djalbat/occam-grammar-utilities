@@ -3,9 +3,9 @@
 import { Rule } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
+import ReducedDefinition from "../definition/reduced";
 
 import { ruleNameFromCycle } from "../utilities/cycle";
-import { isDefinitionReducible } from "../utilities/definition";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 
 export default class ReducedRule extends Rule {
@@ -23,11 +23,10 @@ export default class ReducedRule extends Rule {
 
     definitions = rule.getDefinitions();
 
-    definitions = filterDefinitions(definitions, ruleName, cycles, ruleMap);
+    const reducedDefinitions = filterDefinitions(definitions, ruleName, cycles, ruleMap),
+          reducedDefinitionsLength = reducedDefinitions.length;
 
-    const definitionsLength = definitions.length;
-
-    if (definitionsLength === 0) {
+    if (reducedDefinitionsLength === 0) {
       const ruleString = rule.asString();
 
       throw new Error(`The '${ruleString}' rule has no reduced definitions.`);
@@ -35,21 +34,26 @@ export default class ReducedRule extends Rule {
 
     const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           name = reducedRuleName, ///
-          opacity = null,
-          reducedRule = new ReducedRule(name, opacity, definitions);
+          opacity = null;
+
+    definitions = reducedDefinitions; ///
+
+    const reducedRule = new ReducedRule(name, opacity, definitions);
 
     return reducedRule;
   }
 }
 
 function filterDefinitions(definitions, ruleName, cycles, ruleMap) {
-  definitions = definitions.filter((definition) => {
-    const definitionLeftReducible = isDefinitionReducible(definition, ruleName, cycles, ruleMap);
+  const reducedDefinitions = definitions.reduce((reducedDefinitions, definition) => {
+    const reducedDefinition = ReducedDefinition.fromDefinitionRuleNameAndCycles(definition, ruleName, cycles, ruleMap);
 
-    if (definitionLeftReducible) {
-      return true;
+    if (reducedDefinition !== null) {
+      reducedDefinitions.push(reducedDefinition);
     }
-  });
 
-  return definitions;
+    return reducedDefinitions;
+  }, []);
+
+  return reducedDefinitions;
 }

@@ -277,7 +277,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion", () => {
+  describe("a cycle of length one with right recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -309,9 +309,11 @@ describe("Rewrites", () => {
                                           
         S  ::= ( T ... <END_OF_LINE> ) ;
         
-        T  ::= T_ T~* ;
+        T  ::= _T ;
         
-        T~ ::= "+" T ;
+       _T  ::= T_ T~* ;
+        
+        T~ ::= "+" _T ;
         
         T_ ::= . ;
         
@@ -345,7 +347,7 @@ describe("Rewrites", () => {
                    |                       
           "x"[unassigned] [0]              
              
-      `));
+       `));
       });
     })
 
@@ -359,7 +361,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it("results in the requisite parse tree" , () => {
+      it.only("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
