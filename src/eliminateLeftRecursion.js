@@ -23,9 +23,9 @@ export default function eliminateLeftRecursion(rules) {
 
   createRewrittenRules(cycles, ruleMap);
 
-  createRepeatedRules(cycles, ruleMap);
-
   createReducedRules(cycles, ruleMap);
+
+  createRepeatedRules(cycles, ruleMap);
 
   replaceRules(cycles, ruleMap);
 

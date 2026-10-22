@@ -1,17 +1,8 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
 import { NonTerminalNode } from "occam-parsers";
 
-const { first, tail } = arrayUtilities;
-
 export default class RewrittenNode extends NonTerminalNode {
-  rewrite() {
-    const nonTerminalNode = this; ///
-
-    return nonTerminalNode;
-  }
-
   isSingular() {
     const multiplicity = this.getMultiplicity(),
           singular = (multiplicity === 1);
@@ -19,7 +10,7 @@ export default class RewrittenNode extends NonTerminalNode {
     return singular;
   }
 
-  lift(state) {
+  lift() {
     const parentNode = this.getParentNode(),
           precedence = this.getPrecedence(),
           childNodes = this.removeChildNodes(),
@@ -29,6 +20,12 @@ export default class RewrittenNode extends NonTerminalNode {
     parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 
     parentNode.setPrecedence(precedence);
+  }
+
+  rewrite(state) {
+    const nonTerminalNode = this; ///
+
+    return nonTerminalNode;
   }
 
   restore(state) {
@@ -43,26 +40,53 @@ export default class RewrittenNode extends NonTerminalNode {
 
   simplify(state) {
     const singular = this.isSingular(),
-          childNodes = this.getChildNodes(),
-          firstChildNode = first(childNodes),
-          reducedNode = firstChildNode; ///
+          reducedNode = this.findReducedNode();
 
     if (singular) {
-      reducedNode.lift(state);
-    } else {
-      const tailChildNodes = tail(childNodes),
-            repeatedNodes = tailChildNodes; ///
+      reducedNode.simplify(state);
 
-      let accumulatorNode;
-
-      accumulatorNode = reducedNode.accumulate(state);
-
-      repeatedNodes.forEach((repeatedNode, index) => {
-        const initial = (index === 0);
-
-        accumulatorNode = repeatedNode.lift(accumulatorNode, initial, state);
-      });
+      return;
     }
+
+    let accumulatorNode;
+
+    const repeatedNodes = this.findRepeatedNodes();
+
+    accumulatorNode = reducedNode.accumulate(state);
+
+    repeatedNodes.forEach((repeatedNode, index) => {
+      const initial = (index === 0);
+
+      accumulatorNode = repeatedNode.simplify(accumulatorNode, initial, state);
+    });
+  }
+
+  findReducedNode() {
+    let reducedNode;
+
+    this.someChildNode((childNode) => {
+      reducedNode = childNode;  ///
+
+      return true;
+    });
+
+    return reducedNode;
+  }
+
+  findRepeatedNodes() {
+    const repeatedNodes = [];
+
+    this.someChildNode((childNode, index) => {
+      const initial = (index === 0);
+
+      if (!initial) {
+        const repeatedNode = childNode;  ///
+
+        repeatedNodes.push(repeatedNode);
+      }
+    });
+
+    return repeatedNodes;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RewrittenNode, ruleName, childNodes, precedence, opacity); }

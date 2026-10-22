@@ -3,7 +3,7 @@
 import { NonTerminalNode } from "occam-parsers";
 
 export default class IntermediateNode extends NonTerminalNode {
-  rewrite() {
+  rewrite(state) {
     const nonTerminalNode = this; ///
 
     return nonTerminalNode;

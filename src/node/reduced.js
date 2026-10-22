@@ -3,12 +3,6 @@
 import { NonTerminalNode } from "occam-parsers";
 
 export default class ReducedNode extends NonTerminalNode {
-  rewrite() {
-    const nonTerminalNode = this; ///
-
-    return nonTerminalNode;
-  }
-
   lift(state) {
     const parentNode = this.getParentNode(),
           precedence = this.getPrecedence(),
@@ -19,6 +13,16 @@ export default class ReducedNode extends NonTerminalNode {
     parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 
     parentNode.setPrecedence(precedence);
+  }
+
+  rewrite(state) {
+    const nonTerminalNode = this; ///
+
+    return nonTerminalNode;
+  }
+
+  simplify(state) {
+    this.lift(state);
   }
 
   accumulate(state) {

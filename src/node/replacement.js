@@ -6,36 +6,50 @@ import State from "../state";
 
 export default class ReplacementNode extends NonTerminalNode {
   rewrite(state) {
-    let replacementNode;
+    let nonTerminalNode;
 
-    replacementNode = this.clone(); ///
+    const savedState = state, ///
+          replacementNode = this.clone(); ///
 
     state = State.fromReplacementNode(replacementNode, state);  ///
 
     replacementNode.simplify(state);
 
-    const precedence = replacementNode.getPrecedence(),
-          childNodes = replacementNode.removeChildNodes();
+    nonTerminalNode = replacementNode.createNonTerminalNode(state);
 
-    let nonTerminalNode;
+    state = savedState; ///
 
-    nonTerminalNode = state.createNonTerminalNode(childNodes, precedence);
-
-    nonTerminalNode = nonTerminalNode.rewrite(state);
+    nonTerminalNode = nonTerminalNode.rewrite(state); ///
 
     return nonTerminalNode;
   }
 
   simplify(state) {
+    const rewrittenNode = this.findRewrittenNode();
+
+    rewrittenNode.simplify(state);
+
+    rewrittenNode.lift(state);
+  }
+
+  findRewrittenNode() {
+    let rewrittenNode;
+
     this.someChildNode((childNode) => {
-      const rewrittenNode = childNode;  ///
-
-      rewrittenNode.simplify(state);
-
-      rewrittenNode.lift(state);
+      rewrittenNode = childNode;  ///
 
       return true;
     });
+
+    return rewrittenNode;
+  }
+
+  createNonTerminalNode(state) {
+    const precedence = this.getPrecedence(),
+          childNodes = this.removeChildNodes(),
+          nonTerminalNode = state.createNonTerminalNode(childNodes, precedence);
+
+    return nonTerminalNode;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ReplacementNode, ruleName, childNodes, precedence, opacity); }

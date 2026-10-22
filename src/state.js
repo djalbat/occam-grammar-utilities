@@ -2,21 +2,21 @@
 
 export default class State {
   constructor(replacementNode, NonTerminalNode) {
-    this.replacemenetNode = replacementNode;
+    this.replacementNode = replacementNode;
     this.NonTerminalNode = NonTerminalNode;
   }
 
-  getReplacemenetNode() {
-    return this.replacemenetNode;
+  getReplacementNode() {
+    return this.replacementNode;
   }
 
   getNonTerminalNode() {
     return this.NonTerminalNode;
   }
 
-  getRuleName() { return this.replacemenetNode.getRuleName(); }
+  getRuleName() { return this.replacementNode.getRuleName(); }
 
-  getOpacity() { return this.replacemenetNode.getOpacity(); }
+  getOpacity() { return this.replacementNode.getOpacity(); }
 
   createNonTerminalNode(childNodes, precedence) {
     const opacity = this.getOpacity(),
