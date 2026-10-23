@@ -15,7 +15,10 @@ export default class ReplacementNode extends NonTerminalNode {
 
     replacementNode.simplify(state);
 
-    nonTerminalNode = replacementNode.createNonTerminalNode(state);
+    const precedence = replacementNode.getPrecedence(),
+          childNodes = replacementNode.removeChildNodes();
+
+    nonTerminalNode = state.createNonTerminalNode(childNodes, precedence);
 
     state = savedState; ///
 
@@ -42,14 +45,6 @@ export default class ReplacementNode extends NonTerminalNode {
     });
 
     return rewrittenNode;
-  }
-
-  createNonTerminalNode(state) {
-    const precedence = this.getPrecedence(),
-          childNodes = this.removeChildNodes(),
-          nonTerminalNode = state.createNonTerminalNode(childNodes, precedence);
-
-    return nonTerminalNode;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ReplacementNode, ruleName, childNodes, precedence, opacity); }

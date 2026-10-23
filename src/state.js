@@ -1,36 +1,49 @@
 "use strict";
 
 export default class State {
-  constructor(replacementNode, NonTerminalNode) {
-    this.replacementNode = replacementNode;
-    this.NonTerminalNode = NonTerminalNode;
+  constructor(ruleName, opacity, parser) {
+    this.ruleName = ruleName;
+    this.opacity = opacity;
+    this.parser = parser;
   }
 
-  getReplacementNode() {
-    return this.replacementNode;
+  getRulename() {
+    return this.ruleName;
   }
 
-  getNonTerminalNode() {
-    return this.NonTerminalNode;
+  getOpacity() {
+    return this.opacity;
   }
 
-  getRuleName() { return this.replacementNode.getRuleName(); }
+  getParser() {
+    return this.parser;
+  }
 
-  getOpacity() { return this.replacementNode.getOpacity(); }
+  NonTerminalNodeFromRuleName(ruleName) { return this.parser.NonTerminalNodeFromRuleName(ruleName); }
 
-  createNonTerminalNode(childNodes, precedence) {
-    const opacity = this.getOpacity(),
-          ruleName = this.getRuleName(),
-          nonTerminalNode = this.NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity);
+  createNonTerminalNode(ruleName, childNodes, precedence, opacity) {
+    if (opacity === undefined) {
+      opacity = this.opacity;
+
+      precedence = childNodes;  ///
+
+      childNodes = ruleName;  ///
+
+      ruleName = this.ruleName;
+    }
+
+    const NonTerminalNode = this.NonTerminalNodeFromRuleName(ruleName),
+          nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity);
 
     return nonTerminalNode;
   }
 
   static fromReplacementNode(replacementNode, state) {
     const ruleName = replacementNode.getRuleName(),
-          NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName);
+          opacity = replacementNode.getOpacity(),
+          parser = state.getParser();
 
-    state = new State(replacementNode, NonTerminalNode);  ///
+    state = new State(ruleName, opacity, parser);  ///
 
     return state;
   }

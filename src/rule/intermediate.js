@@ -30,10 +30,11 @@ export default class IntermediateRule extends Rule {
             indirectRuleName = secondRuleName,  ///
             ruleName = firstRuleName, ///
             rule = ruleMap[ruleName],
+            indirectRule = ruleMap[indirectRuleName],
             intermediateRuleName = intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
             repeatedDefinitions = repeatedDefinitionsFromRuleCyclesAndIndirectRuleName(rule, cycles, indirectRuleName, ruleMap),
             name = intermediateRuleName,  ///
-            opacity = null,
+            opacity = indirectRule.getOpacity(),
             definitions = repeatedDefinitions;  ///
 
       intermediateRule = new IntermediateRule(name, opacity, definitions);
