@@ -47,16 +47,16 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                  
+                                          
         S  ::= ( T ... <END_OF_LINE> ) ;
         
         T  ::= _T ;
         
-       _T  ::= T_ T~* ;
-        
-        T~ ::= "g" ;
+        _T ::= T_ T~* ;
         
         T_ ::= "e" ;
+        
+        T~ ::= "g" ;
         
       `));
     });
@@ -157,16 +157,16 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                  
+                                                          
         S  ::= ( T ... <END_OF_LINE> ) ;
         
         T  ::= _T ;
         
         _T ::= T_ T~* ;
         
-        T~ ::= "g" (-1) ;
-        
         T_ ::= "e" (2) ;
+        
+        T~ ::= "g" (-1) ;
         
       `));
     });
@@ -306,16 +306,16 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                          
+                                                  
         S  ::= ( T ... <END_OF_LINE> ) ;
         
         T  ::= _T ;
         
-       _T  ::= T_ T~* ;
-        
-        T~ ::= "+" _T ;
+        _T ::= T_ T~* ;
         
         T_ ::= . ;
+        
+        T~ ::= "+" _T ;
         
       `));
     });
@@ -455,16 +455,16 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                  
+                                                                          
         S  ::= ( T ... <END_OF_LINE> ) ;
         
         T  ::= _T ;
         
         _T ::= T_ T~* ;
         
-        T~ ::= "+" \` _T ;
-        
         T_ ::= . ;
+        
+        T~ ::= "+" \` _T ;
         
       `));
     });
@@ -647,16 +647,16 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                                  
+                                                                                          
         S  ::= ( T ... <END_OF_LINE> ) ;
         
         T  ::= _T ;
         
         _T ::= T_ T~* ;
         
-        T~ ::= "?" \` _T ":" _T ;
+        T_ ::= . ;
         
-        T_ ::= . ;        
+        T~ ::= "?" \` _T ":" _T ;
         
       `));
     });
@@ -770,13 +770,13 @@ describe("Rewrites", () => {
         
         _T ::= T_ T~* ;
         
+        T_ ::= /[a-z0-9]/ ;
+        
         T~ ::= "+" \` _T (-10)
             
              | "^" _T (20)
         
              ;
-        
-        T_ ::= /[a-z0-9]/ ;
         
      `));
     });
@@ -1232,6 +1232,49 @@ describe("Rewrites", () => {
       });
     });
 
+    describe("content with two compound tokens the two separate tokens.", () => {
+      const content = `3x + 4 + 2
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                                                              
+                                                                                                                             S [0]                             
+                                                                                                                               |                               
+                                                                                                     ----------------------------------------------------      
+                                                                                                     |                                                  |      
+                                                                                                T [0] (-10)                                       <END_OF_LINE>
+                                                                                                     |                                                         
+                                                                  ----------------------------------------------------------------------                       
+                                                                  |                                                |                   |                       
+                                                             T [0] (-10)                                  "+"[unassigned] [0]        T [0]                     
+                                                                  |                                                                    |                       
+                                     -----------------------------------------------------------                              "2"[unassigned] [0]              
+                                     |                                     |                   |                                                               
+                                T [0] (-20)                       "+"[unassigned] [0]        T [0]                                                             
+                                     |                                                         |                                                               
+                   -------------------------------------                              "4"[unassigned] [0]                                                      
+                   |                 |                 |                                                                                                       
+                 T [0]        <NO_WHITESPACE>        T [0]                                                                                                     
+                   |                                   |                                                                                                       
+          "3"[unassigned] [0]                 "x"[unassigned] [0]                                                                                              
+             
+       `));
+      });
+    });
+
     describe("content with one separate token then three compound exponential tokens.", () => {
       const content = `1 + 3x^2
 `;
@@ -1242,7 +1285,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it.only("results in the requisite parse tree" , () => {
+      it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
@@ -1271,7 +1314,7 @@ describe("Rewrites", () => {
                                                                                                |                                       |                       
                                                                                       "x"[unassigned] [0]                     "2"[unassigned] [0]              
              
-      `));
+       `));
       });
     });
 
@@ -1336,7 +1379,7 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                                                                                                    
+                                                                                                                                                              
                                                                                                                                                                                               S [0]                                        
                                                                                                                                                                                                 |                                          
                                                                                                                                                             -------------------------------------------------------------------------      
@@ -1381,9 +1424,6 @@ describe("Rewrites", () => {
 
     `;
 
-    const content = `ehfg
-`;
-
     let node,
         rules,
         tokens;
@@ -1396,26 +1436,24 @@ describe("Rewrites", () => {
       const adjustedBNF = adjustedBNFFromRules(rules);
 
       bnf = adjustedBNF;  ///
-
-      tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
-
-      node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
     });
 
-    it("is rewritten", () => {
+    it.only("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                          
+                                  
         S   ::= ( T ... <END_OF_LINE> ) ;
         
-        T   ::= T_ T~* ;
+        T   ::= _T ;
         
         A   ::= T ;
         
         A~T ::= "g" ;
         
-        T~  ::= A~T ;
+        _T  ::= T_ T~* ;
         
         T_  ::= "e" ;
+        
+        T~  ::= A~T ;
         
       `));
     });
