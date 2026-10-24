@@ -7,7 +7,7 @@ import IntermediateNode from "../node/intermediate";
 
 import { ruleNamesFromCycle } from "../utilities/cycle";
 import { intermediateRuleNameFromRuleNameAndIndirectRuleName } from "../utilities/ruleName";
-import { repeatedDefinitionsFromRuleCyclesAndIndirectRuleName } from "./repeated";
+import { repeatedDefinitionsFromRuleIndirectRuleNameAndCycles } from "./repeated";
 
 const { first, second } = arrayUtilities;
 
@@ -32,7 +32,7 @@ export default class IntermediateRule extends Rule {
             rule = ruleMap[ruleName],
             indirectRule = ruleMap[indirectRuleName],
             intermediateRuleName = intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
-            repeatedDefinitions = repeatedDefinitionsFromRuleCyclesAndIndirectRuleName(rule, cycles, indirectRuleName, ruleMap),
+            repeatedDefinitions = repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap),
             name = intermediateRuleName,  ///
             opacity = indirectRule.getOpacity(),
             definitions = repeatedDefinitions;  ///

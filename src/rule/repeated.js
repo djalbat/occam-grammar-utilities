@@ -4,14 +4,15 @@ import { Rule } from "occam-parsers";
 import { arrayUtilities } from "necessary";
 
 import RepeatedNode from "../node/repeated";
-import IndirectDefinition from "../definition/indirect";
 import RepeatedDefinition from "../definition/repeated";
+import IntermediateRepeatedDefinition from "../definition/repeated/intermediate";
 
-import { ruleNameFromCycle } from "../utilities/cycle";
+import { ruleNamesFromCycle } from "../utilities/cycle";
 import { isDefinitionRepeatable } from "../utilities/definition";
 import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
+import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 
-const { first } = arrayUtilities;
+const { first, second } = arrayUtilities;
 
 export default class RepeatedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -21,7 +22,9 @@ export default class RepeatedRule extends Rule {
   }
 
   static fromCycleAndCycles(cycle, cycles, ruleMap) {
-    const ruleName = ruleNameFromCycle(cycle),
+    const ruleNames = ruleNamesFromCycle(cycle),
+          firstRuleName = first(ruleNames),
+          ruleName = firstRuleName, ///
           rule = ruleMap[ruleName],
           cycleLength = cycle.getLength(),
           repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
@@ -29,21 +32,21 @@ export default class RepeatedRule extends Rule {
     let definitions;
 
     switch (cycleLength) {
-      case 1: {
-        const indirectRuleName = ruleName,  ///
-              repeatedDefinitions = repeatedDefinitionsFromRuleCyclesAndIndirectRuleName(rule, cycles, indirectRuleName, ruleMap);
+      case CYCLE_LENGTH_1: {
+        const indirectRuleName = firstRuleName,  ///
+              repeatedDefinitions = repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap);
 
         definitions = repeatedDefinitions;  ///
 
         break;
       }
 
-      case 2: {
-        const indirectDefinition = IndirectDefinition.fromCycle(cycle, ruleMap);
+      case CYCLE_LENGTH_2: {
+        const secondRuleName = second(ruleNames),
+              indirectRuleName = secondRuleName,  ///
+              intermediateRepeatedDefinitions = intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap);
 
-        definitions = [
-          indirectDefinition
-        ];
+        definitions = intermediateRepeatedDefinitions;  ///
 
         break;
       }
@@ -57,13 +60,43 @@ export default class RepeatedRule extends Rule {
   }
 }
 
-export function repeatedDefinitionsFromRuleCyclesAndIndirectRuleName(rule, cycles, indirectRuleName, ruleMap) {
-  let definitions;
-
+export function repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap) {
   const ruleName = rule.getName();
+
+  let definitions;
 
   definitions = rule.getDefinitions();
 
+  definitions = filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap);
+
+  const repeatedDefinitions = definitions.map((definition) => {
+    const repeatedDefinition = RepeatedDefinition.fromDefinitionAndRuleName(definition, ruleName, ruleMap);
+
+    return repeatedDefinition;
+  });
+
+  return repeatedDefinitions;
+}
+
+function intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap) {
+  const ruleName = rule.getName();
+
+  let definitions;
+
+  definitions = rule.getDefinitions();
+
+  definitions = filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap);
+
+  const intermediateRepeatedDefinitions = definitions.map((definition) => {
+    const intermediateRepeatedDefinition = IntermediateRepeatedDefinition.fromDefinitionAndRuleName(definition, ruleName, ruleMap);
+
+    return intermediateRepeatedDefinition;
+  });
+
+  return intermediateRepeatedDefinitions;
+}
+
+function filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap) {
   definitions = definitions.filter((definition) => {
     const definitionLeftRepeatable = isDefinitionRepeatable(definition, ruleName, cycles, ruleMap);
 
@@ -82,22 +115,10 @@ export function repeatedDefinitionsFromRuleCyclesAndIndirectRuleName(rule, cycle
   const definitionsLength = definitions.length;
 
   if (definitionsLength === 0) {
-    const ruleString = rule.asString();
+    const ruleString = ruleName;  ///
 
     throw new Error(`The '${ruleString}' rule has no repeated definitions.`);
   }
 
-  const repeatedDefinitions = repeatedDefinitionsFromDefintiionsAndRuleName(definitions, ruleName, ruleMap);
-
-  return repeatedDefinitions;
-}
-
-function repeatedDefinitionsFromDefintiionsAndRuleName(definitions, ruleName, ruleMap) {
-  const repeatedDefinitions = definitions.map((definition) => {
-    const repeatedDefinition = RepeatedDefinition.fromDefinitionAndRuleName(definition, ruleName, ruleMap);
-
-    return repeatedDefinition;
-  });
-
-  return repeatedDefinitions;
+  return definitions;
 }
