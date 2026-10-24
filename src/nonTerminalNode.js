@@ -155,13 +155,19 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
     });
   }
 
-  lift() {
+  lift(withPrecedence = false) {
     const parentNode = this.getParentNode(),
           childNodes = this.removeChildNodes(),
           replacedChildNode = this,  ///
           replacementChildNodes = childNodes; ///
 
     parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+
+    if (withPrecedence) {
+      const precedence = this.getPrecedence();
+
+      parentNode.setPrecedence(precedence);
+    }
   }
 
   remove() {

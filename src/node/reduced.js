@@ -3,10 +3,28 @@
 import { NonTerminalNode } from "occam-parsers";
 
 export default class ReducedNode extends NonTerminalNode {
-  lift(state) {
+  rewrite(state) {
+    const nonTerminalNode = this; ///
+
+    return nonTerminalNode;
+  }
+
+  simplify(singular, state) {
+    this.simplifyChildNodes(state);
+
+    if (singular) {
+      this.lift();
+
+      return;
+    }
+
+    this.overwrite(state);
+  }
+
+  lift() {
     const parentNode = this.getParentNode(),
           precedence = this.getPrecedence(),
-          childNodes = this.removeAndRestoreChildNodes(state),
+          childNodes = this.removeChildNodes(),
           replacedChildNode = this,  ///
           replacementChildNodes = childNodes; ///
 
@@ -15,22 +33,10 @@ export default class ReducedNode extends NonTerminalNode {
     parentNode.setPrecedence(precedence);
   }
 
-  rewrite(state) {
-    const nonTerminalNode = this; ///
-
-    return nonTerminalNode;
-  }
-
-  simplify(state) {
-    this.lift(state);
-  }
-
-  accumulate(state) {
-    let accumulatorNode;
-
+  overwrite(state) {
     const parentNode = this.getParentNode(),
           precedence = this.getPrecedence(),
-          childNodes = this.removeAndRestoreChildNodes(state),
+          childNodes = this.removeChildNodes(),
           nonTerminalNode = state.createNonTerminalNode(childNodes, precedence),
           replacedChildNode = this, ///
           replacementChildNode = nonTerminalNode, ///
@@ -40,23 +46,13 @@ export default class ReducedNode extends NonTerminalNode {
 
     parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 
-    accumulatorNode = nonTerminalNode; ///
-
-    return accumulatorNode;
+    return replacementChildNode;
   }
 
-  removeAndRestoreChildNodes(state) {
-    let childNodes;
-
-    childNodes = this.removeChildNodes();
-
-    childNodes = childNodes.map((childNode) => {
-      childNode = childNode.restore(state); ///
-
-      return childNode;
+  simplifyChildNodes(state) {
+    this.forEachChildNode((childNode) => {
+      childNode.simplify(state);
     });
-
-    return childNodes;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ReducedNode, ruleName, childNodes, precedence, opacity); }

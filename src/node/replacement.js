@@ -28,11 +28,10 @@ export default class ReplacementNode extends NonTerminalNode {
   }
 
   simplify(state) {
-    const rewrittenNode = this.findRewrittenNode();
+    const topmost = true,
+          rewrittenNode = this.findRewrittenNode();
 
-    rewrittenNode.simplify(state);
-
-    rewrittenNode.lift(state);
+    rewrittenNode.simplify(state, topmost);
   }
 
   findRewrittenNode() {

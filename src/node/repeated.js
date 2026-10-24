@@ -17,24 +17,25 @@ export default class RepeatedNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(accumulatorNode, initial, state) {
-    const parentNode = this.getParentNode(),
-          precedence = this.getPrecedence();
+  simplify(initial, state) {
+    this.simplifyChildNodes(state);
 
     let childNodes;
 
     if (initial) {
-      childNodes = this.removeAndRestoreChildNodes(state);
+      childNodes = this.removeChildNodes();
     } else {
       const index = this.getIndex(),
-            endIndex = index, ///
-            startIndex = 0;
+            parentNode = this.getParentNode(),
+            startIndex = 0,
+            endIndex = index; ///
 
       childNodes = parentNode.spliceChildNodes(startIndex, endIndex);
 
-      const nonTerminalNode = state.createNonTerminalNode(childNodes, precedence);
+      const precedence = parentNode.getPrecedence(),
+            nonTerminalNode = state.createNonTerminalNode(childNodes, precedence);
 
-      childNodes = this.removeAndRestoreChildNodes(state);
+      childNodes = this.removeChildNodes();
 
       childNodes = [  ///
         nonTerminalNode,
@@ -42,28 +43,24 @@ export default class RepeatedNode extends NonTerminalNode {
       ];
     }
 
-    const replacedChildNode = this,  ///
+    this.overwrite(childNodes);
+  }
+
+  overwrite(childNodes) {
+    const parentNode = this.getParentNode(),
+          precedence = this.getPrecedence(),
+          replacedChildNode = this,  ///
           replacementChildNodes = childNodes;  ///
 
     parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 
     parentNode.setPrecedence(precedence);
-
-    return accumulatorNode;
   }
 
-  removeAndRestoreChildNodes(state) {
-    let childNodes;
-
-    childNodes = this.removeChildNodes();
-
-    childNodes = childNodes.map((childNode) => {
-      childNode = childNode.restore(state); ///
-
-      return childNode;
+  simplifyChildNodes(state) {
+    this.forEachChildNode((childNode) => {
+      childNode.simplify(state);
     });
-
-    return childNodes;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RepeatedNode, ruleName, childNodes, precedence, opacity); }

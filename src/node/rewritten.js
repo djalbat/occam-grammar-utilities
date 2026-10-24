@@ -10,55 +10,48 @@ export default class RewrittenNode extends NonTerminalNode {
     return singular;
   }
 
-  lift() {
-    const parentNode = this.getParentNode(),
-          precedence = this.getPrecedence(),
-          childNodes = this.removeChildNodes(),
-          replacedChildNode = this,  ///
-          replacementChildNodes = childNodes;  ///
-
-    parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
-
-    parentNode.setPrecedence(precedence);
-  }
-
   rewrite(state) {
     const nonTerminalNode = this; ///
 
     return nonTerminalNode;
   }
 
-  restore(state) {
-    this.simplify(state);
-
-    const precedence = this.getPrecedence(),
-          childNodes = this.removeChildNodes(),
-          nonTerminalNode = state.createNonTerminalNode(childNodes, precedence);
-
-    return nonTerminalNode;
-  }
-
-  simplify(state) {
+  simplify(state, topmost = false) {
     const singular = this.isSingular(),
-          reducedNode = this.findReducedNode();
+          reducedNode = this.findReducedNode(),
+          repeatedNodes = this.findRepeatedNodes();
 
-    if (singular) {
-      reducedNode.simplify(state);
-
-      return;
-    }
-
-    let accumulatorNode;
-
-    const repeatedNodes = this.findRepeatedNodes();
-
-    accumulatorNode = reducedNode.accumulate(state);
+    reducedNode.simplify(singular, state);
 
     repeatedNodes.forEach((repeatedNode, index) => {
       const initial = (index === 0);
 
-      accumulatorNode = repeatedNode.simplify(accumulatorNode, initial, state);
+      repeatedNode.simplify(initial, state);
     });
+
+    const nonTerminalNode = this.overwrite(state);
+
+    if (topmost) {
+      const withPrecedence = true;
+
+      nonTerminalNode.lift(withPrecedence);
+    }
+  }
+
+  overwrite(state) {
+    const parentNode = this.getParentNode(),
+          precedence = this.getPrecedence(),
+          childNodes = this.removeChildNodes(),
+          nonTerminalNode = state.createNonTerminalNode(childNodes, precedence),
+          replacedChildNode = this, ///
+          replacementChildNode = nonTerminalNode, ///
+          replacementChildNodes = [
+            replacementChildNode
+          ];
+
+    parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+
+    return nonTerminalNode;
   }
 
   findReducedNode() {
