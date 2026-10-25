@@ -18,7 +18,7 @@ describe("Rewrites", () => {
     }
   ];
 
-  describe.only("a cycle of length one", () => {
+  describe("a cycle of length one", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -128,7 +128,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe.only("a cycle of length one with precedence", () => {
+  describe("a cycle of length one with precedence", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -277,7 +277,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion", () => {
+  describe("a cycle of length one with right recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -426,7 +426,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion and a cut", () => {
+  describe("a cycle of length one with right recursion and a cut", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -618,7 +618,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
+  describe("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -732,7 +732,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, precedence, one definition with a cut and the other without ", () => {
+  describe("a cycle of length one with right recursion, precedence, one definition with a cut and the other without ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -961,7 +961,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials ", () => {
+  describe("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1455,7 +1455,7 @@ describe("Rewrites", () => {
         
         T~  ::= A~T ;
         
-      `));
+     `));
     });
 
     describe("content with two tokens", () => {
@@ -1471,12 +1471,12 @@ describe("Rewrites", () => {
       it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
-        // assert.isTrue(checkDescendentNodes(node));
+        assert.isTrue(checkDescendentNodes(node));
 
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-            
+                      
                                          S [0]                 
                                            |                   
                              ----------------------------      
@@ -1485,9 +1485,11 @@ describe("Rewrites", () => {
                              |                                 
                    ---------------------                       
                    |                   |                       
-                 T [0]               A [0]                     
-                   |                   |                       
-          "e"[unassigned] [0] "g"[unassigned] [0]              
+                 A [0]        "g"[unassigned] [0]              
+                   |                                           
+                 T [0]                                         
+                   |                                           
+          "e"[unassigned] [0]                                  
                                             
        `));
       });
@@ -1511,7 +1513,7 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                      
+                                
                                                           S [0]                    
                                                             |                      
                                             ---------------------------------      
@@ -1520,20 +1522,24 @@ describe("Rewrites", () => {
                                             |                                      
                              -------------------------------                       
                              |                             |                       
-                           T [0]                         A [0]                     
-                             |                             |                       
-                   ---------------------          "g"[unassigned] [0]              
+                           A [0]                  "g"[unassigned] [0]              
+                             |                                                     
+                           T [0]                                                   
+                             |                                                     
+                   ---------------------                                           
                    |                   |                                           
-                 T [0]               A [0]                                         
-                   |                   |                                           
-          "e"[unassigned] [0] "g"[unassigned] [0]                                  
+                 A [0]        "g"[unassigned] [0]                                  
+                   |                                                               
+                 T [0]                                                             
+                   |                                                               
+          "e"[unassigned] [0]                                                      
                                             
        `));
       });
     });
   });
 
-  describe("a cycle of length two with precedence", () => {
+  describe.only("a cycle of length two with precedence", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;

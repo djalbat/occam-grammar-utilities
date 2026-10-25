@@ -18,30 +18,25 @@ export default class RepeatedNode extends NonTerminalNode {
   }
 
   simplify(initial, state) {
-    this.simplifyChildNodes(state);
-
-    let childNodes;
-
-    if (initial) {
-      childNodes = this.removeChildNodes();
-    } else {
+    if (!initial) {
       const index = this.getIndex(),
             parentNode = this.getParentNode(),
             startIndex = 0,
-            endIndex = index; ///
+            endIndex = index, ///
+            childNodes = parentNode.spliceChildNodes(startIndex, endIndex),
+            precedence = parentNode.getPrecedence(),
+            nonTerminalNode = state.createNonTerminalNode(childNodes, precedence),
+            addedChildNode = nonTerminalNode, ///
+            addedChildNodes = [
+              addedChildNode
+            ];
 
-      childNodes = parentNode.spliceChildNodes(startIndex, endIndex);
-
-      const precedence = parentNode.getPrecedence(),
-            nonTerminalNode = state.createNonTerminalNode(childNodes, precedence);
-
-      childNodes = this.removeChildNodes();
-
-      childNodes = [  ///
-        nonTerminalNode,
-        ...childNodes
-      ];
+      parentNode.addChildNodes(addedChildNodes, startIndex);
     }
+
+    this.simplifyChildNodes(state);
+
+    const childNodes = this.removeChildNodes();
 
     this.overwrite(childNodes);
   }
