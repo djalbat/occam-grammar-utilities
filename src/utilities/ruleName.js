@@ -14,6 +14,12 @@ export function ruleNameFromRepeatedRuleName(repeatedRuleName) {
   return ruleName;
 }
 
+export function ruleNameFromRewrittenRuleName(rewrittenRuleName) {
+  const ruleName = rewrittenRuleName.replace(/^_/g, EMPTY_STRING);
+
+  return ruleName;
+}
+
 export function ruleNameFromIntermediateRuleName(intermediateRuleName) {
   const ruleName = intermediateRuleName.replace(/^.+~/g, EMPTY_STRING);
 

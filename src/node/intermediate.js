@@ -11,7 +11,9 @@ export default class IntermediateNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(state) {
+  simplify(index, state) {
+    this.simplifyChildNodes(state);
+
     this.swap();
 
     this.shuffle();
@@ -112,6 +114,12 @@ export default class IntermediateNode extends NonTerminalNode {
           ];
 
     parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+  }
+
+  simplifyChildNodes(state) {
+    this.forEachChildNode((childNode, index) => {
+      childNode.simplify(index, state);
+    });
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(IntermediateNode, ruleName, childNodes, precedence, opacity); }

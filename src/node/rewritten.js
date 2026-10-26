@@ -2,6 +2,8 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
+import { ruleNameFromRewrittenRuleName } from "../utilities/ruleName";
+
 export default class RewrittenNode extends NonTerminalNode {
   isSingular() {
     const multiplicity = this.getMultiplicity(),
@@ -16,18 +18,8 @@ export default class RewrittenNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(state, topmost = false) {
-    const singular = this.isSingular(),
-          reducedNode = this.findReducedNode(),
-          repeatedNodes = this.findRepeatedNodes();
-
-    reducedNode.simplify(singular, state);
-
-    repeatedNodes.forEach((repeatedNode, index) => {
-      const initial = (index === 0);
-
-      repeatedNode.simplify(initial, state);
-    });
+  simplify(index, state, topmost = false) {
+    this.simplifyChildNodes(state);
 
     const nonTerminalNode = this.overwrite(state);
 
@@ -39,10 +31,20 @@ export default class RewrittenNode extends NonTerminalNode {
   }
 
   overwrite(state) {
-    const parentNode = this.getParentNode(),
+    const opacity = this.getOpacity(),
+          parentNode = this.getParentNode(),
           precedence = this.getPrecedence(),
-          childNodes = this.removeChildNodes(),
-          nonTerminalNode = state.createNonTerminalNode(childNodes, precedence),
+          childNodes = this.removeChildNodes();
+
+    let ruleName;
+
+    ruleName = this.getRuleName();
+
+    const rewrittenRuleName = ruleName; ///
+
+    ruleName = ruleNameFromRewrittenRuleName(rewrittenRuleName);  ///
+
+    const nonTerminalNode = state.createNonTerminalNode(ruleName, childNodes, precedence, opacity),
           replacedChildNode = this, ///
           replacementChildNode = nonTerminalNode, ///
           replacementChildNodes = [
@@ -80,6 +82,12 @@ export default class RewrittenNode extends NonTerminalNode {
     });
 
     return repeatedNodes;
+  }
+
+  simplifyChildNodes(state) {
+    this.forEachChildNode((childNode, index) => {
+      childNode.simplify(index, state);
+    });
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RewrittenNode, ruleName, childNodes, precedence, opacity); }

@@ -10,8 +10,8 @@ const { tail } = arrayUtilities,
       { RuleNamePart } = Parts;
 
 export default class RepeatedDefinition extends Definition {
-  static fromDefinitionAndRuleName(definition, ruleName, ruleMap) {
-    const parts = partsfromDefinitionAndRuleName(definition, ruleName),
+  static fromDefinitionAndRuleNames(definition, ruleNames, ruleMap) {
+    const parts = partsfromDefinitionAndRuleNames(definition, ruleNames),
           precedence = definition.getPrecedence(),
           repeatedDefinition = new RepeatedDefinition(parts, precedence);
 
@@ -20,8 +20,8 @@ export default class RepeatedDefinition extends Definition {
     return repeatedDefinition;
   }
 
-  static fromDefinitionRuleNameAndPrecedence(definition, ruleName, precedence, ruleMap) {
-    const parts = partsfromDefinitionAndRuleName(definition, ruleName),
+  static fromDefinitionRuleNamesAndPrecedence(definition, ruleNames, precedence, ruleMap) {
+    const parts = partsfromDefinitionAndRuleNames(definition, ruleNames),
           repeatedDefinition = new RepeatedDefinition(parts, precedence);
 
     isRepeatedDefinitionConsuming(repeatedDefinition, ruleMap);
@@ -30,25 +30,14 @@ export default class RepeatedDefinition extends Definition {
   }
 }
 
-function isRepeatedDefinitionConsuming(repeatedDefinition, ruleMap) {
-  const visitedRules = [],
-        checkForCutParts = true;
-
-  repeatedDefinition.isConsuming(ruleMap, visitedRules, checkForCutParts);
-}
-
-function partsfromDefinitionAndRuleName(definition, ruleName) {
-  let parts = definition.getParts();
-
-  const tailParts = tail(parts);
-
-  parts = tailParts;  ///
-
+export function partsfromPartsAndRuleNames(parts, ruleNames) {
   parts = replaceRuleNameParts(parts, (ruleNamePart) => { ///
-    const ruleNamePartRuleName = ruleNamePart.getRuleName();
+    const ruleNamePartRuleName = ruleNamePart.getRuleName(),
+          ruleNamesIncludesRuleNamePartRuleName = ruleNames.includes(ruleNamePartRuleName);
 
-    if (ruleNamePartRuleName === ruleName) {
-      const rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
+    if (ruleNamesIncludesRuleNamePartRuleName) {
+      const ruleName = ruleNamePartRuleName,  ///
+            rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
             rewrittenRuleNamePart = RuleNamePart.fromRuleName(rewrittenRuleName);
 
       ruleNamePart = rewrittenRuleNamePart; ///
@@ -58,4 +47,23 @@ function partsfromDefinitionAndRuleName(definition, ruleName) {
   });
 
   return parts;
+}
+
+function partsfromDefinitionAndRuleNames(definition, ruleNames) {
+  let parts = definition.getParts();
+
+  const tailParts = tail(parts);
+
+  parts = tailParts;  ///
+
+  parts = partsfromPartsAndRuleNames(parts, ruleNames); ///
+
+  return parts;
+}
+
+function isRepeatedDefinitionConsuming(repeatedDefinition, ruleMap) {
+  const visitedRules = [],
+        checkForCutParts = true;
+
+  repeatedDefinition.isConsuming(ruleMap, visitedRules, checkForCutParts);
 }

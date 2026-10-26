@@ -9,10 +9,12 @@ export default class ReducedNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(singular, state) {
+  simplify(index, state) {
     this.simplifyChildNodes(state);
 
-    if (singular) {
+    const single = this.isSingle();
+
+    if (single) {
       this.lift();
 
       return;
@@ -50,8 +52,8 @@ export default class ReducedNode extends NonTerminalNode {
   }
 
   simplifyChildNodes(state) {
-    this.forEachChildNode((childNode) => {
-      childNode.simplify(state);
+    this.forEachChildNode((childNode, index) => {
+      childNode.simplify(index, state);
     });
   }
 

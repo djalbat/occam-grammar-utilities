@@ -5,7 +5,7 @@ import { Rule } from "occam-parsers";
 import ReplacementNode from "../node/replacement";
 import ReplacementDefinition from "../definition/replacement";
 
-import { ruleNameFromCycle } from "../utilities/cycle";
+import { ruleNamesFromCycle } from "../utilities/cycle";
 
 export default class ReplacementRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -14,9 +14,8 @@ export default class ReplacementRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromCycle(cycle, ruleMap) {
-    const ruleName = ruleNameFromCycle(cycle),
-          rule = ruleMap[ruleName],
+  static fromRuleName(ruleName, ruleMap) {
+    const rule = ruleMap[ruleName],
           replacementDefinition = ReplacementDefinition.fromRuleName(ruleName),
           definition = replacementDefinition, ///
           name = ruleName, ///
@@ -28,4 +27,15 @@ export default class ReplacementRule extends Rule {
 
     return replacementRule;
   }
+}
+
+export function replacementRulesFromCycle(cycle, ruleMap) {
+  const ruleNames = ruleNamesFromCycle(cycle),
+        replacementRules = ruleNames.map((ruleName) => {
+          const replacementRule = ReplacementRule.fromRuleName(ruleName, ruleMap);
+
+          return replacementRule;
+        });
+
+  return replacementRules;
 }

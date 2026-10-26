@@ -2,17 +2,21 @@
 
 import ReducedRule from "../rule/reduced";
 import RepeatedRule from "../rule/repeated";
-import RewrittenRule from "../rule/rewritten";
-import ReplacementRule from "../rule/replacement";
 import IntermediateRule from "../rule/intermediate";
+
+import { rewrittenRulesFromCycle } from "../rule/rewritten";
+import { replacementRulesFromCycle } from "../rule/replacement";
 
 export function replaceRules(cycles, ruleMap) {
   cycles.forEach((cycle) => {
-    const replacementRule = ReplacementRule.fromCycle(cycle, ruleMap),
-          replacementRuleName = replacementRule.getName(),
-          ruleName = replacementRuleName; ///
+    const replacementRules = replacementRulesFromCycle(cycle, ruleMap);
 
-    ruleMap[ruleName] = replacementRule;
+    replacementRules.forEach((replacementRule) => {
+      const replacementRuleName = replacementRule.getName(),
+            ruleName = replacementRuleName; ///
+
+      ruleMap[ruleName] = replacementRule;
+    });
   });
 }
 
@@ -39,10 +43,13 @@ export function createRepeatedRules(cycles, ruleMap) {
 
 export function createRewrittenRules(cycles, ruleMap) {
   cycles.forEach((cycle) => {
-    const rewrittenRule = RewrittenRule.fromCycle(cycle, ruleMap),
-          rewrittenRuleName = rewrittenRule.getName();
+    const rewrittenRules = rewrittenRulesFromCycle(cycle, ruleMap);
 
-    ruleMap[rewrittenRuleName] = rewrittenRule;
+    rewrittenRules.map((rewrittenRule) => {
+      const rewrittenRuleName = rewrittenRule.getName();
+
+      ruleMap[rewrittenRuleName] = rewrittenRule;
+    });
   });
 }
 

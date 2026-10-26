@@ -79,7 +79,11 @@ function intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, 
 }
 
 export function repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap) {
-  const ruleName = rule.getName();
+  const ruleName = rule.getName(),
+        ruleNames = [
+          ruleName,
+          indirectRuleName
+        ];
 
   let definitions;
 
@@ -88,7 +92,7 @@ export function repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indir
   definitions = filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap);
 
   const repeatedDefinitions = definitions.map((definition) => {
-    const repeatedDefinition = RepeatedDefinition.fromDefinitionAndRuleName(definition, ruleName, ruleMap);
+    const repeatedDefinition = RepeatedDefinition.fromDefinitionAndRuleNames(definition, ruleNames, ruleMap);
 
     return repeatedDefinition;
   });

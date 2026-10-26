@@ -50,21 +50,25 @@ export default class IntermediateRule extends Rule {
 function intermediateDefinitionsFromRuleIndirectRuleAndCycles(rule, indirectRule, cycles, ruleMap) {
   const intermediateDefinitions = [],
         indirectRuleName = indirectRule.getName(),
-        definitions = indirectRule.getDefinitions();
+        definitions = indirectRule.getDefinitions(),
+        ruleName = rule.getName(),
+        ruleNames = [
+          ruleName,
+          indirectRuleName
+        ];
 
   definitions.forEach((definition) => {
     const definitionLeftRepeatable = isDefinitionIndirectlyRepeatable(definition, indirectRuleName, cycles, ruleMap);
 
     if (definitionLeftRepeatable) {
-      const ruleName = rule.getName(),
-            precedence = definition.getPrecedence();
+      const precedence = definition.getPrecedence();
 
       let definitions = rule.getDefinitions();
 
       definitions = filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap);
 
       definitions.forEach((definition) => {
-        const repeatedDefinition = RepeatedDefinition.fromDefinitionRuleNameAndPrecedence(definition, ruleName, precedence, ruleMap),
+        const repeatedDefinition = RepeatedDefinition.fromDefinitionRuleNamesAndPrecedence(definition, ruleNames, precedence, ruleMap),
               intermediateDefinition = repeatedDefinition;  ///
 
         intermediateDefinitions.push(intermediateDefinition);

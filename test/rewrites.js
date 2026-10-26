@@ -18,7 +18,7 @@ describe("Rewrites", () => {
     }
   ];
 
-  describe.only("a cycle of length one", () => {
+  describe("a cycle of length one", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -128,7 +128,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe.only("a cycle of length one with precedence", () => {
+  describe("a cycle of length one with precedence", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -277,7 +277,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion", () => {
+  describe("a cycle of length one with right recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -426,7 +426,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion and a cut", () => {
+  describe("a cycle of length one with right recursion and a cut", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -618,7 +618,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
+  describe("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -732,7 +732,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, precedence, one definition with a cut and the other without ", () => {
+  describe("a cycle of length one with right recursion, precedence, one definition with a cut and the other without ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -961,7 +961,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials ", () => {
+  describe("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1409,7 +1409,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two", () => {
+  describe.only("a cycle of length two", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1445,11 +1445,13 @@ describe("Rewrites", () => {
         
         T   ::= _T ;
         
-        A   ::= T ;
+        A   ::= _A ;
         
         A~T ::= "g" ;
         
         _T  ::= T_ T~* ;
+        
+        _A  ::= _T ;
         
         T_  ::= "e" ;
         
@@ -1539,7 +1541,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two with precedence", () => {
+  describe.only("a cycle of length two with precedence", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1570,23 +1572,56 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                          
+                                                  
         S   ::= ( T ... <END_OF_LINE> ) ;
         
         T   ::= _T ;
         
-        A   ::= T ( ) ;
+        A   ::= _A ;
         
         A~T ::= "g" ( ) ;
         
         _T  ::= T_ T~* ;
         
+        _A  ::= _T ( ) ;
+        
         T_  ::= "e" (2) ;
         
         T~  ::= A~T (-1) ;
         
-      `));
+     `));
     });
+
+    describe("content with one token", () => {
+      const content = `e
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+               T [0] (2)      <END_OF_LINE>
+                   |                       
+          "e"[unassigned] [0]              
+             
+      `));
+      });
+    })
 
     describe("content with two tokens", () => {
       const content = `eg
@@ -1664,6 +1699,501 @@ describe("Rewrites", () => {
                    |                                                               
           "e"[unassigned] [0]
                                                                 
+       `));
+      });
+    });
+  });
+
+  describe.only("a cycle of length two with right recursion", () => {
+    let bnf = `
+  
+      S ::= ( T ... <END_OF_LINE> ) ;
+      
+      T ::= A "+" A
+      
+          | .
+          
+          ;
+        
+      A ::= T ( ) ;
+      
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                                                                          
+        S   ::= ( T ... <END_OF_LINE> ) ;
+        
+        T   ::= _T ;
+        
+        A   ::= _A ;
+        
+        A~T ::= "+" _A ( ) ;
+        
+        _T  ::= T_ T~* ;
+        
+        _A  ::= _T ( ) ;
+        
+        T_  ::= . ;
+        
+        T~  ::= A~T ;        
+
+     `));
+    });
+
+    describe("content with one token", () => {
+      const content = `x
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                          
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+                 T [0]        <END_OF_LINE>
+                   |                       
+          "x"[unassigned] [0]              
+             
+       `));
+      });
+    });
+
+    describe("content with three tokens", () => {
+      const content = `x + y
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                              
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                     T [0]                            <END_OF_LINE>
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+               A [0] ( )      "+"[unassigned] [0]      A [0] ( )                   
+                   |                                       |                       
+                 T [0]                                   T [0]                     
+                   |                                       |                       
+          "x"[unassigned] [0]                     "y"[unassigned] [0]              
+
+       `));
+      });
+    });
+
+    describe("content with five tokens", () => {
+      const content = `x + y + z
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                              
+                                                                                 S [0]                                     
+                                                                                   |                                       
+                                                 --------------------------------------------------------------------      
+                                                 |                                                                  |      
+                                               T [0]                                                          <END_OF_LINE>
+                                                 |                                                                         
+                   -------------------------------------------------------------                                           
+                   |                   |                                       |                                           
+               A [0] ( )      "+"[unassigned] [0]                          A [0] ( )                                       
+                   |                                                           |                                           
+                 T [0]                                                       T [0]                                         
+                   |                                                           |                                           
+          "x"[unassigned] [0]                              -----------------------------------------                       
+                                                           |                   |                   |                       
+                                                       A [0] ( )      "+"[unassigned] [0]      A [0] ( )                   
+                                                           |                                       |                       
+                                                         T [0]                                   T [0]                     
+                                                           |                                       |                       
+                                                  "y"[unassigned] [0]                     "z"[unassigned] [0]              
+                                                                
+       `));
+      });
+    });
+  });
+
+  describe("a cycle of length two with right recursion and a cut", () => {
+    let bnf = `
+  
+      S ::= ( T ... <END_OF_LINE> ) ;
+      
+      T ::= A "+" \` A
+      
+          | .
+          
+          ;
+        
+      A ::= T ( ) ;
+
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                                                                                  
+        S   ::= ( T ... <END_OF_LINE> ) ;
+        
+        T   ::= _T ;
+        
+        A   ::= T ( ) ;
+        
+        A~T ::= "+" \` A ( ) ;
+        
+        _T  ::= T_ T~* ;
+        
+        T_  ::= . ;
+        
+        T~  ::= A~T ;
+        
+     `));
+    });
+
+    describe("content with one token", () => {
+      const content = `x
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                    
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+                 T [0]        <END_OF_LINE>
+                   |                       
+          "x"[unassigned] [0]              
+             
+       `));
+      });
+    });
+
+    describe("content with three tokens", () => {
+      const content = `x + y
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                  
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                     T [0]                            <END_OF_LINE>
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+               A [0] ( )      "+"[unassigned] [0]      A [0] ( )                   
+                   |                                       |                       
+                 T [0]                                   T [0]                     
+                   |                                       |                       
+          "x"[unassigned] [0]                     "y"[unassigned] [0]              
+                        
+       `));
+      });
+    });
+
+    describe("content with five tokens", () => {
+      const content = `x + y + z
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                            
+                                                                                 S [0]                                     
+                                                                                   |                                       
+                                                 --------------------------------------------------------------------      
+                                                 |                                                                  |      
+                                               T [0]                                                          <END_OF_LINE>
+                                                 |                                                                         
+                   -------------------------------------------------------------                                           
+                   |                   |                                       |                                           
+               A [0] ( )      "+"[unassigned] [0]                          A [0] ( )                                       
+                   |                                                           |                                           
+                 T [0]                                                       T [0]                                         
+                   |                                                           |                                           
+          "x"[unassigned] [0]                              -----------------------------------------                       
+                                                           |                   |                   |                       
+                                                       A [0] ( )      "+"[unassigned] [0]      A [0] ( )                   
+                                                           |                                       |                       
+                                                         T [0]                                   T [0]                     
+                                                           |                                       |                       
+                                                  "y"[unassigned] [0]                     "z"[unassigned] [0]              
+         
+       `));
+      });
+    });
+
+    describe("content with seven tokens", () => {
+      const content = `x + y + z + w
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                            
+                                                                                                       S [0]                                                       
+                                                                                                         |                                                         
+                                                      -------------------------------------------------------------------------------------------------------      
+                                                      |                                                                                                     |      
+                                                    T [0]                                                                                             <END_OF_LINE>
+                                                      |                                                                                                            
+                   -----------------------------------------------------------------------                                                                         
+                   |                   |                                                 |                                                                         
+               A [0] ( )      "+"[unassigned] [0]                                    A [0] ( )                                                                     
+                   |                                                                     |                                                                         
+                 T [0]                                                                 T [0]                                                                       
+                   |                                                                     |                                                                         
+          "x"[unassigned] [0]                              -------------------------------------------------------------                                           
+                                                           |                   |                                       |                                           
+                                                       A [0] ( )      "+"[unassigned] [0]                          A [0] ( )                                       
+                                                           |                                                           |                                           
+                                                         T [0]                                                       T [0]                                         
+                                                           |                                                           |                                           
+                                                  "y"[unassigned] [0]                              -----------------------------------------                       
+                                                                                                   |                   |                   |                       
+                                                                                               A [0] ( )      "+"[unassigned] [0]      A [0] ( )                   
+                                                                                                   |                                       |                       
+                                                                                                 T [0]                                   T [0]                     
+                                                                                                   |                                       |                       
+                                                                                          "z"[unassigned] [0]                     "w"[unassigned] [0]              
+          
+       `));
+      });
+    });
+  });
+
+  describe("a cycle of length two with right recursion, a cut and intermediate recursion", () => {
+    let bnf = `
+  
+      S ::= ( T ... <END_OF_LINE> ) ;
+      
+      T ::= A "?" \` A ":" A
+      
+          | .
+          
+          ;
+        
+      A ::= T ( ) ;
+
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                                                                                                          
+        S   ::= ( T ... <END_OF_LINE> ) ;
+        
+        T   ::= _T ;
+        
+        A   ::= _A ;
+        
+        A~T ::= "?" \` _A ":" _A ( ) ;
+        
+        _T  ::= T_ T~* ;
+        
+        _A  ::= _T ( ) ;
+        
+        T_  ::= . ;
+        
+        T~  ::= A~T ;
+                
+      `));
+    });
+
+    describe("content with one token", () => {
+      const content = `x
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                              
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+                 T [0]        <END_OF_LINE>
+                   |                       
+          "x"[unassigned] [0]              
+             
+       `));
+      });
+    });
+
+    describe("content with nine tokens", () => {
+      const content = `x ? y : z ? u : w
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        // assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                  
+                                                                                                                                        S [0]                                                              
+                                                                                                                                          |                                                                
+                                                                               ----------------------------------------------------------------------------------------------------------------------      
+                                                                               |                                                                                                                    |      
+                                                                             T [0]                                                                                                            <END_OF_LINE>
+                                                                               |                                                                                                                           
+                   -------------------------------------------------------------------------------------------------------------------------                                                               
+                   |                   |                   |                   |                                                           |                                                               
+                 T [0]        "?"[unassigned] [0]        T [0]        ":"[unassigned] [0]                                                T [0]                                                             
+                   |                                       |                                                                               |                                                               
+          "x"[unassigned] [0]                     "y"[unassigned] [0]                              ---------------------------------------------------------------------------------                       
+                                                                                                   |                   |                   |                   |                   |                       
+                                                                                                 T [0]        "?"[unassigned] [0]        T [0]        ":"[unassigned] [0]        T [0]                     
+                                                                                                   |                                       |                                       |                       
+                                                                                          "z"[unassigned] [0]                     "u"[unassigned] [0]                     "w"[unassigned] [0]              
+          
        `));
       });
     });

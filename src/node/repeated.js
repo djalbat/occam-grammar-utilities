@@ -17,7 +17,9 @@ export default class RepeatedNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(initial, state) {
+  simplify(index, state) {
+    const initial = (index === 1);
+
     if (!initial) {
       const index = this.getIndex(),
             parentNode = this.getParentNode(),
@@ -53,8 +55,8 @@ export default class RepeatedNode extends NonTerminalNode {
   }
 
   simplifyChildNodes(state) {
-    this.forEachChildNode((childNode) => {
-      childNode.simplify(state);
+    this.forEachChildNode((childNode, index) => {
+      childNode.simplify(index, state);
     });
   }
 
