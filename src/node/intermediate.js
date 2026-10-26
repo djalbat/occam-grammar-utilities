@@ -11,7 +11,7 @@ export default class IntermediateNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(index, state) {
+  simplify(state) {
     this.simplifyChildNodes(state);
 
     this.swap();
@@ -117,8 +117,8 @@ export default class IntermediateNode extends NonTerminalNode {
   }
 
   simplifyChildNodes(state) {
-    this.forEachChildNode((childNode, index) => {
-      childNode.simplify(index, state);
+    this.forEachChildNode((childNode) => {
+      childNode.simplify(state);
     });
   }
 

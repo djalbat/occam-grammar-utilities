@@ -2,13 +2,14 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
-export default class RepeatedNode extends NonTerminalNode {
-  getIndex() {
-    const childNode = this,  ///
-          parentNode = this.getParentNode(),
-          index = parentNode.indexOfChildNode(childNode);
+import { REPEATED_NODE_INITIAL_INDEX } from "../constants";
 
-    return index;
+export default class RepeatedNode extends NonTerminalNode {
+  isInitial() {
+    const index = this.getIndex(),
+          initial = (index === REPEATED_NODE_INITIAL_INDEX);
+
+    return initial;
   }
 
   rewrite(state) {
@@ -17,8 +18,8 @@ export default class RepeatedNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(index, state) {
-    const initial = (index === 1);
+  simplify(state) {
+    const initial = this.isInitial();
 
     if (!initial) {
       const index = this.getIndex(),
@@ -55,8 +56,8 @@ export default class RepeatedNode extends NonTerminalNode {
   }
 
   simplifyChildNodes(state) {
-    this.forEachChildNode((childNode, index) => {
-      childNode.simplify(index, state);
+    this.forEachChildNode((childNode) => {
+      childNode.simplify(state);
     });
   }
 

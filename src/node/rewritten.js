@@ -18,7 +18,7 @@ export default class RewrittenNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(index, state, topmost = false) {
+  simplify(state, topmost = false) {
     this.simplifyChildNodes(state);
 
     const nonTerminalNode = this.overwrite(state);
@@ -56,37 +56,9 @@ export default class RewrittenNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  findReducedNode() {
-    let reducedNode;
-
-    this.someChildNode((childNode) => {
-      reducedNode = childNode;  ///
-
-      return true;
-    });
-
-    return reducedNode;
-  }
-
-  findRepeatedNodes() {
-    const repeatedNodes = [];
-
-    this.someChildNode((childNode, index) => {
-      const initial = (index === 0);
-
-      if (!initial) {
-        const repeatedNode = childNode;  ///
-
-        repeatedNodes.push(repeatedNode);
-      }
-    });
-
-    return repeatedNodes;
-  }
-
   simplifyChildNodes(state) {
-    this.forEachChildNode((childNode, index) => {
-      childNode.simplify(index, state);
+    this.forEachChildNode((childNode) => {
+      childNode.simplify(state);
     });
   }
 

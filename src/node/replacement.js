@@ -8,13 +8,12 @@ export default class ReplacementNode extends NonTerminalNode {
   rewrite(state) {
     let nonTerminalNode;
 
-    const index = 0,
-          savedState = state, ///
+    const savedState = state, ///
           replacementNode = this.clone(); ///
 
     state = State.fromReplacementNode(replacementNode, state);  ///
 
-    replacementNode.simplify(index, state);
+    replacementNode.simplify(state);
 
     const precedence = replacementNode.getPrecedence(),
           childNodes = replacementNode.removeChildNodes();
@@ -28,7 +27,7 @@ export default class ReplacementNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(index, state) {
+  simplify(state) {
     this.simplifyChildNodes(state);
   }
 
@@ -48,7 +47,7 @@ export default class ReplacementNode extends NonTerminalNode {
     const topmost = true;
 
     this.forEachChildNode((childNode, index) => {
-      childNode.simplify(index, state, topmost);
+      childNode.simplify(state, topmost);
     });
   }
 
