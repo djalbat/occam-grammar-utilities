@@ -20,16 +20,22 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
   findLeftLeaningNode(shallow = false) {
     let leftLeaningNode = null;
 
-    const ruleName = this.getRuleName();
+    const singular = this.isSingular();
 
-    this.forwardsSomeChildNode((childNode) => {
-      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
+    if (singular) {
+      const singleChildNode = this.getSingleChildNode(),
+            singleChildNodeIntervening = singleChildNode.isIntervening();
 
-      if (childNodeNonTerminalNode) {
-        const nonTerminalNode = childNode,  ///
-              nonTerminalNodeRuleName = nonTerminalNode.getRuleName();
+      if (singleChildNodeIntervening) {
+        leftLeaningNode = singleChildNode.findLeftLeaningNode(shallow);
+      }
+    } else {
+      this.forwardsSomeChildNode((childNode) => {
+        const childNodeNonTerminalNode = childNode.isNonTerminalNode();
 
-        if (nonTerminalNodeRuleName === ruleName) {
+        if (childNodeNonTerminalNode) {
+          const nonTerminalNode = childNode;  ///
+
           if (shallow) {
             leftLeaningNode = nonTerminalNode;  ///
           } else {
@@ -41,10 +47,10 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
             }
           }
         }
-      }
 
-      return true;
-    });
+        return true;
+      });
+    }
 
     return leftLeaningNode;
   }
@@ -52,16 +58,22 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
   findRightLeaningNode(shallow = false) {
     let rightLeaningNode = null;
 
-    const ruleName = this.getRuleName();
+    const singular = this.isSingular();
 
-    this.backwardsSomeChildNode((childNode) => {
-      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
+    if (singular) {
+      const singleChildNode = this.getSingleChildNode(),
+            singleChildNodeIntervening = singleChildNode.isIntervening();
 
-      if (childNodeNonTerminalNode) {
-        const nonTerminalNode = childNode,  ///
-              nonTerminalNodeRuleName = nonTerminalNode.getRuleName();
+      if (singleChildNodeIntervening) {
+        rightLeaningNode = singleChildNode.findRightLeaningNode(shallow);
+      }
+    } else {
+      this.backwardsSomeChildNode((childNode) => {
+        const childNodeNonTerminalNode = childNode.isNonTerminalNode();
 
-        if (nonTerminalNodeRuleName === ruleName) {
+        if (childNodeNonTerminalNode) {
+          const nonTerminalNode = childNode;  ///
+
           if (shallow) {
             rightLeaningNode = nonTerminalNode;  ///
           } else {
@@ -73,10 +85,10 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
             }
           }
         }
-      }
 
-      return true;
-    });
+        return true;
+      });
+    }
 
     return rightLeaningNode;
   }
