@@ -1606,8 +1606,20 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                
-
+                                                    
+                                         S [0]                 
+                                           |                   
+                             ----------------------------      
+                             |                          |      
+                        T [0] (-1)                <END_OF_LINE>
+                             |                                 
+                   ---------------------                       
+                   |                   |                       
+               A [0] ( )      "g"[unassigned] [0]              
+                   |                                           
+               T [0] (2)                                       
+                   |                                           
+          "e"[unassigned] [0]                                  
                                             
        `));
       });
@@ -1631,9 +1643,27 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                      
 
-                                            
+                                                          S [0]                    
+                                                            |                      
+                                            ---------------------------------      
+                                            |                               |      
+                                       T [0] (-1)                     <END_OF_LINE>
+                                            |                                      
+                             -------------------------------                       
+                             |                             |                       
+                         A [0] ( )                "g"[unassigned] [0]              
+                             |                                                     
+                        T [0] (-1)                                                 
+                             |                                                     
+                   ---------------------                                           
+                   |                   |                                           
+               A [0] ( )      "g"[unassigned] [0]                                  
+                   |                                                               
+               T [0] (2)                                                           
+                   |                                                               
+          "e"[unassigned] [0]
+                                                                
        `));
       });
     });

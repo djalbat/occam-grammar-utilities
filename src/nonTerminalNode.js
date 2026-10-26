@@ -20,37 +20,30 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
   findLeftLeaningNode(shallow = false) {
     let leftLeaningNode = null;
 
-    const singular = this.isSingular();
+    const nonSingularInterveningNode = this.findNonSingularInterveningNode();
 
-    if (singular) {
-      const singleChildNode = this.getSingleChildNode(),
-            singleChildNodeIntervening = singleChildNode.isIntervening();
+    nonSingularInterveningNode.forwardsSomeChildNode((childNode) => {
+      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
 
-      if (singleChildNodeIntervening) {
-        leftLeaningNode = singleChildNode.findLeftLeaningNode(shallow);
-      }
-    } else {
-      this.forwardsSomeChildNode((childNode) => {
-        const childNodeNonTerminalNode = childNode.isNonTerminalNode();
+      if (childNodeNonTerminalNode) {
+        const nonTerminalNode = childNode;  ///
 
-        if (childNodeNonTerminalNode) {
-          const nonTerminalNode = childNode;  ///
+        if (shallow) {
+          const nonSingularInterveningNode = nonTerminalNode.findNonSingularInterveningNode();
 
-          if (shallow) {
+          leftLeaningNode = nonSingularInterveningNode;  ///
+        } else {
+          const shallow = true,
+                rightLeaningNode = nonTerminalNode.findRightLeaningNode(shallow);
+
+          if (rightLeaningNode !== null) {
             leftLeaningNode = nonTerminalNode;  ///
-          } else {
-            const shallow = true,
-                  rightLeaningNode = nonTerminalNode.findRightLeaningNode(shallow);
-
-            if (rightLeaningNode !== null) {
-              leftLeaningNode = nonTerminalNode;  ///
-            }
           }
         }
+      }
 
-        return true;
-      });
-    }
+      return true;
+    });
 
     return leftLeaningNode;
   }
@@ -58,39 +51,47 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
   findRightLeaningNode(shallow = false) {
     let rightLeaningNode = null;
 
-    const singular = this.isSingular();
+    const nonSingularInterveningNode = this.findNonSingularInterveningNode();
 
-    if (singular) {
-      const singleChildNode = this.getSingleChildNode(),
-            singleChildNodeIntervening = singleChildNode.isIntervening();
+    nonSingularInterveningNode.backwardsSomeChildNode((childNode) => {
+      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
 
-      if (singleChildNodeIntervening) {
-        rightLeaningNode = singleChildNode.findRightLeaningNode(shallow);
-      }
-    } else {
-      this.backwardsSomeChildNode((childNode) => {
-        const childNodeNonTerminalNode = childNode.isNonTerminalNode();
+      if (childNodeNonTerminalNode) {
+        const nonTerminalNode = childNode;  ///
 
-        if (childNodeNonTerminalNode) {
-          const nonTerminalNode = childNode;  ///
+        if (shallow) {
+          const nonSingularInterveningNode = nonTerminalNode.findNonSingularInterveningNode();
 
-          if (shallow) {
-            rightLeaningNode = nonTerminalNode;  ///
-          } else {
-            const shallow = true,
-                  leftLeaningNode = nonTerminalNode.findLeftLeaningNode(shallow);
+          rightLeaningNode = nonSingularInterveningNode;  ///
+        } else {
+          const shallow = true,
+                leftLeaningNode = nonTerminalNode.findLeftLeaningNode(shallow);
 
-            if (leftLeaningNode !== null) {
-              rightLeaningNode = nonTerminalNode; ///
-            }
+          if (leftLeaningNode !== null) {
+            rightLeaningNode = nonTerminalNode; ///
           }
         }
+      }
 
-        return true;
-      });
-    }
+      return true;
+    });
 
     return rightLeaningNode;
+  }
+
+  findNonSingularInterveningNode() {
+    let nonSingularInterveningNode = this;  ///
+
+    const singular = this.isSingular(),
+          intervening = this.isIntervening();
+
+    if (singular && intervening) {
+      const singleChildNode = this.getSingleChildNode();
+
+      nonSingularInterveningNode = singleChildNode.findNonSingularInterveningNode();
+    }
+
+    return nonSingularInterveningNode;
   }
 
   rewrite(state) {
