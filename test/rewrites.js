@@ -2237,31 +2237,31 @@ describe("Rewrites", () => {
       bnf = adjustedBNF;  ///
     });
 
-    it.only("is rewritten", () => {
+    it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-
-        S   ::= ( T ... <END_OF_LINE> ) ;
         
-        T   ::= _T ;
+        S     ::= ( T ... <END_OF_LINE> ) ;
         
-        A   ::= _A ;
+        T     ::= _T ;
         
-     A~T_1  ::= "+" \` _A ( ) ;
+        A     ::= _A ;
         
-     A~T_2  ::= "^" _A ( ) ;
+        A~T_1 ::= "+" \` _A ( ) ;
         
-        _T  ::= T_ T~* ;
+        A~T_2 ::= "^" _A ( ) ;
         
-        _A  ::= _T ( ) ;
+        _T    ::= T_ T~* ;
         
-        T_  ::= /[a-z0-9]/ ;
+        _A    ::= _T ( ) ;
         
-        T~  ::= A~T_1 (-10)
+        T_    ::= /[a-z0-9]/ ;
+        
+        T~    ::= A~T_1 (-10)
             
-              | A~T_2 (20)
+                | A~T_2 (20)
         
-              ;
-              
+                ;
+                              
      `));
     });
 
@@ -2314,7 +2314,7 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                  
+                                                            
                                                         S [0]                      
                                                           |                        
                                        --------------------------------------      
@@ -2323,7 +2323,9 @@ describe("Rewrites", () => {
                                        |                                           
                    -----------------------------------------                       
                    |                   |                   |                       
-                 T [0]        "+"[unassigned] [0]        T [0]                     
+               A [0] ( )      "+"[unassigned] [0]      A [0] ( )                   
+                   |                                       |                       
+                 T [0]                                   T [0]                     
                    |                                       |                       
           "x"[unassigned] [0]                     "y"[unassigned] [0]              
                         
@@ -2349,7 +2351,7 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                  
+                                                            
                                                         S [0]                      
                                                           |                        
                                        --------------------------------------      
@@ -2358,7 +2360,9 @@ describe("Rewrites", () => {
                                        |                                           
                    -----------------------------------------                       
                    |                   |                   |                       
-                 T [0]        "^"[unassigned] [0]        T [0]                     
+               A [0] ( )      "^"[unassigned] [0]      A [0] ( )                   
+                   |                                       |                       
+                 T [0]                                   T [0]                     
                    |                                       |                       
           "x"[unassigned] [0]                     "y"[unassigned] [0]              
                         
@@ -2376,7 +2380,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it("results in the requisite parse tree" , () => {
+      it.only("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));

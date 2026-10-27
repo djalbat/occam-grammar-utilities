@@ -11,8 +11,9 @@ import { ruleNamesFromCycle } from "../utilities/cycle";
 import { isDefinitionRepeatable } from "../utilities/definition";
 import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
+import { indirectRuleNameFromDefinition } from "../definition//repeated/intermediate";
 
-const { first, second, compress } = arrayUtilities;
+const { first, second } = arrayUtilities;
 
 export default class RepeatedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -83,13 +84,16 @@ export function repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indir
 }
 
 export function filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap) {
+  const indirectRuleNameA = indirectRuleName; ///
+
   definitions = definitions.filter((definition) => {
     const definitionLeftRepeatable = isDefinitionRepeatable(definition, ruleName, cycles, ruleMap);
 
     if (definitionLeftRepeatable) {
-      const ruleName = ruleNameFromDefinition(definition);
+      const indirectRuleName = indirectRuleNameFromDefinition(definition),
+            indirectRuleNameB = indirectRuleName; ///
 
-      if (ruleName === indirectRuleName) {
+      if (indirectRuleNameA === indirectRuleNameB) {
         return true;
       }
     }
@@ -115,40 +119,15 @@ function intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, 
 
   definitions = filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap);
 
-  // const indirectRuleNames = indirectRuleNamesFromDefinitions(definitions);
+  const definitionsLength = definitions.length,
+        intermediateRepeatedDefinitions = definitions.map((definition, index) => {
+          const number = index + 1,
+                intermediateRepeatedDefinition = (definitionsLength === 1) ?
+                                                   IntermediateRepeatedDefinition.fromDefinitionAndRuleName(definition, ruleName, ruleMap) :
+                                                     IntermediateRepeatedDefinition.fromDefinitionRuleNameAndNumber(definition, ruleName, number, ruleMap);
 
-  const intermediateRepeatedDefinitions = definitions.map((definition) => {
-    const intermediateRepeatedDefinition = IntermediateRepeatedDefinition.fromDefinitionAndRuleName(definition, ruleName, ruleMap);
-
-    return intermediateRepeatedDefinition;
-  });
+          return intermediateRepeatedDefinition;
+        });
 
   return intermediateRepeatedDefinitions;
-}
-
-function indirectRuleNamesFromDefinitions(definitions) {
-  const ruleNames = definitions.map((definition) => {
-    const ruleName = ruleNameFromDefinition(definition);
-
-    return ruleName;
-  });
-
-  compress(ruleNames, (ruleNameA, ruleNameB) => {
-    if (ruleNameA !== ruleNameB) {
-      return true;
-    }
-  });
-
-  const indirectRuleNames = ruleNames;
-
-  return indirectRuleNames;
-}
-
-function ruleNameFromDefinition(definition) {
-  const parts = definition.getParts(),
-        firstPart = first(parts),
-        ruleNamePart = firstPart, ///
-        ruleName = ruleNamePart.getRuleName();
-
-  return ruleName;
 }

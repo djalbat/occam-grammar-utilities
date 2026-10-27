@@ -20,7 +20,7 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
   findLeftLeaningNode(shallow = false) {
     let leftLeaningNode = null;
 
-    const nonSingularInterveningNode = this.findNonSingularInterveningNode();
+    const nonSingularInterveningNode = this.retrieveNonSingularInterveningNode();
 
     nonSingularInterveningNode.forwardsSomeChildNode((childNode) => {
       const childNodeNonTerminalNode = childNode.isNonTerminalNode();
@@ -29,7 +29,7 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
         const nonTerminalNode = childNode;  ///
 
         if (shallow) {
-          const nonSingularInterveningNode = nonTerminalNode.findNonSingularInterveningNode();
+          const nonSingularInterveningNode = nonTerminalNode.retrieveNonSingularInterveningNode();
 
           leftLeaningNode = nonSingularInterveningNode;  ///
         } else {
@@ -51,7 +51,7 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
   findRightLeaningNode(shallow = false) {
     let rightLeaningNode = null;
 
-    const nonSingularInterveningNode = this.findNonSingularInterveningNode();
+    const nonSingularInterveningNode = this.retrieveNonSingularInterveningNode();
 
     nonSingularInterveningNode.backwardsSomeChildNode((childNode) => {
       const childNodeNonTerminalNode = childNode.isNonTerminalNode();
@@ -60,7 +60,7 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
         const nonTerminalNode = childNode;  ///
 
         if (shallow) {
-          const nonSingularInterveningNode = nonTerminalNode.findNonSingularInterveningNode();
+          const nonSingularInterveningNode = nonTerminalNode.retrieveNonSingularInterveningNode();
 
           rightLeaningNode = nonSingularInterveningNode;  ///
         } else {
@@ -79,7 +79,7 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
     return rightLeaningNode;
   }
 
-  findNonSingularInterveningNode() {
+  retrieveNonSingularInterveningNode() {
     let nonSingularInterveningNode = this;  ///
 
     const singular = this.isSingular(),
@@ -88,7 +88,7 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
     if (singular && intervening) {
       const singleChildNode = this.getSingleChildNode();
 
-      nonSingularInterveningNode = singleChildNode.findNonSingularInterveningNode();
+      nonSingularInterveningNode = singleChildNode.retrieveNonSingularInterveningNode();
     }
 
     return nonSingularInterveningNode;
