@@ -97,23 +97,23 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
   rewrite(state) {
     let nonTerminalNode = this;
 
-    const precedence = this.getPrecedence();
-
-    if (precedence !== null) {
-      const intervening = this.isIntervening();
-
-      if (!intervening) {
-        nonTerminalNode = this.clone();
-
-        nonTerminalNode.tiltLeft(state);
-
-        const unprecedented = nonTerminalNode.balance(state);
-
-        if (unprecedented) {
-          nonTerminalNode = null;
-        }
-      }
-    }
+    // const precedence = this.getPrecedence();
+    //
+    // if (precedence !== null) {
+    //   const intervening = this.isIntervening();
+    //
+    //   if (!intervening) {
+    //     nonTerminalNode = this.clone();
+    //
+    //     nonTerminalNode.tiltLeft(state);
+    //
+    //     const unprecedented = nonTerminalNode.balance(state);
+    //
+    //     if (unprecedented) {
+    //       nonTerminalNode = null;
+    //     }
+    //   }
+    // }
 
     return nonTerminalNode;
   }

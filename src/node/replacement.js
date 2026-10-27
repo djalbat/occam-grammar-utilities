@@ -31,18 +31,6 @@ export default class ReplacementNode extends NonTerminalNode {
     this.simplifyChildNodes(state);
   }
 
-  findRewrittenNode() {
-    let rewrittenNode;
-
-    this.someChildNode((childNode) => {
-      rewrittenNode = childNode;  ///
-
-      return true;
-    });
-
-    return rewrittenNode;
-  }
-
   simplifyChildNodes(state) {
     const topmost = true;
 

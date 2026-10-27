@@ -8,7 +8,7 @@ import Graph from "./graph";
 import { edgesFromStartRule } from "./utilities/edge";
 import { LEFT_RECURSIVE_LABEL } from "./labels";
 import { leftRecursiveRuleNamesFromRule } from "./utilities/leftRecursion";
-import { replaceRules, createReducedRules, createRepeatedRules, createRewrittenRules, createIntermediateRules } from "./utilities/rules";
+import { replaceRules, createReducedRules, createRepeatedRules, createRewrittenRules } from "./utilities/rules";
 
 const { filter } = arrayUtilities,
       { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
@@ -18,8 +18,6 @@ export default function eliminateLeftRecursion(rules) {
         startRule = startRuleFromRules(rules),
         ruleNamesMap = ruleNamesMapFromNothing(ruleMap),
         cycles = cyclesFromStartRule(startRule, ruleMap, ruleNamesMap);
-
-  createIntermediateRules(cycles, ruleMap);
 
   createRewrittenRules(cycles, ruleMap);
 

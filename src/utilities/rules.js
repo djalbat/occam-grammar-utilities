@@ -2,7 +2,6 @@
 
 import ReducedRule from "../rule/reduced";
 import RepeatedRule from "../rule/repeated";
-import IntermediateRule from "../rule/intermediate";
 
 import { rewrittenRulesFromCycle } from "../rule/rewritten";
 import { replacementRulesFromCycle } from "../rule/replacement";
@@ -50,17 +49,5 @@ export function createRewrittenRules(cycles, ruleMap) {
 
       ruleMap[rewrittenRuleName] = rewrittenRule;
     });
-  });
-}
-
-export function createIntermediateRules(cycles, ruleMap) {
-  cycles.forEach((cycle) => {
-    const intermediateRule = IntermediateRule.fromCycleAndCycles(cycle, cycles, ruleMap);
-
-    if (intermediateRule !== null) {
-      const intermediatedRuleName = intermediateRule.getName();
-
-      ruleMap[intermediatedRuleName] = intermediateRule;
-    }
   });
 }

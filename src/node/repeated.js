@@ -5,13 +5,6 @@ import { NonTerminalNode } from "occam-parsers";
 import { REPEATED_NODE_INITIAL_INDEX } from "../constants";
 
 export default class RepeatedNode extends NonTerminalNode {
-  isInitial() {
-    const index = this.getIndex(),
-          initial = (index === REPEATED_NODE_INITIAL_INDEX);
-
-    return initial;
-  }
-
   rewrite(state) {
     const nonTerminalNode = this; ///
 
@@ -42,6 +35,13 @@ export default class RepeatedNode extends NonTerminalNode {
     const childNodes = this.removeChildNodes();
 
     this.overwrite(childNodes);
+  }
+
+  isInitial() {
+    const index = this.getIndex(),
+          initial = (index === REPEATED_NODE_INITIAL_INDEX);
+
+    return initial;
   }
 
   overwrite(childNodes) {

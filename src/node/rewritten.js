@@ -5,13 +5,6 @@ import { NonTerminalNode } from "occam-parsers";
 import { ruleNameFromRewrittenRuleName } from "../utilities/ruleName";
 
 export default class RewrittenNode extends NonTerminalNode {
-  isSingular() {
-    const multiplicity = this.getMultiplicity(),
-          singular = (multiplicity === 1);
-
-    return singular;
-  }
-
   rewrite(state) {
     const nonTerminalNode = this; ///
 

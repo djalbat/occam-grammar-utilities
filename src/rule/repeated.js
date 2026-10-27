@@ -5,14 +5,13 @@ import { arrayUtilities } from "necessary";
 
 import RepeatedNode from "../node/repeated";
 import RepeatedDefinition from "../definition/repeated";
-import IntermediateRepeatedDefinition from "../definition/repeated/intermediate";
 
 import { ruleNamesFromCycle } from "../utilities/cycle";
 import { isDefinitionRepeatable } from "../utilities/definition";
 import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 
-const { first, second } = arrayUtilities;
+const { first, second, compress } = arrayUtilities;
 
 export default class RepeatedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -43,10 +42,9 @@ export default class RepeatedRule extends Rule {
 
       case CYCLE_LENGTH_2: {
         const secondRuleName = second(ruleNames),
-              indirectRuleName = secondRuleName,  ///
-              intermediateRepeatedDefinitions = intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap);
+              indirectRuleName = secondRuleName;
 
-        definitions = intermediateRepeatedDefinitions;  ///
+        debugger
 
         break;
       }
@@ -58,24 +56,6 @@ export default class RepeatedRule extends Rule {
 
     return repeatedRule;
   }
-}
-
-function intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap) {
-  const ruleName = rule.getName();
-
-  let definitions;
-
-  definitions = rule.getDefinitions();
-
-  definitions = filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap);
-
-  const intermediateRepeatedDefinitions = definitions.map((definition) => {
-    const intermediateRepeatedDefinition = IntermediateRepeatedDefinition.fromDefinitionAndRuleName(definition, ruleName, ruleMap);
-
-    return intermediateRepeatedDefinition;
-  });
-
-  return intermediateRepeatedDefinitions;
 }
 
 export function repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap) {
@@ -105,10 +85,7 @@ export function filterDefinitions(definitions, ruleName, indirectRuleName, cycle
     const definitionLeftRepeatable = isDefinitionRepeatable(definition, ruleName, cycles, ruleMap);
 
     if (definitionLeftRepeatable) {
-      const parts = definition.getParts(),
-            firstPart = first(parts),
-            ruleNamePart = firstPart, ///
-            ruleName = ruleNamePart.getRuleName();
+      const ruleName = ruleNameFromDefinition(definition);
 
       if (ruleName === indirectRuleName) {
         return true;
@@ -125,4 +102,12 @@ export function filterDefinitions(definitions, ruleName, indirectRuleName, cycle
   }
 
   return definitions;
+}
+function ruleNameFromDefinition(definition) {
+  const parts = definition.getParts(),
+        firstPart = first(parts),
+        ruleNamePart = firstPart, ///
+        ruleName = ruleNamePart.getRuleName();
+
+  return ruleName;
 }
