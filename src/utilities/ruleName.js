@@ -21,7 +21,7 @@ export function ruleNameFromRewrittenRuleName(rewrittenRuleName) {
 }
 
 export function ruleNameFromIntermediateRuleName(intermediateRuleName) {
-  const ruleName = intermediateRuleName.replace(/^.+~/g, EMPTY_STRING);
+  const ruleName = intermediateRuleName.replace(/^.+~|_\d+$/g, EMPTY_STRING);
 
   return ruleName;
 }
@@ -52,6 +52,12 @@ export function indirectRuleNameFromIntermediateRuleName(intermediateRuleName) {
 
 export function intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName) {
   const intermediateRuleName = `${indirectRuleName}~${ruleName}`;
+
+  return intermediateRuleName;
+}
+
+export function intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber(ruleName, indirectRuleName, number) {
+  const intermediateRuleName = `${indirectRuleName}~${ruleName}_${number}`;
 
   return intermediateRuleName;
 }

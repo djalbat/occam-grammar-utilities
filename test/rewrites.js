@@ -2206,7 +2206,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.skip("a cycle of length two with right recursion, precedence, one definition with a cut and the other without ", () => {
+  describe("a cycle of length two with right recursion, precedence, one definition with a cut and the other without ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -2246,11 +2246,9 @@ describe("Rewrites", () => {
         
         A   ::= _A ;
         
-        A~T ::= "+" \` _A (-10)
-            
-              | "^" _A (20)
+     A~T_1  ::= "+" \` _A ( ) ;
         
-              ;
+     A~T_2  ::= "^" _A ( ) ;
         
         _T  ::= T_ T~* ;
         
@@ -2258,7 +2256,11 @@ describe("Rewrites", () => {
         
         T_  ::= /[a-z0-9]/ ;
         
-        T~  ::= A~T ;
+        T~  ::= A~T_1 (-10)
+            
+              | A~T_2 (20)
+        
+              ;
               
      `));
     });

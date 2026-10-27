@@ -10,7 +10,7 @@ import { CYCLE_LENGTH_1 } from "../constants";
 import { filterDefinitions } from "../rule/repeated";
 import { ruleNamesFromCycle } from "../utilities/cycle";
 import { isDefinitionReducible } from "../utilities/definition";
-import { intermediateRuleNameFromRuleNameAndIndirectRuleName } from "../utilities/ruleName";
+import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber } from "../utilities/ruleName";
 
 const { first, second } = arrayUtilities;
 
@@ -21,30 +21,76 @@ export default class IntermediateRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromCycleAndCycles(cycle, cycles, ruleMap) {
-    let intermediateRule = null;
-
-    const length = cycle.getLength();
-
-    if (length > CYCLE_LENGTH_1) {
-      const ruleNames = ruleNamesFromCycle(cycle),
-            firstRuleName = first(ruleNames),
-            secondRuleName = second(ruleNames),
-            indirectRuleName = secondRuleName,  ///
-            ruleName = firstRuleName, ///
-            rule = ruleMap[ruleName],
-            indirectRule = ruleMap[indirectRuleName],
-            intermediateRuleName = intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
-            intermediateDefinitions = intermediateDefinitionsFromRuleIndirectRuleAndCycles(rule, indirectRule, cycles, ruleMap),
-            name = intermediateRuleName,  ///
-            opacity = indirectRule.getOpacity(),
-            definitions = intermediateDefinitions;  ///
-
-      intermediateRule = new IntermediateRule(name, opacity, definitions);
-    }
+  static fromDefinitionAndCycle(definition, cycle, ruleMap) {
+    const ruleNames = ruleNamesFromCycle(cycle),
+          firstRuleName = first(ruleNames),
+          secondRuleName = second(ruleNames),
+          indirectRuleName = secondRuleName,  ///
+          ruleName = firstRuleName, ///
+          indirectRule = ruleMap[indirectRuleName],
+          intermediateRuleName = intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
+          name = intermediateRuleName,  ///
+          opacity = indirectRule.getOpacity(),
+          definitions = [
+            definition
+          ],
+          intermediateRule = new IntermediateRule(name, opacity, definitions);
 
     return intermediateRule;
   }
+
+  static fromDefinitionCycleAndNumber(definition, cycle, number, ruleMap) {
+    const ruleNames = ruleNamesFromCycle(cycle),
+          firstRuleName = first(ruleNames),
+          secondRuleName = second(ruleNames),
+          indirectRuleName = secondRuleName,  ///
+          ruleName = firstRuleName, ///
+          indirectRule = ruleMap[indirectRuleName],
+          intermediateRuleName = intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber(ruleName, indirectRuleName, number),
+          name = intermediateRuleName,  ///
+          opacity = indirectRule.getOpacity(),
+          definitions = [
+            definition
+          ],
+          intermediateRule = new IntermediateRule(name, opacity, definitions);
+
+    return intermediateRule;
+  }
+}
+
+export function intermediateRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
+  const intermediateRules = [],
+        length = cycle.getLength();
+
+  if (length > CYCLE_LENGTH_1) {
+    const definitions = definitionsFromCycleAndCycles(cycle, cycles, ruleMap),
+          definitionsLength = definitions.length;
+
+    definitions.forEach((definition, index) => {
+      const number = index + 1,
+            intermediateRule = (definitionsLength === 1) ?
+                                 IntermediateRule.fromDefinitionAndCycle(definition, cycle, ruleMap) :
+                                   IntermediateRule.fromDefinitionCycleAndNumber(definition, cycle, number, ruleMap);
+
+      intermediateRules.push(intermediateRule);
+    });
+  }
+
+  return intermediateRules;
+}
+
+function definitionsFromCycleAndCycles(cycle, cycles, ruleMap) {
+  const ruleNames = ruleNamesFromCycle(cycle),
+        firstRuleName = first(ruleNames),
+        secondRuleName = second(ruleNames),
+        indirectRuleName = secondRuleName,  ///
+        ruleName = firstRuleName, ///
+        rule = ruleMap[ruleName],
+        indirectRule = ruleMap[indirectRuleName],
+        intermediateDefinitions = intermediateDefinitionsFromRuleIndirectRuleAndCycles(rule, indirectRule, cycles, ruleMap),
+        definitions = intermediateDefinitions;  ///
+
+  return definitions;
 }
 
 function intermediateDefinitionsFromRuleIndirectRuleAndCycles(rule, indirectRule, cycles, ruleMap) {

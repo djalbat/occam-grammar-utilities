@@ -2,10 +2,10 @@
 
 import ReducedRule from "../rule/reduced";
 import RepeatedRule from "../rule/repeated";
-import IntermediateRule from "../rule/intermediate";
 
 import { rewrittenRulesFromCycle } from "../rule/rewritten";
 import { replacementRulesFromCycle } from "../rule/replacement";
+import { intermediateRulesFromCycleAndCycles } from "../rule/intermediate";
 
 export function replaceRules(cycles, ruleMap) {
   cycles.forEach((cycle) => {
@@ -55,12 +55,12 @@ export function createRewrittenRules(cycles, ruleMap) {
 
 export function createIntermediateRules(cycles, ruleMap) {
   cycles.forEach((cycle) => {
-    const intermediateRule = IntermediateRule.fromCycleAndCycles(cycle, cycles, ruleMap);
+    const intermediateRules = intermediateRulesFromCycleAndCycles(cycle, cycles, ruleMap);
 
-    if (intermediateRule !== null) {
+    intermediateRules.forEach((intermediateRule) => {
       const intermediatedRuleName = intermediateRule.getName();
 
       ruleMap[intermediatedRuleName] = intermediateRule;
-    }
+    });
   });
 }
