@@ -34,7 +34,7 @@ export default class ReplacementNode extends NonTerminalNode {
   simplifyChildNodes(state) {
     const topmost = true;
 
-    this.forEachChildNode((childNode, index) => {
+    this.forEachChildNode((childNode) => {
       childNode.simplify(state, topmost);
     });
   }

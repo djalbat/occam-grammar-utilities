@@ -5,6 +5,7 @@ import { arrayUtilities } from "necessary";
 
 import RepeatedNode from "../node/repeated";
 import RepeatedDefinition from "../definition/repeated";
+import IntermediateRepeatedDefinition from "../definition/repeated/intermediate";
 
 import { ruleNamesFromCycle } from "../utilities/cycle";
 import { isDefinitionRepeatable } from "../utilities/definition";
@@ -42,9 +43,10 @@ export default class RepeatedRule extends Rule {
 
       case CYCLE_LENGTH_2: {
         const secondRuleName = second(ruleNames),
-              indirectRuleName = secondRuleName;
+              indirectRuleName = secondRuleName,  ///
+              intermediateRepeatedDefinitions = intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap);
 
-        debugger
+        definitions = intermediateRepeatedDefinitions;  ///
 
         break;
       }
@@ -103,6 +105,45 @@ export function filterDefinitions(definitions, ruleName, indirectRuleName, cycle
 
   return definitions;
 }
+
+function intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap) {
+  const ruleName = rule.getName();
+
+  let definitions;
+
+  definitions = rule.getDefinitions();
+
+  definitions = filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap);
+
+  // const indirectRuleNames = indirectRuleNamesFromDefinitions(definitions);
+
+  const intermediateRepeatedDefinitions = definitions.map((definition) => {
+    const intermediateRepeatedDefinition = IntermediateRepeatedDefinition.fromDefinitionAndRuleName(definition, ruleName, ruleMap);
+
+    return intermediateRepeatedDefinition;
+  });
+
+  return intermediateRepeatedDefinitions;
+}
+
+function indirectRuleNamesFromDefinitions(definitions) {
+  const ruleNames = definitions.map((definition) => {
+    const ruleName = ruleNameFromDefinition(definition);
+
+    return ruleName;
+  });
+
+  compress(ruleNames, (ruleNameA, ruleNameB) => {
+    if (ruleNameA !== ruleNameB) {
+      return true;
+    }
+  });
+
+  const indirectRuleNames = ruleNames;
+
+  return indirectRuleNames;
+}
+
 function ruleNameFromDefinition(definition) {
   const parts = definition.getParts(),
         firstPart = first(parts),

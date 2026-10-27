@@ -2,6 +2,8 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
+import { ruleNameFromReducedRuleName } from "../utilities/ruleName";
+
 export default class ReducedNode extends NonTerminalNode {
   rewrite(state) {
     const nonTerminalNode = this; ///
@@ -36,10 +38,20 @@ export default class ReducedNode extends NonTerminalNode {
   }
 
   overwrite(state) {
-    const parentNode = this.getParentNode(),
+    const parentNode = this.getParentNode();
+
+    let ruleName;
+
+    ruleName = this.getRuleName();
+
+    const reducedRuleName = ruleName; ///
+
+    ruleName = ruleNameFromReducedRuleName(reducedRuleName);  ///
+
+    const opacity = this.getOpacity(),
           precedence = this.getPrecedence(),
           childNodes = this.removeChildNodes(),
-          nonTerminalNode = state.createNonTerminalNode(childNodes, precedence),
+          nonTerminalNode = state.createNonTerminalNode(ruleName, childNodes, precedence, opacity),
           replacedChildNode = this, ///
           replacementChildNode = nonTerminalNode, ///
           replacementChildNodes = [

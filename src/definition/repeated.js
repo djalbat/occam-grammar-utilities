@@ -19,6 +19,15 @@ export default class RepeatedDefinition extends Definition {
 
     return repeatedDefinition;
   }
+
+  static fromDefinitionRuleNamesAndPrecedence(definition, ruleNames, precedence, ruleMap) {
+    const parts = partsfromDefinitionAndRuleNames(definition, ruleNames),
+          repeatedDefinition = new RepeatedDefinition(parts, precedence);
+
+    isRepeatedDefinitionConsuming(repeatedDefinition, ruleMap);
+
+    return repeatedDefinition;
+  }
 }
 
 export function partsfromPartsAndRuleNames(parts, ruleNames) {

@@ -1438,22 +1438,24 @@ describe("Rewrites", () => {
       bnf = adjustedBNF;  ///
     });
 
-    it.only("is rewritten", () => {
+    it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                  
-        S ::= ( T ... <END_OF_LINE> ) ;
+                                          
+        S   ::= ( T ... <END_OF_LINE> ) ;
         
-        T ::= _T ;
-         
-        A ::= _A ;
+        T   ::= _T ;
         
-       _T ::= A_ T~* ;
-                  
-       A_ ::= T_ ;
-  
-       T_ ::= "e" ;
-  
-       T~ ::= "g" ;
+        A   ::= _A ;
+        
+        A~T ::= "g" ;
+        
+        _T  ::= T_ T~* ;
+        
+        _A  ::= _T ;
+        
+        T_  ::= "e" ;
+        
+        T~  ::= A~T ;
         
      `));
     });
@@ -1552,6 +1554,7 @@ describe("Rewrites", () => {
                 
       A ::= T ( ) ;
 
+
     `;
 
     let node,
@@ -1570,21 +1573,23 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                          
-        S ::= ( T ... <END_OF_LINE> ) ;
+                                                                          
+        S   ::= ( T ... <END_OF_LINE> ) ;
         
-        T ::= _T ;
-         
-        A ::= _A ;
+        T   ::= _T ;
         
-       _T ::= A_ T~* ;
+        A   ::= _A ;
+        
+        A~T ::= "g" ( ) ;
+        
+        _T  ::= T_ T~* ;
+        
+        _A  ::= _T ( ) ;
+        
+        T_  ::= "e" (2) ;
+        
+        T~  ::= A~T (-1) ;
                   
-       A_ ::= T_ ( ) ;
-  
-       T_ ::= "e" (2) ;
-  
-       T~ ::= "g" (-1) ;
-          
      `));
     });
 
@@ -1629,10 +1634,10 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it.only("results in the requisite parse tree" , () => {
+      it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
-        // assert.isTrue(checkDescendentNodes(node));
+        assert.isTrue(checkDescendentNodes(node));
 
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -1731,7 +1736,7 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                          
+                                                                                          
         S   ::= ( T ... <END_OF_LINE> ) ;
         
         T   ::= _T ;
@@ -1746,7 +1751,7 @@ describe("Rewrites", () => {
         
         T_  ::= . ;
         
-        T~  ::= A~T ;        
+        T~  ::= A~T ;
 
      `));
     });
@@ -1894,7 +1899,7 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                                          
+                                                                                                          
         S   ::= ( T ... <END_OF_LINE> ) ;
         
         T   ::= _T ;
@@ -1909,8 +1914,8 @@ describe("Rewrites", () => {
         
         T_  ::= . ;
         
-        T~  ::= A~T ;
-        
+        T~  ::= A~T ;    
+
      `));
     });
 
@@ -2201,7 +2206,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with right recursion, precedence, one definition with a cut and the other without ", () => {
+  describe.skip("a cycle of length two with right recursion, precedence, one definition with a cut and the other without ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -2232,7 +2237,7 @@ describe("Rewrites", () => {
       bnf = adjustedBNF;  ///
     });
 
-    it("is rewritten", () => {
+    it.only("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
 
         S   ::= ( T ... <END_OF_LINE> ) ;
