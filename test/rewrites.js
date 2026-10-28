@@ -2206,7 +2206,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two with right recursion, precedence, one definition with a cut and the other without ", () => {
+  describe.only("a cycle of length two with right recursion, precedence, one definition with a cut and the other without ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -2380,7 +2380,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it.only("results in the requisite parse tree" , () => {
+      it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
@@ -2388,7 +2388,7 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                    
+                              
                                                                                  S [0]                                     
                                                                                    |                                       
                                                  --------------------------------------------------------------------      
@@ -2397,13 +2397,17 @@ describe("Rewrites", () => {
                                                  |                                                                         
                    -------------------------------------------------------------                                           
                    |                   |                                       |                                           
-                 T [0]        "+"[unassigned] [0]                         T [0] (20)                                       
+               A [0] ( )      "+"[unassigned] [0]                          A [0] ( )                                       
+                   |                                                           |                                           
+                 T [0]                                                    T [0] (20)                                       
                    |                                                           |                                           
           "x"[unassigned] [0]                              -----------------------------------------                       
                                                            |                   |                   |                       
-                                                         T [0]        "^"[unassigned] [0]        T [0]                     
+                                                       A [0] ( )      "^"[unassigned] [0]      A [0] ( )                   
                                                            |                                       |                       
-                                                  "y"[unassigned] [0]                     "z"[unassigned] [0]                                  
+                                                         T [0]                                   T [0]                     
+                                                           |                                       |                       
+                                                  "y"[unassigned] [0]                     "z"[unassigned] [0]              
                     
        `));
       });
@@ -2419,7 +2423,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it("results in the requisite parse tree" , () => {
+      it.only("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
@@ -2427,7 +2431,7 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                                                                            
+                                                                                                                                      
                                                                                            S [0]                           
                                                                                              |                             
                                                                      ------------------------------------------------      
@@ -2436,11 +2440,15 @@ describe("Rewrites", () => {
                                                                      |                                                     
                                        -------------------------------------------------------------                       
                                        |                                       |                   |                       
-                                  T [0] (20)                          "+"[unassigned] [0]        T [0]                     
+                                   A [0] ( )                          "+"[unassigned] [0]      A [0] ( )                   
+                                       |                                                           |                       
+                                  T [0] (20)                                                     T [0]                     
                                        |                                                           |                       
                    -----------------------------------------                              "z"[unassigned] [0]              
                    |                   |                   |                                                               
-                 T [0]        "^"[unassigned] [0]        T [0]                                                             
+               A [0] ( )      "^"[unassigned] [0]      A [0] ( )                                                           
+                   |                                       |                                                               
+                 T [0]                                   T [0]                                                             
                    |                                       |                                                               
           "x"[unassigned] [0]                     "y"[unassigned] [0]                                                      
           
