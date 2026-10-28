@@ -7,7 +7,7 @@ import { reducedRuleNameFromRuleName, repeatedRuleNameFromRuleName } from "../ut
 const { RuleNamePart, ZeroOrMorePartsPart } = Parts;
 
 export default class RewrittenDefinition extends Definition {
-  static fromRuleName(ruleName) {
+  static fromRuleName(ruleName, ruleMap) {
     const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
           reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),

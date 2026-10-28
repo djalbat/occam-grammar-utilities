@@ -7,7 +7,7 @@ import { ruleNamesFromCycle } from "../utilities/cycle";
 import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursion";
 import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/edge";
 
-const { first, tail } = arrayUtilities;
+const { first } = arrayUtilities;
 
 export function isDefinitionReducible(definition, ruleName, cycles, ruleMap) {
   const leftRecursiveRuleNames = [];
@@ -45,15 +45,6 @@ export function isDefinitionRepeatable(definition, ruleName, cycles, ruleMap) {
             definitionString = definition.asString();
 
       throw new Error(`The '${firstPartString}' first part of the '${definitionString}' definition is not a rule name part.`);
-    }
-
-    const tailParts = tail(parts),
-          tailPartsLength = tailParts.length;
-
-    if (tailPartsLength === 0) {
-      const definitionString = definition.asString();
-
-      throw new Error(`The '${definitionString}' definition has no tail parts.`);
     }
   }
 

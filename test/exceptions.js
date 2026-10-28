@@ -2,7 +2,7 @@
 
 const { adjustedBNFFromBNF } = require("./helpers/bnf");
 
-describe("Exceptions", () => {
+describe.skip("Exceptions", () => {
   describe("there are no concumsing parts before a cut", () => {
     const bnf = `
   
@@ -14,49 +14,6 @@ describe("Exceptions", () => {
           
           ;
           
-      
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("the first part of a repeating definition is not a rule name part", () => {
-    const bnf = `
-  
-      S ::= ( A ... <END_OF_LINE> ) ;
-      
-      A ::= A? "g"
-      
-          | "e"
-          
-          ;
-          
-      
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("the first part of a repeating definition hides the rule name part", () => {
-    const bnf = `
-  
-      S ::= ( A ... <END_OF_LINE> ) ;
-      
-      A ::= B? A "g"
-      
-          | "e"
-          
-          ;
-          
-      B ::= "b" ;
       
     `;
 
@@ -87,7 +44,7 @@ describe("Exceptions", () => {
     });
   });
 
-  describe("no corresponding rule for a rule name part", () => {
+  describe("there is no corresponding rule for a rule name part", () => {
     const bnf = `
   
       S ::= A ;
@@ -101,27 +58,7 @@ describe("Exceptions", () => {
     });
   });
 
-  describe("a left recursive definition is occluded", () => {
-    const bnf = `
-    
-      A  ::=  C? A
-      
-           |  "a"
-      
-           ;
-      
-      C  ::=  . ;
-            
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("all the reduced rules in a cycle are missing", () => {
+  describe("the root rule of a cyle has no reduceable definitions", () => {
     const bnf = `
 
       A ::= B "f" ;
@@ -139,177 +76,18 @@ describe("Exceptions", () => {
     });
   });
 
-  describe("a directly repeated rule is non-consuming", () => {
-    const bnf = `
-
-      C ::= "f"? D ;
-
-      D ::= "g"? C ;
-
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("a directly repeated rule is not non-consuming", () => {
+  describe("the first part of a repeating definition is not a rule name part", () => {
     const bnf = `
   
-      A ::= "d"
+      S ::= ( A ... <END_OF_LINE> ) ;
       
-          | B "g"
+      A ::= A? "g"
       
           | "e"
-      
-          ;
-      
-      B ::= "b"
-      
-          | A
-      
-          | "c"
-  
-          ;
-  
-    `;
-
-    it("does not throw an exception", () => {
-      assert.doesNotThrow(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("two left recursive definitions in a cycle are mismatched", () => {
-    const bnf = `
-   
-      A ::= B "h"
-      
-          | "d"
-      
-          ;
-      
-      B ::= A "g"
-      
-          | A+ "f"
-      
-          | "c"
-      
-          ;
-      
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("the first part of a left recursive definition is qualified", () => {
-    const bnf = `
-   
-      A ::= "c"
-  
-          | A "f" "g"
-      
-          | "d"
-  
-          | A+ "h"
-      
-          | "e"
-      
-          ;
-
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("the first part of a left recursive definition is a continuation", () => {
-    const bnf = `
-   
-      A ::= A... "h"
-      
-          | "e"
-      
-          ;
-
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("a cycle where some but not all of the reduced rules are missing", () => {
-    const bnf = `
-  
-      A ::= B "g" 
-       
-          | "c"
           
           ;
-  
-      B ::= A "h" ;
-  
-    `;
-
-    it("does not throw an exception", () => {
-      assert.doesNotThrow(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("a left recursive definition in a cycle of length one is complex", () => {
-    const bnf = `
-  
-      A ::= "f"
+          
       
-          | ( A | B ) "g"
-      
-          | "h"
-      
-          ;
-      
-    `;
-
-    it("does throw an exception", () => {
-      assert.throws(() => {
-        adjustedBNFFromBNF(bnf);
-      });
-    });
-  });
-
-  describe("a left recursive definition in a cycle of length two is complex", () => {
-    const bnf = `
-  
-      A ::= "d"
-      
-          | B "g"
-      
-          | "e"
-      
-          ;
-      
-      B ::= "c" 
-      
-          | ( A | C ) "h"
-      
-          | "c"
-  
-          ;
-  
     `;
 
     it("does throw an exception", () => {

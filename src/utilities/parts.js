@@ -2,7 +2,7 @@
 
 import { Parts, partTypes, PartChoice } from "occam-parsers";
 
-const { OptionalPart, IsolatedPartPart, ChoiceOfPartsPart, BranchingPartsPart, OneOrMorePartsPart, ZeroOrMorePartsPart, SequenceOfPartsPart } = Parts,
+const { OptionalPartPart, IsolatedPartPart, ChoiceOfPartsPart, BranchingPartsPart, OneOrMorePartsPart, ZeroOrMorePartsPart, SequenceOfPartsPart } = Parts,
       { RuleNamePartType,
         IsolatedPartPartType,
         OptionalPartPartType,
@@ -49,7 +49,7 @@ export function replaceRuleNameParts(parts, callback) {
           if (ruleNamePart !== null) {
             part = ruleNamePart;  ///
 
-            const optionalPart = OptionalPart.fromPart(part);
+            const optionalPart = OptionalPartPart.fromPart(part);
 
             part = optionalPart;  ///
           } else {

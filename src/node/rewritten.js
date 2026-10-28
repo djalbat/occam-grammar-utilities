@@ -17,9 +17,7 @@ export default class RewrittenNode extends NonTerminalNode {
     const nonTerminalNode = this.overwrite(state);
 
     if (topmost) {
-      const withPrecedence = true;
-
-      nonTerminalNode.lift(withPrecedence);
+      nonTerminalNode.lift();
     }
   }
 
