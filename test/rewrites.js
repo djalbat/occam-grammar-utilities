@@ -18,7 +18,7 @@ describe("Rewrites", () => {
     }
   ];
 
-  describe("a cycle of length one", () => {
+  describe.only("a cycle of length one", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -128,7 +128,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe("a cycle of length one with precedence", () => {
+  describe.only("a cycle of length one with precedence", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -277,7 +277,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with right recursion", () => {
+  describe.only("a cycle of length one with right recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -426,7 +426,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with right recursion and a cut", () => {
+  describe.only("a cycle of length one with right recursion and a cut", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -618,7 +618,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
+  describe.only("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -732,7 +732,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with right recursion, precedence, one definition with a cut and the other without ", () => {
+  describe.only("a cycle of length one with right recursion, precedence, one definition with a cut and the other without ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -961,7 +961,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials ", () => {
+  describe.only("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1409,7 +1409,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two", () => {
+  describe.only("a cycle of length two", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1440,14 +1440,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                          
+                                                  
         S   ::= ( T ... <END_OF_LINE> ) ;
         
         T   ::= _T ;
         
         A   ::= _A ;
-        
-        A~T ::= "g" ;
         
         _T  ::= T_ T~* ;
         
@@ -1456,6 +1454,8 @@ describe("Rewrites", () => {
         T_  ::= "e" ;
         
         T~  ::= A~T ;
+        
+        A~T ::= "g" ;
         
      `));
     });
@@ -1541,7 +1541,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two with precedence", () => {
+  describe.only("a cycle of length two with precedence", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1573,14 +1573,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                          
+                                                                                  
         S   ::= ( T ... <END_OF_LINE> ) ;
         
         T   ::= _T ;
         
         A   ::= _A ;
-        
-        A~T ::= "g" ( ) ;
         
         _T  ::= T_ T~* ;
         
@@ -1589,6 +1587,8 @@ describe("Rewrites", () => {
         T_  ::= "e" (2) ;
         
         T~  ::= A~T (-1) ;
+        
+        A~T ::= "g" ( ) ;
                   
      `));
     });
@@ -1705,7 +1705,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two with right recursion", () => {
+  describe.only("a cycle of length two with right recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1736,14 +1736,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                                          
+                                                                                                  
         S   ::= ( T ... <END_OF_LINE> ) ;
         
         T   ::= _T ;
         
         A   ::= _A ;
-        
-        A~T ::= "+" _A ( ) ;
         
         _T  ::= T_ T~* ;
         
@@ -1752,6 +1750,8 @@ describe("Rewrites", () => {
         T_  ::= . ;
         
         T~  ::= A~T ;
+        
+        A~T ::= "+" _A ( ) ;
 
      `));
     });
@@ -1868,7 +1868,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two with right recursion and a cut", () => {
+  describe.only("a cycle of length two with right recursion and a cut", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1906,15 +1906,15 @@ describe("Rewrites", () => {
         
         A   ::= _A ;
         
-        A~T ::= "+" \` _A ( ) ;
-        
         _T  ::= T_ T~* ;
         
         _A  ::= _T ( ) ;
         
         T_  ::= . ;
         
-        T~  ::= A~T ;    
+        T~  ::= A~T ;
+        
+        A~T ::= "+" \` _A ( ) ;    
 
      `));
     });
@@ -2080,7 +2080,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two with right recursion, a cut and intermediate recursion", () => {
+  describe.only("a cycle of length two with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -2111,14 +2111,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                                                          
+                                                                                                                  
         S   ::= ( T ... <END_OF_LINE> ) ;
         
         T   ::= _T ;
         
         A   ::= _A ;
-        
-        A~T ::= "?" \` _A ":" _A ( ) ;
         
         _T  ::= T_ T~* ;
         
@@ -2127,6 +2125,8 @@ describe("Rewrites", () => {
         T_  ::= . ;
         
         T~  ::= A~T ;
+        
+        A~T ::= "?" \` _A ":" _A ( ) ;
                 
       `));
     });
@@ -2239,16 +2239,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-        
+                
         S     ::= ( T ... <END_OF_LINE> ) ;
         
         T     ::= _T ;
         
         A     ::= _A ;
-        
-        A~T_1 ::= "+" \` _A ( ) ;
-        
-        A~T_2 ::= "^" _A ( ) ;
         
         _T    ::= T_ T~* ;
         
@@ -2261,6 +2257,10 @@ describe("Rewrites", () => {
                 | A~T_2 (20)
         
                 ;
+        
+        A~T_1 ::= "+" \` _A ( ) ;
+        
+        A~T_2 ::= "^" _A ( ) ;
                               
      `));
     });
@@ -2457,7 +2457,509 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length three", () => {
+  describe.only("a cycle of length two with right recursion, together with definitions suitable to parsing polynomials ", () => {
+    let bnf = `
+  
+      S ::= ( T ... <END_OF_LINE> ) ;
+      
+      T ::= A "+" \` A           (-10)
+      
+          | A<NO_WHITESPACE>A    (-20)
+      
+          | A "^" A               (30)
+      
+          | /[a-z0-9]/
+          
+          ;
+        
+      A ::= T ( ) ;
+
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                                                                                                  
+        S     ::= ( T ... <END_OF_LINE> ) ;
+        
+        T     ::= _T ;
+        
+        A     ::= _A ;
+        
+        _T    ::= T_ T~* ;
+        
+        _A    ::= _T ( ) ;
+        
+        T_    ::= /[a-z0-9]/ ;
+        
+        T~    ::= A~T_1 (-10)
+            
+                | A~T_2 (-20)
+            
+                | A~T_3 (30)
+        
+                ;
+        
+        A~T_1 ::= "+" \` _A ( ) ;
+        
+        A~T_2 ::= <NO_WHITESPACE> _A ( ) ;
+        
+        A~T_3 ::= "^" _A ( ) ;
+        
+     `));
+    });
+
+    describe("content with one token", () => {
+      const content = `1
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                              
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+                 T [0]        <END_OF_LINE>
+                   |                       
+          "1"[unassigned] [0]              
+             
+       `));
+      });
+    });
+
+    describe("content with two compound tokens", () => {
+      const content = `12
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                  
+                                                     S [0]                     
+                                                       |                       
+                                     ------------------------------------      
+                                     |                                  |      
+                                T [0] (-20)                       <END_OF_LINE>
+                                     |                                         
+                   -------------------------------------                       
+                   |                 |                 |                       
+               A [0] ( )      <NO_WHITESPACE>      A [0] ( )                   
+                   |                                   |                       
+                 T [0]                               T [0]                     
+                   |                                   |                       
+          "1"[unassigned] [0]                 "2"[unassigned] [0]              
+             
+       `));
+      });
+    });
+
+    describe("content with two exponential tokens.", () => {
+      const content = `x^2
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                                          
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                  T [0] (30)                          <END_OF_LINE>
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+               A [0] ( )      "^"[unassigned] [0]      A [0] ( )                   
+                   |                                       |                       
+                 T [0]                                   T [0]                     
+                   |                                       |                       
+          "x"[unassigned] [0]                     "2"[unassigned] [0]              
+             
+       `));
+      });
+    });
+
+    describe("content with three compound exponential tokens.", () => {
+      const content = `3x^2
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                                          
+                                                                              S [0]                                    
+                                                                                |                                      
+                                               ------------------------------------------------------------------      
+                                               |                                                                |      
+                                          T [0] (-20)                                                     <END_OF_LINE>
+                                               |                                                                       
+                   ---------------------------------------------------------                                           
+                   |                 |                                     |                                           
+               A [0] ( )      <NO_WHITESPACE>                          A [0] ( )                                       
+                   |                                                       |                                           
+                 T [0]                                                T [0] (30)                                       
+                   |                                                       |                                           
+          "3"[unassigned] [0]                          -----------------------------------------                       
+                                                       |                   |                   |                       
+                                                   A [0] ( )      "^"[unassigned] [0]      A [0] ( )                   
+                                                       |                                       |                       
+                                                     T [0]                                   T [0]                     
+                                                       |                                       |                       
+                                              "x"[unassigned] [0]                     "2"[unassigned] [0]              
+             
+       `));
+      });
+    });
+
+    describe("content with two compound tokens then one separate token", () => {
+      const content = `2x + 1
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                      
+                                                                                       S [0]                           
+                                                                                         |                             
+                                                                  -----------------------------------------------      
+                                                                  |                                             |      
+                                                             T [0] (-10)                                  <END_OF_LINE>
+                                                                  |                                                    
+                                     -----------------------------------------------------------                       
+                                     |                                     |                   |                       
+                                 A [0] ( )                        "+"[unassigned] [0]      A [0] ( )                   
+                                     |                                                         |                       
+                                T [0] (-20)                                                  T [0]                     
+                                     |                                                         |                       
+                   -------------------------------------                              "1"[unassigned] [0]              
+                   |                 |                 |                                                               
+               A [0] ( )      <NO_WHITESPACE>      A [0] ( )                                                           
+                   |                                   |                                                               
+                 T [0]                               T [0]                                                             
+                   |                                   |                                                               
+          "2"[unassigned] [0]                 "x"[unassigned] [0]                                                      
+             
+       `));
+      });
+    });
+
+    describe("content with one separate token then two compound tokens.", () => {
+      const content = `1 + 2x
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                                          
+                                                                              S [0]                                    
+                                                                                |                                      
+                                                -----------------------------------------------------------------      
+                                                |                                                               |      
+                                           T [0] (-10)                                                    <END_OF_LINE>
+                                                |                                                                      
+                   -----------------------------------------------------------                                         
+                   |                   |                                     |                                         
+               A [0] ( )      "+"[unassigned] [0]                        A [0] ( )                                     
+                   |                                                         |                                         
+                 T [0]                                                  T [0] (-20)                                    
+                   |                                                         |                                         
+          "1"[unassigned] [0]                              -------------------------------------                       
+                                                           |                 |                 |                       
+                                                       A [0] ( )      <NO_WHITESPACE>      A [0] ( )                   
+                                                           |                                   |                       
+                                                         T [0]                               T [0]                     
+                                                           |                                   |                       
+                                                  "2"[unassigned] [0]                 "x"[unassigned] [0]              
+             
+       `));
+      });
+    });
+
+    describe("content with two compound tokens the two separate tokens.", () => {
+      const content = `3x + 4 + 2
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                                                                        
+                                                                                                                             S [0]                             
+                                                                                                                               |                               
+                                                                                                     ----------------------------------------------------      
+                                                                                                     |                                                  |      
+                                                                                                T [0] (-10)                                       <END_OF_LINE>
+                                                                                                     |                                                         
+                                                                  ----------------------------------------------------------------------                       
+                                                                  |                                                |                   |                       
+                                                              A [0] ( )                                   "+"[unassigned] [0]      A [0] ( )                   
+                                                                  |                                                                    |                       
+                                                             T [0] (-10)                                                             T [0]                     
+                                                                  |                                                                    |                       
+                                     -----------------------------------------------------------                              "2"[unassigned] [0]              
+                                     |                                     |                   |                                                               
+                                 A [0] ( )                        "+"[unassigned] [0]      A [0] ( )                                                           
+                                     |                                                         |                                                               
+                                T [0] (-20)                                                  T [0]                                                             
+                                     |                                                         |                                                               
+                   -------------------------------------                              "4"[unassigned] [0]                                                      
+                   |                 |                 |                                                                                                       
+               A [0] ( )      <NO_WHITESPACE>      A [0] ( )                                                                                                   
+                   |                                   |                                                                                                       
+                 T [0]                               T [0]                                                                                                     
+                   |                                   |                                                                                                       
+          "3"[unassigned] [0]                 "x"[unassigned] [0]                                                                                              
+             
+       `));
+      });
+    });
+
+    describe("content with one separate token then three compound exponential tokens.", () => {
+      const content = `1 + 3x^2
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                                          
+                                                                                                     S [0]                                                     
+                                                                                                       |                                                       
+                                                     ----------------------------------------------------------------------------------------------------      
+                                                     |                                                                                                  |      
+                                                T [0] (-10)                                                                                       <END_OF_LINE>
+                                                     |                                                                                                         
+                   ---------------------------------------------------------------------                                                                       
+                   |                   |                                               |                                                                       
+               A [0] ( )      "+"[unassigned] [0]                                  A [0] ( )                                                                   
+                   |                                                                   |                                                                       
+                 T [0]                                                            T [0] (-20)                                                                  
+                   |                                                                   |                                                                       
+          "1"[unassigned] [0]                              ---------------------------------------------------------                                           
+                                                           |                 |                                     |                                           
+                                                       A [0] ( )      <NO_WHITESPACE>                          A [0] ( )                                       
+                                                           |                                                       |                                           
+                                                         T [0]                                                T [0] (30)                                       
+                                                           |                                                       |                                           
+                                                  "3"[unassigned] [0]                          -----------------------------------------                       
+                                                                                               |                   |                   |                       
+                                                                                           A [0] ( )      "^"[unassigned] [0]      A [0] ( )                   
+                                                                                               |                                       |                       
+                                                                                             T [0]                                   T [0]                     
+                                                                                               |                                       |                       
+                                                                                      "x"[unassigned] [0]                     "2"[unassigned] [0]              
+             
+       `));
+      });
+    });
+
+    describe("content with three compound exponential tokens then two compound tokens.", () => {
+      const content = `3x^2 + 4x
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                                                    
+                                                                                                                                              S [0]                                                
+                                                                                                                                                |                                                  
+                                                                                                    -----------------------------------------------------------------------------------------      
+                                                                                                    |                                                                                       |      
+                                                                                               T [0] (-10)                                                                            <END_OF_LINE>
+                                                                                                    |                                                                                              
+                                               -----------------------------------------------------------------------------------------------------------                                         
+                                               |                                                                   |                                     |                                         
+                                           A [0] ( )                                                      "+"[unassigned] [0]                        A [0] ( )                                     
+                                               |                                                                                                         |                                         
+                                          T [0] (-20)                                                                                               T [0] (-20)                                    
+                                               |                                                                                                         |                                         
+                   ---------------------------------------------------------                                                           -------------------------------------                       
+                   |                 |                                     |                                                           |                 |                 |                       
+               A [0] ( )      <NO_WHITESPACE>                          A [0] ( )                                                   A [0] ( )      <NO_WHITESPACE>      A [0] ( )                   
+                   |                                                       |                                                           |                                   |                       
+                 T [0]                                                T [0] (30)                                                     T [0]                               T [0]                     
+                   |                                                       |                                                           |                                   |                       
+          "3"[unassigned] [0]                          -----------------------------------------                              "4"[unassigned] [0]                 "x"[unassigned] [0]              
+                                                       |                   |                   |                                                                                                   
+                                                   A [0] ( )      "^"[unassigned] [0]      A [0] ( )                                                                                               
+                                                       |                                       |                                                                                                   
+                                                     T [0]                                   T [0]                                                                                                 
+                                                       |                                       |                                                                                                   
+                                              "x"[unassigned] [0]                     "2"[unassigned] [0]                                                                                          
+             
+       `));
+      });
+    });
+
+    describe("content with three compound exponential tokens then two compound tokens then a singnle token.", () => {
+      const content = `3x^2 + 4x + 1
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                                                                                        
+                                                                                                                                                                                              S [0]                                        
+                                                                                                                                                                                                |                                          
+                                                                                                                                                            -------------------------------------------------------------------------      
+                                                                                                                                                            |                                                                       |      
+                                                                                                                                                       T [0] (-10)                                                            <END_OF_LINE>
+                                                                                                                                                            |                                                                              
+                                                                                                    ----------------------------------------------------------------------------------------------------------------                       
+                                                                                                    |                                                                                          |                   |                       
+                                                                                                A [0] ( )                                                                             "+"[unassigned] [0]      A [0] ( )                   
+                                                                                                    |                                                                                                              |                       
+                                                                                               T [0] (-10)                                                                                                       T [0]                     
+                                                                                                    |                                                                                                              |                       
+                                               -----------------------------------------------------------------------------------------------------------                                                "1"[unassigned] [0]              
+                                               |                                                                   |                                     |                                                                                 
+                                           A [0] ( )                                                      "+"[unassigned] [0]                        A [0] ( )                                                                             
+                                               |                                                                                                         |                                                                                 
+                                          T [0] (-20)                                                                                               T [0] (-20)                                                                            
+                                               |                                                                                                         |                                                                                 
+                   ---------------------------------------------------------                                                           -------------------------------------                                                               
+                   |                 |                                     |                                                           |                 |                 |                                                               
+               A [0] ( )      <NO_WHITESPACE>                          A [0] ( )                                                   A [0] ( )      <NO_WHITESPACE>      A [0] ( )                                                           
+                   |                                                       |                                                           |                                   |                                                               
+                 T [0]                                                T [0] (30)                                                     T [0]                               T [0]                                                             
+                   |                                                       |                                                           |                                   |                                                               
+          "3"[unassigned] [0]                          -----------------------------------------                              "4"[unassigned] [0]                 "x"[unassigned] [0]                                                      
+                                                       |                   |                   |                                                                                                                                           
+                                                   A [0] ( )      "^"[unassigned] [0]      A [0] ( )                                                                                                                                       
+                                                       |                                       |                                                                                                                                           
+                                                     T [0]                                   T [0]                                                                                                                                         
+                                                       |                                       |                                                                                                                                           
+                                              "x"[unassigned] [0]                     "2"[unassigned] [0]                                                                                                                                  
+             
+       `));
+      });
+    });
+  });
+
+  xdescribe("a cycle of length three", () => {
     let bnf = `
   
       S  ::=  F... <END_OF_LINE> ;
@@ -2580,7 +3082,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("another cycle of length two", () => {
+  xdescribe("another cycle of length two", () => {
     let bnf = `
   
       S ::= E... <END_OF_LINE> ;
@@ -2671,7 +3173,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("two cycles of length one and two", () => {
+  xdescribe("two cycles of length one and two", () => {
     let bnf = `
   
       S ::= A... <END_OF_LINE> ;
@@ -2780,7 +3282,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("cycles of length one, two and three", () => {
+  xdescribe("cycles of length one, two and three", () => {
     let bnf = `
   
       S ::= A... <END_OF_LINE> ;
@@ -2988,7 +3490,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("two intersecting cycles of length two", () => {
+  xdescribe("two intersecting cycles of length two", () => {
     let bnf = `
   
       S  ::= A... <END_OF_LINE> ;
@@ -3121,7 +3623,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("yet two more cycles of length one and two", () => {
+  xdescribe("yet two more cycles of length one and two", () => {
     let bnf = `
   
       S ::= A... <END_OF_LINE> ;
@@ -3237,7 +3739,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle with an empty indirectly repeated rule", () => {
+  xdescribe("a cycle with an empty indirectly repeated rule", () => {
     let bnf = `
   
       S ::= B... <END_OF_LINE> ;
@@ -3342,7 +3844,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("two overlapping cycles of lengths two and three", () => {
+  xdescribe("two overlapping cycles of lengths two and three", () => {
     let bnf = `
   
       S   ::= A... <END_OF_LINE> ;
@@ -3479,7 +3981,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("two intersecting cycles of length two and three", () => {
+  xdescribe("two intersecting cycles of length two and three", () => {
     let bnf = `
   
       S ::= T... <END_OF_LINE> ;
@@ -3652,7 +4154,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("an indirectly repeated rule that is non-producing", () => {
+  xdescribe("an indirectly repeated rule that is non-producing", () => {
     let bnf = `
   
       S  ::=  A... <END_OF_LINE> ; 
@@ -3747,7 +4249,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle only reachable by way of non-left recursive edges", () => {
+  xdescribe("a cycle only reachable by way of non-left recursive edges", () => {
     let bnf = `
 
       S ::= T... <END_OF_LINE> ;

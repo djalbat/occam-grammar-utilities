@@ -19,13 +19,13 @@ export default function eliminateLeftRecursion(rules) {
         ruleNamesMap = ruleNamesMapFromNothing(ruleMap),
         cycles = cyclesFromStartRule(startRule, ruleMap, ruleNamesMap);
 
-  createIntermediateRules(cycles, ruleMap);
-
   createRewrittenRules(cycles, ruleMap);
 
   createReducedRules(cycles, ruleMap);
 
   createRepeatedRules(cycles, ruleMap);
+
+  createIntermediateRules(cycles, ruleMap);
 
   replaceRules(cycles, ruleMap);
 
