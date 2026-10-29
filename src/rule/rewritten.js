@@ -1,17 +1,15 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
 import { Rule, Definition } from "occam-parsers";
 
 import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
 
-import { CYCLE_LENGTH_2 } from "../constants";
-import { ruleNamesFromCycle } from "../utilities/cycle";
+import { isRuleIndirectlyRepeated } from "../rule/repeated";
 import { partsfromPartsAndRuleNames } from "../definition/repeated";
 import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
-
-const { first, second } = arrayUtilities;
+import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
+import { ruleNameFromCycle, ruleNamesFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 
 export default class RewrittenRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -21,7 +19,7 @@ export default class RewrittenRule extends Rule {
   }
 
   static fromRuleName(ruleName, ruleMap) {
-    const rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName),
+    const rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap),
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           definition = rewrittenDefinition, ///
           name = rewrittenRuleName, ///
@@ -34,14 +32,13 @@ export default class RewrittenRule extends Rule {
     return rewrittenRule;
   }
 
-  static fromRuleNames(ruleNames, ruleMap) {
-    const secondRuleName = second(ruleNames),
-          implicitRuleName = secondRuleName,  ///
-          implicitRule = ruleMap[implicitRuleName];
+  static fromIndirectRuleNameAndCycle(indirectRuleName, cycle, ruleMap) {
+    const indirectRule = ruleMap[indirectRuleName],
+          ruleNames = ruleNamesFromCycle(cycle);
 
     let definitions;
 
-    definitions = implicitRule.getDefinitions();
+    definitions = indirectRule.getDefinitions();
 
     definitions = definitions.map((definition) => {
       let parts;
@@ -57,31 +54,70 @@ export default class RewrittenRule extends Rule {
       return definition;
     });
 
-    const ruleName = implicitRuleName,  ///
+    const ruleName = indirectRuleName,  ///
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName,  ///
-          opacity = implicitRule.getOpacity(),
+          opacity = indirectRule.getOpacity(),
+          rewrittenRule = new RewrittenRule(name, opacity, definitions);
+
+    return rewrittenRule;
+  }
+
+  static fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, ruleMap) {
+    const rewrittenDefinition = RewrittenDefinition.fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, ruleMap),
+          rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
+          definition = rewrittenDefinition, ///
+          name = rewrittenRuleName, ///
+          opacity = null,
+          definitions = [
+            definition
+          ],
           rewrittenRule = new RewrittenRule(name, opacity, definitions);
 
     return rewrittenRule;
   }
 }
 
-export function rewrittenRulesFromCycle(cycle, ruleMap) {
+export function rewrittenRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
   const rewrittenRules = [],
-        ruleNames = ruleNamesFromCycle(cycle),
-        firstRuleName = first(ruleNames),
-        ruleName = firstRuleName, //
+        cycleLength = cycle.getLength(),
+        ruleName = ruleNameFromCycle(cycle);
+
+  let rewrittenRule;
+
+  switch (cycleLength) {
+    case CYCLE_LENGTH_1: {
+      rewrittenRule = RewrittenRule.fromRuleName(ruleName, ruleMap);
+
+      rewrittenRules.push(rewrittenRule);
+
+      break;
+    }
+
+    case CYCLE_LENGTH_2: {
+      const rule = ruleMap[ruleName],
+            ruleIndirectlyRepeated = isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap);
+
+      if (ruleIndirectlyRepeated) {
+        const indirectRuleName = indirectRuleNameFromCycle(cycle);
+
+        rewrittenRule = RewrittenRule.fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, ruleMap);
+
+        rewrittenRules.push(rewrittenRule);
+      } else {
         rewrittenRule = RewrittenRule.fromRuleName(ruleName, ruleMap);
 
-  rewrittenRules.push(rewrittenRule);
+        rewrittenRules.push(rewrittenRule);
 
-  const cycleLength = cycle.getLength();
+        const indirectRuleName = indirectRuleNameFromCycle(cycle);
 
-  if (cycleLength === CYCLE_LENGTH_2) {
-    const rewrittenRule = RewrittenRule.fromRuleNames(ruleNames, ruleMap);
+        rewrittenRule = RewrittenRule.fromIndirectRuleNameAndCycle(indirectRuleName, cycle, ruleMap);
 
-    rewrittenRules.push(rewrittenRule);
+        rewrittenRules.push(rewrittenRule);
+      }
+
+      break;
+    }
   }
 
   return rewrittenRules;

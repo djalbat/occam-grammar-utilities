@@ -10,7 +10,7 @@ const { adjustedBNFFromRules } = require("./helpers/bnf");
 const { rulesFromBNF } = parserUtilities,
       { compareParseTreeStrings } = testUtilities;
 
-describe.skip("Languages", () => {
+describe("Languages", () => {
   describe("JavaScript", () => {
     let bnf = `
       

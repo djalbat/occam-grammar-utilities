@@ -8,11 +8,11 @@ import RepeatedDefinition from "../definition/repeated";
 
 import { CYCLE_LENGTH_1 } from "../constants";
 import { filterDefinitions } from "../rule/repeated";
-import { ruleNamesFromCycle } from "../utilities/cycle";
 import { isDefinitionReducible } from "../utilities/definition";
+import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber } from "../utilities/ruleName";
 
-const { first, second } = arrayUtilities;
+const { first } = arrayUtilities;
 
 export default class IntermediateRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -22,11 +22,8 @@ export default class IntermediateRule extends Rule {
   }
 
   static fromDefinitionAndCycle(definition, cycle, ruleMap) {
-    const ruleNames = ruleNamesFromCycle(cycle),
-          firstRuleName = first(ruleNames),
-          secondRuleName = second(ruleNames),
-          indirectRuleName = secondRuleName,  ///
-          ruleName = firstRuleName, ///
+    const ruleName = ruleNameFromCycle(cycle),
+          indirectRuleName = indirectRuleNameFromCycle(cycle),
           indirectRule = ruleMap[indirectRuleName],
           intermediateRuleName = intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
           name = intermediateRuleName,  ///
@@ -40,11 +37,8 @@ export default class IntermediateRule extends Rule {
   }
 
   static fromDefinitionCycleAndNumber(definition, cycle, number, ruleMap) {
-    const ruleNames = ruleNamesFromCycle(cycle),
-          firstRuleName = first(ruleNames),
-          secondRuleName = second(ruleNames),
-          indirectRuleName = secondRuleName,  ///
-          ruleName = firstRuleName, ///
+    const ruleName = ruleNameFromCycle(cycle),
+          indirectRuleName = indirectRuleNameFromCycle(cycle),
           indirectRule = ruleMap[indirectRuleName],
           intermediateRuleName = intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber(ruleName, indirectRuleName, number),
           name = intermediateRuleName,  ///
@@ -80,11 +74,8 @@ export function intermediateRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
 }
 
 function definitionsFromCycleAndCycles(cycle, cycles, ruleMap) {
-  const ruleNames = ruleNamesFromCycle(cycle),
-        firstRuleName = first(ruleNames),
-        secondRuleName = second(ruleNames),
-        indirectRuleName = secondRuleName,  ///
-        ruleName = firstRuleName, ///
+  const indirectRuleName = indirectRuleNameFromCycle(cycle),
+        ruleName = ruleNameFromCycle(cycle), ///
         rule = ruleMap[ruleName],
         indirectRule = ruleMap[indirectRuleName],
         intermediateDefinitions = intermediateDefinitionsFromRuleIndirectRuleAndCycles(rule, indirectRule, cycles, ruleMap),

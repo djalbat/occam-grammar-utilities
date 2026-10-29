@@ -3,8 +3,8 @@
 import ReducedRule from "../rule/reduced";
 import RepeatedRule from "../rule/repeated";
 
-import { rewrittenRulesFromCycle } from "../rule/rewritten";
 import { replacementRulesFromCycle } from "../rule/replacement";
+import { rewrittenRulesFromCycleAndCycles } from "../rule/rewritten";
 import { intermediateRulesFromCycleAndCycles } from "../rule/intermediate";
 
 export function replaceRules(cycles, ruleMap) {
@@ -43,7 +43,7 @@ export function createRepeatedRules(cycles, ruleMap) {
 
 export function createRewrittenRules(cycles, ruleMap) {
   cycles.forEach((cycle) => {
-    const rewrittenRules = rewrittenRulesFromCycle(cycle, ruleMap);
+    const rewrittenRules = rewrittenRulesFromCycleAndCycles(cycle, cycles, ruleMap);
 
     rewrittenRules.map((rewrittenRule) => {
       const rewrittenRuleName = rewrittenRule.getName();

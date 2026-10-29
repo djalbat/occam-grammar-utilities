@@ -1,19 +1,16 @@
 "use strict";
 
 import { Rule } from "occam-parsers";
-import { arrayUtilities } from "necessary";
 
 import RepeatedNode from "../node/repeated";
 import RepeatedDefinition from "../definition/repeated";
 import IntermediateRepeatedDefinition from "../definition/repeated/intermediate";
 
-import { ruleNamesFromCycle } from "../utilities/cycle";
 import { isDefinitionRepeatable } from "../utilities/definition";
 import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 import { indirectRuleNameFromDefinition } from "../definition//repeated/intermediate";
-
-const { first, second } = arrayUtilities;
+import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 
 export default class RepeatedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -23,9 +20,7 @@ export default class RepeatedRule extends Rule {
   }
 
   static fromCycleAndCycles(cycle, cycles, ruleMap) {
-    const ruleNames = ruleNamesFromCycle(cycle),
-          firstRuleName = first(ruleNames),
-          ruleName = firstRuleName, ///
+    const ruleName = ruleNameFromCycle(cycle),
           rule = ruleMap[ruleName],
           cycleLength = cycle.getLength(),
           repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
@@ -34,7 +29,7 @@ export default class RepeatedRule extends Rule {
 
     switch (cycleLength) {
       case CYCLE_LENGTH_1: {
-        const indirectRuleName = firstRuleName,  ///
+        const indirectRuleName = ruleName,  ///
               repeatedDefinitions = repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap);
 
         definitions = repeatedDefinitions;  ///
@@ -43,8 +38,7 @@ export default class RepeatedRule extends Rule {
       }
 
       case CYCLE_LENGTH_2: {
-        const secondRuleName = second(ruleNames),
-              indirectRuleName = secondRuleName,  ///
+        const indirectRuleName = indirectRuleNameFromCycle(cycle),
               intermediateRepeatedDefinitions = intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap);
 
         definitions = intermediateRepeatedDefinitions;  ///
@@ -83,6 +77,33 @@ export function repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indir
   return repeatedDefinitions;
 }
 
+export function isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap) {
+  let ruleIndirectlyRepeated = false;
+
+  const ruleName = rule.getName(),
+        indirectRuleName = indirectRuleNameFromCycle(cycle);
+
+  let definitions;
+
+  definitions = rule.getDefinitions();
+
+  definitions = filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap);  ///
+
+  const definitionsIndirectlyRepeated = definitions.every((definition) => {
+    const definitionIndirectlyRepeated = isDefinitionIndirectlyRepeated(definition);
+
+    if (definitionIndirectlyRepeated) {
+      return true;
+    }
+  });
+
+  if (definitionsIndirectlyRepeated) {
+    ruleIndirectlyRepeated = true;
+  }
+
+  return ruleIndirectlyRepeated;
+}
+
 export function filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap) {
   const indirectRuleNameA = indirectRuleName; ///
 
@@ -108,6 +129,14 @@ export function filterDefinitions(definitions, ruleName, indirectRuleName, cycle
   }
 
   return definitions;
+}
+
+function isDefinitionIndirectlyRepeated(definition) {
+  const parts = definition.getParts(),
+        partsLength = parts.length,
+        definitionIndirectlyRepeated = (partsLength === 1);
+
+  return definitionIndirectlyRepeated;
 }
 
 function intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap) {

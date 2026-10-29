@@ -50,6 +50,12 @@ export function indirectRuleNameFromIntermediateRuleName(intermediateRuleName) {
   return indirectRuleName;
 }
 
+export function indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName) {
+  const indirectlyRepeatedRuleName = `~${indirectRuleName}`;
+
+  return indirectlyRepeatedRuleName;
+}
+
 export function intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName) {
   const intermediateRuleName = `${indirectRuleName}~${ruleName}`;
 

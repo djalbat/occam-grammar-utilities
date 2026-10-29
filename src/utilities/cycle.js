@@ -2,14 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
-const { push } = arrayUtilities;
-
-export function ruleNameFromCycle(cycle) {
-  const firstVertex = cycle.getFirstVertex(),
-        ruleName = firstVertex; ///
-
-  return ruleName;
-}
+const { first, second, push } = arrayUtilities;
 
 export function ruleNamesFromCycle(cycle, ruleNames = []) {
   const vertexes = cycle.getVertexes(),
@@ -18,4 +11,20 @@ export function ruleNamesFromCycle(cycle, ruleNames = []) {
   push(ruleNames, cycleRuleNames);
 
   return ruleNames;
+}
+
+export function ruleNameFromCycle(cycle) {
+  const ruleNames = ruleNamesFromCycle(cycle),
+    firstRuleName = first(ruleNames),
+    ruleName = firstRuleName; ///
+
+  return ruleName;
+}
+
+export function indirectRuleNameFromCycle(cycle) {
+  const ruleNames = ruleNamesFromCycle(cycle),
+        secondRuleName = second(ruleNames),
+        indirectRuleName = secondRuleName; ///
+
+  return indirectRuleName;
 }

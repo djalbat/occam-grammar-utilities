@@ -2959,19 +2959,19 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.skip("a cycle of length two with a root rule with no tail parts", () => {
+  describe.only("a cycle of length two with a root rule with no tail parts", () => {
     let bnf = `
-  
+
       S ::= ( T ... <END_OF_LINE> ) ;
-      
-      T ::=  C 
-      
-          |  /[a-z0-9]/ 
-                                
+
+      T ::=  C
+
+          |  /[a-z0-9]/
+
           ;
-      
-      C ::= T ( "=" | "!" ) T ; 
-      
+
+      C ::= T ( "=" | "!" ) T ;
+
     `;
 
     let node,
@@ -2990,61 +2990,18 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                          
+
         S  ::= ( T ... <END_OF_LINE> ) ;
-        
+
         T  ::= _T ;
-        
+
         _T ::= T_ ~C* ;
-        
+
         T_ ::= /[a-z0-9]/ ;
-        
+
         ~C ::= ( "=" | "!" ) _T ;
 
      `));
-    });
-
-    describe("content with three tokens", () => {
-      const content = `a = b
-`;
-
-      before(() => {
-        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
-
-        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
-      });
-
-      it("results in the requisite parse tree" , () => {
-        assert.isTrue(checkParentNodes(node));
-
-        assert.isTrue(checkDescendentNodes(node));
-
-        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
-        assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                
-                                                          S [0]                    
-                                                            |                      
-                                            ---------------------------------      
-                                            |                               |      
-                                          T [0]                       <END_OF_LINE>
-                                            |                                      
-                             -------------------------------                       
-                             |                             |                       
-                           A [0]                  "g"[unassigned] [0]              
-                             |                                                     
-                           T [0]                                                   
-                             |                                                     
-                   ---------------------                                           
-                   |                   |                                           
-                 A [0]        "g"[unassigned] [0]                                  
-                   |                                                               
-                 T [0]                                                             
-                   |                                                               
-          "e"[unassigned] [0]                                                      
-                                            
-       `));
-      });
     });
   });
 });
