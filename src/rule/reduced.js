@@ -44,6 +44,17 @@ export default class ReducedRule extends Rule {
   }
 }
 
+export function reducedRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
+  const reducedRules = [],
+        reducedRule = ReducedRule.fromCycleAndCycles(cycle, cycles, ruleMap);
+
+  if (reducedRule !== null) {
+    reducedRules.push(reducedRule);
+  }
+
+  return reducedRules;
+}
+
 function filterDefinitions(definitions, ruleName, cycles, ruleMap) {
   const reducedDefinitions = definitions.reduce((reducedDefinitions, definition) => {
     const reducedDefinition = ReducedDefinition.fromDefinitionRuleNameAndCycles(definition, ruleName, cycles, ruleMap);

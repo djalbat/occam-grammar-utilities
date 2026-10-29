@@ -5,7 +5,7 @@ import { Rule, Definition } from "occam-parsers";
 import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
 
-import { isRuleIndirectlyRepeated } from "../rule/repeated";
+import { isRuleIndirectlyRepeated } from "../rule/repeated/indirectly";
 import { partsfromPartsAndRuleNames } from "../definition/repeated";
 import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";

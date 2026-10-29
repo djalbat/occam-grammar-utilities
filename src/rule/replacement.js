@@ -5,7 +5,9 @@ import { Rule } from "occam-parsers";
 import ReplacementNode from "../node/replacement";
 import ReplacementDefinition from "../definition/replacement";
 
-import { ruleNamesFromCycle } from "../utilities/cycle";
+import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
+import { isRuleIndirectlyRepeated } from "./repeated/indirectly";
+import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 
 export default class ReplacementRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -29,13 +31,39 @@ export default class ReplacementRule extends Rule {
   }
 }
 
-export function replacementRulesFromCycle(cycle, ruleMap) {
-  const ruleNames = ruleNamesFromCycle(cycle),
-        replacementRules = ruleNames.map((ruleName) => {
-          const replacementRule = ReplacementRule.fromRuleName(ruleName, ruleMap);
+export function replacementRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
+  const replacementRules = [],
+        cycleLength = cycle.getLength(),
+        ruleName = ruleNameFromCycle(cycle);
 
-          return replacementRule;
-        });
+  switch (cycleLength) {
+    case CYCLE_LENGTH_1: {
+      const replacementRule = ReplacementRule.fromRuleName(ruleName, ruleMap);
+
+      replacementRules.push(replacementRule);
+
+      break;
+    }
+
+    case CYCLE_LENGTH_2: {
+      const rule = ruleMap[ruleName],
+            replacementRule = ReplacementRule.fromRuleName(ruleName, ruleMap);
+
+      replacementRules.push(replacementRule);
+
+      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap);
+
+      if (!ruleIndirectlyRepeated) {
+        const indirectRuleName = indirectRuleNameFromCycle(cycle),
+              ruleName = indirectRuleName,  ///
+              replacementRule = ReplacementRule.fromRuleName(ruleName, ruleMap);
+
+        replacementRules.push(replacementRule);
+      }
+
+      break;
+    }
+  }
 
   return replacementRules;
 }

@@ -7,7 +7,7 @@ export default class State {
     this.parser = parser;
   }
 
-  getRulename() {
+  getRuleName() {
     return this.ruleName;
   }
 

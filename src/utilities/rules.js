@@ -1,15 +1,24 @@
 "use strict";
 
-import ReducedRule from "../rule/reduced";
-import RepeatedRule from "../rule/repeated";
-
-import { replacementRulesFromCycle } from "../rule/replacement";
+import { removedRulesFromCycleAndCycles } from "../rule/removed";
+import { reducedRulesFromCycleAndCycles } from "../rule/reduced";
+import { repeatedRulesFromCycleAndcycles } from "../rule/repeated";
 import { rewrittenRulesFromCycleAndCycles } from "../rule/rewritten";
+import { replacementRulesFromCycleAndCycles } from "../rule/replacement";
 import { intermediateRulesFromCycleAndCycles } from "../rule/intermediate";
+import { indirectlyRepeatedRulesFromCycleAndCycles } from "../rule/repeated/indirectly";
 
-export function replaceRules(cycles, ruleMap) {
+export function replaceOrRemoveRules(cycles, ruleMap) {
   cycles.forEach((cycle) => {
-    const replacementRules = replacementRulesFromCycle(cycle, ruleMap);
+    const removedRules = removedRulesFromCycleAndCycles(cycle, cycles, ruleMap),
+          replacementRules = replacementRulesFromCycleAndCycles(cycle, cycles, ruleMap);
+
+    removedRules.forEach((removedRule) => {
+      const removedRuleName = removedRule.getName(),
+            ruleName = removedRuleName; ///
+
+      delete ruleMap[ruleName];
+    });
 
     replacementRules.forEach((replacementRule) => {
       const replacementRuleName = replacementRule.getName(),
@@ -22,22 +31,25 @@ export function replaceRules(cycles, ruleMap) {
 
 export function createReducedRules(cycles, ruleMap) {
   cycles.forEach((cycle) => {
-    const reducedRule = ReducedRule.fromCycleAndCycles(cycle, cycles, ruleMap);
+    const reducedRules = reducedRulesFromCycleAndCycles(cycle, cycles, ruleMap);
 
-    if (reducedRule !== null) {
+    reducedRules.forEach((reducedRule) => {
       const reducedRuleName = reducedRule.getName();
 
       ruleMap[reducedRuleName] = reducedRule;
-    }
+    });
   });
 }
 
 export function createRepeatedRules(cycles, ruleMap) {
   cycles.forEach((cycle) => {
-    const repeatedRule = RepeatedRule.fromCycleAndCycles(cycle, cycles, ruleMap),
-          repeatedRuleName = repeatedRule.getName();
+    const repeatedRules = repeatedRulesFromCycleAndcycles(cycle, cycles, ruleMap);
 
-    ruleMap[repeatedRuleName] = repeatedRule;
+    repeatedRules.forEach((repeatedRule) => {
+      const repeatedRuleName = repeatedRule.getName();
+
+      ruleMap[repeatedRuleName] = repeatedRule;
+    });
   });
 }
 
@@ -64,3 +76,16 @@ export function createIntermediateRules(cycles, ruleMap) {
     });
   });
 }
+
+export function createIndirectlyRepeatedRules(cycles, ruleMap) {
+  cycles.forEach((cycle) => {
+    const indirectlyRepeatedRules = indirectlyRepeatedRulesFromCycleAndCycles(cycle, cycles, ruleMap);
+
+    indirectlyRepeatedRules.forEach((indirectlyRepeatedRule) => {
+      const indirectlyRepeatedRuleName = indirectlyRepeatedRule.getName();
+
+      ruleMap[indirectlyRepeatedRuleName] = indirectlyRepeatedRule;
+    });
+  });
+}
+

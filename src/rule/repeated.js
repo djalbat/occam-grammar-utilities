@@ -20,6 +20,8 @@ export default class RepeatedRule extends Rule {
   }
 
   static fromCycleAndCycles(cycle, cycles, ruleMap) {
+    let repeatedRule = null;
+
     const ruleName = ruleNameFromCycle(cycle),
           rule = ruleMap[ruleName],
           cycleLength = cycle.getLength(),
@@ -47,12 +49,28 @@ export default class RepeatedRule extends Rule {
       }
     }
 
-    const name = repeatedRuleName, ///
-          opacity = rule.getOpacity(),
-          repeatedRule = new RepeatedRule(name, opacity, definitions);
+    const definitionsLength = definitions.length;
+
+    if (definitionsLength >0) {
+      const name = repeatedRuleName, ///
+            opacity = rule.getOpacity();
+
+      repeatedRule = new RepeatedRule(name, opacity, definitions);
+    }
 
     return repeatedRule;
   }
+}
+
+export function repeatedRulesFromCycleAndcycles(cycle, cycles, ruleMap) {
+  const repeatedRules = [],
+        repeatedRule = RepeatedRule.fromCycleAndCycles(cycle, cycles, ruleMap);
+
+  if (repeatedRule !== null) {
+    repeatedRules.push(repeatedRule);
+  }
+
+  return repeatedRules;
 }
 
 export function repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap) {
@@ -75,33 +93,6 @@ export function repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indir
   });
 
   return repeatedDefinitions;
-}
-
-export function isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap) {
-  let ruleIndirectlyRepeated = false;
-
-  const ruleName = rule.getName(),
-        indirectRuleName = indirectRuleNameFromCycle(cycle);
-
-  let definitions;
-
-  definitions = rule.getDefinitions();
-
-  definitions = filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap);  ///
-
-  const definitionsIndirectlyRepeated = definitions.every((definition) => {
-    const definitionIndirectlyRepeated = isDefinitionIndirectlyRepeated(definition);
-
-    if (definitionIndirectlyRepeated) {
-      return true;
-    }
-  });
-
-  if (definitionsIndirectlyRepeated) {
-    ruleIndirectlyRepeated = true;
-  }
-
-  return ruleIndirectlyRepeated;
 }
 
 export function filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap) {
@@ -131,14 +122,6 @@ export function filterDefinitions(definitions, ruleName, indirectRuleName, cycle
   return definitions;
 }
 
-function isDefinitionIndirectlyRepeated(definition) {
-  const parts = definition.getParts(),
-        partsLength = parts.length,
-        definitionIndirectlyRepeated = (partsLength === 1);
-
-  return definitionIndirectlyRepeated;
-}
-
 function intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap) {
   const ruleName = rule.getName();
 
@@ -147,6 +130,15 @@ function intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, 
   definitions = rule.getDefinitions();
 
   definitions = filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap);
+
+  definitions = definitions.filter((definition) => {
+    const parts = definition.getParts(),
+          partsLength = parts.length;
+
+    if (partsLength > 1) {
+      return true;
+    }
+  });
 
   const definitionsLength = definitions.length,
         intermediateRepeatedDefinitions = definitions.map((definition, index) => {

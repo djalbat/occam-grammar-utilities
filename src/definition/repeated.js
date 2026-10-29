@@ -15,7 +15,7 @@ export default class RepeatedDefinition extends Definition {
           precedence = definition.getPrecedence(),
           repeatedDefinition = new RepeatedDefinition(parts, precedence);
 
-    isRepeatedDefinitionConsuming(repeatedDefinition, ruleMap);
+    isDefinitionConsuming(repeatedDefinition, ruleMap);
 
     return repeatedDefinition;
   }
@@ -24,7 +24,7 @@ export default class RepeatedDefinition extends Definition {
     const parts = partsfromDefinitionAndRuleNames(definition, ruleNames),
           repeatedDefinition = new RepeatedDefinition(parts, precedence);
 
-    isRepeatedDefinitionConsuming(repeatedDefinition, ruleMap);
+    isDefinitionConsuming(repeatedDefinition, ruleMap);
 
     return repeatedDefinition;
   }
@@ -49,7 +49,7 @@ export function partsfromPartsAndRuleNames(parts, ruleNames) {
   return parts;
 }
 
-function partsfromDefinitionAndRuleNames(definition, ruleNames) {
+export function partsfromDefinitionAndRuleNames(definition, ruleNames) {
   let parts = definition.getParts();
 
   const tailParts = tail(parts);
@@ -61,9 +61,9 @@ function partsfromDefinitionAndRuleNames(definition, ruleNames) {
   return parts;
 }
 
-function isRepeatedDefinitionConsuming(repeatedDefinition, ruleMap) {
+export function isDefinitionConsuming(definition, ruleMap) {
   const visitedRules = [],
         checkForCutParts = true;
 
-  repeatedDefinition.isConsuming(ruleMap, visitedRules, checkForCutParts);
+  definition.isConsuming(ruleMap, visitedRules, checkForCutParts);
 }

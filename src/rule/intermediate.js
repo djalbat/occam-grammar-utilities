@@ -6,9 +6,10 @@ import { arrayUtilities } from "necessary";
 import IntermediateNode from "../node/intermediate";
 import RepeatedDefinition from "../definition/repeated";
 
-import { CYCLE_LENGTH_1 } from "../constants";
 import { filterDefinitions } from "../rule/repeated";
 import { isDefinitionReducible } from "../utilities/definition";
+import { isRuleIndirectlyRepeated } from "./repeated/indirectly";
+import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber } from "../utilities/ruleName";
 
@@ -54,20 +55,34 @@ export default class IntermediateRule extends Rule {
 
 export function intermediateRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
   const intermediateRules = [],
-        length = cycle.getLength();
+        cycleLength = cycle.getLength();
 
-  if (length > CYCLE_LENGTH_1) {
-    const definitions = definitionsFromCycleAndCycles(cycle, cycles, ruleMap),
-          definitionsLength = definitions.length;
+  switch (cycleLength) {
+    case CYCLE_LENGTH_1: {
+      break;
+    }
 
-    definitions.forEach((definition, index) => {
-      const number = index + 1,
-            intermediateRule = (definitionsLength === 1) ?
-                                 IntermediateRule.fromDefinitionAndCycle(definition, cycle, ruleMap) :
-                                   IntermediateRule.fromDefinitionCycleAndNumber(definition, cycle, number, ruleMap);
+    case CYCLE_LENGTH_2: {
+      const ruleName = ruleNameFromCycle(cycle),
+            rule = ruleMap[ruleName],
+            ruleIndirectlyRepeated = isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap);
 
-      intermediateRules.push(intermediateRule);
-    });
+      if (!ruleIndirectlyRepeated) {
+        const definitions = definitionsFromCycleAndCycles(cycle, cycles, ruleMap),
+              definitionsLength = definitions.length;
+
+        definitions.forEach((definition, index) => {
+          const number = index + 1,
+                intermediateRule = (definitionsLength === 1) ?
+                                     IntermediateRule.fromDefinitionAndCycle(definition, cycle, ruleMap) :
+                                       IntermediateRule.fromDefinitionCycleAndNumber(definition, cycle, number, ruleMap);
+
+          intermediateRules.push(intermediateRule);
+        });
+      }
+
+      break;
+    }
   }
 
   return intermediateRules;
@@ -82,6 +97,27 @@ function definitionsFromCycleAndCycles(cycle, cycles, ruleMap) {
         definitions = intermediateDefinitions;  ///
 
   return definitions;
+}
+
+function isDefinitionIndirectlyRepeatable(definition, indirectRuleName, cycles, ruleMap) {
+  const ruleName = indirectRuleName,  ///
+        definitionReducible = isDefinitionReducible(definition, ruleName, cycles, ruleMap),
+        definitionIndirectlyRepeatable = !definitionReducible;
+
+  if (definitionIndirectlyRepeatable) {
+    const parts = definition.getParts(),
+          firstPart = first(parts),
+          firstPartRuleNamePart = firstPart.isRuleNamePart();
+
+    if (!firstPartRuleNamePart) {
+      const firstPartString = firstPart.asString(),
+            definitionString = definition.asString();
+
+      throw new Error(`The '${firstPartString}' first part of the '${definitionString}' definition is not a rule name part.`);
+    }
+  }
+
+  return definitionIndirectlyRepeatable;
 }
 
 function intermediateDefinitionsFromRuleIndirectRuleAndCycles(rule, indirectRule, cycles, ruleMap) {
@@ -118,25 +154,4 @@ function intermediateDefinitionsFromRuleIndirectRuleAndCycles(rule, indirectRule
   });
 
   return intermediateDefinitions;
-}
-
-function isDefinitionIndirectlyRepeatable(definition, indirectRuleName, cycles, ruleMap) {
-  const ruleName = indirectRuleName,  ///
-        definitionReducible = isDefinitionReducible(definition, ruleName, cycles, ruleMap),
-        definitionIndirectlyRepeatable = !definitionReducible;
-
-  if (definitionIndirectlyRepeatable) {
-    const parts = definition.getParts(),
-          firstPart = first(parts),
-          firstPartRuleNamePart = firstPart.isRuleNamePart();
-
-    if (!firstPartRuleNamePart) {
-      const firstPartString = firstPart.asString(),
-            definitionString = definition.asString();
-
-      throw new Error(`The '${firstPartString}' first part of the '${definitionString}' definition is not a rule name part.`);
-    }
-  }
-
-  return definitionIndirectlyRepeatable;
 }
