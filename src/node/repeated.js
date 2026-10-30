@@ -1,6 +1,6 @@
 "use strict";
 
-import { NonTerminalNode } from "occam-parsers";
+import NonTerminalNode from "../nonTerminalNode";
 
 import { REPEATED_NODE_INITIAL_INDEX } from "../constants";
 

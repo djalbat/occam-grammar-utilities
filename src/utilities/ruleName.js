@@ -26,6 +26,12 @@ export function ruleNameFromIntermediateRuleName(intermediateRuleName) {
   return ruleName;
 }
 
+export function ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName) {
+  const ruleName = indirectlyRepeatedRuleName.replace(/^~/g, EMPTY_STRING);
+
+  return ruleName;
+}
+
 export function reducedRuleNameFromRuleName(ruleName) {
   const reducedRuleName = `${ruleName}_`;
 

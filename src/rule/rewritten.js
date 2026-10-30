@@ -9,6 +9,7 @@ import { isRuleIndirectlyRepeated } from "../rule/repeated/indirectly";
 import { partsfromPartsAndRuleNames } from "../definition/repeated";
 import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
+import { isDefinitionIndirectlyRepeatable } from "../rule/repeated/indirectly";
 import { ruleNameFromCycle, ruleNamesFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 
 export default class RewrittenRule extends Rule {
@@ -63,15 +64,18 @@ export default class RewrittenRule extends Rule {
     return rewrittenRule;
   }
 
-  static fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, ruleMap) {
-    const rewrittenDefinition = RewrittenDefinition.fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, ruleMap),
-          rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
-          definition = rewrittenDefinition, ///
+  static fromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap) {
+    const ruleName = rule.getName(),
+          rewrittenDefinitions = rewrittenDDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap),
+          singular = true,
+          rewrittenDefintion = RewrittenDefinition.fromRuleName(ruleName, singular, ruleMap);
+
+    rewrittenDefinitions.push(rewrittenDefintion);
+
+    const rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName, ///
           opacity = null,
-          definitions = [
-            definition
-          ],
+          definitions = rewrittenDefinitions, ///
           rewrittenRule = new RewrittenRule(name, opacity, definitions);
 
     return rewrittenRule;
@@ -101,7 +105,7 @@ export function rewrittenRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
       if (ruleIndirectlyRepeated) {
         const indirectRuleName = indirectRuleNameFromCycle(cycle);
 
-        rewrittenRule = RewrittenRule.fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, ruleMap);
+        rewrittenRule = RewrittenRule.fromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap);
 
         rewrittenRules.push(rewrittenRule);
       } else {
@@ -121,4 +125,28 @@ export function rewrittenRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
   }
 
   return rewrittenRules;
+}
+
+function rewrittenDDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap) {
+  const ruleName = rule.getName();
+
+  let definitions;
+
+  definitions = rule.getDefinitions();
+
+  definitions = definitions.filter((definition) => {
+    const definitionIndirectlyRepeatable = isDefinitionIndirectlyRepeatable(definition, ruleName, cycles, ruleMap);
+
+    if (definitionIndirectlyRepeatable) {
+      return true;
+    }
+  });
+
+  const rewrittenDefinitions = definitions.map((definition) => {
+    const rewrittenDefinition = RewrittenDefinition.fromDefiniitonRuleNameAndIndirectRuleName(definition, ruleName, indirectRuleName, ruleMap);
+
+    return rewrittenDefinition;
+  });
+
+  return rewrittenDefinitions;
 }

@@ -1,6 +1,6 @@
 "use strict";
 
-import { NonTerminalNode } from "occam-parsers";
+import NonTerminalNode from "../nonTerminalNode";
 
 import { indirectRuleNameFromIntermediateRuleName } from "../utilities/ruleName";
 
@@ -53,9 +53,10 @@ export default class IntermediateNode extends NonTerminalNode {
     const addedChildNode = replacedChildNode, ///
           addedChildNodes = [
             addedChildNode
-          ];
+          ],
+          startIndex = 0;
 
-    parentNode.addChildNodes(addedChildNodes);
+    parentNode.addChildNodes(addedChildNodes, startIndex);
   }
 
   shuffle() {

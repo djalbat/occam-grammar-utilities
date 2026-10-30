@@ -1,19 +1,16 @@
 "use strict";
 
 import { Rule } from "occam-parsers";
-import { arrayUtilities } from "necessary";
 
 import IntermediateNode from "../node/intermediate";
 import RepeatedDefinition from "../definition/repeated";
 
 import { filterDefinitions } from "../rule/repeated";
-import { isDefinitionReducible } from "../utilities/definition";
-import { isRuleIndirectlyRepeated } from "./repeated/indirectly";
+import { isRuleIndirectlyRepeated } from "../rule/repeated/indirectly";
+import { isDefinitionIndirectlyRepeatable } from "../rule/repeated/indirectly";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber } from "../utilities/ruleName";
-
-const { first } = arrayUtilities;
 
 export default class IntermediateRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -98,27 +95,6 @@ function definitionsFromCycleAndCycles(cycle, cycles, ruleMap) {
         definitions = intermediateDefinitions;  ///
 
   return definitions;
-}
-
-function isDefinitionIndirectlyRepeatable(definition, indirectRuleName, cycles, ruleMap) {
-  const ruleName = indirectRuleName,  ///
-        definitionReducible = isDefinitionReducible(definition, ruleName, cycles, ruleMap),
-        definitionIndirectlyRepeatable = !definitionReducible;
-
-  if (definitionIndirectlyRepeatable) {
-    const parts = definition.getParts(),
-          firstPart = first(parts),
-          firstPartRuleNamePart = firstPart.isRuleNamePart();
-
-    if (!firstPartRuleNamePart) {
-      const firstPartString = firstPart.asString(),
-            definitionString = definition.asString();
-
-      throw new Error(`The '${firstPartString}' first part of the '${definitionString}' definition is not a rule name part.`);
-    }
-  }
-
-  return definitionIndirectlyRepeatable;
 }
 
 function intermediateDefinitionsFromRuleIndirectRuleAndCycles(rule, indirectRule, cycles, ruleMap) {
