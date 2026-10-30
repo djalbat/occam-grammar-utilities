@@ -118,11 +118,10 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
       const singular = this.isSingular();
 
       if (singular) {
-        const singleChildNode = this.getSingleChildNode(),
-              singleChildNodeNonTerminalNode = singleChildNode.isNonTerminalNode();
+        const singleChildNonTerminalNode = this.getSingleChildNonTerminalNode();
 
-        if (singleChildNodeNonTerminalNode) {
-          effectiveDescendantNode = singleChildNode;  ///
+        if (singleChildNonTerminalNode !== null) {
+          effectiveDescendantNode = singleChildNonTerminalNode;  ///
         }
       }
     }
@@ -168,6 +167,34 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
     }
 
     return irrelevantDescendantNode;
+  }
+
+  getSingleChildNonTerminalNode() {
+    let singleChildNonTerminalNode = null;
+
+    const singleChildNode = this.getSingleChildNode();
+
+    if (singleChildNode !== null) {
+      const singleChildNodeNonTerminalNode = singleChildNode.isNonTerminalNode();
+
+      if (singleChildNodeNonTerminalNode) {
+        singleChildNonTerminalNode = singleChildNode; ///
+      }
+    }
+
+    return singleChildNonTerminalNode;
+  }
+
+  forEachChildNonTerrminalNode(callback) {
+    this.forEachChildNode((childNode) => {
+      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
+
+      if (childNodeNonTerminalNode) {
+        const childNonTerminalNode = childNode; ///
+
+        callback(childNonTerminalNode);
+      }
+    });
   }
 
   rewrite(state) {
@@ -230,22 +257,6 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
     return unprecedencted;
   }
 
-  tiltLeft() {
-    let rightLeaning;
-
-    rightLeaning = this.isRightLeaning();
-
-    while (rightLeaning) {
-      this.leanLeft();
-
-      rightLeaning = this.isRightLeaning();
-    }
-
-    this.forEachChildNonTerrminalNode((nonTermionalNode) => {
-      nonTermionalNode.tiltLeft();
-    });
-  }
-
   lift() {
     const parentNode = this.getParentNode(),
           precedence = this.getPrecedence(),
@@ -263,6 +274,22 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
           removedChildNode = this;  ///
 
     parentNode.removeChildNode(removedChildNode);
+  }
+
+  tiltLeft() {
+    let rightLeaning;
+
+    rightLeaning = this.isRightLeaning();
+
+    while (rightLeaning) {
+      this.leanLeft();
+
+      rightLeaning = this.isRightLeaning();
+    }
+
+    this.forEachChildNonTerrminalNode((nonTermionalNode) => {
+      nonTermionalNode.tiltLeft();
+    });
   }
 
   leanLeft() {
@@ -383,15 +410,6 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
     this.setPrecedence(precedence);
   }
 
-  createNonTerminalNode(childNodes, precedence, state) {
-    const opacity = this.getOpacity(),
-          ruleName = this.getRuleName(),
-          NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName),
-          nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity);
-
-    return nonTerminalNode;
-  }
-
   removeAllButLastChildNode() {
     const multiplicity = this.getMultiplicity(),
           startIndex = 0,
@@ -410,16 +428,13 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
     return removedChildNodes;
   }
 
-  forEachChildNonTerrminalNode(callback) {
-    this.forEachChildNode((childNode) => {
-      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
+  createNonTerminalNode(childNodes, precedence, state) {
+    const opacity = this.getOpacity(),
+          ruleName = this.getRuleName(),
+          NonTerminalNode = state.NonTerminalNodeFromRuleName(ruleName),
+          nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity);
 
-      if (childNodeNonTerminalNode) {
-        const childNonTerminalNode = childNode; ///
-
-        callback(childNonTerminalNode);
-      }
-    });
+    return nonTerminalNode;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity); }
