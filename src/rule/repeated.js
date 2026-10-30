@@ -7,6 +7,7 @@ import RepeatedDefinition from "../definition/repeated";
 import IntermediateRepeatedDefinition from "../definition/repeated/intermediate";
 
 import { isDefinitionRepeatable } from "../utilities/definition";
+import { isRuleIndirectlyRepeated } from "../rule/repeated/indirectly";
 import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 import { indirectRuleNameFromDefinition } from "../definition//repeated/intermediate";
@@ -19,44 +20,27 @@ export default class RepeatedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromCycleAndCycles(cycle, cycles, ruleMap) {
-    let repeatedRule = null;
+  static fromRuleNameAndCycles(ruleName, cycles, ruleMap) {
+    const rule = ruleMap[ruleName],
+          indirectRuleName = ruleName,  ///
+          repeatedDefinitions = repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap),
+          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+          name = repeatedRuleName, ///
+          opacity = rule.getOpacity(),
+          definitions = repeatedDefinitions,  ///
+          repeatedRule = new RepeatedRule(name, opacity, definitions);
 
-    const ruleName = ruleNameFromCycle(cycle),
-          rule = ruleMap[ruleName],
-          cycleLength = cycle.getLength(),
-          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
+    return repeatedRule;
+  }
 
-    let definitions;
-
-    switch (cycleLength) {
-      case CYCLE_LENGTH_1: {
-        const indirectRuleName = ruleName,  ///
-              repeatedDefinitions = repeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap);
-
-        definitions = repeatedDefinitions;  ///
-
-        break;
-      }
-
-      case CYCLE_LENGTH_2: {
-        const indirectRuleName = indirectRuleNameFromCycle(cycle),
-              intermediateRepeatedDefinitions = intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap);
-
-        definitions = intermediateRepeatedDefinitions;  ///
-
-        break;
-      }
-    }
-
-    const definitionsLength = definitions.length;
-
-    if (definitionsLength >0) {
-      const name = repeatedRuleName, ///
-            opacity = rule.getOpacity();
-
-      repeatedRule = new RepeatedRule(name, opacity, definitions);
-    }
+  static fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, cycles, ruleMap) {
+    const rule = ruleMap[ruleName],
+          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+          intermediateRepeatedDefinitions = intermediateRepeatedDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap),
+          name = repeatedRuleName, ///
+          opacity = rule.getOpacity(),
+          definitions = intermediateRepeatedDefinitions,  ///
+          repeatedRule = new RepeatedRule(name, opacity, definitions);
 
     return repeatedRule;
   }
@@ -64,10 +48,31 @@ export default class RepeatedRule extends Rule {
 
 export function repeatedRulesFromCycleAndcycles(cycle, cycles, ruleMap) {
   const repeatedRules = [],
-        repeatedRule = RepeatedRule.fromCycleAndCycles(cycle, cycles, ruleMap);
+        cycleLength = cycle.getLength(),
+        ruleName = ruleNameFromCycle(cycle);
 
-  if (repeatedRule !== null) {
-    repeatedRules.push(repeatedRule);
+  switch (cycleLength) {
+    case CYCLE_LENGTH_1: {
+      const repeatedRule = RepeatedRule.fromRuleNameAndCycles(ruleName, cycles, ruleMap);
+
+      repeatedRules.push(repeatedRule);
+
+      break;
+    }
+
+    case CYCLE_LENGTH_2: {
+      const rule = ruleMap[ruleName],
+            ruleIndirectlyRepeated = isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap);
+
+      if (!ruleIndirectlyRepeated) {
+        const indirectRuleName = indirectRuleNameFromCycle(cycle),
+              repeatedRule = RepeatedRule.fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, cycles, ruleMap);
+
+        repeatedRules.push(repeatedRule);
+      }
+
+      break;
+    }
   }
 
   return repeatedRules;

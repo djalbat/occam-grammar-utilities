@@ -48,9 +48,7 @@ export function reducedRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
   const reducedRules = [],
         reducedRule = ReducedRule.fromCycleAndCycles(cycle, cycles, ruleMap);
 
-  if (reducedRule !== null) {
-    reducedRules.push(reducedRule);
-  }
+  reducedRules.push(reducedRule);
 
   return reducedRules;
 }

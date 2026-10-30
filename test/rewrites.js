@@ -2959,7 +2959,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with a root rule with no tail parts", () => {
+  describe("a cycle of length two with a root rule with no tail parts", () => {
     let bnf = `
 
       S ::= ( T ... <END_OF_LINE> ) ;

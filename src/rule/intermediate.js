@@ -59,6 +59,7 @@ export function intermediateRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
+
       break;
     }
 
