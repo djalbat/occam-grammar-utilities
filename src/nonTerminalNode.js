@@ -78,16 +78,16 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
   }
 
   retrieveEffectiveAscendantNode() {
-    let effectivewAscendantNode;
+    let effectiveAscendantNode;
 
     const irrelevantAscendantNode = this.retrieveIrrelevantAscendantNode();
 
     if (irrelevantAscendantNode !== null) {
       const irrelevantAscendantNodeParentNode = irrelevantAscendantNode.getParentNode();
 
-      effectivewAscendantNode = irrelevantAscendantNodeParentNode; ///
+      effectiveAscendantNode = irrelevantAscendantNodeParentNode; ///
     } else {
-      effectivewAscendantNode = this;
+      effectiveAscendantNode = this;
 
       const single = this.isSingle();
 
@@ -95,16 +95,16 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
         const parentNode = this.getParentNode();
 
         if (parentNode !== null) {
-          effectivewAscendantNode = parentNode; ///
+          effectiveAscendantNode = parentNode; ///
         }
       }
     }
 
-    return effectivewAscendantNode;
+    return effectiveAscendantNode;
   }
 
   retrieveEffectiveDescendantNode() {
-    let effectiveDescendantNode = null;
+    let effectiveDescendantNode;
 
     const irrelevantDescendantNode = this.retrieveIrrelevantDescendantNode();
 
