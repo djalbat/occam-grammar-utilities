@@ -123,10 +123,6 @@ function intermediateDefinitionsFromRuleIndirectRuleAndCycles(rule, indirectRule
 
         intermediateDefinitions.push(intermediateDefinition);
       });
-    } else {
-      const intermediateDefinition = definition;  ///
-
-      intermediateDefinitions.push(intermediateDefinition);
     }
   });
 

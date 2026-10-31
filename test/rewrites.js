@@ -3120,7 +3120,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two with a double indirect repetition, a cut and precedence", () => {
+  describe("two cycles of length two with a double indirect repetition, a cut and precedence", () => {
     let bnf = `
 
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -3329,6 +3329,84 @@ describe("Rewrites", () => {
 
        `));
       });
+    });
+  });
+
+  describe.only("two cycles of length two with a indirect repetition, a cut, precedence and a non-trivial intermediate rule", () => {
+    let bnf = `
+
+      S ::= ( T ... <END_OF_LINE> ) ;
+
+      T ::= A "+" \` A (-90)
+                            
+          | A<NO_WHITESPACE>A (-101)
+          
+          | V
+          
+          ;
+                                                   
+      A ::= T ( ) 
+    
+          | Y ( )
+                                           
+          ;
+
+      V ::= /[0-9]/ ; 
+
+      Y ::= /[a-z]/ ; 
+
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+        
+        S     ::= ( T ... <END_OF_LINE> ) ;
+        
+        T     ::= _T ;
+        
+        A     ::= _A ;
+        
+        V     ::= /[0-9]/ ;
+        
+        Y     ::= /[a-z]/ ;
+        
+        _T    ::= T_ T~* ;
+        
+        _A    ::= _T ( )
+            
+                | Y ( )
+        
+                ;
+        
+        T_    ::=  V ;
+        
+        A_    ::= Y ( ) ;
+        
+        T~    ::= A~T_1 (-90)
+            
+                | A~T_2 (-101)
+        
+                ;
+        
+        A~T_1 ::= "+" \` _A ( ) ;
+        
+        A~T_2 ::= <NO_WHITESPACE> _A ( ) ;
+        
+     `));
     });
   });
 });
