@@ -3,200 +3,6 @@
 import { NonTerminalNode as NonTerminalNodeBase } from "occam-parsers";
 
 export default class NonTerminalNode extends NonTerminalNodeBase {
-  isLeftLeaning() {
-    const leftLeaningNode = this.findLeftLeaningNode(),
-          leftLeaning = (leftLeaningNode !== null);
-
-    return leftLeaning;
-  }
-
-  isRightLeaning() {
-    const rightLeaningNode = this.findRightLeaningNode(),
-          rightLeaning = (rightLeaningNode !== null);
-
-    return rightLeaning;
-  }
-
-  findLeftLeaningNode(shallow = false) {
-    let leftLeaningNode = null;
-
-    const effectiveDescendantNode = this.retrieveEffectiveDescendantNode();
-
-    effectiveDescendantNode.forwardsSomeChildNode((childNode) => {
-      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
-
-      if (childNodeNonTerminalNode) {
-        const nonTerminalNode = childNode,  ///
-              effectiveDescendantNode = nonTerminalNode.retrieveEffectiveDescendantNode();
-
-        if (shallow) {
-          leftLeaningNode = effectiveDescendantNode;  ///
-        } else {
-          const shallow = true,
-                rightLeaningNode = effectiveDescendantNode.findRightLeaningNode(shallow);
-
-          if (rightLeaningNode !== null) {
-            leftLeaningNode = effectiveDescendantNode;  ///
-          }
-        }
-      }
-
-      return true;
-    });
-
-    return leftLeaningNode;
-  }
-
-  findRightLeaningNode(shallow = false) {
-    let rightLeaningNode = null;
-
-    const effectiveDescendantNode = this.retrieveEffectiveDescendantNode();
-
-    effectiveDescendantNode.backwardsSomeChildNode((childNode) => {
-      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
-
-      if (childNodeNonTerminalNode) {
-        const nonTerminalNode = childNode,  ///
-              effectiveDescendantNode = nonTerminalNode.retrieveEffectiveDescendantNode();
-
-        if (shallow) {
-          rightLeaningNode = effectiveDescendantNode;  ///
-        } else {
-          const shallow = true,
-                leftLeaningNode = effectiveDescendantNode.findLeftLeaningNode(shallow);
-
-          if (leftLeaningNode !== null) {
-            rightLeaningNode = effectiveDescendantNode; ///
-          }
-        }
-      }
-
-      return true;
-    });
-
-    return rightLeaningNode;
-  }
-
-  retrieveEffectiveAscendantNode() {
-    let effectiveAscendantNode;
-
-    const irrelevantAscendantNode = this.retrieveIrrelevantAscendantNode();
-
-    if (irrelevantAscendantNode !== null) {
-      const irrelevantAscendantNodeParentNode = irrelevantAscendantNode.getParentNode();
-
-      effectiveAscendantNode = irrelevantAscendantNodeParentNode; ///
-    } else {
-      effectiveAscendantNode = this;
-
-      const single = this.isSingle();
-
-      if (single) {
-        const parentNode = this.getParentNode();
-
-        if (parentNode !== null) {
-          effectiveAscendantNode = parentNode; ///
-        }
-      }
-    }
-
-    return effectiveAscendantNode;
-  }
-
-  retrieveEffectiveDescendantNode() {
-    let effectiveDescendantNode;
-
-    const irrelevantDescendantNode = this.retrieveIrrelevantDescendantNode();
-
-    if (irrelevantDescendantNode !== null) {
-      const irrelevantDescendantNodeSingleChildNode = irrelevantDescendantNode.getSingleChildNode();
-
-      effectiveDescendantNode = irrelevantDescendantNodeSingleChildNode;  ///
-    } else {
-      effectiveDescendantNode = this;
-
-      const singular = this.isSingular();
-
-      if (singular) {
-        const singleChildNonTerminalNode = this.getSingleChildNonTerminalNode();
-
-        if (singleChildNonTerminalNode !== null) {
-          effectiveDescendantNode = singleChildNonTerminalNode;  ///
-        }
-      }
-    }
-
-    return effectiveDescendantNode;
-  }
-
-  retrieveIrrelevantAscendantNode() {
-    let irrelevantAscendantNode = null;
-
-    const parentNode = this.getParentNode();
-
-    if (parentNode !== null) {
-      const parentNodeIrrelevant = parentNode.isIrrelevant();
-
-      if (parentNodeIrrelevant) {
-        irrelevantAscendantNode = parentNode.retrieveIrrelevantAscendantNode();
-
-        if (irrelevantAscendantNode === null) {
-          irrelevantAscendantNode = parentNode; ///
-        }
-      }
-    }
-
-    return irrelevantAscendantNode;
-  }
-
-  retrieveIrrelevantDescendantNode() {
-    let irrelevantDescendantNode = null;
-
-    const singleChildNode = this.getSingleChildNode();
-
-    if (singleChildNode !== null) {
-      const singleChildNodeIrrelevant = singleChildNode.isIrrelevant();
-
-      if (singleChildNodeIrrelevant) {
-        irrelevantDescendantNode = singleChildNode.retrieveIrrelevantDescendantNode();
-
-        if (irrelevantDescendantNode === null) {
-          irrelevantDescendantNode = singleChildNode;  ///
-        }
-      }
-    }
-
-    return irrelevantDescendantNode;
-  }
-
-  getSingleChildNonTerminalNode() {
-    let singleChildNonTerminalNode = null;
-
-    const singleChildNode = this.getSingleChildNode();
-
-    if (singleChildNode !== null) {
-      const singleChildNodeNonTerminalNode = singleChildNode.isNonTerminalNode();
-
-      if (singleChildNodeNonTerminalNode) {
-        singleChildNonTerminalNode = singleChildNode; ///
-      }
-    }
-
-    return singleChildNonTerminalNode;
-  }
-
-  forEachChildNonTerrminalNode(callback) {
-    this.forEachChildNode((childNode) => {
-      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
-
-      if (childNodeNonTerminalNode) {
-        const childNonTerminalNode = childNode; ///
-
-        callback(childNonTerminalNode);
-      }
-    });
-  }
-
   rewrite(state) {
     let nonTerminalNode = this;
 
@@ -259,10 +65,10 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
 
   lift() {
     const parentNode = this.getParentNode(),
-          precedence = this.getPrecedence(),
-          childNodes = this.removeChildNodes(),
-          replacedChildNode = this,  ///
-          replacementChildNodes = childNodes; ///
+      precedence = this.getPrecedence(),
+      childNodes = this.removeChildNodes(),
+      replacedChildNode = this,  ///
+      replacementChildNodes = childNodes; ///
 
     parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 
@@ -408,6 +214,200 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
     precedence = leftLeaningNodePrecedence;  ///
 
     this.setPrecedence(precedence);
+  }
+
+  isLeftLeaning() {
+    const leftLeaningNode = this.findLeftLeaningNode(),
+          leftLeaning = (leftLeaningNode !== null);
+
+    return leftLeaning;
+  }
+
+  isRightLeaning() {
+    const rightLeaningNode = this.findRightLeaningNode(),
+          rightLeaning = (rightLeaningNode !== null);
+
+    return rightLeaning;
+  }
+
+  findLeftLeaningNode(shallow = false) {
+    let leftLeaningNode = null;
+
+    const effectiveDescendantNode = this.retrieveEffectiveDescendantNode();
+
+    effectiveDescendantNode.forwardsSomeChildNode((childNode) => {
+      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
+
+      if (childNodeNonTerminalNode) {
+        const nonTerminalNode = childNode,  ///
+              effectiveDescendantNode = nonTerminalNode.retrieveEffectiveDescendantNode();
+
+        if (shallow) {
+          leftLeaningNode = effectiveDescendantNode;  ///
+        } else {
+          const shallow = true,
+            rightLeaningNode = effectiveDescendantNode.findRightLeaningNode(shallow);
+
+          if (rightLeaningNode !== null) {
+            leftLeaningNode = effectiveDescendantNode;  ///
+          }
+        }
+      }
+
+      return true;
+    });
+
+    return leftLeaningNode;
+  }
+
+  findRightLeaningNode(shallow = false) {
+    let rightLeaningNode = null;
+
+    const effectiveDescendantNode = this.retrieveEffectiveDescendantNode();
+
+    effectiveDescendantNode.backwardsSomeChildNode((childNode) => {
+      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
+
+      if (childNodeNonTerminalNode) {
+        const nonTerminalNode = childNode,  ///
+              effectiveDescendantNode = nonTerminalNode.retrieveEffectiveDescendantNode();
+
+        if (shallow) {
+          rightLeaningNode = effectiveDescendantNode;  ///
+        } else {
+          const shallow = true,
+            leftLeaningNode = effectiveDescendantNode.findLeftLeaningNode(shallow);
+
+          if (leftLeaningNode !== null) {
+            rightLeaningNode = effectiveDescendantNode; ///
+          }
+        }
+      }
+
+      return true;
+    });
+
+    return rightLeaningNode;
+  }
+
+  retrieveEffectiveAscendantNode() {
+    let effectiveAscendantNode;
+
+    const irrelevantAscendantNode = this.retrieveIrrelevantAscendantNode();
+
+    if (irrelevantAscendantNode !== null) {
+      const irrelevantAscendantNodeParentNode = irrelevantAscendantNode.getParentNode();
+
+      effectiveAscendantNode = irrelevantAscendantNodeParentNode; ///
+    } else {
+      effectiveAscendantNode = this;
+
+      const single = this.isSingle();
+
+      if (single) {
+        const parentNode = this.getParentNode();
+
+        if (parentNode !== null) {
+          effectiveAscendantNode = parentNode; ///
+        }
+      }
+    }
+
+    return effectiveAscendantNode;
+  }
+
+  retrieveEffectiveDescendantNode() {
+    let effectiveDescendantNode;
+
+    const irrelevantDescendantNode = this.retrieveIrrelevantDescendantNode();
+
+    if (irrelevantDescendantNode !== null) {
+      const irrelevantDescendantNodeSingleChildNode = irrelevantDescendantNode.getSingleChildNode();
+
+      effectiveDescendantNode = irrelevantDescendantNodeSingleChildNode;  ///
+    } else {
+      effectiveDescendantNode = this;
+
+      const singular = this.isSingular();
+
+      if (singular) {
+        const singleChildNonTerminalNode = this.getSingleChildNonTerminalNode();
+
+        if (singleChildNonTerminalNode !== null) {
+          effectiveDescendantNode = singleChildNonTerminalNode;  ///
+        }
+      }
+    }
+
+    return effectiveDescendantNode;
+  }
+
+  retrieveIrrelevantAscendantNode() {
+    let irrelevantAscendantNode = null;
+
+    const parentNode = this.getParentNode();
+
+    if (parentNode !== null) {
+      const parentNodeIrrelevant = parentNode.isIrrelevant();
+
+      if (parentNodeIrrelevant) {
+        irrelevantAscendantNode = parentNode.retrieveIrrelevantAscendantNode();
+
+        if (irrelevantAscendantNode === null) {
+          irrelevantAscendantNode = parentNode; ///
+        }
+      }
+    }
+
+    return irrelevantAscendantNode;
+  }
+
+  retrieveIrrelevantDescendantNode() {
+    let irrelevantDescendantNode = null;
+
+    const singleChildNode = this.getSingleChildNode();
+
+    if (singleChildNode !== null) {
+      const singleChildNodeIrrelevant = singleChildNode.isIrrelevant();
+
+      if (singleChildNodeIrrelevant) {
+        irrelevantDescendantNode = singleChildNode.retrieveIrrelevantDescendantNode();
+
+        if (irrelevantDescendantNode === null) {
+          irrelevantDescendantNode = singleChildNode;  ///
+        }
+      }
+    }
+
+    return irrelevantDescendantNode;
+  }
+
+  getSingleChildNonTerminalNode() {
+    let singleChildNonTerminalNode = null;
+
+    const singleChildNode = this.getSingleChildNode();
+
+    if (singleChildNode !== null) {
+      const singleChildNodeNonTerminalNode = singleChildNode.isNonTerminalNode();
+
+      if (singleChildNodeNonTerminalNode) {
+        singleChildNonTerminalNode = singleChildNode; ///
+      }
+    }
+
+    return singleChildNonTerminalNode;
+  }
+
+  forEachChildNonTerrminalNode(callback) {
+    this.forEachChildNode((childNode) => {
+      const childNodeNonTerminalNode = childNode.isNonTerminalNode();
+
+      if (childNodeNonTerminalNode) {
+        const childNonTerminalNode = childNode; ///
+
+        callback(childNonTerminalNode);
+      }
+    });
   }
 
   removeAllButLastChildNode() {

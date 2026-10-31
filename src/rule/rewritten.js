@@ -1,5 +1,6 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
 import { Rule, Definition } from "occam-parsers";
 
 import RewrittenNode from "../node/rewritten";
@@ -12,11 +13,35 @@ import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 import { isDefinitionIndirectlyRepeatable } from "../rule/repeated/indirectly";
 import { ruleNameFromCycle, ruleNamesFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 
+const { first, front } = arrayUtilities;
+
 export default class RewrittenRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
     const NonTerminalNode = RewrittenNode; ///
 
     return NonTerminalNode;
+  }
+
+  mergedWith(rewrittenRule) {
+    let definitions;
+
+    definitions = this.getDefinitions();
+
+    const frontDefinitions = front(definitions);
+
+    definitions = rewrittenRule.getDefinitions();
+
+    definitions = [ ///
+      ...frontDefinitions,
+      ...definitions
+    ];
+
+    const name = this.getName(),
+          opacity = this.getOpacity();
+
+    rewrittenRule = new RewrittenRule(name, opacity, definitions);  ///
+
+    return rewrittenRule;
   }
 
   static fromRuleName(ruleName, ruleMap) {
@@ -135,9 +160,18 @@ function rewrittenDDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRu
   definitions = rule.getDefinitions();
 
   definitions = definitions.filter((definition) => {
-    const definitionIndirectlyRepeatable = isDefinitionIndirectlyRepeatable(definition, ruleName, cycles, ruleMap);
+    const indirectRuleName = ruleName,  ///
+          definitionIndirectlyRepeatable = isDefinitionIndirectlyRepeatable(definition, indirectRuleName, cycles, ruleMap);
 
     if (definitionIndirectlyRepeatable) {
+      return true;
+    }
+  });
+
+  definitions = definitions.filter((definition) => {
+    const ruleName = ruleNameFromDefinition(definition);
+
+    if (ruleName === indirectRuleName) {
       return true;
     }
   });
@@ -149,4 +183,13 @@ function rewrittenDDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRu
   });
 
   return rewrittenDefinitions;
+}
+
+function ruleNameFromDefinition(definition) {
+  const parts = definition.getParts(),
+        firstPart = first(parts),
+        ruleNamePart = firstPart, ///
+        ruleName = ruleNamePart.getRuleName();
+
+  return ruleName;
 }

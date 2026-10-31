@@ -31,9 +31,8 @@ export default class ReplacementRule extends Rule {
   }
 }
 
-export function replacementRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
-  const replacementRules = [],
-        cycleLength = cycle.getLength(),
+export function replacementRulesFromCycleAndCycles(cycle, cycles, ruleMap, replacementRules = []) {
+  const cycleLength = cycle.getLength(),
         ruleName = ruleNameFromCycle(cycle);
 
   switch (cycleLength) {

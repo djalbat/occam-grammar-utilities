@@ -9,23 +9,27 @@ import { intermediateRulesFromCycleAndCycles } from "../rule/intermediate";
 import { indirectlyRepeatedRulesFromCycleAndCycles } from "../rule/repeated/indirectly";
 
 export function replaceOrRemoveRules(cycles, ruleMap) {
+  const removedRules = [],
+        replacementRules = [];
+
   cycles.forEach((cycle) => {
-    const removedRules = removedRulesFromCycleAndCycles(cycle, cycles, ruleMap),
-          replacementRules = replacementRulesFromCycleAndCycles(cycle, cycles, ruleMap);
+    removedRulesFromCycleAndCycles(cycle, cycles, ruleMap, removedRules);
 
-    removedRules.forEach((removedRule) => {
-      const removedRuleName = removedRule.getName(),
-            ruleName = removedRuleName; ///
+    replacementRulesFromCycleAndCycles(cycle, cycles, ruleMap, replacementRules);
+  });
 
-      delete ruleMap[ruleName];
-    });
+  removedRules.forEach((removedRule) => {
+    const removedRuleName = removedRule.getName(),
+          ruleName = removedRuleName; ///
 
-    replacementRules.forEach((replacementRule) => {
-      const replacementRuleName = replacementRule.getName(),
-            ruleName = replacementRuleName; ///
+    delete ruleMap[ruleName];
+  });
 
-      ruleMap[ruleName] = replacementRule;
-    });
+  replacementRules.forEach((replacementRule) => {
+    const replacementRuleName = replacementRule.getName(),
+          ruleName = replacementRuleName; ///
+
+    ruleMap[ruleName] = replacementRule;
   });
 }
 
@@ -58,7 +62,13 @@ export function createRewrittenRules(cycles, ruleMap) {
     const rewrittenRules = rewrittenRulesFromCycleAndCycles(cycle, cycles, ruleMap);
 
     rewrittenRules.map((rewrittenRule) => {
-      const rewrittenRuleName = rewrittenRule.getName();
+      const rewrittenRuleName = rewrittenRule.getName(),
+            rewrittenRuleA = rewrittenRule, ///
+            rewrittenRuleB = ruleMap[rewrittenRuleName] || null;  ///
+
+      rewrittenRule = (rewrittenRuleB !== null) ?
+                        rewrittenRuleB.mergedWith(rewrittenRuleA) :
+                          rewrittenRuleA;
 
       ruleMap[rewrittenRuleName] = rewrittenRule;
     });

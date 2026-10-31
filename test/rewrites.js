@@ -2959,7 +2959,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two with a indirect repetition and precedence", () => {
+  describe("a cycle of length two with a single indirect repetition, a cut and precedence", () => {
     let bnf = `
 
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -2970,7 +2970,7 @@ describe("Rewrites", () => {
 
           ;
 
-      C ::= T ( "=" | "!" ) T (1);
+      C ::= T ( "=" | "!" ) \` T (-1);
 
     `;
 
@@ -3003,7 +3003,7 @@ describe("Rewrites", () => {
         
         T_ ::= /[a-z0-9]/ ;
         
-        ~C ::= ( "=" | "!" ) _T (1) ;
+        ~C ::= ( "=" | "!" ) \` _T (-1) ;
 
      `));
     });
@@ -3057,14 +3057,14 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-          
+                    
                                                         S [0]                      
                                                           |                        
                                        --------------------------------------      
                                        |                                    |      
                                    T [0] ( )                          <END_OF_LINE>
                                        |                                           
-                                   C [0] (1)                                       
+                                  C [0] (-1)                                       
                                        |                                           
                    -----------------------------------------                       
                    |                   |                   |                       
@@ -3094,29 +3094,87 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                                                                      
-                                                                                 S [0]                                     
-                                                                                   |                                       
-                                                 --------------------------------------------------------------------      
-                                                 |                                                                  |      
-                                             T [0] ( )                                                        <END_OF_LINE>
-                                                 |                                                                         
-                                             C [0] (1)                                                                     
-                                                 |                                                                         
-                   -------------------------------------------------------------                                           
-                   |                   |                                       |                                           
-                 T [0]        "="[unassigned] [0]                          T [0] ( )                                       
-                   |                                                           |                                           
-          "1"[unassigned] [0]                                              C [0] (1)                                       
-                                                                               |                                           
-                                                           -----------------------------------------                       
-                                                           |                   |                   |                       
-                                                         T [0]        "="[unassigned] [0]        T [0]                     
-                                                           |                                       |                       
-                                                  "2"[unassigned] [0]                     "3"[unassigned] [0]              
+                                                                                                                                
+                                                                                           S [0]                           
+                                                                                             |                             
+                                                                     ------------------------------------------------      
+                                                                     |                                              |      
+                                                                 T [0] ( )                                    <END_OF_LINE>
+                                                                     |                                                     
+                                                                C [0] (-1)                                                 
+                                                                     |                                                     
+                                       -------------------------------------------------------------                       
+                                       |                                       |                   |                       
+                                   T [0] ( )                          "="[unassigned] [0]        T [0]                     
+                                       |                                                           |                       
+                                  C [0] (-1)                                              "3"[unassigned] [0]              
+                                       |                                                                                   
+                   -----------------------------------------                                                               
+                   |                   |                   |                                                               
+                 T [0]        "="[unassigned] [0]        T [0]                                                             
+                   |                                       |                                                               
+          "1"[unassigned] [0]                     "2"[unassigned] [0]                                                      
              
        `));
       });
+    });
+  });
+
+  describe("a cycle of length two with a double indirect repetition, a cut and precedence", () => {
+    let bnf = `
+
+      S ::= ( T ... <END_OF_LINE> ) ;
+
+      T ::=  C ( )
+
+          |  L ( )
+
+          |  /[a-z0-9]/
+
+          ;
+
+      C ::= T ( "=" | "!" ) \` T (-1);
+
+      L ::= T ( "|" | "&" ) \` T (-2) ; 
+
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+        
+        S  ::= ( T ... <END_OF_LINE> ) ;
+        
+        T  ::= _T ;
+        
+        _T ::= T_ ~C+ ( ) 
+        
+             | T_ ~L+ ( ) 
+        
+             | T_ 
+             
+             ;
+        
+        T_ ::= /[a-z0-9]/ ;
+        
+        ~C ::= ( "=" | "!" ) \` _T (-1) ;
+
+        ~L ::= ( "|" | "&" ) \` _T (-2) ; 
+
+     `));
     });
   });
 });

@@ -17,9 +17,8 @@ export default class RemovedRule extends Rule {
   }
 }
 
-export function removedRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
-  const removedRules = [],
-        cycleLength = cycle.getLength();
+export function removedRulesFromCycleAndCycles(cycle, cycles, ruleMap, removedRules = []) {
+  const cycleLength = cycle.getLength();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
