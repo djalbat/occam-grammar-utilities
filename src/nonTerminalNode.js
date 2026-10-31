@@ -158,15 +158,25 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
 
     this.addChildNodes(addedChildNodes, startIndex);
 
-    let precedence;
+    let ruleName,
+        precedence;
+
+    ruleName = this.getRuleName();
 
     precedence = this.getPrecedence();
 
-    const rightLeaningNodePrecedence = rightLeaningNode.getPrecedence();
+    const rightLeaningNodeRuleName = rightLeaningNode.getRuleName(),
+          rightLeaningNodePrecedence = rightLeaningNode.getPrecedence();
+
+    rightLeaningNode.setRuleName(ruleName);
 
     rightLeaningNode.setPrecedence(precedence);
 
+    ruleName = rightLeaningNodeRuleName;  ///
+
     precedence = rightLeaningNodePrecedence;  ///
+
+    this.setRuleName(ruleName);
 
     this.setPrecedence(precedence);
   }
@@ -203,15 +213,25 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
 
     this.addChildNodes(addedChildNodes, startIndex);
 
-    let precedence;
+    let ruleName,
+        precedence;
+
+    ruleName = this.getRuleName();
 
     precedence = this.getPrecedence();
 
-    const leftLeaningNodePrecedence = leftLeaningNode.getPrecedence();
+    const leftLeaningNodeRuleName = leftLeaningNode.getRuleName(),
+          leftLeaningNodePrecedence = leftLeaningNode.getPrecedence();
+
+    leftLeaningNode.setRuleName(ruleName);
 
     leftLeaningNode.setPrecedence(precedence);
 
+    ruleName = leftLeaningNodeRuleName; ///
+
     precedence = leftLeaningNodePrecedence;  ///
+
+    this.setRuleName(ruleName);
 
     this.setPrecedence(precedence);
   }
@@ -437,5 +457,21 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
     return nonTerminalNode;
   }
 
-  static fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity) { return NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity); }
+  static fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity) {
+    if (opacity === undefined) {
+      opacity = precedence; ///
+
+      precedence = childNodes; ///
+
+      childNodes = ruleName;  ///
+
+      ruleName = Class; ///
+
+      Class = NonTerminalNode;  ///
+    }
+
+    const nonTerminalNode = NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity);
+
+    return nonTerminalNode;
+  }
 }

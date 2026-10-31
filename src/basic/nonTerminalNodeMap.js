@@ -18,6 +18,8 @@ class E extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpac
 
 class F extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(F, ruleName, childNodes, precedence, opacity); } }
 
+class L extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(L, ruleName, childNodes, precedence, opacity); } }
+
 class U extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(U, ruleName, childNodes, precedence, opacity); } }
 
 class V extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(V, ruleName, childNodes, precedence, opacity); } }
@@ -36,6 +38,7 @@ const NonTerminalNodeMap = {
   D,
   E,
   F,
+  L,
   S,
   U,
   V,

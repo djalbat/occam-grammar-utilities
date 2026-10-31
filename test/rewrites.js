@@ -3176,5 +3176,159 @@ describe("Rewrites", () => {
 
      `));
     });
+
+    describe("content with one token", () => {
+      const content = `1
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+
+                          S [0]
+                            |
+                   ------------------
+                   |                |
+                 T [0]        <END_OF_LINE>
+                   |
+          "1"[unassigned] [0]
+
+       `));
+      });
+    });
+
+    describe("content with three tokens", () => {
+      const content = `1 | 2
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+          
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                   T [0] ( )                          <END_OF_LINE>
+                                       |                                           
+                                  L [0] (-2)                                       
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+                 T [0]        "|"[unassigned] [0]        T [0]                     
+                   |                                       |                       
+          "1"[unassigned] [0]                     "2"[unassigned] [0]              
+
+       `));
+      });
+    });
+
+    describe("content with five tokens", () => {
+      const content = `1 | 2 = 3
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                              
+                                                                                           S [0]                           
+                                                                                             |                             
+                                                                     ------------------------------------------------      
+                                                                     |                                              |      
+                                                                 T [0] ( )                                    <END_OF_LINE>
+                                                                     |                                                     
+                                                                C [0] (-1)                                                 
+                                                                     |                                                     
+                                       -------------------------------------------------------------                       
+                                       |                                       |                   |                       
+                                   T [0] ( )                          "="[unassigned] [0]        T [0]                     
+                                       |                                                           |                       
+                                  L [0] (-2)                                              "3"[unassigned] [0]              
+                                       |                                                                                   
+                   -----------------------------------------                                                               
+                   |                   |                   |                                                               
+                 T [0]        "|"[unassigned] [0]        T [0]                                                             
+                   |                                       |                                                               
+          "1"[unassigned] [0]                     "2"[unassigned] [0]                                                      
+
+       `));
+      });
+    });
+
+    describe("content with seven tokens", () => {
+      const content = `1 | 2 = 3 | 4
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                        
+                                                                                                                    S [0]                                          
+                                                                                                                      |                                            
+                                                                               ------------------------------------------------------------------------------      
+                                                                               |                                                                            |      
+                                                                           T [0] ( )                                                                  <END_OF_LINE>
+                                                                               |                                                                                   
+                                                                          C [0] (-1)                                                                               
+                                                                               |                                                                                   
+                                       ---------------------------------------------------------------------------------                                           
+                                       |                                       |                                       |                                           
+                                   T [0] ( )                          "="[unassigned] [0]                          T [0] ( )                                       
+                                       |                                                                               |                                           
+                                  L [0] (-2)                                                                      L [0] (-2)                                       
+                                       |                                                                               |                                           
+                   -----------------------------------------                                       -----------------------------------------                       
+                   |                   |                   |                                       |                   |                   |                       
+                 T [0]        "|"[unassigned] [0]        T [0]                                   T [0]        "|"[unassigned] [0]        T [0]                     
+                   |                                       |                                       |                                       |                       
+          "1"[unassigned] [0]                     "2"[unassigned] [0]                     "3"[unassigned] [0]                     "4"[unassigned] [0]              
+
+       `));
+      });
+    });
   });
 });
