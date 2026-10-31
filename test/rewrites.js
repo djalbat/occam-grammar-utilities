@@ -3332,7 +3332,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("two cycles of length two with a indirect repetition, a cut, precedence and a non-trivial intermediate rule", () => {
+  describe("two cycles of length two with a indirect repetition, a cut, precedence and a non-trivial intermediate rule", () => {
     let bnf = `
 
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -3392,9 +3392,11 @@ describe("Rewrites", () => {
         
                 ;
         
-        T_    ::=  V ;
+        T_    ::= A_T_
+            
+                | V
         
-        A_    ::= Y ( ) ;
+                ;
         
         T~    ::= A~T_1 (-90)
             
@@ -3402,10 +3404,12 @@ describe("Rewrites", () => {
         
                 ;
         
+        A_T_  ::= Y ( ) ;
+        
         A~T_1 ::= "+" \` _A ( ) ;
         
-        A~T_2 ::= <NO_WHITESPACE> _A ( ) ;
-        
+        A~T_2 ::= <NO_WHITESPACE> _A ( ) ;        
+
      `));
     });
   });

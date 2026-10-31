@@ -6,6 +6,7 @@ import { repeatedRulesFromCycleAndcycles } from "../rule/repeated";
 import { rewrittenRulesFromCycleAndCycles } from "../rule/rewritten";
 import { replacementRulesFromCycleAndCycles } from "../rule/replacement";
 import { intermediateRulesFromCycleAndCycles } from "../rule/intermediate";
+import { indirectlyReducedRulesFromCycleAndCycles } from "../rule/reduced/indirectly";
 import { indirectlyRepeatedRulesFromCycleAndCycles } from "../rule/repeated/indirectly";
 
 export function replaceOrRemoveRules(cycles, ruleMap) {
@@ -83,6 +84,18 @@ export function createIntermediateRules(cycles, ruleMap) {
       const intermediatedRuleName = intermediateRule.getName();
 
       ruleMap[intermediatedRuleName] = intermediateRule;
+    });
+  });
+}
+
+export function createIndirectlyReducedRules(cycles, ruleMap) {
+  cycles.forEach((cycle) => {
+    const indirectlyReducedRules = indirectlyReducedRulesFromCycleAndCycles(cycle, cycles, ruleMap);
+
+    indirectlyReducedRules.forEach((indirectlyReducedRule) => {
+      const indirectlyReducedRuleName = indirectlyReducedRule.getName();
+
+      ruleMap[indirectlyReducedRuleName] = indirectlyReducedRule;
     });
   });
 }

@@ -15,8 +15,8 @@ export function ruleNamesFromCycle(cycle, ruleNames = []) {
 
 export function ruleNameFromCycle(cycle) {
   const ruleNames = ruleNamesFromCycle(cycle),
-    firstRuleName = first(ruleNames),
-    ruleName = firstRuleName; ///
+        firstRuleName = first(ruleNames),
+        ruleName = firstRuleName; ///
 
   return ruleName;
 }

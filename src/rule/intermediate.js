@@ -5,10 +5,10 @@ import { Rule } from "occam-parsers";
 import IntermediateNode from "../node/intermediate";
 import RepeatedDefinition from "../definition/repeated";
 
+import { CYCLE_LENGTH_2 } from "../constants";
 import { filterDefinitions } from "../rule/repeated";
 import { isRuleIndirectlyRepeated } from "../rule/repeated/indirectly";
 import { isDefinitionIndirectlyRepeatable } from "../rule/repeated/indirectly";
-import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber } from "../utilities/ruleName";
 
@@ -50,16 +50,10 @@ export default class IntermediateRule extends Rule {
   }
 }
 
-export function intermediateRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
-  const intermediateRules = [],
-        cycleLength = cycle.getLength();
+export function intermediateRulesFromCycleAndCycles(cycle, cycles, ruleMap, intermediateRules = []) {
+  const cycleLength = cycle.getLength();
 
   switch (cycleLength) {
-    case CYCLE_LENGTH_1: {
-
-      break;
-    }
-
     case CYCLE_LENGTH_2: {
       const ruleName = ruleNameFromCycle(cycle),
             rule = ruleMap[ruleName],
@@ -87,25 +81,19 @@ export function intermediateRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
 }
 
 function definitionsFromCycleAndCycles(cycle, cycles, ruleMap) {
-  const indirectRuleName = indirectRuleNameFromCycle(cycle),
-        ruleName = ruleNameFromCycle(cycle), ///
-        rule = ruleMap[ruleName],
-        indirectRule = ruleMap[indirectRuleName],
-        intermediateDefinitions = intermediateDefinitionsFromRuleIndirectRuleAndCycles(rule, indirectRule, cycles, ruleMap),
+  const intermediateDefinitions = intermediateDefinitionsFromCycleAndCycles(cycle, cycles, ruleMap),
         definitions = intermediateDefinitions;  ///
 
   return definitions;
 }
 
-function intermediateDefinitionsFromRuleIndirectRuleAndCycles(rule, indirectRule, cycles, ruleMap) {
+function intermediateDefinitionsFromCycleAndCycles(cycle, cycles, ruleMap) {
   const intermediateDefinitions = [],
-        indirectRuleName = indirectRule.getName(),
-        definitions = indirectRule.getDefinitions(),
-        ruleName = rule.getName(),
-        ruleNames = [
-          ruleName,
-          indirectRuleName
-        ];
+        indirectRuleName = indirectRuleNameFromCycle(cycle),
+        ruleName = ruleNameFromCycle(cycle), ///
+        rule = ruleMap[ruleName],
+        indirectRule = ruleMap[indirectRuleName],
+        definitions = indirectRule.getDefinitions();
 
   definitions.forEach((definition) => {
     const definitionLeftRepeatable = isDefinitionIndirectlyRepeatable(definition, indirectRuleName, cycles, ruleMap);
@@ -115,10 +103,10 @@ function intermediateDefinitionsFromRuleIndirectRuleAndCycles(rule, indirectRule
 
       let definitions = rule.getDefinitions();
 
-      definitions = filterDefinitions(definitions, ruleName, indirectRuleName, cycles, ruleMap);
+      definitions = filterDefinitions(definitions, cycle, cycles, ruleMap); ///
 
       definitions.forEach((definition) => {
-        const repeatedDefinition = RepeatedDefinition.fromDefinitionRuleNamesAndPrecedence(definition, ruleNames, precedence, ruleMap),
+        const repeatedDefinition = RepeatedDefinition.fromDefinitionCycleAndPrecedence(definition, cycle, precedence, ruleMap),
               intermediateDefinition = repeatedDefinition;  ///
 
         intermediateDefinitions.push(intermediateDefinition);

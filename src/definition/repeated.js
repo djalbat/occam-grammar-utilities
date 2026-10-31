@@ -1,17 +1,15 @@
 "use strict";
 
+import { Definition } from "occam-parsers";
 import { arrayUtilities } from "necessary";
-import { Parts, Definition } from "occam-parsers";
 
-import { replaceRuleNameParts } from "../utilities/parts";
-import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
+import { rewriteRuleNameParts } from "../utilities/rewrite";
 
-const { tail } = arrayUtilities,
-      { RuleNamePart } = Parts;
+const { tail } = arrayUtilities;
 
 export default class RepeatedDefinition extends Definition {
-  static fromDefinitionAndRuleNames(definition, ruleNames, ruleMap) {
-    const parts = partsfromDefinitionAndRuleNames(definition, ruleNames),
+  static fromDefinitionAndCycle(definition, cycle, ruleMap) {
+    const parts = partsfromDefinitionAndCycle(definition, cycle),
           precedence = definition.getPrecedence(),
           repeatedDefinition = new RepeatedDefinition(parts, precedence);
 
@@ -20,8 +18,8 @@ export default class RepeatedDefinition extends Definition {
     return repeatedDefinition;
   }
 
-  static fromDefinitionRuleNamesAndPrecedence(definition, ruleNames, precedence, ruleMap) {
-    const parts = partsfromDefinitionAndRuleNames(definition, ruleNames),
+  static fromDefinitionCycleAndPrecedence(definition, cycle, precedence, ruleMap) {
+    const parts = partsfromDefinitionAndCycle(definition, cycle),
           repeatedDefinition = new RepeatedDefinition(parts, precedence);
 
     isDefinitionConsuming(repeatedDefinition, ruleMap);
@@ -30,33 +28,14 @@ export default class RepeatedDefinition extends Definition {
   }
 }
 
-export function partsfromPartsAndRuleNames(parts, ruleNames) {
-  parts = replaceRuleNameParts(parts, (ruleNamePart) => { ///
-    const ruleNamePartRuleName = ruleNamePart.getRuleName(),
-          ruleNamesIncludesRuleNamePartRuleName = ruleNames.includes(ruleNamePartRuleName);
-
-    if (ruleNamesIncludesRuleNamePartRuleName) {
-      const ruleName = ruleNamePartRuleName,  ///
-            rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
-            rewrittenRuleNamePart = RuleNamePart.fromRuleName(rewrittenRuleName);
-
-      ruleNamePart = rewrittenRuleNamePart; ///
-    }
-
-    return ruleNamePart;
-  });
-
-  return parts;
-}
-
-export function partsfromDefinitionAndRuleNames(definition, ruleNames) {
+export function partsfromDefinitionAndCycle(definition, cycle) {
   let parts = definition.getParts();
 
   const tailParts = tail(parts);
 
   parts = tailParts;  ///
 
-  parts = partsfromPartsAndRuleNames(parts, ruleNames); ///
+  parts = rewriteRuleNameParts(parts, cycle); ///
 
   return parts;
 }

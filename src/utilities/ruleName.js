@@ -68,6 +68,12 @@ export function intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, in
   return intermediateRuleName;
 }
 
+export function indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectlRuleName) {
+  const indirectlyReducedRuleName = `${indirectlRuleName}_${ruleName}_`;
+
+  return indirectlyReducedRuleName;
+}
+
 export function intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber(ruleName, indirectRuleName, number) {
   const intermediateRuleName = `${indirectRuleName}~${ruleName}_${number}`;
 

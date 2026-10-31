@@ -6,12 +6,12 @@ import { Rule, Definition } from "occam-parsers";
 import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
 
+import { rewriteRuleNameParts } from "../utilities/rewrite";
 import { isRuleIndirectlyRepeated } from "../rule/repeated/indirectly";
-import { partsfromPartsAndRuleNames } from "../definition/repeated";
 import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 import { isDefinitionIndirectlyRepeatable } from "../rule/repeated/indirectly";
-import { ruleNameFromCycle, ruleNamesFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
+import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 
 const { first, front } = arrayUtilities;
 
@@ -59,8 +59,7 @@ export default class RewrittenRule extends Rule {
   }
 
   static fromIndirectRuleNameAndCycle(indirectRuleName, cycle, ruleMap) {
-    const indirectRule = ruleMap[indirectRuleName],
-          ruleNames = ruleNamesFromCycle(cycle);
+    const indirectRule = ruleMap[indirectRuleName];
 
     let definitions;
 
@@ -71,7 +70,7 @@ export default class RewrittenRule extends Rule {
 
       parts = definition.getParts();
 
-      parts = partsfromPartsAndRuleNames(parts, ruleNames);  ///
+      parts = rewriteRuleNameParts(parts, cycle); ///
 
       const precedence = definition.getPrecedence();
 
@@ -107,9 +106,8 @@ export default class RewrittenRule extends Rule {
   }
 }
 
-export function rewrittenRulesFromCycleAndCycles(cycle, cycles, ruleMap) {
-  const rewrittenRules = [],
-        cycleLength = cycle.getLength(),
+export function rewrittenRulesFromCycleAndCycles(cycle, cycles, ruleMap, rewrittenRules = []) {
+  const cycleLength = cycle.getLength(),
         ruleName = ruleNameFromCycle(cycle);
 
   let rewrittenRule;

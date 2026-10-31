@@ -2,9 +2,9 @@
 
 import { Rule } from "occam-parsers";
 
-import {indirectRuleNameFromCycle, ruleNameFromCycle} from "../utilities/cycle";
+import { CYCLE_LENGTH_2 } from "../constants";
 import { isRuleIndirectlyRepeated } from "./repeated/indirectly";
-import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
+import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 
 export default class RemovedRule extends Rule {
   static fromIndirectRuleName(indirectRuleName, ruleMap) {
@@ -21,11 +21,6 @@ export function removedRulesFromCycleAndCycles(cycle, cycles, ruleMap, removedRu
   const cycleLength = cycle.getLength();
 
   switch (cycleLength) {
-    case CYCLE_LENGTH_1: {
-
-      break;
-    }
-
     case CYCLE_LENGTH_2: {
       const ruleName = ruleNameFromCycle(cycle),
             rule = ruleMap[ruleName],
