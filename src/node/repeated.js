@@ -1,10 +1,11 @@
 "use strict";
 
+import rewriteMixins from  "../mixins/rewrite";
 import NonTerminalNode from "../nonTerminalNode";
 
 import { REPEATED_NODE_INITIAL_INDEX } from "../constants";
 
-export default class RepeatedNode extends NonTerminalNode {
+class RepeatedNode extends NonTerminalNode {
   rewrite(state) {
     const nonTerminalNode = this; ///
 
@@ -32,9 +33,7 @@ export default class RepeatedNode extends NonTerminalNode {
 
     this.simplifyChildNodes(state);
 
-    const childNodes = this.removeChildNodes();
-
-    this.overwrite(childNodes);
+    this.lift();
   }
 
   isInitial() {
@@ -44,22 +43,9 @@ export default class RepeatedNode extends NonTerminalNode {
     return initial;
   }
 
-  overwrite(childNodes) {
-    const parentNode = this.getParentNode(),
-          precedence = this.getPrecedence(),
-          replacedChildNode = this,  ///
-          replacementChildNodes = childNodes;  ///
-
-    parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
-
-    parentNode.setPrecedence(precedence);
-  }
-
-  simplifyChildNodes(state) {
-    this.forEachChildNode((childNode) => {
-      childNode.simplify(state);
-    });
-  }
-
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RepeatedNode, ruleName, childNodes, precedence, opacity); }
 }
+
+Object.assign(RepeatedNode.prototype, rewriteMixins);
+
+export default RepeatedNode;

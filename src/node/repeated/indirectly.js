@@ -1,10 +1,11 @@
 "use strict";
 
+import rewriteMixins from  "../../mixins/rewrite";
 import NonTerminalNode from "../../nonTerminalNode";
 
 import { ruleNameFromIndirectlyRepeatedRuleName } from "../../utilities/ruleName";
 
-export default class IndirectlyRepeatedNode extends NonTerminalNode {
+class IndirectlyRepeatedNode extends NonTerminalNode {
   rewrite(state) {
     const nonTerminalNode = this; ///
 
@@ -24,34 +25,17 @@ export default class IndirectlyRepeatedNode extends NonTerminalNode {
     this.overwrite(state);
   }
 
-  overwrite(state) {
-    let ruleName;
+  getBaseRuleName() {
+    const ruleName = this.getRuleName(),
+          indirectlyRepeatedRuleName = ruleName,  ///
+          baseRuleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);
 
-    ruleName = this.getRuleName();
-
-    const indirectlyRepeatedRuleName = ruleName;  ///
-
-    ruleName = ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleName);
-
-    const opacity = this.getOpacity(),
-          precedence = this.getPrecedence(),
-          parentNode = this.getParentNode(),
-          childNodes = this.removeChildNodes(),
-          nonTerminalNode = state.createNonTerminalNode(ruleName, childNodes, precedence, opacity),
-          replacedChildNode = this, ///
-          replacementChildNode = nonTerminalNode,
-          replacementChildNodes = [
-            replacementChildNode
-          ];
-
-    parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
-  }
-
-  simplifyChildNodes(state) {
-    this.forEachChildNode((childNode) => {
-      childNode.simplify(state);
-    });
+    return baseRuleName;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(IndirectlyRepeatedNode, ruleName, childNodes, precedence, opacity); }
 }
+
+Object.assign(IndirectlyRepeatedNode.prototype, rewriteMixins);
+
+export default IndirectlyRepeatedNode;

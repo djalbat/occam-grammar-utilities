@@ -1,8 +1,9 @@
 "use strict";
 
+import rewriteMixins from  "../../mixins/rewrite";
 import NonTerminalNode from "../../nonTerminalNode";
 
-export default class IndirectlyReducedNode extends NonTerminalNode {
+class IndirectlyReducedNode extends NonTerminalNode {
   rewrite(state) {
     const nonTerminalNode = this; ///
 
@@ -15,11 +16,9 @@ export default class IndirectlyReducedNode extends NonTerminalNode {
     this.lift();
   }
 
-  simplifyChildNodes(state) {
-    this.forEachChildNode((childNode) => {
-      childNode.simplify(state);
-    });
-  }
-
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(IndirectlyReducedNode, ruleName, childNodes, precedence, opacity); }
 }
+
+Object.assign(IndirectlyReducedNode.prototype, rewriteMixins);
+
+export default IndirectlyReducedNode;

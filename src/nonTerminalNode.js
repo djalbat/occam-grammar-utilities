@@ -63,18 +63,6 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
     return unprecedencted;
   }
 
-  lift() {
-    const parentNode = this.getParentNode(),
-          precedence = this.getPrecedence(),
-          childNodes = this.removeChildNodes(),
-          replacedChildNode = this,  ///
-          replacementChildNodes = childNodes; ///
-
-    parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
-
-    parentNode.setPrecedence(precedence);
-  }
-
   remove() {
     const parentNode = this.getParentNode(),
           removedChildNode = this;  ///

@@ -1,10 +1,11 @@
 "use strict";
 
+import rewriteMixins from  "../mixins/rewrite";
 import NonTerminalNode from "../nonTerminalNode";
 
 import { indirectRuleNameFromIntermediateRuleName } from "../utilities/ruleName";
 
-export default class IntermediateNode extends NonTerminalNode {
+class IntermediateNode extends NonTerminalNode {
   rewrite(state) {
     const nonTerminalNode = this; ///
 
@@ -93,35 +94,18 @@ export default class IntermediateNode extends NonTerminalNode {
     parentNode.addChildNodes(addedChildNodes, startIndex);
   }
 
-  overwrite(state) {
-    let ruleName;
+  getBaseRuleName() {
+    const ruleName = this.getRuleName(),
+          intermediateRuleName = ruleName,  ///
+          indirectRuleName = indirectRuleNameFromIntermediateRuleName(intermediateRuleName),
+          baseRuleName = indirectRuleName;  ///
 
-    ruleName = this.getRuleName();
-
-    const intermediateRuleName = ruleName,  ///
-          indirectRuleName = indirectRuleNameFromIntermediateRuleName(intermediateRuleName);
-
-    ruleName = indirectRuleName;  ///
-
-    const opacity = this.getOpacity(),
-          precedence = this.getPrecedence(),
-          parentNode = this.getParentNode(),
-          childNodes = this.removeChildNodes(),
-          nonTerminalNode = state.createNonTerminalNode(ruleName, childNodes, precedence, opacity),
-          replacedChildNode = this, ///
-          replacementChildNode = nonTerminalNode,
-          replacementChildNodes = [
-            replacementChildNode
-          ];
-
-    parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
-  }
-
-  simplifyChildNodes(state) {
-    this.forEachChildNode((childNode) => {
-      childNode.simplify(state);
-    });
+    return baseRuleName;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(IntermediateNode, ruleName, childNodes, precedence, opacity); }
 }
+
+Object.assign(IntermediateNode.prototype, rewriteMixins);
+
+export default IntermediateNode;

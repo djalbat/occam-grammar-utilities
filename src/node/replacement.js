@@ -1,10 +1,10 @@
 "use strict";
 
+import State from "../state";
+import rewriteMixins from  "../mixins/rewrite";
 import NonTerminalNode from "../nonTerminalNode";
 
-import State from "../state";
-
-export default class ReplacementNode extends NonTerminalNode {
+class ReplacementNode extends NonTerminalNode {
   rewrite(state) {
     let nonTerminalNode;
 
@@ -29,15 +29,25 @@ export default class ReplacementNode extends NonTerminalNode {
 
   simplify(state) {
     this.simplifyChildNodes(state);
+
+    this.liftSingleChildNode();
   }
 
-  simplifyChildNodes(state) {
-    const topmost = true;
+  liftSingleChildNode() {
+    const singleChildNode = this.getSingleChildNode(),
+          precedence = singleChildNode.getPrecedence(),
+          childNodes = singleChildNode.removeChildNodes(),
+          replacedChildNode = singleChildNode, ///
+          replacementChildNodes = childNodes; ///
 
-    this.forEachChildNode((childNode) => {
-      childNode.simplify(state, topmost);
-    });
+    this.setPrecedence(precedence);
+
+    this.replaceChildNode(replacedChildNode, replacementChildNodes);
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ReplacementNode, ruleName, childNodes, precedence, opacity); }
 }
+
+Object.assign(ReplacementNode.prototype, rewriteMixins);
+
+export default ReplacementNode;
