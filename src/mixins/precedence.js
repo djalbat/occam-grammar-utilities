@@ -415,18 +415,18 @@ function forEachChildNonTerrminalNode(callback) {
   });
 }
 
-function removeAllButLastChildNode() {
+function removeAllButFirstChildNode() {
   const multiplicity = this.getMultiplicity(),
-        startIndex = 0,
+        startIndex = 1,
         deleteCount = (multiplicity - 1),
         removedChildNodes = this.spliceChildNodes(startIndex, deleteCount);
 
   return removedChildNodes;
 }
 
-function removeAllButFirstChildNode() {
+function removeAllButLastChildNode() {
   const multiplicity = this.getMultiplicity(),
-        startIndex = 1,
+        startIndex = 0,
         deleteCount = (multiplicity - 1),
         removedChildNodes = this.spliceChildNodes(startIndex, deleteCount);
 
@@ -461,8 +461,8 @@ const precedenceMixins = {
   retrieveIrrelevantDescendantNode,
   getSingleChildNonTerminalNode,
   forEachChildNonTerrminalNode,
-  removeAllButLastChildNode,
   removeAllButFirstChildNode,
+  removeAllButLastChildNode,
   createNonTerminalNode
 };
 

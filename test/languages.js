@@ -10,7 +10,183 @@ const { adjustedBNFFromRules } = require("./helpers/bnf");
 const { rulesFromBNF } = parserUtilities,
       { compareParseTreeStrings } = testUtilities;
 
-describe.skip("Languages", () => {
+describe("Languages", () => {
+  describe("Nonimal", () => {
+    describe("term", () => {
+      let bnf = `
+
+        term  ::=  argument ( "÷" (-99)
+        
+                            | "×" (-99)
+                            
+                            | "+" (-98)
+                            
+                            | "-" (-98) ) \` argument
+                            
+                |  argument<NO_WHITESPACE>argument (-101)
+                
+                |  "(" argument ")"
+                
+                |  variable
+                
+                ;
+                                                   
+    argument  ::=  term ( ) 
+    
+                |  type ( )
+                                           
+                ;
+
+    variable  ::=  . ; 
+
+        type  ::=  . ; 
+
+      `;
+
+      let rules;
+
+      before(() => {
+        rules = rulesFromBNF(bnf);
+
+        rules = eliminateLeftRecursion(rules);  ///
+
+        const adjustedBNF = adjustedBNFFromRules(rules);
+
+        bnf = adjustedBNF;  ///
+      });
+
+      it("is rewritten", () => {
+        assert.isTrue(compareParseTreeStrings(bnf, `
+
+          term            ::= _term ;
+          
+          argument        ::= _argument ;
+          
+          variable        ::= . ;
+          
+          type            ::= . ;
+          
+          _term           ::= term_ term~*
+              
+                            | argument_term_ term~+
+          
+                            ;
+          
+          _argument       ::= _term ( )
+              
+                            | type ( )
+          
+                            ;
+          
+          term_           ::= "(" _argument ")"
+              
+                            | variable
+          
+                            ;
+          
+          term~           ::= argument~term_1
+              
+                            | argument~term_2 (-101)
+          
+                            ;
+          
+          argument_term_  ::= type ( ) ;
+          
+          argument~term_1 ::= ( "÷" (-99) | "×" (-99) | "+" (-98) | "-" (-98) ) \` _argument ( ) ;
+          
+          argument~term_2 ::= <NO_WHITESPACE> _argument ( ) ;
+
+       `));
+      });
+    });
+
+    describe("statemet", () => {
+      let bnf = `
+
+        statement  ::=  "¬"<NO_WHITESPACE>metaArgument (10)
+        
+                     |  metaArgument ( "∧" (-9) 
+                    
+                                     | "∨" (-8) 
+                                    
+                                     | "⇒" (-7) 
+                                    
+                                     | "⇐" (-7) 
+                                    
+                                     | "𝗂𝖿𝖿" (-6) ) \` metaArgument
+                    
+                     |  "(" metaArgument ")" 
+                                        
+                     |  metavariable
+        
+                     ;
+                                             
+     metaArgument  ::=  statement ( ) 
+
+                     |  metaType ( ) 
+                                     
+                     ;
+                                       
+     metavariable  ::=  . ;
+                                       
+         metaType  ::=  . ;
+                                       
+      `;
+
+      let rules;
+
+      before(() => {
+        rules = rulesFromBNF(bnf);
+
+        rules = eliminateLeftRecursion(rules);  ///
+
+        const adjustedBNF = adjustedBNFFromRules(rules);
+
+        bnf = adjustedBNF;  ///
+      });
+
+      it("is rewritten", () => {
+        assert.isTrue(compareParseTreeStrings(bnf, `
+                  
+          statement               ::= _statement ;
+          
+          metaArgument            ::= _metaArgument ;
+          
+          metavariable            ::= . ;
+          
+          metaType                ::= . ;
+          
+          _statement              ::= statement_ statement~*
+              
+                                    | metaArgument_statement_ statement~+
+          
+                                    ;
+          
+          _metaArgument           ::= _statement ( )
+              
+                                    | metaType ( )
+          
+                                    ;
+          
+          statement_              ::= "¬" <NO_WHITESPACE> _metaArgument (10)
+              
+                                    | "(" _metaArgument ")"
+              
+                                    | metavariable
+          
+                                    ;
+          
+          statement~              ::= metaArgument~statement ;
+          
+          metaArgument_statement_ ::= metaType ( ) ;
+          
+          metaArgument~statement  ::= ( "∧" (-9) | "∨" (-8) | "⇒" (-7) | "⇐" (-7) | "𝗂𝖿𝖿" (-6) ) \` _metaArgument ( ) ;
+          
+        `));
+      });
+    });
+  })
+
   describe("Furtle", () => {
     let bnf = `
 
@@ -446,7 +622,7 @@ describe.skip("Languages", () => {
         ~comparisonTerm       ::= ( "==" | "!=" ) \` _term ;
         
         ~logicalTerm          ::= ( "||" | "&&" ) \` _term ;
-        
+
       `));
     });
   });
@@ -959,117 +1135,4 @@ describe.skip("Languages", () => {
      `));
     });
   });
-
-  describe.skip("Nonimal", () => {
-    describe("term", () => {
-      let bnf = `
-
-        term  ::=  argument ( "÷" (-99)
-        
-                            | "×" (-99)
-                            
-                            | "+" (-98)
-                            
-                            | "-" (-98) ) \` argument
-                            
-                |  argument<NO_WHITESPACE>argument (-101)
-                
-                |  "(" argument ")"
-                
-                |  variable
-                
-                ;
-                                                   
-    argument  ::=  term ( ) 
-    
-                |  type ( )
-                                           
-                ;
-
-    variable  ::=  . ; 
-
-        type  ::=  . ; 
-
-      `;
-
-      let rules;
-
-      before(() => {
-        rules = rulesFromBNF(bnf);
-
-        rules = eliminateLeftRecursion(rules);  ///
-
-        const adjustedBNF = adjustedBNFFromRules(rules);
-
-        bnf = adjustedBNF;  ///
-      });
-
-      it("is rewritten", () => {
-        assert.isTrue(compareParseTreeStrings(bnf, `
-
-
-       `));
-      });
-    });
-
-    describe("statemet", () => {
-      let bnf = `
-
-        statement  ::=  "¬"<NO_WHITESPACE>metaArgument (10)
-        
-                     |  metaArgument ( "∧" (-9) 
-                    
-                                     | "∨" (-8) 
-                                    
-                                     | "⇒" (-7) 
-                                    
-                                     | "⇐" (-7) 
-                                    
-                                     | "𝗂𝖿𝖿" (-6) ) \` metaArgument
-                    
-                     |  "(" metaArgument ")" 
-                    
-                     |  equality
-                    
-                     |  typeAssertion 
-                    
-                     |  definedAssertion  
-                    
-                     |  containedAssertion  
-                    
-                     |  signatureAssertion
-                    
-                     |  subproofAssertion         
-                    
-                     |  propertyAssertion  
-                    
-                     |  metavariable termSubstitution?
-        
-                     ;
-                                             
-     metaArgument  ::=  statement ( ) 
-
-                     |  metaType ( ) 
-                                     
-                     ;
-                                       
-      `;
-
-      let rules;
-
-      before(() => {
-        rules = rulesFromBNF(bnf);
-
-        rules = eliminateLeftRecursion(rules);  ///
-
-        const adjustedBNF = adjustedBNFFromRules(rules);
-
-        bnf = adjustedBNF;  ///
-      });
-
-      it("is rewritten", () => {
-        assert.isTrue(compareParseTreeStrings(bnf, ``));
-      });
-    });
-  })
 });
