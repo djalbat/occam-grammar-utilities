@@ -9,15 +9,28 @@ import { intermediateRulesFromCycleAndCycles } from "../rule/intermediate";
 import { indirectlyReducedRulesFromCycleAndCycles } from "../rule/reduced/indirectly";
 import { indirectlyRepeatedRulesFromCycleAndCycles } from "../rule/repeated/indirectly";
 
-export function replaceOrRemoveRules(cycles, ruleMap) {
-  const removedRules = [],
-        replacementRules = [];
+export function rewriteRules(context) {
+  createRewrittenRules(context);
 
-  cycles.forEach((cycle) => {
-    removedRulesFromCycleAndCycles(cycle, cycles, ruleMap, removedRules);
+  createReducedRules(context);
 
-    replacementRulesFromCycleAndCycles(cycle, cycles, ruleMap, replacementRules);
-  });
+  createRepeatedRules(context);
+
+  createIndirectlyReducedRules(context);
+
+  createIndirectlyRepeatedRules(context);
+
+  createIntermediateRules(context);
+
+  createRemoevedRules(context);
+
+  createReplacementRules(context);
+}
+
+export function replaceOrRemoveRules(context) {
+  const ruleMap = context.getRuleMap(),
+        removedRules = context.getRemovedRules(),
+        replacementRules = context.getReplacementRules();
 
   removedRules.forEach((removedRule) => {
     const removedRuleName = removedRule.getName(),
@@ -34,81 +47,82 @@ export function replaceOrRemoveRules(cycles, ruleMap) {
   });
 }
 
-export function createReducedRules(cycles, ruleMap) {
-  cycles.forEach((cycle) => {
-    const reducedRules = reducedRulesFromCycleAndCycles(cycle, cycles, ruleMap);
+function createReducedRules(context) {
+  const ruleMap = context.getRuleMap(),
+        reducedRules = reducedRulesFromCycleAndCycles(context);
 
-    reducedRules.forEach((reducedRule) => {
-      const reducedRuleName = reducedRule.getName();
+  reducedRules.forEach((reducedRule) => {
+    const reducedRuleName = reducedRule.getName();
 
-      ruleMap[reducedRuleName] = reducedRule;
-    });
+    ruleMap[reducedRuleName] = reducedRule;
   });
 }
 
-export function createRepeatedRules(cycles, ruleMap) {
-  cycles.forEach((cycle) => {
-    const repeatedRules = repeatedRulesFromCycleAndcycles(cycle, cycles, ruleMap);
+function createRepeatedRules(context) {
+  const ruleMap = context.getRuleMap(),
+        repeatedRules = repeatedRulesFromCycleAndcycles(context);
 
-    repeatedRules.forEach((repeatedRule) => {
-      const repeatedRuleName = repeatedRule.getName();
+  repeatedRules.forEach((repeatedRule) => {
+    const repeatedRuleName = repeatedRule.getName();
 
-      ruleMap[repeatedRuleName] = repeatedRule;
-    });
+    ruleMap[repeatedRuleName] = repeatedRule;
   });
 }
 
-export function createRewrittenRules(cycles, ruleMap) {
-  cycles.forEach((cycle) => {
-    const rewrittenRules = rewrittenRulesFromCycleAndCycles(cycle, cycles, ruleMap);
+function createRewrittenRules(context) {
+  const ruleMap = context.getRuleMap(),
+        rewrittenRules = rewrittenRulesFromCycleAndCycles(context);
 
-    rewrittenRules.map((rewrittenRule) => {
-      const rewrittenRuleName = rewrittenRule.getName(),
-            rewrittenRuleA = rewrittenRule, ///
-            rewrittenRuleB = ruleMap[rewrittenRuleName] || null;  ///
+  rewrittenRules.map((rewrittenRule) => {
+    const rewrittenRuleName = rewrittenRule.getName(),
+          rewrittenRuleA = rewrittenRule, ///
+          rewrittenRuleB = ruleMap[rewrittenRuleName] || null;  ///
 
-      rewrittenRule = (rewrittenRuleB !== null) ?
-                        rewrittenRuleB.mergedWith(rewrittenRuleA) :
-                          rewrittenRuleA;
+    rewrittenRule = (rewrittenRuleB !== null) ?
+                      rewrittenRuleB.mergedWith(rewrittenRuleA) :
+                        rewrittenRuleA;
 
-      ruleMap[rewrittenRuleName] = rewrittenRule;
-    });
+    ruleMap[rewrittenRuleName] = rewrittenRule;
   });
 }
 
-export function createIntermediateRules(cycles, ruleMap) {
-  cycles.forEach((cycle) => {
-    const intermediateRules = intermediateRulesFromCycleAndCycles(cycle, cycles, ruleMap);
+function createIntermediateRules(context) {
+  const ruleMap = context.getRuleMap(),
+        intermediateRules = intermediateRulesFromCycleAndCycles(context);
 
-    intermediateRules.forEach((intermediateRule) => {
-      const intermediatedRuleName = intermediateRule.getName();
+  intermediateRules.forEach((intermediateRule) => {
+    const intermediatedRuleName = intermediateRule.getName();
 
-      ruleMap[intermediatedRuleName] = intermediateRule;
-    });
+    ruleMap[intermediatedRuleName] = intermediateRule;
   });
 }
 
-export function createIndirectlyReducedRules(cycles, ruleMap) {
-  cycles.forEach((cycle) => {
-    const indirectlyReducedRules = indirectlyReducedRulesFromCycleAndCycles(cycle, cycles, ruleMap);
+function createIndirectlyReducedRules(context) {
+  const ruleMap = context.getRuleMap(),
+        indirectlyReducedRules = indirectlyReducedRulesFromCycleAndCycles(context);
 
-    indirectlyReducedRules.forEach((indirectlyReducedRule) => {
-      const indirectlyReducedRuleName = indirectlyReducedRule.getName();
+  indirectlyReducedRules.forEach((indirectlyReducedRule) => {
+    const indirectlyReducedRuleName = indirectlyReducedRule.getName();
 
-      ruleMap[indirectlyReducedRuleName] = indirectlyReducedRule;
-    });
+    ruleMap[indirectlyReducedRuleName] = indirectlyReducedRule;
   });
 }
 
-export function createIndirectlyRepeatedRules(cycles, ruleMap) {
-  cycles.forEach((cycle) => {
-    const indirectlyRepeatedRules = indirectlyRepeatedRulesFromCycleAndCycles(cycle, cycles, ruleMap);
+function createIndirectlyRepeatedRules(context) {
+  const ruleMap = context.getRuleMap(),
+        indirectlyRepeatedRules = indirectlyRepeatedRulesFromCycleAndCycles(context);
 
-    indirectlyRepeatedRules.forEach((indirectlyRepeatedRule) => {
-      const indirectlyRepeatedRuleName = indirectlyRepeatedRule.getName();
+  indirectlyRepeatedRules.forEach((indirectlyRepeatedRule) => {
+    const indirectlyRepeatedRuleName = indirectlyRepeatedRule.getName();
 
-      ruleMap[indirectlyRepeatedRuleName] = indirectlyRepeatedRule;
-    });
+    ruleMap[indirectlyRepeatedRuleName] = indirectlyRepeatedRule;
   });
 }
 
+function createReplacementRules(context) {
+  replacementRulesFromCycleAndCycles(context);
+}
+
+function createRemoevedRules(context) {
+  removedRulesFromCycleAndCycles(context);
+}

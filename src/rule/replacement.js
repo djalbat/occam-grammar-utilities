@@ -5,8 +5,8 @@ import { Rule } from "occam-parsers";
 import ReplacementNode from "../node/replacement";
 import ReplacementDefinition from "../definition/replacement";
 
+import { isCycleIndirectlyRepeated } from "./repeated/indirectly";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
-import { isRuleIndirectlyRepeated } from "./repeated/indirectly";
 import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 
 export default class ReplacementRule extends Rule {
@@ -31,8 +31,12 @@ export default class ReplacementRule extends Rule {
   }
 }
 
-export function replacementRulesFromCycleAndCycles(cycle, cycles, ruleMap, replacementRules = []) {
-  const cycleLength = cycle.getLength(),
+export function replacementRulesFromCycleAndCycles(context) {
+  const cycle = context.getCycle(),
+        cycles = context.getCycles(),
+        ruleMap = context.getRuleMap(),
+        replacementRules = context.getReplacementRules(),
+        cycleLength = cycle.getLength(),
         ruleName = ruleNameFromCycle(cycle);
 
   switch (cycleLength) {
@@ -49,7 +53,7 @@ export function replacementRulesFromCycleAndCycles(cycle, cycles, ruleMap, repla
 
       replacementRules.push(replacementRule);
 
-      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(cycle, cycles, ruleMap);
+      const ruleIndirectlyRepeated = isCycleIndirectlyRepeated(context);
 
       if (!ruleIndirectlyRepeated) {
         const indirectRuleName = indirectRuleNameFromCycle(cycle),

@@ -9,11 +9,10 @@ import IndirectlyRewrittenDefinition from "../definition/rewritten/indirectly";
 
 import { rewriteRuleNameParts } from "../utilities/rewrite";
 import { isIndirectRuleReducible } from "./reduced/indirectly";
-import { isRuleIndirectlyRepeated } from "../rule/repeated/indirectly";
+import { isCycleIndirectlyRepeated } from "../rule/repeated/indirectly";
 import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 import { isDefinitionIndirectlyRepeatable } from "../rule/repeated/indirectly";
-import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 
 const { first, front } = arrayUtilities;
 
@@ -46,44 +45,10 @@ export default class RewrittenRule extends Rule {
     return rewrittenRule;
   }
 
-  static fromRuleName(ruleName, ruleMap) {
-    const rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap),
-          rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
-          name = rewrittenRuleName, ///
-          opacity = null,
-          definitions = [
-            rewrittenDefinition
-          ],
-          rewrittenRule = new RewrittenRule(name, opacity, definitions);
-
-    return rewrittenRule;
-  }
-
-  static fromRuleNameCycleAndCycles(ruleName, cycle, cycles, ruleMap) {
-    let definitions = [];
-
-    const rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap);
-
-    definitions.push(rewrittenDefinition);
-
-    const indirectRuleReducible = isIndirectRuleReducible(cycle, cycles, ruleMap);
-
-    if (indirectRuleReducible) {
-      const indirectlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromCycle(cycle, ruleMap);
-
-      definitions.push(indirectlyRewrittenDefinition);
-    }
-
-    const rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
-          name = rewrittenRuleName, ///
-          opacity = null,
-          rewrittenRule = new RewrittenRule(name, opacity, definitions);
-
-    return rewrittenRule;
-  }
-
-  static fromIndirectRuleNameAndCycle(indirectRuleName, cycle, ruleMap) {
-    const indirectRule = ruleMap[indirectRuleName];
+  static fromIndirectRuleName(indirectRuleName, context) {
+    const cycle = context.getCycle(),
+          ruleMap = context.getRuleMap(),
+          indirectRule = ruleMap[indirectRuleName];
 
     let definitions;
 
@@ -112,8 +77,53 @@ export default class RewrittenRule extends Rule {
     return rewrittenRule;
   }
 
-  static fromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap) {
-    const ruleName = rule.getName(),
+  static fromDirectlyRepeatedDirectCycle(directlyRepeatedDirectCycle, context) {
+    const ruleName = context.getRuleName(),
+          rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, context),
+          rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
+          name = rewrittenRuleName, ///
+          opacity = null,
+          definitions = [
+            rewrittenDefinition
+          ],
+          rewrittenRule = new RewrittenRule(name, opacity, definitions);
+
+    return rewrittenRule;
+  }
+
+  static fromDirectlyRepeatedIndirectCycle(directlyRepeatedIndirectcycle, context) {
+    let definitions = [];
+
+    const cycle = context.getCycle(),
+          cycles = context.getCycles(),
+          ruleMap = context.getRuleMap(),
+          ruleName = context.getRuleName(),
+          rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap);
+
+    definitions.push(rewrittenDefinition);
+
+    const indirectRuleReducible = isIndirectRuleReducible(cycle, cycles, ruleMap);
+
+    if (indirectRuleReducible) {
+      const indirectlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromCycle(cycle, ruleMap);
+
+      definitions.push(indirectlyRewrittenDefinition);
+    }
+
+    const rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
+          name = rewrittenRuleName, ///
+          opacity = null,
+          rewrittenRule = new RewrittenRule(name, opacity, definitions);
+
+    return rewrittenRule;
+  }
+
+  static fromIndirectlyRepetaedIndirectCycle(indirectlyRepeatedIndirectCycle, context) {
+    const rule = context.getRule(),
+          cycles = context.getCycles(),
+          ruleMap = context.getRuleMap(),
+          ruleName = context.getRuleName(),
+          indirectRuleName = context.getIndirectRuleName(),
           rewrittenDefinitions = rewrittenDDefinitionsFromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap),
           singular = true,
           rewrittenDefintion = RewrittenDefinition.fromRuleName(ruleName, singular, ruleMap);
@@ -130,15 +140,17 @@ export default class RewrittenRule extends Rule {
   }
 }
 
-export function rewrittenRulesFromCycleAndCycles(cycle, cycles, ruleMap, rewrittenRules = []) {
-  const cycleLength = cycle.getLength(),
-        ruleName = ruleNameFromCycle(cycle);
+export function rewrittenRulesFromCycleAndCycles(context, rewrittenRules = []) {
+  const cycleLength = context.getCycleLength();
 
   let rewrittenRule;
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
-      rewrittenRule = RewrittenRule.fromRuleName(ruleName, ruleMap);
+      const cycle = context.getCycle(),
+            directlyRepeatedDirectCycle = cycle;  ///
+
+      rewrittenRule = RewrittenRule.fromDirectlyRepeatedDirectCycle(directlyRepeatedDirectCycle, context);
 
       rewrittenRules.push(rewrittenRule);
 
@@ -146,23 +158,25 @@ export function rewrittenRulesFromCycleAndCycles(cycle, cycles, ruleMap, rewritt
     }
 
     case CYCLE_LENGTH_2: {
-      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(cycle, cycles, ruleMap);
+      const cycleIndirectlyRepeated = isCycleIndirectlyRepeated(context);
 
-      if (ruleIndirectlyRepeated) {
-        const rule = ruleMap[ruleName],
-              indirectRuleName = indirectRuleNameFromCycle(cycle);
+      if (cycleIndirectlyRepeated) {
+        const cycle = context.getCycle(),
+              indirectlyRepeatedIndirectCycle = cycle;  ///
 
-        rewrittenRule = RewrittenRule.fromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap);
+        rewrittenRule = RewrittenRule.fromIndirectlyRepetaedIndirectCycle(indirectlyRepeatedIndirectCycle, context);
 
         rewrittenRules.push(rewrittenRule);
       } else {
-        rewrittenRule = RewrittenRule.fromRuleNameCycleAndCycles(ruleName, cycle, cycles, ruleMap);
+        const cycle = context.getCycle(),
+              indirectRuleName = context.getIndirectRuleName(),
+              directlyRepeatedIndirectCycle = cycle;  ///
+
+        rewrittenRule = RewrittenRule.fromDirectlyRepeatedIndirectCycle(directlyRepeatedIndirectCycle, context);
 
         rewrittenRules.push(rewrittenRule);
 
-        const indirectRuleName = indirectRuleNameFromCycle(cycle);
-
-        rewrittenRule = RewrittenRule.fromIndirectRuleNameAndCycle(indirectRuleName, cycle, ruleMap);
+        rewrittenRule = RewrittenRule.fromIndirectRuleName(indirectRuleName, context);
 
         rewrittenRules.push(rewrittenRule);
       }

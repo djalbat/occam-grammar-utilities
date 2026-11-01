@@ -50,14 +50,18 @@ export default class IndirectlyRepeatedRule extends Rule {
   }
 }
 
-export function indirectlyRepeatedRulesFromCycleAndCycles(cycle, cycles, ruleMap, indirectlyRepeatedRules = []) {
-  const cycleLength = cycle.getLength();
+export function indirectlyRepeatedRulesFromCycleAndCycles(context) {
+  const cycle = context.getCycle(),
+        cycles = context.getCycles(),
+        ruleMap = context.getRuleMap(),
+        cycleLength = cycle.getLength(),
+        indirectlyRepeatedRules = [];
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(cycle, cycles, ruleMap);
+      const cycleIndirectlyRepeated = isCycleIndirectlyRepeated(context);
 
-      if (ruleIndirectlyRepeated) {
+      if (cycleIndirectlyRepeated) {
         const indirectRuleName = indirectRuleNameFromCycle(cycle),
               indirectRule = ruleMap[indirectRuleName],
               indirectlyRepeatedRule = IndirectlyRepeatedRule.fromIndirectRuleCycleAndCycles(indirectRule, cycle, cycles, ruleMap);
@@ -93,10 +97,13 @@ export function isDefinitionIndirectlyRepeatable(definition, indirectRuleName, c
   return definitionIndirectlyRepeatable;
 }
 
-export function isRuleIndirectlyRepeated(cycle, cycles, ruleMap) {
-  let ruleIndirectlyRepeated = false;
+export function isCycleIndirectlyRepeated(context) {
+  let cycleIndirectlyRepeated = false;
 
-  const ruleName = ruleNameFromCycle(cycle),
+  const cycle = context.getCycle(),
+        cycles = context.getCycles(),
+        ruleMap = context.getRuleMap(),
+        ruleName = ruleNameFromCycle(cycle),
         rule = ruleMap[ruleName];
 
   let definitions;
@@ -114,10 +121,10 @@ export function isRuleIndirectlyRepeated(cycle, cycles, ruleMap) {
   });
 
   if (definitionsIndirectlyRepeated) {
-    ruleIndirectlyRepeated = true;
+    cycleIndirectlyRepeated = true;
   }
 
-  return ruleIndirectlyRepeated;
+  return cycleIndirectlyRepeated;
 }
 
 function isDefinitionIndirectlyRepeated(definition) {

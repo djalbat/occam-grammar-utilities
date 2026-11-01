@@ -72,8 +72,11 @@ export default class ReducedRule extends Rule {
   }
 }
 
-export function reducedRulesFromCycleAndCycles(cycle, cycles, ruleMap, reducedRules = []) {
-  const cycleLength = cycle.getLength();
+export function reducedRulesFromCycleAndCycles(context, reducedRules = []) {
+  const cycle = context.getCycle(),
+        cycles = context.getCycles(),
+        ruleMap = context.getRuleMap(),
+        cycleLength = cycle.getLength();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {

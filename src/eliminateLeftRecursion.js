@@ -4,17 +4,12 @@ import { arrayUtilities } from "necessary";
 import { rulesUtilities } from "occam-parsers";
 
 import Graph from "./graph";
+import Context from "./context";
 
 import { edgesFromStartRule } from "./utilities/edge";
 import { LEFT_RECURSIVE_LABEL } from "./labels";
 import { leftRecursiveRuleNamesFromRule } from "./utilities/leftRecursion";
-import { replaceOrRemoveRules,
-         createReducedRules,
-         createRepeatedRules,
-         createRewrittenRules,
-         createIntermediateRules,
-         createIndirectlyReducedRules,
-         createIndirectlyRepeatedRules } from "./utilities/rules";
+import { rewriteRules, replaceOrRemoveRules } from "./utilities/rules";
 
 const { filter } = arrayUtilities,
       { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
@@ -25,19 +20,15 @@ export default function eliminateLeftRecursion(rules) {
         ruleNamesMap = ruleNamesMapFromNothing(ruleMap),
         cycles = cyclesFromStartRule(startRule, ruleMap, ruleNamesMap);
 
-  createRewrittenRules(cycles, ruleMap);
+  let context = Context.fromCyclesAndRuleMap(cycles, ruleMap);
 
-  createReducedRules(cycles, ruleMap);
+  cycles.forEach((cycle) => {
+    context = Context.fromCycle(cycle, context);
 
-  createRepeatedRules(cycles, ruleMap);
+    rewriteRules(context);
+  });
 
-  createIndirectlyReducedRules(cycles, ruleMap);
-
-  createIndirectlyRepeatedRules(cycles, ruleMap);
-
-  createIntermediateRules(cycles, ruleMap);
-
-  replaceOrRemoveRules(cycles, ruleMap);
+  replaceOrRemoveRules(context);
 
   rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap); ///
 

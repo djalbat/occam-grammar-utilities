@@ -49,8 +49,12 @@ export function isIndirectRuleReducible(cycle, cycles, ruleMap) {
   return indirectRuleReducible;
 }
 
-export function indirectlyReducedRulesFromCycleAndCycles(cycle, cycles, ruleMap, indirectlyReducedRules = []) {
-  const cycleLength = cycle.getLength();
+export function indirectlyReducedRulesFromCycleAndCycles(context) {
+  const cycle = context.getCycle(),
+        cycles = context.getCycles(),
+        ruleMap = context.getRuleMap(),
+        cycleLength = cycle.getLength(),
+        indirectlyReducedRules = [];
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {

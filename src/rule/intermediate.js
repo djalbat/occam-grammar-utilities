@@ -7,7 +7,7 @@ import RepeatedDefinition from "../definition/repeated";
 
 import { CYCLE_LENGTH_2 } from "../constants";
 import { filterDefinitions } from "../rule/repeated";
-import { isRuleIndirectlyRepeated } from "../rule/repeated/indirectly";
+import { isCycleIndirectlyRepeated } from "../rule/repeated/indirectly";
 import { isDefinitionIndirectlyRepeatable } from "../rule/repeated/indirectly";
 import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
 import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber } from "../utilities/ruleName";
@@ -50,14 +50,18 @@ export default class IntermediateRule extends Rule {
   }
 }
 
-export function intermediateRulesFromCycleAndCycles(cycle, cycles, ruleMap, intermediateRules = []) {
-  const cycleLength = cycle.getLength();
+export function intermediateRulesFromCycleAndCycles(context) {
+  const cycle = context.getCycle(),
+        cycles = context.getCycles(),
+        ruleMap = context.getRuleMap(),
+        cycleLength = cycle.getLength(),
+        intermediateRules = [];
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(cycle, cycles, ruleMap);
+      const cycleIndirectlyRepeated = isCycleIndirectlyRepeated(context);
 
-      if (!ruleIndirectlyRepeated) {
+      if (!cycleIndirectlyRepeated) {
         const definitions = definitionsFromCycleAndCycles(cycle, cycles, ruleMap),
               definitionsLength = definitions.length;
 

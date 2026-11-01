@@ -7,7 +7,7 @@ import RepeatedDefinition from "../definition/repeated";
 import IntermediateRepeatedDefinition from "../definition/repeated/intermediate";
 
 import { isDefinitionRepeatable } from "../utilities/definition";
-import { isRuleIndirectlyRepeated } from "../rule/repeated/indirectly";
+import { isCycleIndirectlyRepeated } from "../rule/repeated/indirectly";
 import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 import { indirectRuleNameFromDefinition } from "../definition//repeated/intermediate";
@@ -84,9 +84,13 @@ export function filterDefinitions(definitions, cycle, cycles, ruleMap) {
   return definitions;
 }
 
-export function repeatedRulesFromCycleAndcycles(cycle, cycles, ruleMap, repeatedRules = []) {
-  const cycleLength = cycle.getLength(),
-        ruleName = ruleNameFromCycle(cycle);
+export function repeatedRulesFromCycleAndcycles(context) {
+  const cycle = context.getCycle(),
+        cycles = context.getCycles(),
+        ruleMap = context.getRuleMap(),
+        cycleLength = cycle.getLength(),
+        ruleName = ruleNameFromCycle(cycle),
+        repeatedRules = [];
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
@@ -98,9 +102,9 @@ export function repeatedRulesFromCycleAndcycles(cycle, cycles, ruleMap, repeated
     }
 
     case CYCLE_LENGTH_2: {
-      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(cycle, cycles, ruleMap);
+      const cycleIndirectlyRepeated = isCycleIndirectlyRepeated(context);
 
-      if (!ruleIndirectlyRepeated) {
+      if (!cycleIndirectlyRepeated) {
         const repeatedRule = RepeatedRule.fromCycleAndCycles(cycle, cycles, ruleMap);
 
         repeatedRules.push(repeatedRule);

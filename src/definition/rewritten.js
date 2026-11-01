@@ -7,9 +7,9 @@ import { reducedRuleNameFromRuleName, repeatedRuleNameFromRuleName, indirectlyRe
 const { RuleNamePart, OneOrMorePartsPart, ZeroOrMorePartsPart } = Parts;
 
 export default class RewrittenDefinition extends Definition {
-  static fromRuleName(ruleName, singular, ruleMap) {
-    if (ruleMap === undefined) {
-      ruleMap = singular; ///
+  static fromRuleName(ruleName, singular, context) {
+    if (context === undefined) {
+      context = singular; ///
 
       singular = false;
     }
