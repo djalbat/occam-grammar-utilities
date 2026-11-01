@@ -1,37 +1,12 @@
 "use strict";
 
-import { Parts, Definition } from "occam-parsers";
+import { Definition } from "occam-parsers";
 
 import { rewriteRuleNameParts } from "../../utilities/rewrite";
 import { isDefinitionReducible } from "../../utilities/definition";
-import { isIndirectRuleReducible } from "../../rule/reduced/indirectly";
-import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../../utilities/cycle";
-import { indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName } from "../../utilities/ruleName";
-
-const { RuleNamePart } = Parts;
+import { indirectRuleNameFromCycle } from "../../utilities/cycle";
 
 export default class IndirectlyReducedDefinition extends Definition {
-  static fromCycleAndCycles(cycle, cycles, ruleMap) {
-    let indirectlyReducedDefinition = null;
-
-    const indirectRuleReducible = isIndirectRuleReducible(cycle, cycles, ruleMap);
-
-    if (indirectRuleReducible) {
-      const ruleName = ruleNameFromCycle(cycle),
-            indirectRuleName = indirectRuleNameFromCycle(cycle),
-            indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
-            indirectlyReducedRuleNamePart = RuleNamePart.fromRuleName(indirectlyReducedRuleName),
-            parts = [
-              indirectlyReducedRuleNamePart
-            ],
-            precedence = null;
-
-      indirectlyReducedDefinition = new IndirectlyReducedDefinition(parts, precedence);
-    }
-
-    return indirectlyReducedDefinition;
-  }
-
   static fromDefinitionCycleAndCycles(definition, cycle, cycles, ruleMap) {
     let indirectlyReducedDefinition = null;
 

@@ -25,18 +25,6 @@ export default class ReducedNode extends NonTerminalNode {
     this.overwrite(state);
   }
 
-  lift() {
-    const parentNode = this.getParentNode(),
-          precedence = this.getPrecedence(),
-          childNodes = this.removeChildNodes(),
-          replacedChildNode = this,  ///
-          replacementChildNodes = childNodes; ///
-
-    parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
-
-    parentNode.setPrecedence(precedence);
-  }
-
   overwrite(state) {
     const parentNode = this.getParentNode();
 

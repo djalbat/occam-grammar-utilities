@@ -4,7 +4,6 @@ import { Rule } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
 import ReducedDefinition from "../definition/reduced";
-import IndirectlyReducedDefinition from "../definition/reduced/indirectly";
 
 import { ruleNameFromCycle } from "../utilities/cycle";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
@@ -32,14 +31,6 @@ export default class ReducedRule extends Rule {
       const ruleString = rule.asString();
 
       throw new Error(`The '${ruleString}' rule has no reduced definitions.`);
-    }
-
-    const indirectlyReducedDefinition = IndirectlyReducedDefinition.fromCycleAndCycles(cycle, cycles, ruleMap);
-
-    if (indirectlyReducedDefinition !== null) {
-      const reducedDefintion = indirectlyReducedDefinition; ///
-
-      reducedDefinitions.unshift(reducedDefintion);
     }
 
     const reducedRuleName = reducedRuleNameFromRuleName(ruleName),

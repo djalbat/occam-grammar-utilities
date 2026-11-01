@@ -45,12 +45,11 @@ export function replacementRulesFromCycleAndCycles(cycle, cycles, ruleMap, repla
     }
 
     case CYCLE_LENGTH_2: {
-      const rule = ruleMap[ruleName],
-            replacementRule = ReplacementRule.fromRuleName(ruleName, ruleMap);
+      const replacementRule = ReplacementRule.fromRuleName(ruleName, ruleMap);
 
       replacementRules.push(replacementRule);
 
-      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap);
+      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(cycle, cycles, ruleMap);
 
       if (!ruleIndirectlyRepeated) {
         const indirectRuleName = indirectRuleNameFromCycle(cycle),

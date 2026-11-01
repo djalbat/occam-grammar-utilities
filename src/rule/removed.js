@@ -4,7 +4,7 @@ import { Rule } from "occam-parsers";
 
 import { CYCLE_LENGTH_2 } from "../constants";
 import { isRuleIndirectlyRepeated } from "./repeated/indirectly";
-import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
+import { indirectRuleNameFromCycle } from "../utilities/cycle";
 
 export default class RemovedRule extends Rule {
   static fromIndirectRuleName(indirectRuleName, ruleMap) {
@@ -22,9 +22,7 @@ export function removedRulesFromCycleAndCycles(cycle, cycles, ruleMap, removedRu
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const ruleName = ruleNameFromCycle(cycle),
-            rule = ruleMap[ruleName],
-            ruleIndirectlyRepeated = isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap);
+      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(cycle, cycles, ruleMap);
 
       if (ruleIndirectlyRepeated) {
         const indirectRuleName = indirectRuleNameFromCycle(cycle),

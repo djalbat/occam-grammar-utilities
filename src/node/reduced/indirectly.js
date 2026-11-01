@@ -10,7 +10,15 @@ export default class IndirectlyReducedNode extends NonTerminalNode {
   }
 
   simplify(state) {
-    debugger
+    this.simplifyChildNodes(state);
+
+    this.lift();
+  }
+
+  simplifyChildNodes(state) {
+    this.forEachChildNode((childNode) => {
+      childNode.simplify(state);
+    });
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(IndirectlyReducedNode, ruleName, childNodes, precedence, opacity); }

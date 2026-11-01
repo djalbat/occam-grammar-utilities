@@ -55,9 +55,7 @@ export function intermediateRulesFromCycleAndCycles(cycle, cycles, ruleMap, inte
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const ruleName = ruleNameFromCycle(cycle),
-            rule = ruleMap[ruleName],
-            ruleIndirectlyRepeated = isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap);
+      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(cycle, cycles, ruleMap);
 
       if (!ruleIndirectlyRepeated) {
         const definitions = definitionsFromCycleAndCycles(cycle, cycles, ruleMap),

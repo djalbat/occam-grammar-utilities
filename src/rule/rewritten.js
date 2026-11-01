@@ -5,8 +5,10 @@ import { Rule, Definition } from "occam-parsers";
 
 import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
+import IndirectlyRewrittenDefinition from "../definition/rewritten/indirectly";
 
 import { rewriteRuleNameParts } from "../utilities/rewrite";
+import { isIndirectRuleReducible } from "./reduced/indirectly";
 import { isRuleIndirectlyRepeated } from "../rule/repeated/indirectly";
 import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
@@ -47,12 +49,34 @@ export default class RewrittenRule extends Rule {
   static fromRuleName(ruleName, ruleMap) {
     const rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap),
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
-          definition = rewrittenDefinition, ///
           name = rewrittenRuleName, ///
           opacity = null,
           definitions = [
-            definition
+            rewrittenDefinition
           ],
+          rewrittenRule = new RewrittenRule(name, opacity, definitions);
+
+    return rewrittenRule;
+  }
+
+  static fromRuleNameCycleAndCycles(ruleName, cycle, cycles, ruleMap) {
+    let definitions = [];
+
+    const rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap);
+
+    definitions.push(rewrittenDefinition);
+
+    const indirectRuleReducible = isIndirectRuleReducible(cycle, cycles, ruleMap);
+
+    if (indirectRuleReducible) {
+      const indirectlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromCycle(cycle, ruleMap);
+
+      definitions.push(indirectlyRewrittenDefinition);
+    }
+
+    const rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
+          name = rewrittenRuleName, ///
+          opacity = null,
           rewrittenRule = new RewrittenRule(name, opacity, definitions);
 
     return rewrittenRule;
@@ -122,17 +146,17 @@ export function rewrittenRulesFromCycleAndCycles(cycle, cycles, ruleMap, rewritt
     }
 
     case CYCLE_LENGTH_2: {
-      const rule = ruleMap[ruleName],
-            ruleIndirectlyRepeated = isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap);
+      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(cycle, cycles, ruleMap);
 
       if (ruleIndirectlyRepeated) {
-        const indirectRuleName = indirectRuleNameFromCycle(cycle);
+        const rule = ruleMap[ruleName],
+              indirectRuleName = indirectRuleNameFromCycle(cycle);
 
         rewrittenRule = RewrittenRule.fromRuleIndirectRuleNameAndCycles(rule, indirectRuleName, cycles, ruleMap);
 
         rewrittenRules.push(rewrittenRule);
       } else {
-        rewrittenRule = RewrittenRule.fromRuleName(ruleName, ruleMap);
+        rewrittenRule = RewrittenRule.fromRuleNameCycleAndCycles(ruleName, cycle, cycles, ruleMap);
 
         rewrittenRules.push(rewrittenRule);
 

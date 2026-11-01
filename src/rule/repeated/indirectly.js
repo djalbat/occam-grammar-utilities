@@ -55,9 +55,7 @@ export function indirectlyRepeatedRulesFromCycleAndCycles(cycle, cycles, ruleMap
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const ruleName = ruleNameFromCycle(cycle),
-            rule = ruleMap[ruleName],
-            ruleIndirectlyRepeated = isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap);
+      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(cycle, cycles, ruleMap);
 
       if (ruleIndirectlyRepeated) {
         const indirectRuleName = indirectRuleNameFromCycle(cycle),
@@ -95,8 +93,11 @@ export function isDefinitionIndirectlyRepeatable(definition, indirectRuleName, c
   return definitionIndirectlyRepeatable;
 }
 
-export function isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap) {
+export function isRuleIndirectlyRepeated(cycle, cycles, ruleMap) {
   let ruleIndirectlyRepeated = false;
+
+  const ruleName = ruleNameFromCycle(cycle),
+        rule = ruleMap[ruleName];
 
   let definitions;
 

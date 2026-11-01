@@ -3373,7 +3373,7 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-        
+                
         S     ::= ( T ... <END_OF_LINE> ) ;
         
         T     ::= _T ;
@@ -3384,7 +3384,11 @@ describe("Rewrites", () => {
         
         Y     ::= /[a-z]/ ;
         
-        _T    ::= T_ T~* ;
+        _T    ::= T_ T~*
+            
+                | A_T_ T~+
+        
+                ;
         
         _A    ::= _T ( )
             
@@ -3392,11 +3396,7 @@ describe("Rewrites", () => {
         
                 ;
         
-        T_    ::= A_T_
-            
-                | V
-        
-                ;
+        T_    ::= V ;
         
         T~    ::= A~T_1 (-90)
             
@@ -3408,9 +3408,292 @@ describe("Rewrites", () => {
         
         A~T_1 ::= "+" \` _A ( ) ;
         
-        A~T_2 ::= <NO_WHITESPACE> _A ( ) ;        
+        A~T_2 ::= <NO_WHITESPACE> _A ( ) ; 
 
      `));
+    });
+
+    describe("content with one numeric token", () => {
+      const content = `1
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+          
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+                 T [0]        <END_OF_LINE>
+                   |                       
+                 V [0]                     
+                   |                       
+          "1"[unassigned] [0]              
+
+       `));
+      });
+    });
+
+    describe("content with two numeric tokens", () => {
+      const content = `1 + 2
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                    
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                  T [0] (-90)                         <END_OF_LINE>
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+               A [0] ( )      "+"[unassigned] [0]      A [0] ( )                   
+                   |                                       |                       
+                 T [0]                                   T [0]                     
+                   |                                       |                       
+                 V [0]                                   V [0]                     
+                   |                                       |                       
+          "1"[unassigned] [0]                     "2"[unassigned] [0]              
+
+       `));
+      });
+    });
+
+    describe("content with one numeric token followed by one character tokwn", () => {
+      const content = `1 + a
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                    
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                  T [0] (-90)                         <END_OF_LINE>
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+               A [0] ( )      "+"[unassigned] [0]      A [0] ( )                   
+                   |                                       |                       
+                 T [0]                                   Y [0]                     
+                   |                                       |                       
+                 V [0]                            "a"[unassigned] [0]              
+                   |                                                               
+          "1"[unassigned] [0]                                                      
+
+       `));
+      });
+    });
+
+    describe("content with one character token followed by one numeric tokwn", () => {
+      const content = `a + 2
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                              
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                  T [0] (-90)                         <END_OF_LINE>
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+               A [0] ( )      "+"[unassigned] [0]      A [0] ( )                   
+                   |                                       |                       
+                 Y [0]                                   T [0]                     
+                   |                                       |                       
+          "a"[unassigned] [0]                            V [0]                     
+                                                           |                       
+                                                  "2"[unassigned] [0]              
+
+       `));
+      });
+    });
+
+    describe("content with two character tokens followed by one numeric tokwn", () => {
+      const content = `a + b + 2
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                        
+                                                                                           S [0]                           
+                                                                                             |                             
+                                                                     ------------------------------------------------      
+                                                                     |                                              |      
+                                                                T [0] (-90)                                   <END_OF_LINE>
+                                                                     |                                                     
+                                       -------------------------------------------------------------                       
+                                       |                                       |                   |                       
+                                   A [0] ( )                          "+"[unassigned] [0]      A [0] ( )                   
+                                       |                                                           |                       
+                                  T [0] (-90)                                                    T [0]                     
+                                       |                                                           |                       
+                   -----------------------------------------                                     V [0]                     
+                   |                   |                   |                                       |                       
+               A [0] ( )      "+"[unassigned] [0]      A [0] ( )                          "2"[unassigned] [0]              
+                   |                                       |                                                               
+                 Y [0]                                   Y [0]                                                             
+                   |                                       |                                                               
+          "a"[unassigned] [0]                     "b"[unassigned] [0]                                                      
+
+       `));
+      });
+    });
+
+    describe("content with one character token followed by two numeric tokwns", () => {
+      const content = `a + 1 + 2
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                        
+                                                                                           S [0]                           
+                                                                                             |                             
+                                                                     ------------------------------------------------      
+                                                                     |                                              |      
+                                                                T [0] (-90)                                   <END_OF_LINE>
+                                                                     |                                                     
+                                       -------------------------------------------------------------                       
+                                       |                                       |                   |                       
+                                   A [0] ( )                          "+"[unassigned] [0]      A [0] ( )                   
+                                       |                                                           |                       
+                                  T [0] (-90)                                                    T [0]                     
+                                       |                                                           |                       
+                   -----------------------------------------                                     V [0]                     
+                   |                   |                   |                                       |                       
+               A [0] ( )      "+"[unassigned] [0]      A [0] ( )                          "2"[unassigned] [0]              
+                   |                                       |                                                               
+                 Y [0]                                   T [0]                                                             
+                   |                                       |                                                               
+          "a"[unassigned] [0]                            V [0]                                                             
+                                                           |                                                               
+                                                  "1"[unassigned] [0]                                                      
+
+       `));
+      });
+    });
+
+    describe("content with one character token followed by one numeric tokwn and one character token", () => {
+      const content = `a + 1 + b
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                        
+                                                                                           S [0]                           
+                                                                                             |                             
+                                                                     ------------------------------------------------      
+                                                                     |                                              |      
+                                                                T [0] (-90)                                   <END_OF_LINE>
+                                                                     |                                                     
+                                       -------------------------------------------------------------                       
+                                       |                                       |                   |                       
+                                   A [0] ( )                          "+"[unassigned] [0]      A [0] ( )                   
+                                       |                                                           |                       
+                                  T [0] (-90)                                                    Y [0]                     
+                                       |                                                           |                       
+                   -----------------------------------------                              "b"[unassigned] [0]              
+                   |                   |                   |                                                               
+               A [0] ( )      "+"[unassigned] [0]      A [0] ( )                                                           
+                   |                                       |                                                               
+                 Y [0]                                   T [0]                                                             
+                   |                                       |                                                               
+          "a"[unassigned] [0]                            V [0]                                                             
+                                                           |                                                               
+                                                  "1"[unassigned] [0]                                                      
+
+       `));
+      });
     });
   });
 });

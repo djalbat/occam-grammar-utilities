@@ -98,8 +98,7 @@ export function repeatedRulesFromCycleAndcycles(cycle, cycles, ruleMap, repeated
     }
 
     case CYCLE_LENGTH_2: {
-      const rule = ruleMap[ruleName],
-            ruleIndirectlyRepeated = isRuleIndirectlyRepeated(rule, cycle, cycles, ruleMap);
+      const ruleIndirectlyRepeated = isRuleIndirectlyRepeated(cycle, cycles, ruleMap);
 
       if (!ruleIndirectlyRepeated) {
         const repeatedRule = RepeatedRule.fromCycleAndCycles(cycle, cycles, ruleMap);
