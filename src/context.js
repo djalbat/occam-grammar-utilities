@@ -65,6 +65,18 @@ export default class Context {
     return cycleLength;
   }
 
+  getIndirectRule() {
+    let indirectRule = null;
+
+    const indirectRuleName = this.getIndirectRuleName();
+
+    if (indirectRuleName !== null) {
+      indirectRule = this.ruleMap[indirectRuleName];
+    }
+
+    return indirectRule;
+  }
+
   getIndirectRuleName() {
     let indirectRuleName = null;
 
@@ -75,6 +87,10 @@ export default class Context {
     }
 
     return indirectRuleName;
+  }
+
+  permuteCycle() {
+    this.cycle = this.cycle.permuted();
   }
 
   static fromCycle(cycle, context) {

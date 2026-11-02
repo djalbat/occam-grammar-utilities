@@ -6,12 +6,9 @@ import RepeatedNode from "../node/repeated";
 import RepeatedDefinition from "../definition/repeated";
 import IntermediateRepeatedDefinition from "../definition/repeated/intermediate";
 
-import { isDefinitionRepeatable } from "../utilities/definition";
-import { isCycleIndirectlyRepeated } from "../rule/repeated/indirectly";
 import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
-import { indirectRuleNameFromDefinition } from "../definition//repeated/intermediate";
-import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
+import { filterDefinitions, isCycleIndirectlyRepeated } from "../utilities/cycle";
 
 export default class RepeatedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -20,23 +17,12 @@ export default class RepeatedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromCycleAndCycles(cycle, cycles, ruleMap) {
-    const ruleName = ruleNameFromCycle(cycle),
-          rule = ruleMap[ruleName],
+  static fromDirectlyRepeatedDirectCycle(directlyRepeatedDirectCycle, context) {
+    const rule = context.getRule(),
+          cycle = context.getCycle(),
+          ruleName = context.getRuleName(),
+          repeatedDefinitions = repeatedDefinitionsFromCycle(cycle, context),
           repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
-          intermediateRepeatedDefinitions = intermediateRepeatedDefinitionsFromCycleAndCycles(cycle, cycles, ruleMap),
-          name = repeatedRuleName, ///
-          opacity = rule.getOpacity(),
-          definitions = intermediateRepeatedDefinitions,  ///
-          repeatedRule = new RepeatedRule(name, opacity, definitions);
-
-    return repeatedRule;
-  }
-
-  static fromRuleNameCycleAndCycles(ruleName, cycle, cycles, ruleMap) {
-    const repeatedDefinitions = repeatedDefinitionsFromCycleAndCycles(cycle, cycles, ruleMap),
-          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
-          rule = ruleMap[ruleName],
           name = repeatedRuleName, ///
           opacity = rule.getOpacity(),
           definitions = repeatedDefinitions,  ///
@@ -44,57 +30,48 @@ export default class RepeatedRule extends Rule {
 
     return repeatedRule;
   }
+
+  static fromDirectlyRepeatedIndirectCycle(directlyRepeatedIndirectCycle, context) {
+    const rule = context.getRule(),
+          cycle = context.getCycle(),
+          ruleName = context.getRuleName(),
+          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+          intermediateRepeatedDefinitions = intermediateRepeatedDefinitionsFromCycle(cycle, context),
+          name = repeatedRuleName, ///
+          opacity = rule.getOpacity(),
+          definitions = intermediateRepeatedDefinitions,  ///
+          repeatedRule = new RepeatedRule(name, opacity, definitions);
+
+    return repeatedRule;
+  }
 }
 
-export function filterDefinitions(definitions, cycle, cycles, ruleMap) {
-  const ruleName = ruleNameFromCycle(cycle);
+export function repeatedDefinitionsFromCycle(cycle, context) {
+  const rule = context.getRule();
 
-  definitions = definitions.filter((definition) => {
-    const definitionLeftRepeatable = isDefinitionRepeatable(definition, ruleName, cycles, ruleMap);
+  let definitions;
 
-    if (definitionLeftRepeatable) {
-      return true;
-    }
+  definitions = rule.getDefinitions();
+
+  definitions = filterDefinitions(definitions, context); ///
+
+  const repeatedDefinitions = definitions.map((definition) => {
+    const repeatedDefinition = RepeatedDefinition.fromDefinition(definition, context);
+
+    return repeatedDefinition;
   });
 
-  const cycleLength = cycle.getLength();
-
-  if (cycleLength === CYCLE_LENGTH_2) {
-    const indirectRuleName = indirectRuleNameFromCycle(cycle),
-          indirectRuleNameA = indirectRuleName; ///
-
-    definitions = definitions.filter((definition) => {
-      const indirectRuleName = indirectRuleNameFromDefinition(definition),
-            indirectRuleNameB = indirectRuleName; ///
-
-      if (indirectRuleNameA === indirectRuleNameB) {
-        return true;
-      }
-    });
-  }
-
-  const definitionsLength = definitions.length;
-
-  if (definitionsLength === 0) {
-    const ruleString = ruleName;  ///
-
-    throw new Error(`The '${ruleString}' rule has no repeated definitions.`);
-  }
-
-  return definitions;
+  return repeatedDefinitions;
 }
 
-export function repeatedRulesFromCycleAndcycles(context) {
+export function repeatedRulesFromCycleAndCycles(context, repeatedRules = []) {
   const cycle = context.getCycle(),
-        cycles = context.getCycles(),
-        ruleMap = context.getRuleMap(),
-        cycleLength = cycle.getLength(),
-        ruleName = ruleNameFromCycle(cycle),
-        repeatedRules = [];
+        cycleLength = context.getCycleLength();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
-      const repeatedRule = RepeatedRule.fromRuleNameCycleAndCycles(ruleName, cycle, cycles, ruleMap);
+      const directlyRepeatedDirectCycle = cycle,  ///
+            repeatedRule = RepeatedRule.fromDirectlyRepeatedDirectCycle(directlyRepeatedDirectCycle, context);
 
       repeatedRules.push(repeatedRule);
 
@@ -105,7 +82,8 @@ export function repeatedRulesFromCycleAndcycles(context) {
       const cycleIndirectlyRepeated = isCycleIndirectlyRepeated(context);
 
       if (!cycleIndirectlyRepeated) {
-        const repeatedRule = RepeatedRule.fromCycleAndCycles(cycle, cycles, ruleMap);
+        const directlyRepeatedIndirectCycle = cycle,  ///
+              repeatedRule = RepeatedRule.fromDirectlyRepeatedIndirectCycle(directlyRepeatedIndirectCycle, context);
 
         repeatedRules.push(repeatedRule);
       }
@@ -117,34 +95,14 @@ export function repeatedRulesFromCycleAndcycles(context) {
   return repeatedRules;
 }
 
-export function repeatedDefinitionsFromCycleAndCycles(cycle, cycles, ruleMap) {
-  const ruleName = ruleNameFromCycle(cycle),
-        rule = ruleMap[ruleName];
+function intermediateRepeatedDefinitionsFromCycle(cycle, context) {
+  const rule = context.getRule();
 
   let definitions;
 
   definitions = rule.getDefinitions();
 
-  definitions = filterDefinitions(definitions, cycle, cycles, ruleMap); ///
-
-  const repeatedDefinitions = definitions.map((definition) => {
-    const repeatedDefinition = RepeatedDefinition.fromDefinitionAndCycle(definition, cycle, ruleMap);
-
-    return repeatedDefinition;
-  });
-
-  return repeatedDefinitions;
-}
-
-function intermediateRepeatedDefinitionsFromCycleAndCycles(cycle, cycles, ruleMap) {
-  const ruleName = ruleNameFromCycle(cycle),
-        rule = ruleMap[ruleName];
-
-  let definitions;
-
-  definitions = rule.getDefinitions();
-
-  definitions = filterDefinitions(definitions, cycle, cycles, ruleMap); ///
+  definitions = filterDefinitions(definitions, context); ///
 
   definitions = definitions.filter((definition) => {
     const parts = definition.getParts(),
@@ -155,12 +113,13 @@ function intermediateRepeatedDefinitionsFromCycleAndCycles(cycle, cycles, ruleMa
     }
   });
 
-  const definitionsLength = definitions.length,
+  const ruleName = context.getRuleName(),
+        definitionsLength = definitions.length,
         intermediateRepeatedDefinitions = definitions.map((definition, index) => {
           const number = index + 1,
                 intermediateRepeatedDefinition = (definitionsLength === 1) ?
-                                                   IntermediateRepeatedDefinition.fromDefinitionAndRuleName(definition, ruleName, ruleMap) :
-                                                     IntermediateRepeatedDefinition.fromDefinitionRuleNameAndNumber(definition, ruleName, number, ruleMap);
+                                                   IntermediateRepeatedDefinition.fromDefinitionAndRuleName(definition, ruleName, context) :
+                                                     IntermediateRepeatedDefinition.fromDefinitionRuleNameAndNumber(definition, ruleName, number, context);
 
           return intermediateRepeatedDefinition;
         });

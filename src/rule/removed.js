@@ -3,12 +3,12 @@
 import { Rule } from "occam-parsers";
 
 import { CYCLE_LENGTH_2 } from "../constants";
-import { isCycleIndirectlyRepeated } from "./repeated/indirectly";
-import { indirectRuleNameFromCycle } from "../utilities/cycle";
+import { isCycleIndirectlyRepeated } from "../utilities/cycle";
 
 export default class RemovedRule extends Rule {
-  static fromIndirectRuleName(indirectRuleName, ruleMap) {
-    const name = indirectRuleName, ///
+  static fromIndirectlyRepeatedIndirectCycle(indirectlyRepeatedIndirectCycle, context) {
+    const indirectRuleName = context.getIndirectRuleName(),
+          name = indirectRuleName, ///
           opacity = null,
           definitions = [],
           removedRule = new RemovedRule(name, opacity, definitions);
@@ -19,18 +19,16 @@ export default class RemovedRule extends Rule {
 
 export function removedRulesFromCycleAndCycles(context) {
   const cycle = context.getCycle(),
-        cycles = context.getCycles(),
-        ruleMap = context.getRuleMap(),
-        removedRules = context.getRemovedRules(),
-        cycleLength = cycle.getLength();
+        cycleLength = context.getCycleLength(),
+        removedRules = context.getRemovedRules();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
       const cycleIndirectlyRepeated = isCycleIndirectlyRepeated(context);
 
       if (cycleIndirectlyRepeated) {
-        const indirectRuleName = indirectRuleNameFromCycle(cycle),
-              removedRule = RemovedRule.fromIndirectRuleName(indirectRuleName, ruleMap);
+        const indirectlyRepeatedIndirectCycle = cycle,  ///
+              removedRule = RemovedRule.fromIndirectlyRepeatedIndirectCycle(indirectlyRepeatedIndirectCycle, context);
 
         removedRules.push(removedRule);
       }

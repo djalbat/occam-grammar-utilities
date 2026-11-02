@@ -1,15 +1,14 @@
 "use strict";
 
 import { Definition } from "occam-parsers";
-import { arrayUtilities } from "necessary";
 
-import { rewriteRuleNameParts } from "../utilities/rewrite";
-
-const { tail } = arrayUtilities;
+import { tailPartsfromDefinition, isDefinitionConsuming } from "../utilities/definition";
 
 export default class RepeatedDefinition extends Definition {
-  static fromDefinitionAndCycle(definition, cycle, ruleMap) {
-    const parts = partsfromDefinitionAndCycle(definition, cycle),
+  static fromDefinition(definition, context) {
+    const tailParts = tailPartsfromDefinition(definition, context),
+          parts = tailParts,  ///
+          ruleMap = context.getRuleMap(),
           precedence = definition.getPrecedence(),
           repeatedDefinition = new RepeatedDefinition(parts, precedence);
 
@@ -18,31 +17,14 @@ export default class RepeatedDefinition extends Definition {
     return repeatedDefinition;
   }
 
-  static fromDefinitionCycleAndPrecedence(definition, cycle, precedence, ruleMap) {
-    const parts = partsfromDefinitionAndCycle(definition, cycle),
+  static fromDefinitionAndPrecedence(definition, precedence, context) {
+    const tailParts = tailPartsfromDefinition(definition, context),
+          parts = tailParts,  ///
+          ruleMap = context.getRuleMap(),
           repeatedDefinition = new RepeatedDefinition(parts, precedence);
 
     isDefinitionConsuming(repeatedDefinition, ruleMap);
 
     return repeatedDefinition;
   }
-}
-
-export function partsfromDefinitionAndCycle(definition, cycle) {
-  let parts = definition.getParts();
-
-  const tailParts = tail(parts);
-
-  parts = tailParts;  ///
-
-  parts = rewriteRuleNameParts(parts, cycle); ///
-
-  return parts;
-}
-
-export function isDefinitionConsuming(definition, ruleMap) {
-  const visitedRules = [],
-        checkForCutParts = true;
-
-  definition.isConsuming(ruleMap, visitedRules, checkForCutParts);
 }

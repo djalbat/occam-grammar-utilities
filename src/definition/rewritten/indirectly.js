@@ -1,21 +1,19 @@
 "use strict";
 
-import { Parts, Definition } from "occam-parsers";
+import { Definition } from "occam-parsers";
 
-import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../../utilities/cycle";
+import { ruleNamePartFromRuleName, oneOrMorePartsPartFromPart } from "../../utilities/part";
 import { repeatedRuleNameFromRuleName, indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName } from "../../utilities/ruleName";
 
-const { RuleNamePart, OneOrMorePartsPart } = Parts;
-
 export default class IndirectlyRewrittenDefinition extends Definition {
-  static fromCycle(cycle, ruleMap) {
-    const ruleName = ruleNameFromCycle(cycle),
-          indirectRuleName = indirectRuleNameFromCycle(cycle),
+  static fromCycle(cycle, context) {
+    const ruleName = context.getRuleName(),
+          indirectRuleName = context.getIndirectRuleName(),
           indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
           indirectlyReducedRuleNamePart = ruleNamePartFromRuleName(indirectlyReducedRuleName),
           repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
           repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
-          oneOrMoreRepeatedRuleNamePartPart = OneOrMorePartsPart.fromPart(repeatedRuleNamePart),
+          oneOrMoreRepeatedRuleNamePartPart = oneOrMorePartsPartFromPart(repeatedRuleNamePart),
           parts = [
             indirectlyReducedRuleNamePart,
             oneOrMoreRepeatedRuleNamePartPart
@@ -25,10 +23,4 @@ export default class IndirectlyRewrittenDefinition extends Definition {
 
     return indirectlyRewrittenDefinition;
   }
-}
-
-function ruleNamePartFromRuleName(ruleName) {
-  const ruleNamePart = RuleNamePart.fromRuleName(ruleName);
-
-  return ruleNamePart;
 }

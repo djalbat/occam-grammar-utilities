@@ -5,7 +5,6 @@ import { Rule } from "occam-parsers";
 import ReducedNode from "../node/reduced";
 import ReducedDefinition from "../definition/reduced";
 
-import { ruleNameFromCycle } from "../utilities/cycle";
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 
@@ -16,15 +15,14 @@ export default class ReducedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromCycleAndCycles(cycle, cycles, ruleMap) {
-    const ruleName = ruleNameFromCycle(cycle),
-          rule = ruleMap[ruleName];
+  static fromDirectlyReducedDirectCycle(directlyReducedDirectCycle, context) {
+    const rule = context.getRule();
 
     let definitions;
 
     definitions = rule.getDefinitions();
 
-    const reducedDefinitions = filterDefinitions(definitions, cycle, cycles, ruleMap),
+    const reducedDefinitions = filterDefinitions(definitions, context),
           reducedDefinitionsLength = reducedDefinitions.length;
 
     if (reducedDefinitionsLength === 0) {
@@ -33,7 +31,8 @@ export default class ReducedRule extends Rule {
       throw new Error(`The '${ruleString}' rule has no reduced definitions.`);
     }
 
-    const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+    const ruleName = context.getRuleName(),
+          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           name = reducedRuleName, ///
           opacity = null;
 
@@ -44,14 +43,14 @@ export default class ReducedRule extends Rule {
     return reducedRule;
   }
 
-  static fromRuleNameCycleAndCycles(ruleName, cycle, cycles, ruleMap) {
-    const rule = ruleMap[ruleName];
+  static fromDirectlyReducedIndirectCycle(directlyReducedIndirectCycle, context) {
+    const rule = context.getRule();
 
     let definitions;
 
     definitions = rule.getDefinitions();
 
-    const reducedDefinitions = filterDefinitions(definitions, cycle, cycles, ruleMap),
+    const reducedDefinitions = filterDefinitions(definitions, context),
           reducedDefinitionsLength = reducedDefinitions.length;
 
     if (reducedDefinitionsLength === 0) {
@@ -60,7 +59,8 @@ export default class ReducedRule extends Rule {
       throw new Error(`The '${ruleString}' rule has no reduced definitions.`);
     }
 
-    const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+    const ruleName = context.getRuleName(),
+          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           name = reducedRuleName, ///
           opacity = null;
 
@@ -74,14 +74,12 @@ export default class ReducedRule extends Rule {
 
 export function reducedRulesFromCycleAndCycles(context, reducedRules = []) {
   const cycle = context.getCycle(),
-        cycles = context.getCycles(),
-        ruleMap = context.getRuleMap(),
-        cycleLength = cycle.getLength();
+        cycleLength = context.getCycleLength();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
-      const ruleName = ruleNameFromCycle(cycle),
-            reducedRule = ReducedRule.fromRuleNameCycleAndCycles(ruleName, cycle, cycles, ruleMap);
+      const directlyReducedDirectCycle = cycle,  ///
+            reducedRule = ReducedRule.fromDirectlyReducedDirectCycle(directlyReducedDirectCycle, context);
 
       reducedRules.push(reducedRule);
 
@@ -89,7 +87,8 @@ export function reducedRulesFromCycleAndCycles(context, reducedRules = []) {
     }
 
     case CYCLE_LENGTH_2: {
-      const reducedRule = ReducedRule.fromCycleAndCycles(cycle, cycles, ruleMap);
+      const directlyReducedIndirectCycle = cycle,  ///
+            reducedRule = ReducedRule.fromDirectlyReducedIndirectCycle(directlyReducedIndirectCycle, context);
 
       reducedRules.push(reducedRule);
 
@@ -100,9 +99,9 @@ export function reducedRulesFromCycleAndCycles(context, reducedRules = []) {
   return reducedRules;
 }
 
-function filterDefinitions(definitions, cycle, cycles, ruleMap) {
+function filterDefinitions(definitions, context) {
   const reducedDefinitions = definitions.reduce((reducedDefinitions, definition) => {
-    const reducedDefinition = ReducedDefinition.fromDefinitionCycleAndCycles(definition, cycle, cycles, ruleMap);
+    const reducedDefinition = ReducedDefinition.fromDefinition(definition, context);
 
     if (reducedDefinition !== null) {
       reducedDefinitions.push(reducedDefinition);

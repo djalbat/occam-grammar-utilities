@@ -1,10 +1,9 @@
 "use strict";
 
-import { Parts, Definition } from "occam-parsers";
+import { Definition } from "occam-parsers";
 
+import { ruleNamePartFromRuleName, oneOrMorePartsPartFromPart, zeroOrMorePartsPartFromPart } from "../utilities/part";
 import { reducedRuleNameFromRuleName, repeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromIndirectRuleName } from "../utilities/ruleName";
-
-const { RuleNamePart, OneOrMorePartsPart, ZeroOrMorePartsPart } = Parts;
 
 export default class RewrittenDefinition extends Definition {
   static fromRuleName(ruleName, singular, context) {
@@ -23,7 +22,7 @@ export default class RewrittenDefinition extends Definition {
     if (!singular) {
       const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
             repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
-            zeroOrMoreRepeatedRuleNamePartPart = ZeroOrMorePartsPart.fromPart(repeatedRuleNamePart);
+            zeroOrMoreRepeatedRuleNamePartPart = zeroOrMorePartsPartFromPart(repeatedRuleNamePart);
 
       parts.push(zeroOrMoreRepeatedRuleNamePartPart);
     }
@@ -34,26 +33,19 @@ export default class RewrittenDefinition extends Definition {
     return rewrittenDefinition;
   }
 
-  static fromDefiniitonRuleNameAndIndirectRuleName(definition, ruleName, indirectRuleName, ruleMap) {
+  static fromDefiniitonRuleNameAndIndirectRuleName(definition, ruleName, indirectRuleName, context) {
     const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName),
           indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName),
-          repeatedRuleNamePart = indirectlyRepeatedRuleNamePart,  ///
-          oneOrMoreRepeatedRuleNamePartPart = OneOrMorePartsPart.fromPart(repeatedRuleNamePart),
+          oneOrMoreIndirectlyRepeatedRuleNamePartPart = oneOrMorePartsPartFromPart(indirectlyRepeatedRuleNamePart),
           parts = [
             reducedRuleNamePart,
-            oneOrMoreRepeatedRuleNamePartPart
+            oneOrMoreIndirectlyRepeatedRuleNamePartPart
           ],
           precedence = definition.getPrecedence(),
           rewrittenDefinition = new RewrittenDefinition(parts, precedence);
 
     return rewrittenDefinition;
   }
-}
-
-function ruleNamePartFromRuleName(ruleName) {
-  const ruleNamePart = RuleNamePart.fromRuleName(ruleName);
-
-  return ruleNamePart;
 }

@@ -2,7 +2,7 @@
 
 import { removedRulesFromCycleAndCycles } from "../rule/removed";
 import { reducedRulesFromCycleAndCycles } from "../rule/reduced";
-import { repeatedRulesFromCycleAndcycles } from "../rule/repeated";
+import { repeatedRulesFromCycleAndCycles } from "../rule/repeated";
 import { rewrittenRulesFromCycleAndCycles } from "../rule/rewritten";
 import { replacementRulesFromCycleAndCycles } from "../rule/replacement";
 import { intermediateRulesFromCycleAndCycles } from "../rule/intermediate";
@@ -60,7 +60,7 @@ function createReducedRules(context) {
 
 function createRepeatedRules(context) {
   const ruleMap = context.getRuleMap(),
-        repeatedRules = repeatedRulesFromCycleAndcycles(context);
+        repeatedRules = repeatedRulesFromCycleAndCycles(context);
 
   repeatedRules.forEach((repeatedRule) => {
     const repeatedRuleName = repeatedRule.getName();

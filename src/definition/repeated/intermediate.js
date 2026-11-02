@@ -1,18 +1,16 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
-import { Parts, Definition } from "occam-parsers";
+import { Definition } from "occam-parsers";
 
+import { ruleNamePartFromRuleName } from "../../utilities/part";
+import { indirectRuleNameFromDefinition } from "../../utilities/definition";
 import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber } from "../../utilities/ruleName";
 
-const { first } = arrayUtilities,
-      { RuleNamePart } = Parts;
-
 export default class IntermediateRepeatedDefinition extends Definition {
-  static fromDefinitionAndRuleName(definition, ruleName, ruleMap) {
+  static fromDefinitionAndRuleName(definition, ruleName, context) {
     const indirectRuleName = indirectRuleNameFromDefinition(definition),
           intermediateRuleName = intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
-          intermediateRuleNameRuleNamePart = RuleNamePart.fromRuleName(intermediateRuleName),
+          intermediateRuleNameRuleNamePart = ruleNamePartFromRuleName(intermediateRuleName),
           parts = [
             intermediateRuleNameRuleNamePart
           ],
@@ -22,10 +20,10 @@ export default class IntermediateRepeatedDefinition extends Definition {
     return intermediateRepeatedDefinition;
   }
 
-  static fromDefinitionRuleNameAndNumber(definition, ruleName, number, ruleMap) {
+  static fromDefinitionRuleNameAndNumber(definition, ruleName, number, context) {
     const indirectRuleName = indirectRuleNameFromDefinition(definition),
           intermediateRuleName = intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber(ruleName, indirectRuleName, number),
-          intermediateRuleNameRuleNamePart = RuleNamePart.fromRuleName(intermediateRuleName),
+          intermediateRuleNameRuleNamePart = ruleNamePartFromRuleName(intermediateRuleName),
           parts = [
             intermediateRuleNameRuleNamePart
           ],
@@ -34,13 +32,4 @@ export default class IntermediateRepeatedDefinition extends Definition {
 
     return intermediateRepeatedDefinition;
   }
-}
-
-export function indirectRuleNameFromDefinition(definition) {
-  const parts = definition.getParts(),
-        firstPart = first(parts),
-        indirectRuleNamePart = firstPart, ///
-        indirectRuleName = indirectRuleNamePart.getRuleName();
-
-  return indirectRuleName;
 }

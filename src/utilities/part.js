@@ -2,14 +2,8 @@
 
 import { Parts, partTypes } from "occam-parsers";
 
-const { RuleNamePart } = Parts,
-      { RuleNamePartType } = partTypes;
-
-export function ruleNamePartFromRuleName(ruleName) {
-  const ruleNamePart = RuleNamePart.fromRuleName(ruleName);
-
-  return ruleNamePart;
-}
+const { RuleNamePartType } = partTypes,
+      { RuleNamePart, OneOrMorePartsPart, ZeroOrMorePartsPart } = Parts;
 
 export function isPartSimplePart(part) {
   let partSimplePart = false;
@@ -28,4 +22,22 @@ export function isPartSimplePart(part) {
   }
 
   return partSimplePart;
+}
+
+export function ruleNamePartFromRuleName(ruleName) {
+  const ruleNamePart = RuleNamePart.fromRuleName(ruleName);
+
+  return ruleNamePart;
+}
+
+export function oneOrMorePartsPartFromPart(part) {
+  const oneOrMorePartsPart = OneOrMorePartsPart.fromPart(part);
+
+  return oneOrMorePartsPart;
+}
+
+export function zeroOrMorePartsPartFromPart(part) {
+  const zeroOrMorePartsPart = ZeroOrMorePartsPart.fromPart(part);
+
+  return zeroOrMorePartsPart;
 }

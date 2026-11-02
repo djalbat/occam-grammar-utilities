@@ -6,7 +6,7 @@ import IndirectlyReducedNode from "../../node/reduced/indirectly";
 import IndirectlyReducedDefinition from "../../definition/reduced/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
-import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../../utilities/cycle";
+import { indirectRuleNameFromCycle } from "../../utilities/cycle";
 import { indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName } from "../../utilities/ruleName";
 
 export default class IndirectlyReducedRule extends Rule {
@@ -16,16 +16,17 @@ export default class IndirectlyReducedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromCycleAndCycles(cycle, cycles, ruleMap) {
-    const indirectRuleName = indirectRuleNameFromCycle(cycle),
-          indirectRule = ruleMap[indirectRuleName];
+  static fromIndirectlyReducibleIndirectCycle(indirectlyReducibleIndirectCycle, context) {
+    const cycle = context.getCycle(),
+          ruleName = context.getRuleName(),
+          indirectRule = context.getIndirectRule(),
+          indirectRuleName = context.getIndirectRuleName();
 
     let definitions;
 
     definitions = indirectRule.getDefinitions();
 
-    const indirectlyReducedDefinitions = filterDefinitions(definitions, cycle, cycles, ruleMap),
-          ruleName = ruleNameFromCycle(cycle),
+    const indirectlyReducedDefinitions = filterDefinitions(definitions, cycle, context),
           indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
           name = indirectlyReducedRuleName, ///
           opacity = null;
@@ -38,30 +39,29 @@ export default class IndirectlyReducedRule extends Rule {
   }
 }
 
-export function isIndirectRuleReducible(cycle, cycles, ruleMap) {
+export function isCycleIndirectlyReducible(cycle, context) {
   const indirectRuleName = indirectRuleNameFromCycle(cycle),
+        ruleMap = context.getRuleMap(),
         indirectRule = ruleMap[indirectRuleName],
         definitions = indirectRule.getDefinitions(),
-        indirectlyReducedDefinitions = filterDefinitions(definitions, cycle, cycles, ruleMap),
+        indirectlyReducedDefinitions = filterDefinitions(definitions, cycle, context),
         indirectlyReducedDefinitionsLength = indirectlyReducedDefinitions.length,
-        indirectRuleReducible = (indirectlyReducedDefinitionsLength > 0);
+        cycleIndirectlyReducible = (indirectlyReducedDefinitionsLength > 0);
 
-  return indirectRuleReducible;
+  return cycleIndirectlyReducible;
 }
 
-export function indirectlyReducedRulesFromCycleAndCycles(context) {
+export function indirectlyReducedRulesFromCycleAndCycles(context, indirectlyReducedRules = []) {
   const cycle = context.getCycle(),
-        cycles = context.getCycles(),
-        ruleMap = context.getRuleMap(),
-        cycleLength = cycle.getLength(),
-        indirectlyReducedRules = [];
+        cycleLength = context.getCycleLength();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const indirectRuleReducible = isIndirectRuleReducible(cycle, cycles, ruleMap);
+      const cycleIndirectlyReducible = isCycleIndirectlyReducible(cycle, context);
 
-      if (indirectRuleReducible) {
-        const indirectlyReducedRule = IndirectlyReducedRule.fromCycleAndCycles(cycle, cycles, ruleMap);
+      if (cycleIndirectlyReducible) {
+        const indirectlyReducibleIndirectCycle = cycle, ///
+              indirectlyReducedRule = IndirectlyReducedRule.fromIndirectlyReducibleIndirectCycle(indirectlyReducibleIndirectCycle, context);
 
         indirectlyReducedRules.push(indirectlyReducedRule);
       }
@@ -73,9 +73,9 @@ export function indirectlyReducedRulesFromCycleAndCycles(context) {
   return indirectlyReducedRules;
 }
 
-function filterDefinitions(definitions, cycle, cycles, ruleMap) {
+function filterDefinitions(definitions, cycle, context) {
   const indirectlyReducedDefinitions = definitions.reduce((indirectlyReducedDefinitions, definition) => {
-          const indirectlyReducedDefinition = IndirectlyReducedDefinition.fromDefinitionCycleAndCycles(definition, cycle, cycles, ruleMap);
+          const indirectlyReducedDefinition = IndirectlyReducedDefinition.fromDefinition(definition, context);
 
           if (indirectlyReducedDefinition !== null) {
             indirectlyReducedDefinitions.push(indirectlyReducedDefinition);

@@ -2,25 +2,18 @@
 
 import { Definition } from "occam-parsers";
 
-import { ruleNameFromCycle } from "../utilities/cycle";
-import { rewriteRuleNameParts } from "../utilities/rewrite";
-import { isDefinitionReducible } from "../utilities/definition";
+import { partsfromDefinition, isDefinitionReducible } from "../utilities/definition";
 
 export default class ReducedDefinition extends Definition {
-  static fromDefinitionCycleAndCycles(definition, cycle, cycles, ruleMap) {
+  static fromDefinition(definition, context) {
     let reducedDefinition = null;
 
-    const ruleName = ruleNameFromCycle(cycle),
-          definitionReducible = isDefinitionReducible(definition, ruleName, cycles, ruleMap);
+    const ruleName = context.getRuleName(),
+          definitionReducible = isDefinitionReducible(definition, ruleName, context);
 
     if (definitionReducible) {
-      let parts;
-
-      parts = definition.getParts();
-
-      parts = rewriteRuleNameParts(parts, cycle); ///
-
-      const precedence = definition.getPrecedence();
+      const parts = partsfromDefinition(definition, context),
+            precedence = definition.getPrecedence();
 
       reducedDefinition = new ReducedDefinition(parts, precedence);
     }

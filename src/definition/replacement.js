@@ -1,15 +1,14 @@
 "use strict";
 
-import { Parts, Definition } from "occam-parsers";
+import { Definition } from "occam-parsers";
 
+import { ruleNamePartFromRuleName } from "../utilities/part";
 import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
 
-const { RuleNamePart } = Parts;
-
 export default class ReplacementDefinition extends Definition {
-  static fromRuleName(ruleNams) {
+  static fromRuleName(ruleNams, context) {
     const rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleNams),
-          rewrittenRuleNamePart = RuleNamePart.fromRuleName(rewrittenRuleName),
+          rewrittenRuleNamePart = ruleNamePartFromRuleName(rewrittenRuleName),
           parts = [
             rewrittenRuleNamePart
           ],

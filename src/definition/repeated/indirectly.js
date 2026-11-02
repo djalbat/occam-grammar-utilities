@@ -2,11 +2,13 @@
 
 import { Definition } from "occam-parsers";
 
-import { isDefinitionConsuming, partsfromDefinitionAndCycle } from "../../definition/repeated";
+import { tailPartsfromDefinition, isDefinitionConsuming } from "../../utilities/definition";
 
 export default class IndirectlyRepeatedDefinition extends Definition {
-  static fromDefinitionAndCycle(definition, cycle, ruleMap) {
-    const parts = partsfromDefinitionAndCycle(definition, cycle),
+  static fromDefinition(definition, context) {
+    const tailParts = tailPartsfromDefinition(definition, context),
+          parts = tailParts,  ///
+          ruleMap = context.getRuleMap(),
           precedence = definition.getPrecedence(),
           indirectlyRepeatedDefinition = new IndirectlyRepeatedDefinition(parts, precedence);
 

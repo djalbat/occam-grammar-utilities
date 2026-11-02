@@ -7,10 +7,10 @@ import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 import IndirectlyRepeatedDefinition from "../../definition/repeated/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
-import { filterDefinitions } from "../../rule/repeated";
+import { filterDefinitions } from "../../utilities/cycle";
 import { isDefinitionReducible } from "../../utilities/definition";
-import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../../utilities/cycle";
 import { indirectlyRepeatedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
+import { indirectRuleNameFromCycle, isCycleIndirectlyRepeated } from "../../utilities/cycle";
 
 const { first } = arrayUtilities;
 
@@ -21,19 +21,22 @@ export default class IndirectlyRepeatedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromIndirectRuleCycleAndCycles(indirectRule, cycle, cycles, ruleMap) {
+  static fromIndirectlyRepeatedIndirectCycle(indirectlyRepeatedIndirectCycle, context) {
     let definitions;
+
+    const indirectRule = context.getIndirectRule();
 
     definitions = indirectRule.getDefinitions();
 
-    cycle = cycle.permuted();
+    context.permuteCycle();
 
-    definitions = filterDefinitions(definitions, cycle, cycles, ruleMap);  ///
+    definitions = filterDefinitions(definitions, context); ///
 
-    cycle = cycle.permuted();
+    context.permuteCycle();
 
-    const indirectlyRepeatedDefinitions = definitions.map((definition) => {
-            const indirectlyRepeatedDefinition = IndirectlyRepeatedDefinition.fromDefinitionAndCycle(definition, cycle, ruleMap);
+    const cycle = context.getCycle(),
+          indirectlyRepeatedDefinitions = definitions.map((definition) => {
+            const indirectlyRepeatedDefinition = IndirectlyRepeatedDefinition.fromDefinition(definition, context);
 
             return indirectlyRepeatedDefinition;
           }),
@@ -50,21 +53,17 @@ export default class IndirectlyRepeatedRule extends Rule {
   }
 }
 
-export function indirectlyRepeatedRulesFromCycleAndCycles(context) {
+export function indirectlyRepeatedRulesFromCycleAndCycles(context, indirectlyRepeatedRules = []) {
   const cycle = context.getCycle(),
-        cycles = context.getCycles(),
-        ruleMap = context.getRuleMap(),
-        cycleLength = cycle.getLength(),
-        indirectlyRepeatedRules = [];
+        cycleLength = context.getCycleLength();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
       const cycleIndirectlyRepeated = isCycleIndirectlyRepeated(context);
 
       if (cycleIndirectlyRepeated) {
-        const indirectRuleName = indirectRuleNameFromCycle(cycle),
-              indirectRule = ruleMap[indirectRuleName],
-              indirectlyRepeatedRule = IndirectlyRepeatedRule.fromIndirectRuleCycleAndCycles(indirectRule, cycle, cycles, ruleMap);
+        const indirectlyRepeatedIndirectCycle = cycle,  ///
+              indirectlyRepeatedRule = IndirectlyRepeatedRule.fromIndirectlyRepeatedIndirectCycle(indirectlyRepeatedIndirectCycle, context);
 
         indirectlyRepeatedRules.push(indirectlyRepeatedRule);
       }
@@ -74,63 +73,4 @@ export function indirectlyRepeatedRulesFromCycleAndCycles(context) {
   }
 
   return indirectlyRepeatedRules;
-}
-
-export function isDefinitionIndirectlyRepeatable(definition, indirectRuleName, cycles, ruleMap) {
-  const ruleName = indirectRuleName,  ///
-        definitionReducible = isDefinitionReducible(definition, ruleName, cycles, ruleMap),
-        definitionIndirectlyRepeatable = !definitionReducible;
-
-  if (definitionIndirectlyRepeatable) {
-    const parts = definition.getParts(),
-          firstPart = first(parts),
-          firstPartRuleNamePart = firstPart.isRuleNamePart();
-
-    if (!firstPartRuleNamePart) {
-      const firstPartString = firstPart.asString(),
-            definitionString = definition.asString();
-
-      throw new Error(`The '${firstPartString}' first part of the '${definitionString}' definition is not a rule name part.`);
-    }
-  }
-
-  return definitionIndirectlyRepeatable;
-}
-
-export function isCycleIndirectlyRepeated(context) {
-  let cycleIndirectlyRepeated = false;
-
-  const cycle = context.getCycle(),
-        cycles = context.getCycles(),
-        ruleMap = context.getRuleMap(),
-        ruleName = ruleNameFromCycle(cycle),
-        rule = ruleMap[ruleName];
-
-  let definitions;
-
-  definitions = rule.getDefinitions();
-
-  definitions = filterDefinitions(definitions, cycle, cycles, ruleMap);  ///
-
-  const definitionsIndirectlyRepeated = definitions.every((definition) => {
-    const definitionIndirectlyRepeated = isDefinitionIndirectlyRepeated(definition);
-
-    if (definitionIndirectlyRepeated) {
-      return true;
-    }
-  });
-
-  if (definitionsIndirectlyRepeated) {
-    cycleIndirectlyRepeated = true;
-  }
-
-  return cycleIndirectlyRepeated;
-}
-
-function isDefinitionIndirectlyRepeated(definition) {
-  const parts = definition.getParts(),
-        partsLength = parts.length,
-        definitionIndirectlyRepeated = (partsLength === 1);
-
-  return definitionIndirectlyRepeated;
 }
