@@ -49,3 +49,13 @@ export default class RewrittenDefinition extends Definition {
     return rewrittenDefinition;
   }
 }
+
+export function rewrittenDefinitionsFromDefinitionsRuleNameAndIndirectRuleName(definitions, ruleName, indirectRuleName, context) {
+  const rewrittenDefinitions = definitions.map((definition) => {
+    const rewrittenDefinition = RewrittenDefinition.fromDefiniitonRuleNameAndIndirectRuleName(definition, ruleName, indirectRuleName, context);
+
+    return rewrittenDefinition;
+  });
+
+  return rewrittenDefinitions;
+}

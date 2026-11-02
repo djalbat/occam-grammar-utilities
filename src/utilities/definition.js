@@ -35,14 +35,58 @@ export function tailPartsfromDefinition(definition, context) {
   return tailParts;
 }
 
-export function isDefinitionConsuming(definition, ruleMap) {
-  const visitedRules = [],
+export function indirectRuleNameFromDefinition(definition) {
+  const parts = definition.getParts(),
+        firstPart = first(parts),
+        indirectRuleNamePart = firstPart, ///
+        indirectRuleName = indirectRuleNamePart.getRuleName();
+
+  return indirectRuleName;
+}
+
+export function isDefinitionConsuming(definition, context) {
+  const ruleMap = context.getRuleMap(),
+        visitedRules = [],
         checkForCutParts = true;
 
   definition.isConsuming(ruleMap, visitedRules, checkForCutParts);
 }
 
-export function isDefinitionReducible(definition, ruleName, context) {
+export function isDefinitionDirectlyReducible(definition, context) {
+  const ruleName = context.getRuleName(),
+        definitionReducible = isDefinitionReducible(definition, ruleName, context),
+        definitionDirectlyReducible = definitionReducible;  ///
+
+  return definitionDirectlyReducible;
+}
+
+export function isDefinitionDirectlyRepeatable(definition, context) {
+  const ruleName = context.getRuleName(),
+        definitionRepeatable = isDefinitionRepeatable(definition, ruleName, context),
+        definitionDirectlyRepeatable = definitionRepeatable;
+
+  return definitionDirectlyRepeatable;
+}
+
+export function isDefinitionIndirectlyReducible(definition, context) {
+  const indirectRuleName = context.getIndirectRuleName(),
+        ruleName = indirectRuleName,  ///
+        definitionReducible = isDefinitionReducible(definition, ruleName, context),
+        definitionIndirectlyReducible = definitionReducible;  ///
+
+  return definitionIndirectlyReducible;
+}
+
+export function isDefinitionIndirectlyRepeatable(definition, context) {
+  const indirectRuleName = context.getIndirectRuleName(),
+        ruleName = indirectRuleName,  ///
+        definitionRepeatable = isDefinitionRepeatable(definition, ruleName, context),
+        definitionIndirectlyRepeatable = definitionRepeatable;
+
+  return definitionIndirectlyRepeatable;
+}
+
+function isDefinitionReducible(definition, ruleName, context) {
   const leftRecursiveRuleNames = [],
         ruleMap = context.getRuleMap(),
         cycles = context.getCycles();
@@ -66,7 +110,7 @@ export function isDefinitionReducible(definition, ruleName, context) {
   return definitionReducible;
 }
 
-export function isDefinitionRepeatable(definition, ruleName, context) {
+function isDefinitionRepeatable(definition, ruleName, context) {
   const definitionReducible = isDefinitionReducible(definition, ruleName, context),
         definitionRepeatable = !definitionReducible;
 
@@ -84,53 +128,6 @@ export function isDefinitionRepeatable(definition, ruleName, context) {
   }
 
   return definitionRepeatable;
-}
-
-export function indirectRuleNameFromDefinition(definition) {
-  const parts = definition.getParts(),
-        firstPart = first(parts),
-        indirectRuleNamePart = firstPart, ///
-        indirectRuleName = indirectRuleNamePart.getRuleName();
-
-  return indirectRuleName;
-}
-
-export function isDefinitionIndirectlyRepeated(definition) {
-  const parts = definition.getParts(),
-        partsLength = parts.length,
-        definitionIndirectlyRepeated = (partsLength === 1);
-
-  return definitionIndirectlyRepeated;
-}
-
-export function isDefinitionIndirectlyReducible(definition, context) {
-  const indirectRuleName = context.getIndirectRuleName(),
-        ruleName = indirectRuleName,  ///
-        definitionReducible = isDefinitionReducible(definition, ruleName, context),
-        definitionIndirectlyReducible = definitionReducible;  ///
-
-  return definitionIndirectlyReducible;
-}
-
-export function isDefinitionIndirectlyRepeatable(definition, indirectRuleName, context) {
-  const ruleName = indirectRuleName,  ///
-        definitionReducible = isDefinitionReducible(definition, ruleName, context),
-        definitionIndirectlyRepeatable = !definitionReducible;
-
-  if (definitionIndirectlyRepeatable) {
-    const parts = definition.getParts(),
-          firstPart = first(parts),
-          firstPartRuleNamePart = firstPart.isRuleNamePart();
-
-    if (!firstPartRuleNamePart) {
-      const firstPartString = firstPart.asString(),
-            definitionString = definition.asString();
-
-      throw new Error(`The '${firstPartString}' first part of the '${definitionString}' definition is not a rule name part.`);
-    }
-  }
-
-  return definitionIndirectlyRepeatable;
 }
 
 function doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName) {

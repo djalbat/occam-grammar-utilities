@@ -1,8 +1,8 @@
 "use strict";
 
 import State from "../state";
-import rewriteMixins from  "../mixins/rewrite";
 import NonTerminalNode from "../nonTerminalNode";
+import simpliciationMixins from  "../mixins/simpliciation";
 
 class ReplacementNode extends NonTerminalNode {
   rewrite(state) {
@@ -48,6 +48,6 @@ class ReplacementNode extends NonTerminalNode {
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ReplacementNode, ruleName, childNodes, precedence, opacity); }
 }
 
-Object.assign(ReplacementNode.prototype, rewriteMixins);
+Object.assign(ReplacementNode.prototype, simpliciationMixins);
 
 export default ReplacementNode;

@@ -8,7 +8,7 @@ import IntermediateRepeatedDefinition from "../definition/repeated/intermediate"
 
 import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
-import { filterDefinitions, isCycleIndirectlyRepeated } from "../utilities/cycle";
+import { filterDefinitions, isCycleIndirectlyRepeatable } from "../utilities/cycle";
 
 export default class RepeatedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -17,7 +17,7 @@ export default class RepeatedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromDirectlyRepeatedDirectCycle(directlyRepeatedDirectCycle, context) {
+  static fromDirectlyRepeatableDirectCycle(directlyRepeatableDirectCycle, context) {
     const rule = context.getRule(),
           cycle = context.getCycle(),
           ruleName = context.getRuleName(),
@@ -31,7 +31,7 @@ export default class RepeatedRule extends Rule {
     return repeatedRule;
   }
 
-  static fromDirectlyRepeatedIndirectCycle(directlyRepeatedIndirectCycle, context) {
+  static fromDirectlyRepeatableIndirectCycle(directlyRepeatableIndirectCycle, context) {
     const rule = context.getRule(),
           cycle = context.getCycle(),
           ruleName = context.getRuleName(),
@@ -70,8 +70,8 @@ export function repeatedRulesFromCycleAndCycles(context, repeatedRules = []) {
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
-      const directlyRepeatedDirectCycle = cycle,  ///
-            repeatedRule = RepeatedRule.fromDirectlyRepeatedDirectCycle(directlyRepeatedDirectCycle, context);
+      const directlyRepeatableDirectCycle = cycle,  ///
+            repeatedRule = RepeatedRule.fromDirectlyRepeatableDirectCycle(directlyRepeatableDirectCycle, context);
 
       repeatedRules.push(repeatedRule);
 
@@ -79,11 +79,11 @@ export function repeatedRulesFromCycleAndCycles(context, repeatedRules = []) {
     }
 
     case CYCLE_LENGTH_2: {
-      const cycleIndirectlyRepeated = isCycleIndirectlyRepeated(context);
+      const cycleIndirectlyRepeatable = isCycleIndirectlyRepeatable(context);
 
-      if (!cycleIndirectlyRepeated) {
-        const directlyRepeatedIndirectCycle = cycle,  ///
-              repeatedRule = RepeatedRule.fromDirectlyRepeatedIndirectCycle(directlyRepeatedIndirectCycle, context);
+      if (!cycleIndirectlyRepeatable) {
+        const directlyRepeatableIndirectCycle = cycle,  ///
+              repeatedRule = RepeatedRule.fromDirectlyRepeatableIndirectCycle(directlyRepeatableIndirectCycle, context);
 
         repeatedRules.push(repeatedRule);
       }

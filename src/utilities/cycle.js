@@ -3,7 +3,7 @@
 import { arrayUtilities } from "necessary";
 
 import { CYCLE_LENGTH_2 } from "../constants";
-import { isDefinitionRepeatable, indirectRuleNameFromDefinition, isDefinitionIndirectlyRepeated } from "../utilities/definition";
+import { isDefinitionDirectlyRepeatable, indirectRuleNameFromDefinition, isDefinitionIndirectlyReducible } from "../utilities/definition";
 
 const { first, second, push } = arrayUtilities;
 
@@ -33,12 +33,10 @@ export function indirectRuleNameFromCycle(cycle) {
 }
 
 export function filterDefinitions(definitions, context) {
-  const ruleName = context.getRuleName();
-
   definitions = definitions.filter((definition) => {
-    const definitionLeftRepeatable = isDefinitionRepeatable(definition, ruleName, context);
+    const definitionDirectlyRepeatable = isDefinitionDirectlyRepeatable(definition, context);
 
-    if (definitionLeftRepeatable) {
+    if (definitionDirectlyRepeatable) {
       return true;
     }
   });
@@ -62,7 +60,8 @@ export function filterDefinitions(definitions, context) {
   const definitionsLength = definitions.length;
 
   if (definitionsLength === 0) {
-    const ruleString = ruleName;  ///
+    const ruleName = context.getRuleName(),
+          ruleString = ruleName;  ///
 
     throw new Error(`The '${ruleString}' rule has no repeated definitions.`);
   }
@@ -70,8 +69,22 @@ export function filterDefinitions(definitions, context) {
   return definitions;
 }
 
-export function isCycleIndirectlyRepeated(context) {
-  let cycleIndirectlyRepeated = false;
+export function isCycleIndirectlyReducible(context) {
+  const indirectRule = context.getIndirectRule(),
+        definitions = indirectRule.getDefinitions(),
+        cycleIndirectlyReducible = definitions.some((definition) => {
+          const definitionIndirectlyReducible = isDefinitionIndirectlyReducible(definition, context);
+
+          if (definitionIndirectlyReducible) {
+            return true;
+          }
+        });
+
+  return cycleIndirectlyReducible;
+}
+
+export function isCycleIndirectlyRepeatable(context) {
+  let cycleIndirectlyRepeatable = false;
 
   const rule = context.getRule();
 
@@ -81,17 +94,19 @@ export function isCycleIndirectlyRepeated(context) {
 
   definitions = filterDefinitions(definitions, context); ///
 
-  const definitionsIndirectlyRepeated = definitions.every((definition) => {
-    const definitionIndirectlyRepeated = isDefinitionIndirectlyRepeated(definition);
+  const definitionsIndirectlyRepeatable = definitions.every((definition) => {
+    const parts = definition.getParts(),
+          partsLength = parts.length,
+          definitionIndirectlyRepeatable = (partsLength === 1);
 
-    if (definitionIndirectlyRepeated) {
+    if (definitionIndirectlyRepeatable) {
       return true;
     }
   });
 
-  if (definitionsIndirectlyRepeated) {
-    cycleIndirectlyRepeated = true;
+  if (definitionsIndirectlyRepeatable) {
+    cycleIndirectlyRepeatable = true;
   }
 
-  return cycleIndirectlyRepeated;
+  return cycleIndirectlyRepeatable;
 }

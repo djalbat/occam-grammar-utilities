@@ -7,8 +7,7 @@ import RepeatedDefinition from "../definition/repeated";
 
 import { CYCLE_LENGTH_2 } from "../constants";
 import { isDefinitionIndirectlyRepeatable } from "../utilities/definition";
-import { ruleNameFromCycle, indirectRuleNameFromCycle } from "../utilities/cycle";
-import { filterDefinitions, isCycleIndirectlyRepeated } from "../utilities/cycle";
+import { filterDefinitions, isCycleIndirectlyRepeatable } from "../utilities/cycle";
 import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber } from "../utilities/ruleName";
 
 export default class IntermediateRule extends Rule {
@@ -54,9 +53,9 @@ export function intermediateRulesFromCycleAndCycles(context, intermediateRules =
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const cycleIndirectlyRepeated = isCycleIndirectlyRepeated(context);
+      const cycleIndirectlyRepeatable = isCycleIndirectlyRepeatable(context);
 
-      if (!cycleIndirectlyRepeated) {
+      if (!cycleIndirectlyRepeatable) {
         const cycle = context.getCycle(),
               definitions = definitionsFromCycle(cycle, context),
               definitionsLength = definitions.length;
@@ -87,18 +86,15 @@ function definitionsFromCycle(cycle, context) {
 
 function intermediateDefinitionsFromCycle(cycle, context) {
   const intermediateDefinitions = [],
-        indirectRuleName = indirectRuleNameFromCycle(cycle),
-        ruleName = ruleNameFromCycle(cycle), ///
-        ruleMap = context.getRuleMap(),
-        rule = ruleMap[ruleName],
-        indirectRule = ruleMap[indirectRuleName],
+        indirectRule = context.getIndirectRule(),
         definitions = indirectRule.getDefinitions();
 
   definitions.forEach((definition) => {
-    const definitionLeftRepeatable = isDefinitionIndirectlyRepeatable(definition, indirectRuleName, context);
+    const definitionLeftRepeatable = isDefinitionIndirectlyRepeatable(definition, context);
 
     if (definitionLeftRepeatable) {
-      const precedence = definition.getPrecedence();
+      const rule = context.getRule(),
+            precedence = definition.getPrecedence();
 
       let definitions = rule.getDefinitions();
 

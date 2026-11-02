@@ -1,7 +1,7 @@
 "use strict";
 
-import rewriteMixins from  "../mixins/rewrite";
 import NonTerminalNode from "../nonTerminalNode";
+import simpliciationMixins from  "../mixins/simpliciation";
 
 import { ruleNameFromReducedRuleName } from "../utilities/ruleName";
 
@@ -39,6 +39,6 @@ class ReducedNode extends NonTerminalNode {
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ReducedNode, ruleName, childNodes, precedence, opacity); }
 }
 
-Object.assign(ReducedNode.prototype, rewriteMixins);
+Object.assign(ReducedNode.prototype, simpliciationMixins);
 
 export default ReducedNode;

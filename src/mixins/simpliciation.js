@@ -37,10 +37,10 @@ function simplifyChildNodes(state) {
   });
 }
 
-const rewriteMixins = {
+const simpliciationMixins = {
   lift,
   overwrite,
   simplifyChildNodes
 };
 
-export default rewriteMixins;
+export default simpliciationMixins;

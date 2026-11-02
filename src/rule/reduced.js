@@ -3,10 +3,10 @@
 import { Rule } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
-import ReducedDefinition from "../definition/reduced";
 
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
+import { reducedDefinitionsFromDefinitions } from "../definition/reduced";
 
 export default class ReducedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -22,7 +22,7 @@ export default class ReducedRule extends Rule {
 
     definitions = rule.getDefinitions();
 
-    const reducedDefinitions = filterDefinitions(definitions, context),
+    const reducedDefinitions = reducedDefinitionsFromDefinitions(definitions, context),
           reducedDefinitionsLength = reducedDefinitions.length;
 
     if (reducedDefinitionsLength === 0) {
@@ -50,7 +50,7 @@ export default class ReducedRule extends Rule {
 
     definitions = rule.getDefinitions();
 
-    const reducedDefinitions = filterDefinitions(definitions, context),
+    const reducedDefinitions = reducedDefinitionsFromDefinitions(definitions, context),
           reducedDefinitionsLength = reducedDefinitions.length;
 
     if (reducedDefinitionsLength === 0) {
@@ -97,18 +97,4 @@ export function reducedRulesFromCycleAndCycles(context, reducedRules = []) {
   }
 
   return reducedRules;
-}
-
-function filterDefinitions(definitions, context) {
-  const reducedDefinitions = definitions.reduce((reducedDefinitions, definition) => {
-    const reducedDefinition = ReducedDefinition.fromDefinition(definition, context);
-
-    if (reducedDefinition !== null) {
-      reducedDefinitions.push(reducedDefinition);
-    }
-
-    return reducedDefinitions;
-  }, []);
-
-  return reducedDefinitions;
 }

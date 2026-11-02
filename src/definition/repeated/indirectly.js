@@ -8,12 +8,22 @@ export default class IndirectlyRepeatedDefinition extends Definition {
   static fromDefinition(definition, context) {
     const tailParts = tailPartsfromDefinition(definition, context),
           parts = tailParts,  ///
-          ruleMap = context.getRuleMap(),
           precedence = definition.getPrecedence(),
           indirectlyRepeatedDefinition = new IndirectlyRepeatedDefinition(parts, precedence);
 
-    isDefinitionConsuming(indirectlyRepeatedDefinition, ruleMap);
+    isDefinitionConsuming(indirectlyRepeatedDefinition, context);
 
     return indirectlyRepeatedDefinition;
   }
 }
+
+export function indirectlyRepeatedDefinitionsFromDefinitinos(definitions, context) {
+  const indirectlyRepeatedDefinitions = definitions.map((definition) => {
+    const indirectlyRepeatedDefinition = IndirectlyRepeatedDefinition.fromDefinition(definition, context);
+
+    return indirectlyRepeatedDefinition;
+  });
+
+  return indirectlyRepeatedDefinitions;
+}
+
