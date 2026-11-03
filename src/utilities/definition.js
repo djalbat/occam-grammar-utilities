@@ -52,12 +52,38 @@ export function isDefinitionConsuming(definition, context) {
   definition.isConsuming(ruleMap, visitedRules, checkForCutParts);
 }
 
+export function isDefinitionDirectlySingular(definition, context) {
+  const ruleName = context.getRuleName(),
+    definitionSingular = isDefinitionSingular(definition, ruleName, context),
+    definitionDirectlySingular = definitionSingular;
+
+  return definitionDirectlySingular;
+}
+
+export function isDefinitionIndirectlySingular(definition, context) {
+  const indirectRuleName = context.getIndirectRuleName(),
+        ruleName = indirectRuleName,  ///
+        definitionSingular = isDefinitionSingular(definition, ruleName, context),
+        definitionIndirectlySingular = definitionSingular;
+
+  return definitionIndirectlySingular;
+}
+
 export function isDefinitionDirectlyReducible(definition, context) {
   const ruleName = context.getRuleName(),
         definitionReducible = isDefinitionReducible(definition, ruleName, context),
         definitionDirectlyReducible = definitionReducible;  ///
 
   return definitionDirectlyReducible;
+}
+
+export function isDefinitionIndirectlyReducible(definition, context) {
+  const indirectRuleName = context.getIndirectRuleName(),
+    ruleName = indirectRuleName,  ///
+    definitionReducible = isDefinitionReducible(definition, ruleName, context),
+    definitionIndirectlyReducible = definitionReducible;  ///
+
+  return definitionIndirectlyReducible;
 }
 
 export function isDefinitionDirectlyRepeatable(definition, context) {
@@ -68,15 +94,6 @@ export function isDefinitionDirectlyRepeatable(definition, context) {
   return definitionDirectlyRepeatable;
 }
 
-export function isDefinitionIndirectlyReducible(definition, context) {
-  const indirectRuleName = context.getIndirectRuleName(),
-        ruleName = indirectRuleName,  ///
-        definitionReducible = isDefinitionReducible(definition, ruleName, context),
-        definitionIndirectlyReducible = definitionReducible;  ///
-
-  return definitionIndirectlyReducible;
-}
-
 export function isDefinitionIndirectlyRepeatable(definition, context) {
   const indirectRuleName = context.getIndirectRuleName(),
         ruleName = indirectRuleName,  ///
@@ -84,6 +101,38 @@ export function isDefinitionIndirectlyRepeatable(definition, context) {
         definitionIndirectlyRepeatable = definitionRepeatable;
 
   return definitionIndirectlyRepeatable;
+}
+
+function isDefinitionSingular(definition, ruleName, context) {
+  let definitionSingular = false;
+
+  const leftRecursiveRuleNames = [],
+        ruleMap = context.getRuleMap();
+
+  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
+
+  const leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
+
+  if (leftRecursiveRuleNamesIncludesRuleName) {
+    const parts = definition.getParts(),
+          firstPart = first(parts),
+          firstPartRuleNamePart = firstPart.isRuleNamePart();
+
+    if (!firstPartRuleNamePart) {
+      const firstPartString = firstPart.asString(),
+            definitionString = definition.asString();
+
+      throw new Error(`The '${firstPartString}' first part of the '${definitionString}' definition is not a rule name part.`);
+    }
+
+    const partsLength = parts.length;
+
+    if (partsLength === 1) {
+      definitionSingular = true;
+    }
+  }
+
+  return definitionSingular;
 }
 
 function isDefinitionReducible(definition, ruleName, context) {
@@ -144,3 +193,4 @@ function isDefinitionRepeatable(definition, ruleName, context) {
 
   return definitionRepeatable;
 }
+

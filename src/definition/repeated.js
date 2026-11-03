@@ -2,7 +2,7 @@
 
 import { Definition } from "occam-parsers";
 
-import { isDefinitionConsuming, tailPartsfromDefinition, isDefinitionDirectlyRepeatable, isDefinitionIndirectlyRepeatable } from "../utilities/definition";
+import { isDefinitionConsuming, tailPartsfromDefinition, isDefinitionDirectlyRepeatable } from "../utilities/definition";
 
 export default class RepeatedDefinition extends Definition {
   static fromDefinition(definition, context) {
@@ -27,28 +27,22 @@ export default class RepeatedDefinition extends Definition {
   }
 }
 
+export function repeatedDefinitionsFromPDefinitionAndPrecedences(definition, precedences, context) {
+  const repeatedDefinitions = precedences.map((precedence) => {
+    const repeatedDefinition = RepeatedDefinition.fromDefinitionAndPrecedence(definition, precedence, context);
+
+    return repeatedDefinition;
+  });
+
+  return repeatedDefinitions;
+}
+
 export function repeatedDefinitionsFromDefinitions(definitions, context) {
   const repeatedDefinitions = definitions.reduce((repeatedDefinitions, definition) => {
     const defintionIndirectlyRepeatable = isDefinitionDirectlyRepeatable(definition, context);
 
     if (defintionIndirectlyRepeatable) {
       const repeatedDefinition = RepeatedDefinition.fromDefinition(definition, context);
-
-      repeatedDefinitions.push(repeatedDefinition);
-    }
-
-    return repeatedDefinitions;
-  }, []);
-
-  return repeatedDefinitions;
-}
-
-export function repeatedDefinitionsFromDefinitionsAndPrecedence(definitions, precedence, context) {
-  const repeatedDefinitions = definitions.reduce((repeatedDefinitions, definition) => {
-    const defintionIndirectlyRepeatable = isDefinitionIndirectlyRepeatable(definition, context);
-
-    if (defintionIndirectlyRepeatable) {
-      const repeatedDefinition = RepeatedDefinition.fromDefinitionAndPrecedence(definition, precedence, context);
 
       repeatedDefinitions.push(repeatedDefinition);
     }
