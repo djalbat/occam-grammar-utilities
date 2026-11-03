@@ -2,7 +2,7 @@
 
 import { Definition } from "occam-parsers";
 
-import { isDefinitionDirectlyRepeatable } from "../utilities/definition";
+import { isDefinitionIndirectlyRepeatable } from "../utilities/definition";
 import { ruleNamePartFromRuleName, oneOrMorePartsPartFromPart, zeroOrMorePartsPartFromPart } from "../utilities/part";
 import { reducedRuleNameFromRuleName, repeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromIndirectRuleName } from "../utilities/ruleName";
 
@@ -55,9 +55,9 @@ export default class RewrittenDefinition extends Definition {
 
 export function rewrittenDefinitionsFromDefinitions(definitions, context) {
   const rewrittenDefinitions = definitions.reduce((rewrittenDefinitions, definition) => {
-    const definitionDirectlyRepeatable = isDefinitionDirectlyRepeatable(definition, context);
+    const definitionIndirectlyRepeatable = isDefinitionIndirectlyRepeatable(definition, context);
 
-    if (definitionDirectlyRepeatable) {
+    if (definitionIndirectlyRepeatable) {
       const rewrittenDefinition = RewrittenDefinition.fromDefiniiton(definition, context);
 
       rewrittenDefinitions.push(rewrittenDefinition);

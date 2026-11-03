@@ -95,9 +95,12 @@ function isDefinitionReducible(definition, ruleName, context) {
 
   const definitionReducible = leftRecursiveRuleNames.every((leftRecursiveRuleName) => {
     const cyclesIncludeRuleNameAndLeftRecursiveRuleName = cycles.some((cycle) => {
-      const cycleIncludesRuleNameAndLeftRecursiveRuleName = doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName);
+      const ruleNames = ruleNamesFromCycle(cycle),
+            edge = edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
+            edges = edgesFromRuleNames(ruleNames),
+            matches = edgesMatchEdge(edges, edge);
 
-      if (cycleIncludesRuleNameAndLeftRecursiveRuleName) {
+      if (matches) {
         return true;
       }
     });
@@ -111,21 +114,16 @@ function isDefinitionReducible(definition, ruleName, context) {
 }
 
 function isDefinitionRepeatable(definition, ruleName, context) {
+  let definitionRepeatable = false;
+
   const leftRecursiveRuleNames = [],
-        ruleMap = context.getRuleMap(),
-        cycle = context.getCycle();
+        ruleMap = context.getRuleMap();
 
   leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
 
-  const definitionRepeatable = leftRecursiveRuleNames.some((leftRecursiveRuleName) => {
-    const cycleIncludesRuleNameAndLeftRecursiveRuleName = doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName);
+  const leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
 
-    if (cycleIncludesRuleNameAndLeftRecursiveRuleName) {
-      return true;
-    }
-  });
-
-  if (definitionRepeatable) {
+  if (leftRecursiveRuleNamesIncludesRuleName) {
     const parts = definition.getParts(),
           firstPart = first(parts),
           firstPartRuleNamePart = firstPart.isRuleNamePart();
@@ -136,17 +134,13 @@ function isDefinitionRepeatable(definition, ruleName, context) {
 
       throw new Error(`The '${firstPartString}' first part of the '${definitionString}' definition is not a rule name part.`);
     }
+
+    const partsLength = parts.length;
+
+    if (partsLength > 1) {
+      definitionRepeatable = true;
+    }
   }
 
   return definitionRepeatable;
-}
-
-function doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName) {
-  const ruleNames = ruleNamesFromCycle(cycle),
-        edge = edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
-        edges = edgesFromRuleNames(ruleNames),
-        matches = edgesMatchEdge(edges, edge),
-        cycleIncludesRuleNameAndLeftRecursiveRuleName = matches;  ///
-
-  return cycleIncludesRuleNameAndLeftRecursiveRuleName;
 }

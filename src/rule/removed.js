@@ -3,7 +3,6 @@
 import { Rule } from "occam-parsers";
 
 import { CYCLE_LENGTH_2 } from "../constants";
-import { isCycleIndirectlyRepeatable } from "../utilities/cycle";
 
 export default class RemovedRule extends Rule {
   static fromIndirectlyRepeatedIndirectCycle(indirectlyRepeatedIndirectCycle, context) {
@@ -24,14 +23,14 @@ export function removedRulesFromCycleAndCycles(context) {
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const cycleIndirectlyRepeatable = isCycleIndirectlyRepeatable(context);
-
-      if (cycleIndirectlyRepeatable) {
-        const indirectlyRepeatedIndirectCycle = cycle,  ///
-              removedRule = RemovedRule.fromIndirectlyRepeatedIndirectCycle(indirectlyRepeatedIndirectCycle, context);
-
-        removedRules.push(removedRule);
-      }
+      // const cycleIndirectlyRepeatable = isCycleIndirectlyRepeatable(context);
+      //
+      // if (cycleIndirectlyRepeatable) {
+        // const indirectlyRepeatedIndirectCycle = cycle,  ///
+        //       removedRule = RemovedRule.fromIndirectlyRepeatedIndirectCycle(indirectlyRepeatedIndirectCycle, context);
+        //
+        // removedRules.push(removedRule);
+      // }
 
       break;
     }

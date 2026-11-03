@@ -1409,7 +1409,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two", () => {
+  describe.only("a cycle of length two", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;

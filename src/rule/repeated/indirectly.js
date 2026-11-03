@@ -5,8 +5,7 @@ import { Rule } from "occam-parsers";
 import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
-import { filterDefinitions } from "../../utilities/cycle";
-import { isCycleIndirectlyRepeatable } from "../../utilities/cycle";
+import { isRuleIndirectlyRepeatable } from "../../utilities/rule";
 import { indirectlyRepeatedDefinitionsFromDefinitinos } from "../../definition/repeated/indirectly";
 import { indirectlyRepeatedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
 
@@ -17,22 +16,16 @@ export default class IndirectlyRepeatedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromIndirectlyRepeatedIndirectCycle(indirectlyRepeatedIndirectCycle, context) {
-    let definitions;
+  static fromIndirectlyRepeatableRule(indirectlyRepeatableRule, context) {
+    const indirectRule = context.getIndirectRule(),
+          indirectRuleName = context.getIndirectRuleName(),
+          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName);
 
-    const indirectRule = context.getIndirectRule();
+    let definitions;
 
     definitions = indirectRule.getDefinitions();
 
-    context.permuteCycle();
-
-    definitions = filterDefinitions(definitions, context); ///
-
-    context.permuteCycle();
-
-    const indirectRuleName = context.getIndirectRuleName(),
-          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName),
-          indirectlyRepeatedDefinitions = indirectlyRepeatedDefinitionsFromDefinitinos(definitions, context),
+    const indirectlyRepeatedDefinitions = indirectlyRepeatedDefinitionsFromDefinitinos(definitions, context),
           name = indirectlyRepeatedRuleName, ///
           opacity = indirectRule.getOpacity();
 
@@ -45,18 +38,15 @@ export default class IndirectlyRepeatedRule extends Rule {
 }
 
 export function indirectlyRepeatedRulesFromCycleAndCycles(context, indirectlyRepeatedRules = []) {
-  const cycle = context.getCycle(),
-        cycleLength = context.getCycleLength();
+  const cycleLength = context.getCycleLength();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const cycleIndirectlyRepeatable = isCycleIndirectlyRepeatable(context);
+      const rule = context.getRule(),
+            ruleIndirectlyRepeatedRule = isRuleIndirectlyRepeatable(rule, context);
 
-      if (cycleIndirectlyRepeatable) {
-        const indirectlyRepeatedIndirectCycle = cycle,  ///
-              indirectlyRepeatedRule = IndirectlyRepeatedRule.fromIndirectlyRepeatedIndirectCycle(indirectlyRepeatedIndirectCycle, context);
+      if (ruleIndirectlyRepeatedRule) {
 
-        indirectlyRepeatedRules.push(indirectlyRepeatedRule);
       }
 
       break;

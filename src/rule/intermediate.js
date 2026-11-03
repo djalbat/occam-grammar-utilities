@@ -3,12 +3,12 @@
 import { Rule } from "occam-parsers";
 
 import IntermediateNode from "../node/intermediate";
-import RepeatedDefinition from "../definition/repeated";
 
 import { CYCLE_LENGTH_2 } from "../constants";
+import { isRuleIndirectlyRepeatable } from "../utilities/rule";
 import { isDefinitionIndirectlyRepeatable } from "../utilities/definition";
-import { filterDefinitions, isCycleIndirectlyRepeatable } from "../utilities/cycle";
-import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber } from "../utilities/ruleName";
+import { repeatedDefinitionsFromDefinitionsAndPrecedence } from "../definition/repeated";
+import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndIndex } from "../utilities/ruleName";
 
 export default class IntermediateRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -17,31 +17,26 @@ export default class IntermediateRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromDefinition(definition, context) {
-    const ruleName = context.getRuleName(),
+  static fromDefinitionAndIndex(definition, index, context) {
+    const rule = context.getRule(),
+          ruleName = context.getRuleName(),
           indirectRuleName = context.getIndirectRuleName(),
-          intermediateRuleName = intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
-          indirectRule = context.getIndirectRule(),
-          name = intermediateRuleName,  ///
-          opacity = indirectRule.getOpacity(),
-          definitions = [
-            definition
-          ],
-          intermediateRule = new IntermediateRule(name, opacity, definitions);
+          intermediateRuleName = (index > 0) ?
+                                   intermediateRuleNameFromRuleNameIndirectRuleNameAndIndex(ruleName, indirectRuleName, index) :
+                                     intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
+          indirectRule = context.getIndirectRule();
 
-    return intermediateRule;
-  }
+    let definitions;
 
-  static fromDefinitionAndNumber(definition, number, context) {
-    const ruleName = context.getRuleName(),
-          indirectRuleName = context.getIndirectRuleName(),
-          intermediateRuleName = intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber(ruleName, indirectRuleName, number),
-          indirectRule = context.getIndirectRule(),
-          name = intermediateRuleName,  ///
+    definitions = rule.getDefinitions();
+
+    const precedence = definition.getPrecedence(),
+          repeatedDefinitions = repeatedDefinitionsFromDefinitionsAndPrecedence(definitions, precedence, context);
+
+    definitions = repeatedDefinitions;  ///
+
+    const name = intermediateRuleName,
           opacity = indirectRule.getOpacity(),
-          definitions = [
-            definition
-          ],
           intermediateRule = new IntermediateRule(name, opacity, definitions);
 
     return intermediateRule;
@@ -53,20 +48,24 @@ export function intermediateRulesFromCycleAndCycles(context, intermediateRules =
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const cycleIndirectlyRepeatable = isCycleIndirectlyRepeatable(context);
+      const rule = context.getRule(),
+            ruleIndirectlyRepeatedRule = isRuleIndirectlyRepeatable(rule, context);
 
-      if (!cycleIndirectlyRepeatable) {
-        const cycle = context.getCycle(),
-              definitions = definitionsFromCycle(cycle, context),
-              definitionsLength = definitions.length;
+      if (ruleIndirectlyRepeatedRule) {
+        const definitions = rule.getDefinitions();
 
-        definitions.forEach((definition, index) => {
-          const number = index + 1,
-                intermediateRule = (definitionsLength === 1) ?
-                                     IntermediateRule.fromDefinition(definition, context) :
-                                       IntermediateRule.fromDefinitionAndNumber(definition, number, context);
+        let index = 0;
 
-          intermediateRules.push(intermediateRule);
+        definitions.forEach((definition) => {
+          const definitionIndirectlyRepeatableRule = isDefinitionIndirectlyRepeatable(definition, context);
+
+          if (definitionIndirectlyRepeatableRule) {
+            const intermediateRule = IntermediateRule.fromDefinitionAndIndex(definition, index, context);
+
+            intermediateRules.push(intermediateRule);
+
+            index++;
+          }
         });
       }
 
@@ -75,39 +74,4 @@ export function intermediateRulesFromCycleAndCycles(context, intermediateRules =
   }
 
   return intermediateRules;
-}
-
-function definitionsFromCycle(cycle, context) {
-  const intermediateDefinitions = intermediateDefinitionsFromCycle(cycle, context),
-        definitions = intermediateDefinitions;  ///
-
-  return definitions;
-}
-
-function intermediateDefinitionsFromCycle(cycle, context) {
-  const intermediateDefinitions = [],
-        indirectRule = context.getIndirectRule(),
-        definitions = indirectRule.getDefinitions();
-
-  definitions.forEach((definition) => {
-    const definitionLeftRepeatable = isDefinitionIndirectlyRepeatable(definition, context);
-
-    if (definitionLeftRepeatable) {
-      const rule = context.getRule(),
-            precedence = definition.getPrecedence();
-
-      let definitions = rule.getDefinitions();
-
-      definitions = filterDefinitions(definitions, context); ///
-
-      definitions.forEach((definition) => {
-        const repeatedDefinition = RepeatedDefinition.fromDefinitionAndPrecedence(definition, precedence, context),
-              intermediateDefinition = repeatedDefinition;  ///
-
-        intermediateDefinitions.push(intermediateDefinition);
-      });
-    }
-  });
-
-  return intermediateDefinitions;
 }

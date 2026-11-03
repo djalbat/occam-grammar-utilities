@@ -5,7 +5,6 @@ import { Rule } from "occam-parsers";
 import IndirectlyReducedNode from "../../node/reduced/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
-import { isCycleIndirectlyReducible } from "../../utilities/cycle";
 import { indirectlyReducedDefinitionsFromDefinitions } from "../../definition/reduced/indirectly";
 import { indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName } from "../../utilities/ruleName";
 
@@ -44,14 +43,14 @@ export function indirectlyReducedRulesFromCycleAndCycles(context, indirectlyRedu
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const cycleIndirectlyReducible = isCycleIndirectlyReducible(context);
-
-      if (cycleIndirectlyReducible) {
-        const indirectlyReducibleIndirectCycle = cycle, ///
-              indirectlyReducedRule = IndirectlyReducedRule.fromIndirectlyReducibleIndirectCycle(indirectlyReducibleIndirectCycle, context);
-
-        indirectlyReducedRules.push(indirectlyReducedRule);
-      }
+      // const cycleIndirectlyReducible = isCycleIndirectlyReducible(context);
+      //
+      // if (cycleIndirectlyReducible) {
+      //   const indirectlyReducibleIndirectCycle = cycle, ///
+      //         indirectlyReducedRule = IndirectlyReducedRule.fromIndirectlyReducibleIndirectCycle(indirectlyReducibleIndirectCycle, context);
+      //
+      //   indirectlyReducedRules.push(indirectlyReducedRule);
+      // }
 
       break;
     }

@@ -5,7 +5,6 @@ import { Rule } from "occam-parsers";
 import ReplacementNode from "../node/replacement";
 import ReplacementDefinition from "../definition/replacement";
 
-import { isCycleIndirectlyRepeatable } from "../utilities/cycle";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 
 export default class ReplacementRule extends Rule {
@@ -28,6 +27,20 @@ export default class ReplacementRule extends Rule {
 
     return replacementRule;
   }
+
+  static fromIndirectRuleName(indirectRuleName, context) {
+    const indirectRule = context.getIndirectRule(),
+          replacementDefinition = ReplacementDefinition.fromIndirectRuleName(indirectRuleName),
+          definition = replacementDefinition, ///
+          name = indirectRuleName, ///
+          opacity = indirectRule.getOpacity(),
+          definitions = [
+            definition
+          ],
+          replacementRule = new ReplacementRule(name, opacity, definitions);
+
+    return replacementRule;
+  }
 }
 
 export function replacementRulesFromCycleAndCycles(context) {
@@ -35,9 +48,11 @@ export function replacementRulesFromCycleAndCycles(context) {
         cycleLength = context.getCycleLength(),
         replacementRules = context.getReplacementRules();
 
+  let replacementRule;
+
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
-      const replacementRule = ReplacementRule.fromRuleName(ruleName, context);
+      replacementRule = ReplacementRule.fromRuleName(ruleName, context);
 
       replacementRules.push(replacementRule);
 
@@ -45,19 +60,19 @@ export function replacementRulesFromCycleAndCycles(context) {
     }
 
     case CYCLE_LENGTH_2: {
-      const replacementRule = ReplacementRule.fromRuleName(ruleName, context);
+      replacementRule = ReplacementRule.fromRuleName(ruleName, context);
 
       replacementRules.push(replacementRule);
 
-      const cycleIndirectlyRepeatable = isCycleIndirectlyRepeatable(context);
+      // const cycleIndirectlyRepeatable = isCycleIndirectlyRepeatable(context);
+      //
+      // if (!cycleIndirectlyRepeatable) {
+        const indirectRuleName = context.getIndirectRuleName();
 
-      if (!cycleIndirectlyRepeatable) {
-        const indirectRuleName = context.getIndirectRuleName(),
-              ruleName = indirectRuleName,  ///
-              replacementRule = ReplacementRule.fromRuleName(ruleName, context);
+        replacementRule = ReplacementRule.fromIndirectRuleName(indirectRuleName, context);
 
         replacementRules.push(replacementRule);
-      }
+      // }
 
       break;
     }
