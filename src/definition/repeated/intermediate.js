@@ -3,7 +3,7 @@
 import { Definition } from "occam-parsers";
 
 import { ruleNamePartFromRuleName } from "../../utilities/part";
-import { indirectRuleNameFromDefinition } from "../../utilities/definition";
+import { ruleNameFromRepeatableDefinition } from "../../utilities/definition";
 import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndNumber } from "../../utilities/ruleName";
 
 export default class IntermediateRepeatedDefinition extends Definition {
@@ -32,4 +32,12 @@ export default class IntermediateRepeatedDefinition extends Definition {
 
     return intermediateRepeatedDefinition;
   }
+}
+
+function indirectRuleNameFromDefinition(definition) {
+  const repeatableDefinition = definition,  ///
+        ruleName = ruleNameFromRepeatableDefinition(repeatableDefinition),
+        indirectRuleName = ruleName;  ///
+
+  return indirectRuleName;
 }

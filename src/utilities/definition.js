@@ -35,13 +35,13 @@ export function tailPartsfromDefinition(definition, context) {
   return tailParts;
 }
 
-export function indirectRuleNameFromDefinition(definition) {
-  const parts = definition.getParts(),
+export function ruleNameFromRepeatableDefinition(repeatableDefinition) {
+  const parts = repeatableDefinition.getParts(),
         firstPart = first(parts),
-        indirectRuleNamePart = firstPart, ///
-        indirectRuleName = indirectRuleNamePart.getRuleName();
+        ruleNamePart = firstPart, ///
+        ruleName = ruleNamePart.getRuleName();
 
-  return indirectRuleName;
+  return ruleName;
 }
 
 export function isDefinitionConsuming(definition, context) {
@@ -111,8 +111,19 @@ function isDefinitionReducible(definition, ruleName, context) {
 }
 
 function isDefinitionRepeatable(definition, ruleName, context) {
-  const definitionReducible = isDefinitionReducible(definition, ruleName, context),
-        definitionRepeatable = !definitionReducible;
+  const leftRecursiveRuleNames = [],
+        ruleMap = context.getRuleMap(),
+        cycle = context.getCycle();
+
+  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
+
+  const definitionRepeatable = leftRecursiveRuleNames.some((leftRecursiveRuleName) => {
+    const cycleIncludesRuleNameAndLeftRecursiveRuleName = doesCycleIncludeRuleNameAndLeftRecursiveRuleName(cycle, ruleName, leftRecursiveRuleName);
+
+    if (cycleIncludesRuleNameAndLeftRecursiveRuleName) {
+      return true;
+    }
+  });
 
   if (definitionRepeatable) {
     const parts = definition.getParts(),

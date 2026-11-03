@@ -2,6 +2,7 @@
 
 import { Definition } from "occam-parsers";
 
+import { isDefinitionDirectlyRepeatable } from "../utilities/definition";
 import { ruleNamePartFromRuleName, oneOrMorePartsPartFromPart, zeroOrMorePartsPartFromPart } from "../utilities/part";
 import { reducedRuleNameFromRuleName, repeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromIndirectRuleName } from "../utilities/ruleName";
 
@@ -33,8 +34,10 @@ export default class RewrittenDefinition extends Definition {
     return rewrittenDefinition;
   }
 
-  static fromDefiniitonRuleNameAndIndirectRuleName(definition, ruleName, indirectRuleName, context) {
-    const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+  static fromDefiniiton(definition, context) {
+    const ruleName = context.getRuleName(),
+          indirectRuleName = context.getIndirectRuleName(),
+          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName),
           indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName),
@@ -50,12 +53,18 @@ export default class RewrittenDefinition extends Definition {
   }
 }
 
-export function rewrittenDefinitionsFromDefinitionsRuleNameAndIndirectRuleName(definitions, ruleName, indirectRuleName, context) {
-  const rewrittenDefinitions = definitions.map((definition) => {
-    const rewrittenDefinition = RewrittenDefinition.fromDefiniitonRuleNameAndIndirectRuleName(definition, ruleName, indirectRuleName, context);
+export function rewrittenDefinitionsFromDefinitions(definitions, context) {
+  const rewrittenDefinitions = definitions.reduce((rewrittenDefinitions, definition) => {
+    const definitionDirectlyRepeatable = isDefinitionDirectlyRepeatable(definition, context);
 
-    return rewrittenDefinition;
-  });
+    if (definitionDirectlyRepeatable) {
+      const rewrittenDefinition = RewrittenDefinition.fromDefiniiton(definition, context);
+
+      rewrittenDefinitions.push(rewrittenDefinition);
+    }
+
+    return rewrittenDefinitions;
+  }, []);
 
   return rewrittenDefinitions;
 }

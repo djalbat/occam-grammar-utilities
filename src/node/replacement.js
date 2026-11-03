@@ -30,14 +30,15 @@ class ReplacementNode extends NonTerminalNode {
   simplify(state) {
     this.simplifyChildNodes(state);
 
-    this.liftSingleChildNode();
+    this.leftRewrittenNode();
   }
 
-  liftSingleChildNode() {
+  leftRewrittenNode() {
     const singleChildNode = this.getSingleChildNode(),
-          precedence = singleChildNode.getPrecedence(),
-          childNodes = singleChildNode.removeChildNodes(),
-          replacedChildNode = singleChildNode, ///
+          rewrittenNode = singleChildNode,  //
+          precedence = rewrittenNode.getPrecedence(),
+          childNodes = rewrittenNode.removeChildNodes(),
+          replacedChildNode = rewrittenNode, ///
           replacementChildNodes = childNodes; ///
 
     this.setPrecedence(precedence);

@@ -3,7 +3,7 @@
 import { arrayUtilities } from "necessary";
 
 import { CYCLE_LENGTH_2 } from "../constants";
-import { isDefinitionDirectlyRepeatable, indirectRuleNameFromDefinition, isDefinitionIndirectlyReducible } from "../utilities/definition";
+import { isDefinitionDirectlyRepeatable, isDefinitionIndirectlyReducible, ruleNameFromRepeatableDefinition,} from "../utilities/definition";
 
 const { first, second, push } = arrayUtilities;
 
@@ -63,7 +63,7 @@ export function filterDefinitions(definitions, context) {
     const ruleName = context.getRuleName(),
           ruleString = ruleName;  ///
 
-    throw new Error(`The '${ruleString}' rule has no repeated definitions.`);
+    throw new Error(`The '${ruleString}' rule has no repeatable definitions.`);
   }
 
   return definitions;
@@ -109,4 +109,12 @@ export function isCycleIndirectlyRepeatable(context) {
   }
 
   return cycleIndirectlyRepeatable;
+}
+
+function indirectRuleNameFromDefinition(definition) {
+  const repeatableDefinition = definition,  ///
+        ruleName = ruleNameFromRepeatableDefinition(repeatableDefinition),
+        indirectRuleName = ruleName;  ///
+
+  return indirectRuleName;
 }
