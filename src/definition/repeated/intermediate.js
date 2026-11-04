@@ -3,7 +3,7 @@
 import { Definition } from "occam-parsers";
 
 import { ruleNamePartFromRuleName } from "../../utilities/part";
-import { ruleNameFromRepeatableDefinition, isDefinitionIndirectlyRepeatable } from "../../utilities/definition";
+import { isDefinitionRepeatable, ruleNameFromRepeatableDefinition } from "../../utilities/definition";
 import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndIndex } from "../../utilities/ruleName";
 
 export default class IntermediateRepeatedDefinition extends Definition {
@@ -35,19 +35,20 @@ function indirectRuleNameFromDefinition(definition) {
 export function intermediateRepeatedDefinitionsFromDefinitions(definitions, context) {
   let index = 0;
 
-  const intermediateRepeatedDefinitions = definitions.reduce((intermediateRepeatedDefinitions, definition) => {
-    const definitionIndirectlyRepeatableRule = isDefinitionIndirectlyRepeatable(definition, context);
+  const indirectRuleName = context.getIndirectRuleName(),
+        intermediateRepeatedDefinitions = definitions.reduce((intermediateRepeatedDefinitions, definition) => {
+          const definitionRepeatable = isDefinitionRepeatable(definition, indirectRuleName, context);
 
-    if (definitionIndirectlyRepeatableRule) {
-      const intermediateRepeatedDefinition = IntermediateRepeatedDefinition.fromDefinitionAndIndex(definition, index, context);
+          if (definitionRepeatable) {
+            const intermediateRepeatedDefinition = IntermediateRepeatedDefinition.fromDefinitionAndIndex(definition, index, context);
 
-      intermediateRepeatedDefinitions.push(intermediateRepeatedDefinition);
+            intermediateRepeatedDefinitions.push(intermediateRepeatedDefinition);
 
-      index++;
-    }
+            index++;
+          }
 
-    return intermediateRepeatedDefinitions;
-  }, []);
+          return intermediateRepeatedDefinitions;
+        }, []);
 
   return intermediateRepeatedDefinitions;
 }

@@ -1,29 +1,42 @@
 "use strict";
 
-import { isDefinitionIndirectlyReducible, isDefinitionIndirectlyRepeatable } from "../utilities/definition";
+import { isDefinitionSingular, isDefinitionReducible, isDefinitionRepeatable } from "../utilities/definition";
 
-export function isRuleIndirectlyReducible(rule, context) {
+export function isRuleSingular(rule, ruleName, context) {
   const definitions = rule.getDefinitions(),
-        ruleIndirectlyReducible = definitions.some((definition) => {
-          const definitionIndirectlyReducible = isDefinitionIndirectlyReducible(definition, context);
+        ruleSingular = definitions.some((definition) => {
+          const definitionSingular = isDefinitionSingular(definition, ruleName, context);
 
-          if (definitionIndirectlyReducible) {
+          if (definitionSingular) {
             return true;
           }
         });
 
-  return ruleIndirectlyReducible;
+  return ruleSingular;
 }
 
-export function isRuleIndirectlyRepeatable(rule, context) {
+export function isRuleReducible(rule, ruleName, context) {
   const definitions = rule.getDefinitions(),
-        ruleIndirectlyRepeatable = definitions.some((definition) => {
-          const definitionIndirectlyRepeatable = isDefinitionIndirectlyRepeatable(definition, context);
+        ruleReducible = definitions.some((definition) => {
+          const definitionReducible = isDefinitionReducible(definition, ruleName, context);
 
-          if (definitionIndirectlyRepeatable) {
+          if (definitionReducible) {
             return true;
           }
         });
 
-  return ruleIndirectlyRepeatable;
+  return ruleReducible;
+}
+
+export function isRuleRepeatable(rule, ruleName, context) {
+  const definitions = rule.getDefinitions(),
+        ruleRepeatable = definitions.some((definition) => {
+          const definitionRepeatable = isDefinitionRepeatable(definition, ruleName, context);
+
+          if (definitionRepeatable) {
+            return true;
+          }
+        });
+
+  return ruleRepeatable;
 }

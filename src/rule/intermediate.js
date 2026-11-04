@@ -5,9 +5,9 @@ import { Rule } from "occam-parsers";
 import IntermediateNode from "../node/intermediate";
 
 import { CYCLE_LENGTH_2 } from "../constants";
-import { isRuleIndirectlyRepeatable } from "../utilities/rule";
+import { isRuleRepeatable } from "../utilities/rule";
+import { isDefinitionSingular, isDefinitionRepeatable } from "../utilities/definition";
 import { repeatedDefinitionsFromPDefinitionAndPrecedences } from "../definition/repeated";
-import { isDefinitionIndirectlySingular, isDefinitionIndirectlyRepeatable } from "../utilities/definition";
 import { intermediateRuleNameFromRuleNameAndIndirectRuleName, intermediateRuleNameFromRuleNameIndirectRuleNameAndIndex } from "../utilities/ruleName";
 
 export default class IntermediateRule extends Rule {
@@ -41,18 +41,20 @@ export function intermediateRulesFromCycleAndCycles(context, intermediateRules =
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
-            ruleIndirectlyRepeatedRule = isRuleIndirectlyRepeatable(rule, context);
+            indirectRuleName = context.getIndirectRuleName(),
+            ruleRepeatable = isRuleRepeatable(rule, indirectRuleName, context);
 
-      if (ruleIndirectlyRepeatedRule) {
+      if (ruleRepeatable) {
         const rule = context.getRule(),
-              definitions = rule.getDefinitions();
+              definitions = rule.getDefinitions(),
+              indirectRuleName = context.getIndirectRuleName();
 
         let index = 0;
 
         definitions.forEach((definition) => {
-          const definitionIndirectlyRepeatable = isDefinitionIndirectlyRepeatable(definition, context);
+          const definitionRepeatable = isDefinitionRepeatable(definition, indirectRuleName, context);
 
-          if (definitionIndirectlyRepeatable) {
+          if (definitionRepeatable) {
             const intermediateRule = IntermediateRule.fromDefinitionAndIndex(definition, index, context);
 
             intermediateRules.push(intermediateRule);
@@ -70,13 +72,12 @@ export function intermediateRulesFromCycleAndCycles(context, intermediateRules =
 }
 
 function precedencesFromIndirectRule(indirectRule, context) {
-  context.permuteCycle();
-
-  const definitions = indirectRule.getDefinitions(),
+  const ruleName = context.getRuleName(),
+        definitions = indirectRule.getDefinitions(),
         precedences = definitions.reduce((precedences, definition) => {
-          const definitionIndirectlySingular = isDefinitionIndirectlySingular(definition, context);
+          const definitionSingular = isDefinitionSingular(definition, ruleName, context);
 
-          if (definitionIndirectlySingular) {
+          if (definitionSingular) {
             const precedence = definition.getPrecedence();
 
             precedences.push(precedence);
@@ -84,8 +85,6 @@ function precedencesFromIndirectRule(indirectRule, context) {
 
           return precedences;
         }, []);
-
-  context.permuteCycle();
 
   return precedences;
 }

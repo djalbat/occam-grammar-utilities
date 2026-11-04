@@ -4,7 +4,7 @@ import { Rule } from "occam-parsers";
 
 import RepeatedNode from "../node/repeated";
 
-import { isRuleIndirectlyRepeatable } from "../utilities/rule";
+import { isRuleRepeatable } from "../utilities/rule";
 import { repeatedRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 import { repeatedDefinitionsFromDefinitions } from "../definition/repeated";
@@ -74,9 +74,10 @@ export function repeatedRulesFromCycleAndCycles(context, repeatedRules = []) {
 
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
-            ruleIndirectlyRepeatedRule = isRuleIndirectlyRepeatable(rule, context);
+            indirectRuleName = context.getIndirectRuleName(),
+            ruleRepeatable = isRuleRepeatable(rule, indirectRuleName, context);
 
-      if (ruleIndirectlyRepeatedRule) {
+      if (ruleRepeatable) {
         const directlyRepeatableRule = rule,  ///
               repeatedRule = RepeatedRule.fromIndirectlyRepeatableRule(directlyRepeatableRule, context);
 

@@ -15,8 +15,8 @@ export default class ReducedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromDirectlyReducedDirectCycle(directlyReducedDirectCycle, context) {
-    const rule = context.getRule();
+  static fromDirectlyRepeatedRule(directlyRepeatedRule, context) {
+    const rule = directlyRepeatedRule;  ///
 
     let definitions;
 
@@ -43,8 +43,8 @@ export default class ReducedRule extends Rule {
     return reducedRule;
   }
 
-  static fromDirectlyReducedIndirectCycle(directlyReducedIndirectCycle, context) {
-    const rule = context.getRule();
+  static fromIndirectlyRepeatedRule(indirectlyRepeatedRule, context) {
+    const rule = indirectlyRepeatedRule;  ///
 
     let definitions;
 
@@ -73,13 +73,13 @@ export default class ReducedRule extends Rule {
 }
 
 export function reducedRulesFromCycleAndCycles(context, reducedRules = []) {
-  const cycle = context.getCycle(),
-        cycleLength = context.getCycleLength();
+  const cycleLength = context.getCycleLength();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
-      const directlyReducedDirectCycle = cycle,  ///
-            reducedRule = ReducedRule.fromDirectlyReducedDirectCycle(directlyReducedDirectCycle, context);
+      const rule = context.getRule(),
+            directlyRepeatedRule = rule,  ///
+            reducedRule = ReducedRule.fromDirectlyRepeatedRule(directlyRepeatedRule, context);
 
       reducedRules.push(reducedRule);
 
@@ -87,8 +87,9 @@ export function reducedRulesFromCycleAndCycles(context, reducedRules = []) {
     }
 
     case CYCLE_LENGTH_2: {
-      const directlyReducedIndirectCycle = cycle,  ///
-            reducedRule = ReducedRule.fromDirectlyReducedIndirectCycle(directlyReducedIndirectCycle, context);
+      const rule = context.getRule(),
+            indirectlyRepeatedRule = rule,  ///
+            reducedRule = ReducedRule.fromIndirectlyRepeatedRule(indirectlyRepeatedRule, context);
 
       reducedRules.push(reducedRule);
 

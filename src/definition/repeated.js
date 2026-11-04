@@ -2,7 +2,7 @@
 
 import { Definition } from "occam-parsers";
 
-import { isDefinitionConsuming, tailPartsfromDefinition, isDefinitionDirectlyRepeatable } from "../utilities/definition";
+import { isDefinitionConsuming, tailPartsfromDefinition, isDefinitionRepeatable } from "../utilities/definition";
 
 export default class RepeatedDefinition extends Definition {
   static fromDefinition(definition, context) {
@@ -38,17 +38,18 @@ export function repeatedDefinitionsFromPDefinitionAndPrecedences(definition, pre
 }
 
 export function repeatedDefinitionsFromDefinitions(definitions, context) {
-  const repeatedDefinitions = definitions.reduce((repeatedDefinitions, definition) => {
-    const defintionIndirectlyRepeatable = isDefinitionDirectlyRepeatable(definition, context);
+  const ruleName = context.getRuleName(),
+        repeatedDefinitions = definitions.reduce((repeatedDefinitions, definition) => {
+          const defintionRepeatable = isDefinitionRepeatable(definition, ruleName, context);
 
-    if (defintionIndirectlyRepeatable) {
-      const repeatedDefinition = RepeatedDefinition.fromDefinition(definition, context);
+          if (defintionRepeatable) {
+            const repeatedDefinition = RepeatedDefinition.fromDefinition(definition, context);
 
-      repeatedDefinitions.push(repeatedDefinition);
-    }
+            repeatedDefinitions.push(repeatedDefinition);
+          }
 
-    return repeatedDefinitions;
-  }, []);
+          return repeatedDefinitions;
+        }, []);
 
   return repeatedDefinitions;
 }

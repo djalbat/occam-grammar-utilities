@@ -5,13 +5,11 @@ import { Rule, Definition } from "occam-parsers";
 
 import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
-import IndirectlyRewrittenDefinition from "../definition/rewritten/indirectly";
 
-import { partsfromDefinition } from "../utilities/definition";
-import { isRuleIndirectlyRepeatable } from "../utilities/rule";
 import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
-import { rewrittenDefinitionsFromDefinitions } from "../definition/rewritten";
+import { isRuleSingular, isRuleRepeatable } from "../utilities/rule";
+import { partsfromDefinition, isDefinitionSingular } from "../utilities/definition";
 
 const { front } = arrayUtilities;
 
@@ -68,6 +66,43 @@ export default class RewrittenRule extends Rule {
     return rewrittenRule;
   }
 
+  static fromIndirectlySingularRule(indirectlySingularRule, context) {
+    const rule = indirectlySingularRule,  ///
+          indirectRuleName = context.getIndirectRuleName(),
+          rewrittenDefinitions = [];
+
+    let definitions;
+
+    definitions = rule.getDefinitions();
+
+    definitions.forEach((definition) => {
+      const definitionSingular = isDefinitionSingular(definition, indirectRuleName, context);
+
+      if (definitionSingular) {
+        const indirectlyRepeatedDefinition = definition,  ///
+              rewrittenDefinition = RewrittenDefinition.fromIndirectlyRepeatedDefinition(indirectlyRepeatedDefinition, context);
+
+        rewrittenDefinitions.push(rewrittenDefinition);
+      }
+    });
+
+    const ruleName = context.getRuleName(),
+          singular = true,
+          rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, singular, context);
+
+    rewrittenDefinitions.push(rewrittenDefinition);
+
+    const rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
+          name = rewrittenRuleName, ///
+          opacity = null;
+
+    definitions = rewrittenDefinitions; ///
+
+    const rewrittenRule = new RewrittenRule(name, opacity, definitions);
+
+    return rewrittenRule;
+  }
+
   static fromDirectlyRepeatableRule(directlyRepeatableRule, context) {
     const rule = directlyRepeatableRule,  ///
           ruleName = rule.getName(),
@@ -97,32 +132,6 @@ export default class RewrittenRule extends Rule {
 
     return rewrittenRule;
   }
-
-  // static fromDirectlyRepeatableIndirectCycle(directlyRepeatableIndirectcycle, context) {
-  //   let definitions = [];
-  //
-  //   const cycle = context.getCycle(),
-  //         ruleMap = context.getRuleMap(),
-  //         ruleName = context.getRuleName(),
-  //         rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, ruleMap);
-  //
-  //   definitions.push(rewrittenDefinition);
-  //
-  //   const cycleIndirectlyReducible = isCycleIndirectlyReducible(context);
-  //
-  //   if (cycleIndirectlyReducible) {
-  //     const indirectlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromCycle(cycle, context);
-  //
-  //     definitions.push(indirectlyRewrittenDefinition);
-  //   }
-  //
-  //   const rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
-  //         name = rewrittenRuleName, ///
-  //         opacity = null,
-  //         rewrittenRule = new RewrittenRule(name, opacity, definitions);
-  //
-  //   return rewrittenRule;
-  // }
 }
 
 export function rewrittenRulesFromCycleAndCycles(context, rewrittenRules = []) {
@@ -144,9 +153,19 @@ export function rewrittenRulesFromCycleAndCycles(context, rewrittenRules = []) {
 
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
-            ruleIndirectlyRepeatable = isRuleIndirectlyRepeatable(rule, context);
+            indirectRuleName = context.getIndirectRuleName(),
+            ruleSingular = isRuleSingular(rule, indirectRuleName, context),
+            ruleRepeatable = isRuleRepeatable(rule, indirectRuleName, context);
 
-      if (ruleIndirectlyRepeatable) {
+      if (false) {
+        ///
+      } else if (ruleSingular) {
+        const indirectlySingularRule = rule;  ///
+
+        rewrittenRule = RewrittenRule.fromIndirectlySingularRule(indirectlySingularRule, context);
+
+        rewrittenRules.push(rewrittenRule);
+      } else if (ruleRepeatable) {
         const indirectlyRepeatableRule = rule;  ///
 
         rewrittenRule = RewrittenRule.fromIndirectlyRepeatableRule(indirectlyRepeatableRule, context);
@@ -154,10 +173,11 @@ export function rewrittenRulesFromCycleAndCycles(context, rewrittenRules = []) {
         rewrittenRules.push(rewrittenRule);
       }
 
-      const indirectRule = context.getIndirectRule(),
-            indirectRuleIndirectlyRepeatable = isRuleIndirectlyRepeatable(indirectRule, context);
+      const ruleName = context.getRuleName(),
+            indirectRule = context.getIndirectRule(),
+            indirectRuleRepeatable = isRuleRepeatable(indirectRule, ruleName, context);
 
-      if (!indirectRuleIndirectlyRepeatable) {
+      if (!indirectRuleRepeatable) {
         rewrittenRule = RewrittenRule.fromIndirectRule(indirectRule, context);
 
         rewrittenRules.push(rewrittenRule);

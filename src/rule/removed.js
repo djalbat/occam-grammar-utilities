@@ -3,10 +3,11 @@
 import { Rule } from "occam-parsers";
 
 import { CYCLE_LENGTH_2 } from "../constants";
+import { isRuleSingular } from "../utilities/rule";
 
 export default class RemovedRule extends Rule {
-  static fromIndirectlyRepeatedIndirectCycle(indirectlyRepeatedIndirectCycle, context) {
-    const indirectRuleName = context.getIndirectRuleName(),
+  static fromIndirectRule(indirectRule, context) {
+    const indirectRuleName = indirectRule.getName(),
           name = indirectRuleName, ///
           opacity = null,
           definitions = [],
@@ -17,20 +18,21 @@ export default class RemovedRule extends Rule {
 }
 
 export function removedRulesFromCycleAndCycles(context) {
-  const cycle = context.getCycle(),
-        cycleLength = context.getCycleLength(),
+  const cycleLength = context.getCycleLength(),
         removedRules = context.getRemovedRules();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      // const cycleIndirectlyRepeatable = isCycleIndirectlyRepeatable(context);
-      //
-      // if (cycleIndirectlyRepeatable) {
-        // const indirectlyRepeatedIndirectCycle = cycle,  ///
-        //       removedRule = RemovedRule.fromIndirectlyRepeatedIndirectCycle(indirectlyRepeatedIndirectCycle, context);
-        //
-        // removedRules.push(removedRule);
-      // }
+      const rule = context.getRule(),
+            indirectRuleName = context.getIndirectRuleName(),
+            ruleSingular = isRuleSingular(rule, indirectRuleName, context);
+
+      if (ruleSingular) {
+        const indirectRule = context.getIndirectRule(),
+              removedRule = RemovedRule.fromIndirectRule(indirectRule, context);
+
+        removedRules.push(removedRule);
+      }
 
       break;
     }

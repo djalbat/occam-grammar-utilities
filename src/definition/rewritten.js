@@ -2,7 +2,7 @@
 
 import { Definition } from "occam-parsers";
 
-import { isDefinitionIndirectlyRepeatable } from "../utilities/definition";
+import { isDefinitionRepeatable } from "../utilities/definition";
 import { ruleNamePartFromRuleName, oneOrMorePartsPartFromPart, zeroOrMorePartsPartFromPart } from "../utilities/part";
 import { reducedRuleNameFromRuleName, repeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromIndirectRuleName } from "../utilities/ruleName";
 
@@ -51,20 +51,39 @@ export default class RewrittenDefinition extends Definition {
 
     return rewrittenDefinition;
   }
+
+  static fromIndirectlyRepeatedDefinition(indirectlyRepeatedDefinition, context) {
+    const ruleName = context.getRuleName(),
+          indirectRuleName = context.getIndirectRuleName(),
+          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
+          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName),
+          indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName),
+          zerorMoreIndirectlyRepeatedRuleNamePartPart = zeroOrMorePartsPartFromPart(indirectlyRepeatedRuleNamePart),
+          parts = [
+            reducedRuleNamePart,
+            zerorMoreIndirectlyRepeatedRuleNamePartPart
+          ],
+          precedence = indirectlyRepeatedDefinition.getPrecedence(),
+          rewrittenDefinition = new RewrittenDefinition(parts, precedence);
+
+    return rewrittenDefinition;
+  }
 }
 
 export function rewrittenDefinitionsFromDefinitions(definitions, context) {
-  const rewrittenDefinitions = definitions.reduce((rewrittenDefinitions, definition) => {
-    const definitionIndirectlyRepeatable = isDefinitionIndirectlyRepeatable(definition, context);
+  const indirectRuleName = context.getIndirectRuleName(),
+        rewrittenDefinitions = definitions.reduce((rewrittenDefinitions, definition) => {
+          const definitionIndirectlyRepeatable = isDefinitionRepeatable(definition, indirectRuleName, context);
 
-    if (definitionIndirectlyRepeatable) {
-      const rewrittenDefinition = RewrittenDefinition.fromDefiniiton(definition, context);
+          if (definitionIndirectlyRepeatable) {
+            const rewrittenDefinition = RewrittenDefinition.fromDefiniiton(definition, context);
 
-      rewrittenDefinitions.push(rewrittenDefinition);
-    }
+            rewrittenDefinitions.push(rewrittenDefinition);
+          }
 
-    return rewrittenDefinitions;
-  }, []);
+          return rewrittenDefinitions;
+        }, []);
 
   return rewrittenDefinitions;
 }

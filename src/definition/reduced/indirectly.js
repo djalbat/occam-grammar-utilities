@@ -2,7 +2,7 @@
 
 import { Definition } from "occam-parsers";
 
-import { partsfromDefinition, isDefinitionIndirectlyReducible } from "../../utilities/definition";
+import { partsfromDefinition, isDefinitionReducible } from "../../utilities/definition";
 
 export default class IndirectlyReducedDefinition extends Definition {
   static fromDefinition(definition, context) {
@@ -15,17 +15,18 @@ export default class IndirectlyReducedDefinition extends Definition {
 }
 
 export function indirectlyReducedDefinitionsFromDefinitions(definitions, context) {
-  const indirectlyReducedDefinitions = definitions.reduce((indirectlyReducedDefinitions, definition) => {
-    const definitionIndirectlyReducible = isDefinitionIndirectlyReducible(definition, context);
+  const indirectRuleName = context.getIndirectRuleName(),
+        indirectlyReducedDefinitions = definitions.reduce((indirectlyReducedDefinitions, definition) => {
+          const definitionReducible = isDefinitionReducible(definition, indirectRuleName, context);
 
-    if (definitionIndirectlyReducible) {
-      const indirectlyReducedDefinition = IndirectlyReducedDefinition.fromDefinition(definition, context);
+          if (definitionReducible) {
+            const indirectlyReducedDefinition = IndirectlyReducedDefinition.fromDefinition(definition, context);
 
-      indirectlyReducedDefinitions.push(indirectlyReducedDefinition);
-    }
+            indirectlyReducedDefinitions.push(indirectlyReducedDefinition);
+          }
 
-    return indirectlyReducedDefinitions;
-  }, []);
+          return indirectlyReducedDefinitions;
+        }, []);
 
   return indirectlyReducedDefinitions;
 }

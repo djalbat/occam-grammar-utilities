@@ -52,58 +52,7 @@ export function isDefinitionConsuming(definition, context) {
   definition.isConsuming(ruleMap, visitedRules, checkForCutParts);
 }
 
-export function isDefinitionDirectlySingular(definition, context) {
-  const ruleName = context.getRuleName(),
-    definitionSingular = isDefinitionSingular(definition, ruleName, context),
-    definitionDirectlySingular = definitionSingular;
-
-  return definitionDirectlySingular;
-}
-
-export function isDefinitionIndirectlySingular(definition, context) {
-  const indirectRuleName = context.getIndirectRuleName(),
-        ruleName = indirectRuleName,  ///
-        definitionSingular = isDefinitionSingular(definition, ruleName, context),
-        definitionIndirectlySingular = definitionSingular;
-
-  return definitionIndirectlySingular;
-}
-
-export function isDefinitionDirectlyReducible(definition, context) {
-  const ruleName = context.getRuleName(),
-        definitionReducible = isDefinitionReducible(definition, ruleName, context),
-        definitionDirectlyReducible = definitionReducible;  ///
-
-  return definitionDirectlyReducible;
-}
-
-export function isDefinitionIndirectlyReducible(definition, context) {
-  const indirectRuleName = context.getIndirectRuleName(),
-    ruleName = indirectRuleName,  ///
-    definitionReducible = isDefinitionReducible(definition, ruleName, context),
-    definitionIndirectlyReducible = definitionReducible;  ///
-
-  return definitionIndirectlyReducible;
-}
-
-export function isDefinitionDirectlyRepeatable(definition, context) {
-  const ruleName = context.getRuleName(),
-        definitionRepeatable = isDefinitionRepeatable(definition, ruleName, context),
-        definitionDirectlyRepeatable = definitionRepeatable;
-
-  return definitionDirectlyRepeatable;
-}
-
-export function isDefinitionIndirectlyRepeatable(definition, context) {
-  const indirectRuleName = context.getIndirectRuleName(),
-        ruleName = indirectRuleName,  ///
-        definitionRepeatable = isDefinitionRepeatable(definition, ruleName, context),
-        definitionIndirectlyRepeatable = definitionRepeatable;
-
-  return definitionIndirectlyRepeatable;
-}
-
-function isDefinitionSingular(definition, ruleName, context) {
+export function isDefinitionSingular(definition, ruleName, context) {
   let definitionSingular = false;
 
   const leftRecursiveRuleNames = [],
@@ -135,7 +84,7 @@ function isDefinitionSingular(definition, ruleName, context) {
   return definitionSingular;
 }
 
-function isDefinitionReducible(definition, ruleName, context) {
+export function isDefinitionReducible(definition, ruleName, context) {
   const leftRecursiveRuleNames = [],
         ruleMap = context.getRuleMap(),
         cycles = context.getCycles();
@@ -162,7 +111,7 @@ function isDefinitionReducible(definition, ruleName, context) {
   return definitionReducible;
 }
 
-function isDefinitionRepeatable(definition, ruleName, context) {
+export function isDefinitionRepeatable(definition, ruleName, context) {
   let definitionRepeatable = false;
 
   const leftRecursiveRuleNames = [],

@@ -5,7 +5,7 @@ import { Rule } from "occam-parsers";
 import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
-import { isRuleIndirectlyRepeatable } from "../../utilities/rule";
+import { isRuleRepeatable } from "../../utilities/rule";
 import { indirectlyRepeatedDefinitionsFromDefinitinos } from "../../definition/repeated/indirectly";
 import { indirectlyRepeatedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
 
@@ -43,9 +43,10 @@ export function indirectlyRepeatedRulesFromCycleAndCycles(context, indirectlyRep
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
-            ruleIndirectlyRepeatedRule = isRuleIndirectlyRepeatable(rule, context);
+            indirectRuleName = context.getIndirectRuleName(),
+            ruleRepeatable = isRuleRepeatable(rule, indirectRuleName, context);
 
-      if (ruleIndirectlyRepeatedRule) {
+      if (ruleRepeatable) {
 
       }
 

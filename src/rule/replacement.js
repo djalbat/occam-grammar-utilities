@@ -5,6 +5,7 @@ import { Rule } from "occam-parsers";
 import ReplacementNode from "../node/replacement";
 import ReplacementDefinition from "../definition/replacement";
 
+import { isRuleSingular } from "../utilities/rule";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 
 export default class ReplacementRule extends Rule {
@@ -64,15 +65,17 @@ export function replacementRulesFromCycleAndCycles(context) {
 
       replacementRules.push(replacementRule);
 
-      // const cycleIndirectlyRepeatable = isCycleIndirectlyRepeatable(context);
-      //
-      // if (!cycleIndirectlyRepeatable) {
+      const rule = context.getRule(),
+            indirectRuleName = context.getIndirectRuleName(),
+            ruleSingular = isRuleSingular(rule, indirectRuleName, context);
+
+      if (!ruleSingular) {
         const indirectRuleName = context.getIndirectRuleName();
 
         replacementRule = ReplacementRule.fromIndirectRuleName(indirectRuleName, context);
 
         replacementRules.push(replacementRule);
-      // }
+      }
 
       break;
     }
