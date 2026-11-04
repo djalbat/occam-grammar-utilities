@@ -59,10 +59,10 @@ export default class RewrittenDefinition extends Definition {
           reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName),
           indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName),
-          zerorMoreIndirectlyRepeatedRuleNamePartPart = zeroOrMorePartsPartFromPart(indirectlyRepeatedRuleNamePart),
+          oneOrMoreIndirectlyRepeatedRuleNamePartPart = oneOrMorePartsPartFromPart(indirectlyRepeatedRuleNamePart),
           parts = [
             reducedRuleNamePart,
-            zerorMoreIndirectlyRepeatedRuleNamePartPart
+            oneOrMoreIndirectlyRepeatedRuleNamePartPart
           ],
           precedence = indirectlyRepeatedDefinition.getPrecedence(),
           rewrittenDefinition = new RewrittenDefinition(parts, precedence);

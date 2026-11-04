@@ -17,7 +17,7 @@ export default class IndirectlyRepeatedDefinition extends Definition {
   }
 }
 
-export function indirectlyRepeatedDefinitionsFromDefinitinos(definitions, context) {
+export function indirectlyRepeatedDefinitionsFromDefinitions(definitions, context) {
   const indirectlyRepeatedDefinitions = definitions.map((definition) => {
     const indirectlyRepeatedDefinition = IndirectlyRepeatedDefinition.fromDefinition(definition, context);
 

@@ -5,6 +5,7 @@ import { Rule } from "occam-parsers";
 import IndirectlyReducedNode from "../../node/reduced/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
+import { isRuleSingular, isRuleReducible } from "../../utilities/rule";
 import { indirectlyReducedDefinitionsFromDefinitions } from "../../definition/reduced/indirectly";
 import { indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName } from "../../utilities/ruleName";
 
@@ -15,10 +16,10 @@ export default class IndirectlyReducedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromIndirectlyReducibleIndirectCycle(indirectlyReducibleIndirectCycle, context) {
-    const ruleName = context.getRuleName(),
-          indirectRule = context.getIndirectRule(),
-          indirectRuleName = context.getIndirectRuleName();
+  static fromIndirectlySiingularIndirectRuleAndRule(indirectlyReducibleIndirectCycle, rule, context) {
+    const ruleName = rule.getName(),
+          indirectRule = indirectlyReducibleIndirectCycle,  ///
+          indirectRuleName = indirectRule.getName();
 
     let definitions;
 
@@ -38,19 +39,23 @@ export default class IndirectlyReducedRule extends Rule {
 }
 
 export function indirectlyReducedRulesFromCycleAndCycles(context, indirectlyReducedRules = []) {
-  const cycle = context.getCycle(),
-        cycleLength = context.getCycleLength();
+  const cycleLength = context.getCycleLength();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      // const cycleIndirectlyReducible = isCycleIndirectlyReducible(context);
-      //
-      // if (cycleIndirectlyReducible) {
-      //   const indirectlyReducibleIndirectCycle = cycle, ///
-      //         indirectlyReducedRule = IndirectlyReducedRule.fromIndirectlyReducibleIndirectCycle(indirectlyReducibleIndirectCycle, context);
-      //
-      //   indirectlyReducedRules.push(indirectlyReducedRule);
-      // }
+      const ruleName = context.getRuleName(),
+            indirectRule = context.getIndirectRule(),
+            indirectRuleName = context.getIndirectRuleName(),
+            indirectRuleSingular = isRuleSingular(indirectRule, ruleName, context),
+            indirectRuleReducible = isRuleReducible(indirectRule, indirectRuleName, context);
+
+      if (indirectRuleSingular && indirectRuleReducible) {
+        const rule = context.getRule(),
+              indirectlySingularIndirectRule = indirectRule, ///
+              indirectlyReducedRule = IndirectlyReducedRule.fromIndirectlySiingularIndirectRuleAndRule(indirectlySingularIndirectRule, rule, context);
+
+        indirectlyReducedRules.push(indirectlyReducedRule);
+      }
 
       break;
     }

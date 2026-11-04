@@ -86,19 +86,18 @@ export function isDefinitionSingular(definition, ruleName, context) {
 
 export function isDefinitionReducible(definition, ruleName, context) {
   const leftRecursiveRuleNames = [],
-        ruleMap = context.getRuleMap(),
-        cycles = context.getCycles();
+        cycles = context.getCycles(),
+        ruleMap = context.getRuleMap();
 
   leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
 
   const definitionReducible = leftRecursiveRuleNames.every((leftRecursiveRuleName) => {
-    const cyclesIncludeRuleNameAndLeftRecursiveRuleName = cycles.some((cycle) => {
-      const ruleNames = ruleNamesFromCycle(cycle),
-            edge = edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
-            edges = edgesFromRuleNames(ruleNames),
-            matches = edgesMatchEdge(edges, edge);
+    const edge = edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName);
 
-      if (matches) {
+    const cyclesIncludeRuleNameAndLeftRecursiveRuleName = cycles.some((cycle) => {
+      const edgeMatches = cycle.matchEdge(edge);
+
+      if (edgeMatches) {
         return true;
       }
     });

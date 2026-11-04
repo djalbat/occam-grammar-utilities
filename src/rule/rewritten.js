@@ -5,11 +5,12 @@ import { Rule, Definition } from "occam-parsers";
 
 import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
+import IndirectlyRewrittenDefinition from "../definition/rewritten/indirectly";
 
 import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
-import { isRuleSingular, isRuleRepeatable } from "../utilities/rule";
 import { partsfromDefinition, isDefinitionSingular } from "../utilities/definition";
+import { isRuleSingular, isRuleRepeatable, isRuleReducible } from "../utilities/rule";
 
 const { front } = arrayUtilities;
 
@@ -119,10 +120,31 @@ export default class RewrittenRule extends Rule {
   }
 
   static fromIndirectlyRepeatableRule(indirectlyRepeatableRule, context) {
-    const ruleName = context.getRuleName(),
+    const rule = indirectlyRepeatableRule,  ///
+          ruleName = rule.getName(),
           rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, context),
           rewrittenDefinitions = [
             rewrittenDefinition
+          ],
+          rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
+          name = rewrittenRuleName, ///
+          opacity = null,
+          definitions = rewrittenDefinitions, ///
+          rewrittenRule = new RewrittenRule(name, opacity, definitions);
+
+    return rewrittenRule;
+  }
+
+  static fromIndirectlyRepeatableRuleAndIndirectlyReducibleIndirectRule(indirectlyRepeatableRule, indirectlyReducibleIndirectRule, context) {
+    const rule = indirectlyRepeatableRule,  ///
+          ruleName = rule.getName(),
+          indirectRule = indirectlyReducibleIndirectRule,  ///
+          indirectRuleName = indirectRule.getName(),
+          rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, context),
+          indirectlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, context),
+          rewrittenDefinitions = [
+            rewrittenDefinition,
+            indirectlyRewrittenDefinition
           ],
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName, ///
@@ -153,9 +175,13 @@ export function rewrittenRulesFromCycleAndCycles(context, rewrittenRules = []) {
 
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
+            ruleName = context.getRuleName(),
+            indirectRule = context.getIndirectRule(),
             indirectRuleName = context.getIndirectRuleName(),
             ruleSingular = isRuleSingular(rule, indirectRuleName, context),
-            ruleRepeatable = isRuleRepeatable(rule, indirectRuleName, context);
+            ruleRepeatable = isRuleRepeatable(rule, indirectRuleName, context),
+            indirectRuleRedicible = isRuleReducible(indirectRule, indirectRuleName, context),
+            indirectRuleRepeatable = isRuleRepeatable(indirectRule, ruleName, context);
 
       if (false) {
         ///
@@ -168,14 +194,18 @@ export function rewrittenRulesFromCycleAndCycles(context, rewrittenRules = []) {
       } else if (ruleRepeatable) {
         const indirectlyRepeatableRule = rule;  ///
 
-        rewrittenRule = RewrittenRule.fromIndirectlyRepeatableRule(indirectlyRepeatableRule, context);
+        if (indirectRuleRedicible) {
+          const indirectlyReducibleIndirectRule = indirectRule;  ///
 
-        rewrittenRules.push(rewrittenRule);
+          rewrittenRule = RewrittenRule.fromIndirectlyRepeatableRuleAndIndirectlyReducibleIndirectRule(indirectlyRepeatableRule, indirectlyReducibleIndirectRule, context);
+
+          rewrittenRules.push(rewrittenRule);
+        } else {
+          rewrittenRule = RewrittenRule.fromIndirectlyRepeatableRule(indirectlyRepeatableRule, context);
+
+          rewrittenRules.push(rewrittenRule);
+        }
       }
-
-      const ruleName = context.getRuleName(),
-            indirectRule = context.getIndirectRule(),
-            indirectRuleRepeatable = isRuleRepeatable(indirectRule, ruleName, context);
 
       if (!indirectRuleRepeatable) {
         rewrittenRule = RewrittenRule.fromIndirectRule(indirectRule, context);

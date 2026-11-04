@@ -32,12 +32,11 @@ function indirectRuleNameFromDefinition(definition) {
   return indirectRuleName;
 }
 
-export function intermediateRepeatedDefinitionsFromDefinitions(definitions, context) {
+export function intermediateRepeatedDefinitionsFromDefinitions(definitions, ruleName, context) {
   let index = 0;
 
-  const indirectRuleName = context.getIndirectRuleName(),
-        intermediateRepeatedDefinitions = definitions.reduce((intermediateRepeatedDefinitions, definition) => {
-          const definitionRepeatable = isDefinitionRepeatable(definition, indirectRuleName, context);
+  const intermediateRepeatedDefinitions = definitions.reduce((intermediateRepeatedDefinitions, definition) => {
+          const definitionRepeatable = isDefinitionRepeatable(definition, ruleName, context);
 
           if (definitionRepeatable) {
             const intermediateRepeatedDefinition = IntermediateRepeatedDefinition.fromDefinitionAndIndex(definition, index, context);

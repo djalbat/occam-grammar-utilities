@@ -6,7 +6,7 @@ import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
 import { isRuleRepeatable } from "../../utilities/rule";
-import { indirectlyRepeatedDefinitionsFromDefinitinos } from "../../definition/repeated/indirectly";
+import { indirectlyRepeatedDefinitionsFromDefinitions } from "../../definition/repeated/indirectly";
 import { indirectlyRepeatedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
 
 export default class IndirectlyRepeatedRule extends Rule {
@@ -16,16 +16,16 @@ export default class IndirectlyRepeatedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromIndirectlyRepeatableRule(indirectlyRepeatableRule, context) {
-    const indirectRule = context.getIndirectRule(),
-          indirectRuleName = context.getIndirectRuleName(),
-          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName);
+  static fromIndirectlyRepeatableIndirectRule(indirectlyRepeatableIndirectRule, context) {
+    const indirectRule = indirectlyRepeatableIndirectRule,  ///
+          indirectRuleName = indirectRule.getName();
 
     let definitions;
 
     definitions = indirectRule.getDefinitions();
 
-    const indirectlyRepeatedDefinitions = indirectlyRepeatedDefinitionsFromDefinitinos(definitions, context),
+    const indirectlyRepeatedDefinitions = indirectlyRepeatedDefinitionsFromDefinitions(definitions, context),
+          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName),
           name = indirectlyRepeatedRuleName, ///
           opacity = indirectRule.getOpacity();
 
@@ -42,12 +42,15 @@ export function indirectlyRepeatedRulesFromCycleAndCycles(context, indirectlyRep
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const rule = context.getRule(),
-            indirectRuleName = context.getIndirectRuleName(),
-            ruleRepeatable = isRuleRepeatable(rule, indirectRuleName, context);
+      const ruleName = context.getRuleName(),
+            indirectRule = context.getIndirectRule(),
+            indirectRuleRepeatable = isRuleRepeatable(indirectRule, ruleName, context);
 
-      if (ruleRepeatable) {
+      if (indirectRuleRepeatable) {
+        const indirectlyRepeatableIndirectRule = indirectRule,  ///
+              indirectlyRepeatedRule = IndirectlyRepeatedRule.fromIndirectlyRepeatableIndirectRule(indirectlyRepeatableIndirectRule, context);
 
+        indirectlyRepeatedRules.push(indirectlyRepeatedRule);
       }
 
       break;

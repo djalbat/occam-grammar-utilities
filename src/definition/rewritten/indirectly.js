@@ -6,10 +6,8 @@ import { ruleNamePartFromRuleName, oneOrMorePartsPartFromPart } from "../../util
 import { repeatedRuleNameFromRuleName, indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName } from "../../utilities/ruleName";
 
 export default class IndirectlyRewrittenDefinition extends Definition {
-  static fromCycle(cycle, context) {
-    const ruleName = context.getRuleName(),
-          indirectRuleName = context.getIndirectRuleName(),
-          indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
+  static fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, context) {
+    const indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
           indirectlyReducedRuleNamePart = ruleNamePartFromRuleName(indirectlyReducedRuleName),
           repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
           repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),

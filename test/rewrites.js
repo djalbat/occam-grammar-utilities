@@ -18,7 +18,7 @@ describe("Rewrites", () => {
     }
   ];
 
-  describe.only("a cycle of length one", () => {
+  describe("a cycle of length one", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -128,7 +128,7 @@ describe("Rewrites", () => {
     })
   });
 
-  describe.only("a cycle of length one with precedence", () => {
+  describe("a cycle of length one with precedence", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -277,7 +277,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion", () => {
+  describe("a cycle of length one with right recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -426,7 +426,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion and a cut", () => {
+  describe("a cycle of length one with right recursion and a cut", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -618,7 +618,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
+  describe("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -732,7 +732,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, precedence, one definition with a cut and the other without ", () => {
+  describe("a cycle of length one with right recursion, precedence, one definition with a cut and the other without ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -961,7 +961,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials ", () => {
+  describe("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1409,7 +1409,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two", () => {
+  describe("a cycle of length two", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1541,7 +1541,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with precedence", () => {
+  describe("a cycle of length two with precedence", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1705,7 +1705,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion", () => {
+  describe("a cycle of length two with right recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1868,7 +1868,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion and a cut", () => {
+  describe("a cycle of length two with right recursion and a cut", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -2080,7 +2080,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion, a cut and intermediate recursion", () => {
+  describe("a cycle of length two with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -2206,7 +2206,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion, precedence, one definition with a cut and the other without ", () => {
+  describe("a cycle of length two with right recursion, precedence, one definition with a cut and the other without ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -2457,7 +2457,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion, together with definitions suitable to parsing polynomials ", () => {
+  describe("a cycle of length two with right recursion, together with definitions suitable to parsing polynomials ", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -3398,17 +3398,17 @@ describe("Rewrites", () => {
         
         T_    ::= V ;
         
-        T~    ::= A~T_1 (-90)
+        T~    ::= A~T (-90)
             
-                | A~T_2 (-101)
+                | A~T_1 (-101)
         
                 ;
         
         A_T_  ::= Y ( ) ;
         
-        A~T_1 ::= "+" \` _A ( ) ;
+        A~T ::= "+" \` _A ( ) ;
         
-        A~T_2 ::= <NO_WHITESPACE> _A ( ) ; 
+        A~T_1 ::= <NO_WHITESPACE> _A ( ) ; 
 
      `));
     });

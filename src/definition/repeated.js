@@ -37,9 +37,8 @@ export function repeatedDefinitionsFromPDefinitionAndPrecedences(definition, pre
   return repeatedDefinitions;
 }
 
-export function repeatedDefinitionsFromDefinitions(definitions, context) {
-  const ruleName = context.getRuleName(),
-        repeatedDefinitions = definitions.reduce((repeatedDefinitions, definition) => {
+export function repeatedDefinitionsFromDefinitions(definitions, ruleName, context) {
+  const repeatedDefinitions = definitions.reduce((repeatedDefinitions, definition) => {
           const defintionRepeatable = isDefinitionRepeatable(definition, ruleName, context);
 
           if (defintionRepeatable) {

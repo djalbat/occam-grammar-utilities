@@ -51,6 +51,20 @@ export default class Cycle {
 
   forEachEdge(callback) { return this.edges.forEach(callback); }
 
+  matchEdge(edge) {
+    const edgeA = edge, ///
+          edgeMatches = this.edges.some((edge) => {
+            const edgeB = edge, ///
+                  edgeBMatchesEdgeA = edgeB.match(edgeA);
+
+            if (edgeBMatchesEdgeA) {
+              return true;
+            }
+          });
+
+    return edgeMatches;
+  }
+
   isEqualTo(cycle) {
     let equalTo = false;
 

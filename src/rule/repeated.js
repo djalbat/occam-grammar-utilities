@@ -25,7 +25,7 @@ export default class RepeatedRule extends Rule {
 
     definitions = rule.getDefinitions();
 
-    const repeatedDefinitions = repeatedDefinitionsFromDefinitions(definitions, context),
+    const repeatedDefinitions = repeatedDefinitionsFromDefinitions(definitions, ruleName, context),
           repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
           name = repeatedRuleName, ///
           opacity = rule.getOpacity();
@@ -37,8 +37,8 @@ export default class RepeatedRule extends Rule {
     return repeatedRule;
   }
 
-  static fromIndirectlyRepeatableRule(directlyRepeatableIndirectCycle, context) {
-    const rule = directlyRepeatableIndirectCycle, ///
+  static fromIndirectlyRepeatableRule(indirectlyRepeatableRule, context) {
+    const rule = indirectlyRepeatableRule, ///
           ruleName = rule.getName(),
           repeatedRuleName = repeatedRuleNameFromRuleName(ruleName);
 
@@ -46,7 +46,8 @@ export default class RepeatedRule extends Rule {
 
     definitions = rule.getDefinitions();
 
-    const intermediateRepeatedDefinitions = intermediateRepeatedDefinitionsFromDefinitions(definitions, context),
+    const indirectRuleName = context.getIndirectRuleName(),
+          intermediateRepeatedDefinitions = intermediateRepeatedDefinitionsFromDefinitions(definitions, indirectRuleName, context),
           name = repeatedRuleName, ///
           opacity = rule.getOpacity();
 
@@ -78,8 +79,8 @@ export function repeatedRulesFromCycleAndCycles(context, repeatedRules = []) {
             ruleRepeatable = isRuleRepeatable(rule, indirectRuleName, context);
 
       if (ruleRepeatable) {
-        const directlyRepeatableRule = rule,  ///
-              repeatedRule = RepeatedRule.fromIndirectlyRepeatableRule(directlyRepeatableRule, context);
+        const indirectlyRepeatableRule = rule,  ///
+              repeatedRule = RepeatedRule.fromIndirectlyRepeatableRule(indirectlyRepeatableRule, context);
 
         repeatedRules.push(repeatedRule);
       }
