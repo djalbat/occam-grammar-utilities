@@ -10,7 +10,7 @@ const { adjustedBNFFromRules } = require("./helpers/bnf");
 const { rulesFromBNF } = parserUtilities,
       { compareParseTreeStrings } = testUtilities;
 
-describe.skip("Languages", () => {
+describe("Languages", () => {
   describe("Nonimal", () => {
     describe("term", () => {
       let bnf = `
@@ -72,29 +72,29 @@ describe.skip("Languages", () => {
           
                             ;
           
-          _argument       ::= _term ( )
-              
-                            | type ( )
-          
-                            ;
-          
           term_           ::= "(" _argument ")"
               
                             | variable
           
                             ;
           
-          term~           ::= argument~term_1
+          term~           ::= argument~term
               
-                            | argument~term_2 (-101)
+                            | argument~term_1 (-101)
           
                             ;
           
           argument_term_  ::= type ( ) ;
           
-          argument~term_1 ::= ( "÷" (-99) | "×" (-99) | "+" (-98) | "-" (-98) ) \` _argument ( ) ;
+          _argument       ::= _term ( )
+              
+                            | type ( )
           
-          argument~term_2 ::= <NO_WHITESPACE> _argument ( ) ;
+                            ;
+          
+          argument~term   ::= ( "÷" (-99) | "×" (-99) | "+" (-98) | "-" (-98) ) \` _argument ( ) ;
+          
+          argument~term_1 ::= <NO_WHITESPACE> _argument ( ) ;
 
        `));
       });
@@ -162,12 +162,6 @@ describe.skip("Languages", () => {
           
                                     ;
           
-          _metaArgument           ::= _statement ( )
-              
-                                    | metaType ( )
-          
-                                    ;
-          
           statement_              ::= "¬" <NO_WHITESPACE> _metaArgument (10)
               
                                     | "(" _metaArgument ")"
@@ -179,6 +173,12 @@ describe.skip("Languages", () => {
           statement~              ::= metaArgument~statement ;
           
           metaArgument_statement_ ::= metaType ( ) ;
+          
+          _metaArgument           ::= _statement ( )
+              
+                                    | metaType ( )
+          
+                                    ;
           
           metaArgument~statement  ::= ( "∧" (-9) | "∨" (-8) | "⇒" (-7) | "⇐" (-7) | "𝗂𝖿𝖿" (-6) ) \` _metaArgument ( ) ;
           

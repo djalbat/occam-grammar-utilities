@@ -2,11 +2,9 @@
 
 import { arrayUtilities } from "necessary";
 
-import { edgesMatchEdge } from "../edge";
-import { ruleNamesFromCycle } from "../utilities/cycle";
 import { rewriteRuleNameParts } from "../utilities/rewrite";
 import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursion";
-import { edgesFromRuleNames, edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/edge";
+import { edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/edge";
 
 const { first, tail } = arrayUtilities;
 
@@ -55,14 +53,11 @@ export function isDefinitionConsuming(definition, context) {
 export function isDefinitionSingular(definition, ruleName, context) {
   let definitionSingular = false;
 
-  const leftRecursiveRuleNames = [],
-        ruleMap = context.getRuleMap();
+  const cycle = context.getCycle(),
+        ruleMap = context.getRuleMap(),
+        definitionCyclical = isDefinitionCyclical(definition, ruleName, cycle, ruleMap);
 
-  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
-
-  const leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
-
-  if (leftRecursiveRuleNamesIncludesRuleName) {
+  if (definitionCyclical) {
     const parts = definition.getParts(),
           firstPart = first(parts),
           firstPartRuleNamePart = firstPart.isRuleNamePart();
@@ -85,27 +80,10 @@ export function isDefinitionSingular(definition, ruleName, context) {
 }
 
 export function isDefinitionReducible(definition, ruleName, context) {
-  const leftRecursiveRuleNames = [],
-        cycles = context.getCycles(),
-        ruleMap = context.getRuleMap();
-
-  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
-
-  const definitionReducible = leftRecursiveRuleNames.every((leftRecursiveRuleName) => {
-    const edge = edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName);
-
-    const cyclesIncludeRuleNameAndLeftRecursiveRuleName = cycles.some((cycle) => {
-      const edgeMatches = cycle.matchEdge(edge);
-
-      if (edgeMatches) {
-        return true;
-      }
-    });
-
-    if (!cyclesIncludeRuleNameAndLeftRecursiveRuleName) {
-      return true;
-    }
-  });
+  const cycles = context.getCycles(),
+        ruleMap = context.getRuleMap(),
+        definitionCyclical = isDefinitionCyclical(definition, ruleName, cycles, ruleMap),
+        definitionReducible = !definitionCyclical;
 
   return definitionReducible;
 }
@@ -113,14 +91,11 @@ export function isDefinitionReducible(definition, ruleName, context) {
 export function isDefinitionRepeatable(definition, ruleName, context) {
   let definitionRepeatable = false;
 
-  const leftRecursiveRuleNames = [],
-        ruleMap = context.getRuleMap();
+  const cycle = context.getCycle(),
+        ruleMap = context.getRuleMap(),
+        definitionCyclical = isDefinitionCyclical(definition, ruleName, cycle, ruleMap);
 
-  leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
-
-  const leftRecursiveRuleNamesIncludesRuleName = leftRecursiveRuleNames.includes(ruleName);
-
-  if (leftRecursiveRuleNamesIncludesRuleName) {
+  if (definitionCyclical) {
     const parts = definition.getParts(),
           firstPart = first(parts),
           firstPartRuleNamePart = firstPart.isRuleNamePart();
@@ -142,3 +117,31 @@ export function isDefinitionRepeatable(definition, ruleName, context) {
   return definitionRepeatable;
 }
 
+function isDefinitionCyclical(definition, ruleName, cycleOrCycles, ruleMap) {
+  const cycles = guaranteeCycles(cycleOrCycles),
+        leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition, ruleMap),
+        definitionCyclical = leftRecursiveRuleNames.some((leftRecursiveRuleName) => {
+          const edge = edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
+                edgeMatchesCycles = cycles.some((cycle) => {
+                  const edgeMatchesCycle = cycle.matchEdge(edge);
+
+                  if (edgeMatchesCycle) {
+                    return true;
+                  }
+                });
+
+          if (edgeMatchesCycles) {
+            return true;
+          }
+        });
+
+  return definitionCyclical;
+}
+
+function guaranteeCycles(cycleOrCycles) {
+  const cycles = Array.isArray(cycleOrCycles) ?
+                   cycleOrCycles :
+                     [cycleOrCycles];
+
+  return cycles;
+}

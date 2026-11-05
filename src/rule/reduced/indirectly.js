@@ -43,11 +43,9 @@ export function indirectlyReducedRulesFromCycleAndCycles(context, indirectlyRedu
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const ruleName = context.getRuleName(),
-            indirectRule = context.getIndirectRule(),
-            indirectRuleName = context.getIndirectRuleName(),
-            indirectRuleSingular = isRuleSingular(indirectRule, ruleName, context),
-            indirectRuleReducible = isRuleReducible(indirectRule, indirectRuleName, context);
+      const indirectRule = context.getIndirectRule(),
+            indirectRuleSingular = isRuleSingular(indirectRule, context),
+            indirectRuleReducible = isRuleReducible(indirectRule, context);
 
       if (indirectRuleSingular && indirectRuleReducible) {
         const rule = context.getRule(),

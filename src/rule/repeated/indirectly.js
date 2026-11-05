@@ -42,9 +42,8 @@ export function indirectlyRepeatedRulesFromCycleAndCycles(context, indirectlyRep
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const ruleName = context.getRuleName(),
-            indirectRule = context.getIndirectRule(),
-            indirectRuleRepeatable = isRuleRepeatable(indirectRule, ruleName, context);
+      const indirectRule = context.getIndirectRule(),
+            indirectRuleRepeatable = isRuleRepeatable(indirectRule, context);
 
       if (indirectRuleRepeatable) {
         const indirectlyRepeatableIndirectRule = indirectRule,  ///

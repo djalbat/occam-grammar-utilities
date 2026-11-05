@@ -8,6 +8,7 @@ import { replacementRulesFromCycleAndCycles } from "../rule/replacement";
 import { intermediateRulesFromCycleAndCycles } from "../rule/intermediate";
 import { indirectlyReducedRulesFromCycleAndCycles } from "../rule/reduced/indirectly";
 import { indirectlyRepeatedRulesFromCycleAndCycles } from "../rule/repeated/indirectly";
+import { indirectlyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/indirectly";
 
 export function rewriteRules(context) {
   createRewrittenRules(context);
@@ -19,6 +20,8 @@ export function rewriteRules(context) {
   createIndirectlyReducedRules(context);
 
   createIndirectlyRepeatedRules(context);
+
+  createIndirectlyRewrittenRules(context);
 
   createIntermediateRules(context);
 
@@ -116,6 +119,23 @@ function createIndirectlyRepeatedRules(context) {
     const indirectlyRepeatedRuleName = indirectlyRepeatedRule.getName();
 
     ruleMap[indirectlyRepeatedRuleName] = indirectlyRepeatedRule;
+  });
+}
+
+function createIndirectlyRewrittenRules(context) {
+  const ruleMap = context.getRuleMap(),
+        indirectlyRewrittenRules = indirectlyRewrittenRulesFromCycleAndCycles(context);
+
+  indirectlyRewrittenRules.map((indirectlyRewrittenRule) => {
+    const indirectlyRewrittenRuleName = indirectlyRewrittenRule.getName(),
+          indirectlyRewrittenRuleA = indirectlyRewrittenRule, ///
+          indirectlyRewrittenRuleB = ruleMap[indirectlyRewrittenRuleName] || null;  ///
+
+    indirectlyRewrittenRule = (indirectlyRewrittenRuleB !== null) ?
+                                indirectlyRewrittenRuleB.mergedWith(indirectlyRewrittenRuleA) :
+                                  indirectlyRewrittenRuleA;
+
+    ruleMap[indirectlyRewrittenRuleName] = indirectlyRewrittenRule;
   });
 }
 

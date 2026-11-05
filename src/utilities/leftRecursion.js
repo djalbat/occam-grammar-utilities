@@ -58,7 +58,7 @@ export function leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleN
   return terminate;
 }
 
-export function leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames) {
+export function leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames = []) {
   const parts = definition.getParts();
 
   parts.some((part) => {
@@ -68,6 +68,8 @@ export function leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRe
       return true;
     }
   });
+
+  return leftRecursiveRuleNames;
 }
 
 export function leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames) {

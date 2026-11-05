@@ -24,8 +24,7 @@ export function removedRulesFromCycleAndCycles(context) {
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
-            indirectRuleName = context.getIndirectRuleName(),
-            ruleSingular = isRuleSingular(rule, indirectRuleName, context);
+            ruleSingular = isRuleSingular(rule, context);
 
       if (ruleSingular) {
         const indirectRule = context.getIndirectRule(),

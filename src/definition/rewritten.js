@@ -70,20 +70,3 @@ export default class RewrittenDefinition extends Definition {
     return rewrittenDefinition;
   }
 }
-
-export function rewrittenDefinitionsFromDefinitions(definitions, context) {
-  const indirectRuleName = context.getIndirectRuleName(),
-        rewrittenDefinitions = definitions.reduce((rewrittenDefinitions, definition) => {
-          const definitionIndirectlyRepeatable = isDefinitionRepeatable(definition, indirectRuleName, context);
-
-          if (definitionIndirectlyRepeatable) {
-            const rewrittenDefinition = RewrittenDefinition.fromDefiniiton(definition, context);
-
-            rewrittenDefinitions.push(rewrittenDefinition);
-          }
-
-          return rewrittenDefinitions;
-        }, []);
-
-  return rewrittenDefinitions;
-}

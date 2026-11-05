@@ -2,8 +2,9 @@
 
 import { isDefinitionSingular, isDefinitionReducible, isDefinitionRepeatable } from "../utilities/definition";
 
-export function isRuleSingular(rule, ruleName, context) {
-  const definitions = rule.getDefinitions(),
+export function isRuleSingular(rule, context) {
+  const ruleName = rule.getName(),
+        definitions = rule.getDefinitions(),
         ruleSingular = definitions.some((definition) => {
           const definitionSingular = isDefinitionSingular(definition, ruleName, context);
 
@@ -15,8 +16,9 @@ export function isRuleSingular(rule, ruleName, context) {
   return ruleSingular;
 }
 
-export function isRuleReducible(rule, ruleName, context) {
-  const definitions = rule.getDefinitions(),
+export function isRuleReducible(rule, context) {
+  const ruleName = rule.getName(),
+        definitions = rule.getDefinitions(),
         ruleReducible = definitions.some((definition) => {
           const definitionReducible = isDefinitionReducible(definition, ruleName, context);
 
@@ -28,8 +30,9 @@ export function isRuleReducible(rule, ruleName, context) {
   return ruleReducible;
 }
 
-export function isRuleRepeatable(rule, ruleName, context) {
-  const definitions = rule.getDefinitions(),
+export function isRuleRepeatable(rule, context) {
+  const ruleName = rule.getName(),
+        definitions = rule.getDefinitions(),
         ruleRepeatable = definitions.some((definition) => {
           const definitionRepeatable = isDefinitionRepeatable(definition, ruleName, context);
 

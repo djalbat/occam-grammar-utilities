@@ -41,18 +41,17 @@ export function intermediateRulesFromCycleAndCycles(context, intermediateRules =
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
-            indirectRuleName = context.getIndirectRuleName(),
-            ruleRepeatable = isRuleRepeatable(rule, indirectRuleName, context);
+            ruleRepeatable = isRuleRepeatable(rule, context);
 
       if (ruleRepeatable) {
         const rule = context.getRule(),
-              definitions = rule.getDefinitions(),
-              indirectRuleName = context.getIndirectRuleName();
+              ruleName = rule.getName(),
+              definitions = rule.getDefinitions();
 
         let index = 0;
 
         definitions.forEach((definition) => {
-          const definitionRepeatable = isDefinitionRepeatable(definition, indirectRuleName, context);
+          const definitionRepeatable = isDefinitionRepeatable(definition, ruleName, context);
 
           if (definitionRepeatable) {
             const intermediateRule = IntermediateRule.fromDefinitionAndIndex(definition, index, context);
@@ -72,10 +71,10 @@ export function intermediateRulesFromCycleAndCycles(context, intermediateRules =
 }
 
 function precedencesFromIndirectRule(indirectRule, context) {
-  const ruleName = context.getRuleName(),
-        definitions = indirectRule.getDefinitions(),
+  const definitions = indirectRule.getDefinitions(),
+        indirectRuleName = indirectRule.getName(),
         precedences = definitions.reduce((precedences, definition) => {
-          const definitionSingular = isDefinitionSingular(definition, ruleName, context);
+          const definitionSingular = isDefinitionSingular(definition, indirectRuleName, context);
 
           if (definitionSingular) {
             const precedence = definition.getPrecedence();

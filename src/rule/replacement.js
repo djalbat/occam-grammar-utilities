@@ -45,14 +45,15 @@ export default class ReplacementRule extends Rule {
 }
 
 export function replacementRulesFromCycleAndCycles(context) {
-  const ruleName = context.getRuleName(),
-        cycleLength = context.getCycleLength(),
+  const cycleLength = context.getCycleLength(),
         replacementRules = context.getReplacementRules();
 
   let replacementRule;
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
+      const ruleName = context.getRuleName();
+
       replacementRule = ReplacementRule.fromRuleName(ruleName, context);
 
       replacementRules.push(replacementRule);
@@ -61,13 +62,14 @@ export function replacementRulesFromCycleAndCycles(context) {
     }
 
     case CYCLE_LENGTH_2: {
+      const ruleName = context.getRuleName();
+
       replacementRule = ReplacementRule.fromRuleName(ruleName, context);
 
       replacementRules.push(replacementRule);
 
       const rule = context.getRule(),
-            indirectRuleName = context.getIndirectRuleName(),
-            ruleSingular = isRuleSingular(rule, indirectRuleName, context);
+            ruleSingular = isRuleSingular(rule, context);
 
       if (!ruleSingular) {
         const indirectRuleName = context.getIndirectRuleName();
