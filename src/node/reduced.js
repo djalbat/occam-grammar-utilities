@@ -1,6 +1,7 @@
 "use strict";
 
-import NonTerminalNode from "../nonTerminalNode";
+import { NonTerminalNode } from "occam-parsers";
+
 import simpliciationMixins from  "../mixins/simpliciation";
 
 import { ruleNameFromReducedRuleName } from "../utilities/ruleName";

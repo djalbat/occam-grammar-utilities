@@ -1,7 +1,8 @@
 "use strict";
 
+import { NonTerminalNode } from "occam-parsers";
+
 import State from "../state";
-import NonTerminalNode from "../nonTerminalNode";
 import simpliciationMixins from  "../mixins/simpliciation";
 
 class ReplacementNode extends NonTerminalNode {

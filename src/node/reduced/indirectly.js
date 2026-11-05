@@ -1,6 +1,7 @@
 "use strict";
 
-import NonTerminalNode from "../../nonTerminalNode";
+import { NonTerminalNode } from "occam-parsers";
+
 import simpliciationMixins from  "../../mixins/simpliciation";
 
 class IndirectlyReducedNode extends NonTerminalNode {
