@@ -110,10 +110,9 @@ export default class RewrittenRule extends Rule {
     return rewrittenRule;
   }
 
-  static fromIndirectlyRepeatableRuleAndIndirectlyReducibleIndirectRule(indirectlyRepeatableRule, indirectlyReducibleIndirectRule, context) {
+  static fromIndirectlyRepeatableRuleAndIndirectRule(indirectlyRepeatableRule, indirectRule, context) {
     const rule = indirectlyRepeatableRule,  ///
           ruleName = rule.getName(),
-          indirectRule = indirectlyReducibleIndirectRule,  ///
           indirectRuleName = indirectRule.getName(),
           rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, context),
           indirectlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, context),
@@ -134,14 +133,11 @@ export default class RewrittenRule extends Rule {
 export function rewrittenRulesFromCycleAndCycles(context, rewrittenRules = []) {
   const cycleLength = context.getCycleLength();
 
-  let rewrittenRule;
-
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
       const rule = context.getRule(),
-            directlyRepeatableRule = rule;  ///
-
-      rewrittenRule = RewrittenRule.fromDirectlyRepeatableRule(directlyRepeatableRule, context);
+            directlyRepeatableRule = rule,  ///
+            rewrittenRule = RewrittenRule.fromDirectlyRepeatableRule(directlyRepeatableRule, context);
 
       rewrittenRules.push(rewrittenRule);
 
@@ -150,33 +146,25 @@ export function rewrittenRulesFromCycleAndCycles(context, rewrittenRules = []) {
 
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
-            indirectRule = context.getIndirectRule(),
             ruleSingular = isRuleSingular(rule, context),
-            ruleRepeatable = isRuleRepeatable(rule, context),
-            indirectRuleRedicible = isRuleReducible(indirectRule, context);
+            ruleRepeatable = isRuleRepeatable(rule, context);
 
       if (false) {
         ///
       } else if (ruleSingular) {
-        const indirectlySingularRule = rule;  ///
-
-        rewrittenRule = RewrittenRule.fromIndirectlySingularRule(indirectlySingularRule, context);
+        const indirectlySingularRule = rule,  ///
+              rewrittenRule = RewrittenRule.fromIndirectlySingularRule(indirectlySingularRule, context);
 
         rewrittenRules.push(rewrittenRule);
       } else if (ruleRepeatable) {
-        const indirectlyRepeatableRule = rule;  ///
+        const indirectRule = context.getIndirectRule(),
+              indirectRuleReducible = isRuleReducible(indirectRule, context),
+              indirectlyRepeatableRule = rule,  ///
+              rewrittenRule = indirectRuleReducible ?
+                                RewrittenRule.fromIndirectlyRepeatableRuleAndIndirectRule(indirectlyRepeatableRule, indirectRule, context) :
+                                  RewrittenRule.fromIndirectlyRepeatableRule(indirectlyRepeatableRule, context);
 
-        if (indirectRuleRedicible) {
-          const indirectlyReducibleIndirectRule = indirectRule;  ///
-
-          rewrittenRule = RewrittenRule.fromIndirectlyRepeatableRuleAndIndirectlyReducibleIndirectRule(indirectlyRepeatableRule, indirectlyReducibleIndirectRule, context);
-
-          rewrittenRules.push(rewrittenRule);
-        } else {
-          rewrittenRule = RewrittenRule.fromIndirectlyRepeatableRule(indirectlyRepeatableRule, context);
-
-          rewrittenRules.push(rewrittenRule);
-        }
+        rewrittenRules.push(rewrittenRule);
       }
 
       break;

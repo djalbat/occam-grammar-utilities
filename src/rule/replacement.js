@@ -15,8 +15,8 @@ export default class ReplacementRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromRuleName(ruleName, context) {
-    const rule = context.getRule(),
+  static fromRule(rule, context) {
+    const ruleName = rule.getName(),
           replacementDefinition = ReplacementDefinition.fromRuleName(ruleName),
           definition = replacementDefinition, ///
           name = ruleName, ///
@@ -29,8 +29,8 @@ export default class ReplacementRule extends Rule {
     return replacementRule;
   }
 
-  static fromIndirectRuleName(indirectRuleName, context) {
-    const indirectRule = context.getIndirectRule(),
+  static fromIndirectRule(indirectRule, context) {
+    const indirectRuleName = indirectRule.getName(),
           replacementDefinition = ReplacementDefinition.fromIndirectRuleName(indirectRuleName),
           definition = replacementDefinition, ///
           name = indirectRuleName, ///
@@ -48,13 +48,10 @@ export function replacementRulesFromCycleAndCycles(context) {
   const cycleLength = context.getCycleLength(),
         replacementRules = context.getReplacementRules();
 
-  let replacementRule;
-
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
-      const ruleName = context.getRuleName();
-
-      replacementRule = ReplacementRule.fromRuleName(ruleName, context);
+      const rule = context.getRule(),
+            replacementRule = ReplacementRule.fromRule(rule, context);
 
       replacementRules.push(replacementRule);
 
@@ -62,19 +59,16 @@ export function replacementRulesFromCycleAndCycles(context) {
     }
 
     case CYCLE_LENGTH_2: {
-      const ruleName = context.getRuleName();
-
-      replacementRule = ReplacementRule.fromRuleName(ruleName, context);
+      const rule = context.getRule(),
+            replacementRule = ReplacementRule.fromRule(rule, context);
 
       replacementRules.push(replacementRule);
 
-      const rule = context.getRule(),
-            ruleSingular = isRuleSingular(rule, context);
+      const ruleSingular = isRuleSingular(rule, context);
 
       if (!ruleSingular) {
-        const indirectRuleName = context.getIndirectRuleName();
-
-        replacementRule = ReplacementRule.fromIndirectRuleName(indirectRuleName, context);
+        const indirectRule = context.getIndirectRule(),
+              replacementRule = ReplacementRule.fromIndirectRule(indirectRule, context);
 
         replacementRules.push(replacementRule);
       }
