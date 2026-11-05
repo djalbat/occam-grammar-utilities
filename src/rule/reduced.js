@@ -21,15 +21,7 @@ export default class ReducedRule extends Rule {
     definitions = rule.getDefinitions();
 
     const reducedDefinitions = reducedDefinitionsFromDefinitions(definitions, context),
-          reducedDefinitionsLength = reducedDefinitions.length;
-
-    if (reducedDefinitionsLength === 0) {
-      const ruleString = rule.asString();
-
-      throw new Error(`The '${ruleString}' rule has no reduced definitions.`);
-    }
-
-    const ruleName = rule.getName(),
+          ruleName = rule.getName(),
           reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           name = reducedRuleName, ///
           opacity = null;

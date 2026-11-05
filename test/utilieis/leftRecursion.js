@@ -13,6 +13,31 @@ const { rulesFromBNF } = parserUtilities,
 
 describe("utiliies/leftReursion", () => {
   describe("leftRecursiveRuleNamesFromPart", () => {
+    describe("a missing rule name part", () => {
+      const bnf = `
+    
+        T ::= A ;
+          
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("throws an exception", () => {
+        assert.throws(() => {
+          leftRecursiveRuleNamesFromPart(part, ruleMap);
+        });
+      });
+    });
+
     describe("a terminal part", () => {
       const bnf = `
   

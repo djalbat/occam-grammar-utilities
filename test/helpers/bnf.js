@@ -1,11 +1,30 @@
 "use strict";
 
-const { rulesUtilities, parserUtilities } = require("occam-parsers");
+const { arrayUtilities } = require("necessary"),
+      { rulesUtilities, parserUtilities } = require("occam-parsers");
 
-const { eliminateLeftRecursion } = require("../../lib");  ///
+const { eliminateLeftRecursion } = require("../../lib");
 
-const { rulesFromBNF } = parserUtilities,
+const { first } = arrayUtilities,
+      { rulesFromBNF } = parserUtilities,
       { rulesAsString } = rulesUtilities;
+
+function ruleFromBNF(bnf) {
+  const rules = rulesFromBNF(bnf),
+        firstRule = first(rules),
+        rule = firstRule;
+
+  return rule;
+}
+
+function definitionFromBNF(bnf) {
+  const rule = ruleFromBNF(bnf),
+        definitions = rule.getDefinitions(),
+        firstDefinition = first(definitions),
+        definition = firstDefinition; ///
+
+  return definition;
+}
 
 function adjustedBNFFromBNF(bnf) {
   let rules;
@@ -30,6 +49,8 @@ function adjustedBNFFromRules(rules) {
 }
 
 module.exports = {
+  ruleFromBNF,
+  definitionFromBNF,
   adjustedBNFFromBNF,
   adjustedBNFFromRules
 };

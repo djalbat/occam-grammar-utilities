@@ -117,6 +117,16 @@ export function isDefinitionRepeatable(definition, ruleName, context) {
   return definitionRepeatable;
 }
 
+export default {
+  partsfromDefinition,
+  tailPartsfromDefinition,
+  ruleNameFromRepeatableDefinition,
+  isDefinitionConsuming,
+  isDefinitionSingular,
+  isDefinitionReducible,
+  isDefinitionRepeatable
+};
+
 function isDefinitionCyclical(definition, ruleName, cycleOrCycles, ruleMap) {
   const cycles = guaranteeCycles(cycleOrCycles),
         leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition, ruleMap),
