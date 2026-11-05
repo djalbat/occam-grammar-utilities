@@ -127,13 +127,7 @@ function createIndirectlyRewrittenRules(context) {
         indirectlyRewrittenRules = indirectlyRewrittenRulesFromCycleAndCycles(context);
 
   indirectlyRewrittenRules.map((indirectlyRewrittenRule) => {
-    const indirectlyRewrittenRuleName = indirectlyRewrittenRule.getName(),
-          indirectlyRewrittenRuleA = indirectlyRewrittenRule, ///
-          indirectlyRewrittenRuleB = ruleMap[indirectlyRewrittenRuleName] || null;  ///
-
-    indirectlyRewrittenRule = (indirectlyRewrittenRuleB !== null) ?
-                                indirectlyRewrittenRuleB.mergedWith(indirectlyRewrittenRuleA) :
-                                  indirectlyRewrittenRuleA;
+    const indirectlyRewrittenRuleName = indirectlyRewrittenRule.getName();
 
     ruleMap[indirectlyRewrittenRuleName] = indirectlyRewrittenRule;
   });

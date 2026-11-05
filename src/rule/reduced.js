@@ -15,9 +15,7 @@ export default class ReducedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromDirectlyRepeatedRule(directlyRepeatedRule, context) {
-    const rule = directlyRepeatedRule;  ///
-
+  static fromRule(rule, context) {
     let definitions;
 
     definitions = rule.getDefinitions();
@@ -31,35 +29,7 @@ export default class ReducedRule extends Rule {
       throw new Error(`The '${ruleString}' rule has no reduced definitions.`);
     }
 
-    const ruleName = context.getRuleName(),
-          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          name = reducedRuleName, ///
-          opacity = null;
-
-    definitions = reducedDefinitions; ///
-
-    const reducedRule = new ReducedRule(name, opacity, definitions);
-
-    return reducedRule;
-  }
-
-  static fromIndirectlyRepeatedRule(indirectlyRepeatedRule, context) {
-    const rule = indirectlyRepeatedRule;  ///
-
-    let definitions;
-
-    definitions = rule.getDefinitions();
-
-    const reducedDefinitions = reducedDefinitionsFromDefinitions(definitions, context),
-          reducedDefinitionsLength = reducedDefinitions.length;
-
-    if (reducedDefinitionsLength === 0) {
-      const ruleString = rule.asString();
-
-      throw new Error(`The '${ruleString}' rule has no reduced definitions.`);
-    }
-
-    const ruleName = context.getRuleName(),
+    const ruleName = rule.getName(),
           reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           name = reducedRuleName, ///
           opacity = null;
@@ -78,8 +48,7 @@ export function reducedRulesFromCycleAndCycles(context, reducedRules = []) {
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
       const rule = context.getRule(),
-            directlyRepeatedRule = rule,  ///
-            reducedRule = ReducedRule.fromDirectlyRepeatedRule(directlyRepeatedRule, context);
+            reducedRule = ReducedRule.fromRule(rule, context);
 
       reducedRules.push(reducedRule);
 
@@ -88,8 +57,7 @@ export function reducedRulesFromCycleAndCycles(context, reducedRules = []) {
 
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
-            indirectlyRepeatedRule = rule,  ///
-            reducedRule = ReducedRule.fromIndirectlyRepeatedRule(indirectlyRepeatedRule, context);
+            reducedRule = ReducedRule.fromRule(rule, context);
 
       reducedRules.push(reducedRule);
 

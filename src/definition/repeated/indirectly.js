@@ -26,4 +26,3 @@ export function indirectlyRepeatedDefinitionsFromDefinitions(definitions, contex
 
   return indirectlyRepeatedDefinitions;
 }
-

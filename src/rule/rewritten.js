@@ -7,9 +7,9 @@ import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
 import IndirectlyRewrittenDefinition from "../definition/rewritten/indirectly";
 
-import { isDefinitionSingular } from "../utilities/definition";
 import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
+import { rewrittenDefinitionsFromDefinitionsAndRuleName } from "../definition/rewritten";
 import { isRuleSingular, isRuleRepeatable, isRuleReducible } from "../utilities/rule";
 
 const { front } = arrayUtilities;
@@ -45,31 +45,20 @@ export default class RewrittenRule extends Rule {
 
   static fromIndirectlySingularRule(indirectlySingularRule, context) {
     const rule = indirectlySingularRule,  ///
-          ruleName = rule.getName(),
-          rewrittenDefinitions = [];
+          ruleName = rule.getName();
 
     let definitions;
 
     definitions = rule.getDefinitions();
 
-    definitions.forEach((definition) => {
-      const definitionSingular = isDefinitionSingular(definition, ruleName, context);
-
-      if (definitionSingular) {
-        const indirectlyRepeatedDefinition = definition,  ///
-              rewrittenDefinition = RewrittenDefinition.fromIndirectlyRepeatedDefinition(indirectlyRepeatedDefinition, context);
-
-        rewrittenDefinitions.push(rewrittenDefinition);
-      }
-    });
-
     const singular = true,
-          rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, singular, context);
+          rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
+          rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, singular, context),
+          rewrittenDefinitions = rewrittenDefinitionsFromDefinitionsAndRuleName(definitions, ruleName, context);
 
     rewrittenDefinitions.push(rewrittenDefinition);
 
-    const rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
-          name = rewrittenRuleName, ///
+    const name = rewrittenRuleName, ///
           opacity = null;
 
     definitions = rewrittenDefinitions; ///
@@ -98,13 +87,12 @@ export default class RewrittenRule extends Rule {
     const rule = indirectlyRepeatableRule,  ///
           ruleName = rule.getName(),
           rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, context),
-          rewrittenDefinitions = [
-            rewrittenDefinition
-          ],
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName, ///
           opacity = null,
-          definitions = rewrittenDefinitions, ///
+          definitions = [
+            rewrittenDefinition
+          ],
           rewrittenRule = new RewrittenRule(name, opacity, definitions);
 
     return rewrittenRule;
@@ -116,14 +104,13 @@ export default class RewrittenRule extends Rule {
           indirectRuleName = indirectRule.getName(),
           rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, context),
           indirectlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, context),
-          rewrittenDefinitions = [
-            rewrittenDefinition,
-            indirectlyRewrittenDefinition
-          ],
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName, ///
           opacity = null,
-          definitions = rewrittenDefinitions, ///
+          definitions = [
+            rewrittenDefinition,
+            indirectlyRewrittenDefinition
+          ],
           rewrittenRule = new RewrittenRule(name, opacity, definitions);
 
     return rewrittenRule;

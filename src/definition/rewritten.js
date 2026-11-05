@@ -2,7 +2,7 @@
 
 import { Definition } from "occam-parsers";
 
-import { isDefinitionRepeatable } from "../utilities/definition";
+import { isDefinitionSingular } from "../utilities/definition";
 import { ruleNamePartFromRuleName, oneOrMorePartsPartFromPart, zeroOrMorePartsPartFromPart } from "../utilities/part";
 import { reducedRuleNameFromRuleName, repeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromIndirectRuleName } from "../utilities/ruleName";
 
@@ -52,7 +52,7 @@ export default class RewrittenDefinition extends Definition {
     return rewrittenDefinition;
   }
 
-  static fromIndirectlyRepeatedDefinition(indirectlyRepeatedDefinition, context) {
+  static fromSingularDefinition(singularDefinition, context) {
     const ruleName = context.getRuleName(),
           indirectRuleName = context.getIndirectRuleName(),
           reducedRuleName = reducedRuleNameFromRuleName(ruleName),
@@ -64,9 +64,26 @@ export default class RewrittenDefinition extends Definition {
             reducedRuleNamePart,
             oneOrMoreIndirectlyRepeatedRuleNamePartPart
           ],
-          precedence = indirectlyRepeatedDefinition.getPrecedence(),
+          precedence = singularDefinition.getPrecedence(),
           rewrittenDefinition = new RewrittenDefinition(parts, precedence);
 
     return rewrittenDefinition;
   }
+}
+
+export function rewrittenDefinitionsFromDefinitionsAndRuleName(definitions, ruleName, context) {
+  const rewrittenDefinitions = definitions.reduce((rewrittenDefinitions, definition) => {
+    const definitionSingular = isDefinitionSingular(definition, ruleName, context);
+
+    if (definitionSingular) {
+      const singularDefinition = definition,  ///
+            rewrittenDefinition = RewrittenDefinition.fromSingularDefinition(singularDefinition, context);
+
+      rewrittenDefinitions.push(rewrittenDefinition);
+    }
+
+    return rewrittenDefinitions;
+  }, []);
+
+  return rewrittenDefinitions;
 }

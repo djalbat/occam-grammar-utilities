@@ -18,11 +18,10 @@ export default class ReplacementRule extends Rule {
   static fromRule(rule, context) {
     const ruleName = rule.getName(),
           replacementDefinition = ReplacementDefinition.fromRuleName(ruleName),
-          definition = replacementDefinition, ///
           name = ruleName, ///
           opacity = rule.getOpacity(),
           definitions = [
-            definition
+            replacementDefinition
           ],
           replacementRule = new ReplacementRule(name, opacity, definitions);
 
@@ -32,11 +31,10 @@ export default class ReplacementRule extends Rule {
   static fromIndirectRule(indirectRule, context) {
     const indirectRuleName = indirectRule.getName(),
           replacementDefinition = ReplacementDefinition.fromIndirectRuleName(indirectRuleName),
-          definition = replacementDefinition, ///
           name = indirectRuleName, ///
           opacity = indirectRule.getOpacity(),
           definitions = [
-            definition
+            replacementDefinition
           ],
           replacementRule = new ReplacementRule(name, opacity, definitions);
 

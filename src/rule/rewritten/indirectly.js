@@ -1,16 +1,13 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
-import { Rule, Definition } from "occam-parsers";
+import { Rule } from "occam-parsers";
 
-import IndirectlyRewrittenNode from "../../node/rewritten";
+import IndirectlyRewrittenNode from "../../node/rewritten/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
 import { isRuleRepeatable } from "../../utilities/rule";
-import { partsfromDefinition } from "../../utilities/definition";
 import { rewrittenRuleNameFromRuleName } from "../../utilities/ruleName";
-
-const { front } = arrayUtilities;
+import { indiretlyRewrittenDefinitionsFromDefinitions } from "../../definition/rewritten/indirectly";
 
 export default class IndirectlyRewrittenRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -19,41 +16,14 @@ export default class IndirectlyRewrittenRule extends Rule {
     return NonTerminalNode;
   }
 
-  mergedWith(indirectlyRewrittenRule) {
-    let definitions;
-
-    definitions = this.getDefinitions();
-
-    const frontDefinitions = front(definitions);
-
-    definitions = indirectlyRewrittenRule.getDefinitions();
-
-    definitions = [ ///
-      ...frontDefinitions,
-      ...definitions
-    ];
-
-    const name = this.getName(),
-          opacity = this.getOpacity();
-
-    indirectlyRewrittenRule = new IndirectlyRewrittenRule(name, opacity, definitions);  ///
-
-    return indirectlyRewrittenRule;
-  }
-
   static fromIndirectRule(indirectRule, context) {
     let definitions;
 
     definitions = indirectRule.getDefinitions();
 
-    definitions = definitions.map((definition) => {
-      const parts = partsfromDefinition(definition, context),
-            precedence = definition.getPrecedence();
+    const indirectlyRewrittenDefinitions = indiretlyRewrittenDefinitionsFromDefinitions(definitions, context);
 
-      definition = Definition.fromPartsAndPrecedence(parts, precedence);
-
-      return definition;
-    });
+    definitions = indirectlyRewrittenDefinitions; ///
 
     const indirectRuleName = indirectRule.getName(),
           ruleName = indirectRuleName,  ///
