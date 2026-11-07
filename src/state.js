@@ -38,10 +38,8 @@ export default class State {
     return nonTerminalNode;
   }
 
-  static fromReplacementNode(replacementNode, state) {
-    const ruleName = replacementNode.getRuleName(),
-          opacity = replacementNode.getOpacity(),
-          parser = state.getParser();
+  static fromRuleNameAndOpacity(ruleName, opacity, state) {
+    const parser = state.getParser();
 
     state = new State(ruleName, opacity, parser);  ///
 
