@@ -3696,4 +3696,97 @@ describe("Rewrites", () => {
       });
     });
   });
+
+  describe.skip("two cycles of length two with a double indirect repetition, a cut, precedence and non-left recursive intermediate rules", () => {
+    let bnf = `
+
+      S ::= ( T ... <END_OF_LINE> ) ;
+
+      T ::=  B
+
+          |  C
+
+          |  L
+
+          |  /[a-z0-9]/
+
+          ;
+
+      B ::= "(" T ")" ;
+      
+      C ::= T ( "=" | "!" ) T ;
+
+      L ::= T ( "|" | "&" ) T ; 
+
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+        
+        S  ::= ( T ... <END_OF_LINE> ) ;
+        
+        T  ::= _T ;
+        
+        _T ::= T_ ~C+
+            
+             | T_ ~L+
+            
+             | T_
+        
+             ;
+        
+        T_ ::= _B
+            
+             | /[a-z0-9]/
+        
+             ;
+        
+        ~C ::= ( "=" | "!" ) \` _T ;
+        
+        ~L ::= ( "|" | "&" ) \` _T ;
+
+        _B ::= "(" _T ")" ;
+        
+     `));
+    });
+
+    describe("content with five tokens", () => {
+      const content = `(x=5)
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        // assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+        
+          ...
+                              
+       `));
+      });
+    });
+  });
 });

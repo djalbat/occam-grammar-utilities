@@ -64,17 +64,3 @@ export default class Edge {
     return edge;
   }
 }
-
-export function edgesMatchEdge(edges, edge) {
-  const edgeA = edge, ///
-        matches = edges.some((edge) => {
-          const edgeB = edge, ///
-            edgeAMatchesEdgeB = edgeA.match(edgeB);
-
-          if (edgeAMatchesEdgeB) {
-            return true;
-          }
-        });
-
-  return matches;
-}

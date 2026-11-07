@@ -3,22 +3,20 @@
 import { arrayUtilities } from "necessary";
 import { rulesUtilities } from "occam-parsers";
 
-import Graph from "./graph";
 import Context from "./context";
 
-import { edgesFromStartRule } from "./utilities/edge";
+import { graphFromRules } from "./utilities/graph";
 import { LEFT_RECURSIVE_LABEL } from "./labels";
-import { leftRecursiveRuleNamesFromRule } from "./utilities/leftRecursion";
-import { rewriteRules, replaceOrRemoveRules } from "./utilities/rules";
+import { rewriteRules, replaceOrRemoveRules, rewriteSecondaryRules } from "./utilities/rules";
 
 const { filter } = arrayUtilities,
       { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
 export default function eliminateLeftRecursion(rules) {
-  const ruleMap = ruleMapFromRules(rules),
-        startRule = startRuleFromRules(rules),
-        ruleNamesMap = ruleNamesMapFromNothing(ruleMap),
-        cycles = cyclesFromStartRule(startRule, ruleMap, ruleNamesMap);
+  const startRule = startRuleFromRules(rules),
+        ruleMap = ruleMapFromRules(rules),
+        graph = graphFromRules(rules),
+        cycles = cyclesFromGrapah(graph);
 
   let context = Context.fromCyclesAndRuleMap(cycles, ruleMap);
 
@@ -30,23 +28,15 @@ export default function eliminateLeftRecursion(rules) {
 
   replaceOrRemoveRules(context);
 
+  rewriteSecondaryRules(context);
+
   rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap); ///
 
   return rules;
 }
 
-function graphFromStartRule(startRule, ruleMap, ruleNamesMap) {
-  const startRuleName = startRule.getName(),
-        edges = edgesFromStartRule(startRule, ruleMap, ruleNamesMap),
-        startVertex = startRuleName,  ///
-        graph = Graph.fromEdgesAndStartVertex(edges, startVertex);
-
-  return graph;
-}
-
-function cyclesFromStartRule(startRule, ruleMap, ruleNamesMap) {
-  const graph = graphFromStartRule(startRule, ruleMap, ruleNamesMap),
-        cycles = graph.findCycles();
+function cyclesFromGrapah(graph) {
+  const cycles = graph.findCycles();
 
   filter(cycles, (cycle) => {
     const cycleLeftRecursive = isCycleLeftRecursive(cycle);
@@ -71,23 +61,5 @@ function isCycleLeftRecursive(cycle) {
   });
 
   return cycleLeftRecursive;
-}
-
-function ruleNamesMapFromNothing(ruleMap) {
-  const ruleNamesMap = {},
-        ruleNames = Object.keys(ruleMap);
-
-  ruleNames.forEach((ruleName) => {
-    const rule = ruleMap[ruleName],
-          leftRecursiveRuleNames = [];
-
-    leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames);
-
-    const ruleNames = leftRecursiveRuleNames; ///
-
-    ruleNamesMap[ruleName] = ruleNames;
-  });
-
-  return ruleNamesMap;
 }
 

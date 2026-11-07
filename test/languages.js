@@ -185,7 +185,7 @@ describe("Languages", () => {
         `));
       });
     });
-  })
+  });
 
   describe("Furtle", () => {
     let bnf = `

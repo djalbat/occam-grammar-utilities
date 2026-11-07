@@ -24,7 +24,7 @@ export function replaceRuleNameParts(parts, callback) {
 
     part = parts[index];
 
-    const partNonTerminalPart= part.isNonTerminalPart();
+    const partNonTerminalPart = part.isNonTerminalPart();
 
     if (partNonTerminalPart) {
       const nonTerminalPart = part, ///

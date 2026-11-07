@@ -4,7 +4,6 @@ import { arrayUtilities } from "necessary";
 
 import Cycle from "./cycle";
 
-import { edgesMatchEdge } from "./edge";
 import { areCyclesCoincident } from "./cycle";
 
 const { find, compress } = arrayUtilities;
@@ -24,17 +23,33 @@ export default class Graph {
   }
 
   addEdge(edge) {
-    const matches = edgesMatchEdge(this.edges, edge);
+    const edgeMatches = this.matchEdge(edge);
 
-    if (!matches) {
-      this.edges.push(edge);
+    if (edgeMatches) {
+      return;
     }
+
+    this.edges.push(edge);
   }
 
   addEdges(edges) {
     edges.forEach((edge) => {
       this.addEdge(edge);
     });
+  }
+
+  matchEdge(edge) {
+    const edgeA = edge, ///
+          edgeMatches = this.edges.some((edge) => {
+            const edgeB = edge, ///
+                  edgeAMatchesEdgeB = edgeA.match(edgeB);
+
+            if (edgeAMatchesEdgeB) {
+              return true;
+            }
+          });
+
+    return edgeMatches;
   }
 
   removeEdge(edge) {

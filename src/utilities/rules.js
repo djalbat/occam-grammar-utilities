@@ -50,6 +50,16 @@ export function replaceOrRemoveRules(context) {
   });
 }
 
+export function rewriteSecondaryRules(context) {
+  const ruleMap = context.getRuleMap(),
+        ruleNames = [],
+        replacementRules = context.getReplacementRules();
+
+  replacementRules.forEach((replacementRule) => {
+    retrieveRuleNames(replacementRule, ruleNames, ruleMap);
+  });
+}
+
 function createReducedRules(context) {
   const ruleMap = context.getRuleMap(),
         reducedRules = reducedRulesFromCycleAndCycles(context);
@@ -139,4 +149,8 @@ function createReplacementRules(context) {
 
 function createRemoevedRules(context) {
   removedRulesFromCycleAndCycles(context);
+}
+
+function retrieveRuleNames(rule, ruleNames, ruleMap) {
+
 }
