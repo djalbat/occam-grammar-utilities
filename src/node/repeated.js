@@ -24,12 +24,12 @@ class RepeatedNode extends NonTerminalNode {
             childNodes = parentNode.spliceChildNodes(startIndex, endIndex),
             precedence = parentNode.getPrecedence(),
             nonTerminalNode = state.createNonTerminalNode(childNodes, precedence),
-            addedChildNode = nonTerminalNode, ///
-            addedChildNodes = [
-              addedChildNode
+            prependedChildNode = nonTerminalNode, ///
+            prependedChildNodes = [
+              prependedChildNode
             ];
 
-      parentNode.addChildNodes(addedChildNodes, startIndex);
+      parentNode.prependChildNodes(prependedChildNodes);
     }
 
     this.simplifyChildNodes(state);

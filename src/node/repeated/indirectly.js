@@ -18,10 +18,9 @@ class IndirectlyRepeatedNode extends NonTerminalNode {
 
     const parentNode = this.getParentNode(),
           removedChildNodes = parentNode.removeAllButLastChildNode(),
-          addedChildNodes = removedChildNodes,  ///
-          startIndex = 0;
+          prependedChildNodes = removedChildNodes;  ///
 
-    this.addChildNodes(addedChildNodes, startIndex);
+    this.prependChildNodes(prependedChildNodes);
 
     this.overwrite(state);
   }

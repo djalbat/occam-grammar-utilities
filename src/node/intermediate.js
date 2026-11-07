@@ -52,13 +52,11 @@ class IntermediateNode extends NonTerminalNode {
 
     parentNode = this;  ///
 
-    const addedChildNode = replacedChildNode, ///
-          addedChildNodes = [
-            addedChildNode
-          ],
-          startIndex = 0;
+    const prependedChildNodes = [
+            replacedChildNode
+          ];
 
-    parentNode.addChildNodes(addedChildNodes, startIndex);
+    parentNode.prependChildNodes(prependedChildNodes);
   }
 
   shuffle() {
@@ -88,11 +86,11 @@ class IntermediateNode extends NonTerminalNode {
 
     removedChildNodes = parentNode.spliceChildNodes(startIndex, deleteCount, addedChildNodes);
 
-    addedChildNodes = removedChildNodes;  ///
-
     parentNode = this;  ///
 
-    parentNode.addChildNodes(addedChildNodes, startIndex);
+    const prependedChildNodes = removedChildNodes;  ///
+
+    parentNode.prependChildNodes(prependedChildNodes);
   }
 
   getBaseRuleName() {
