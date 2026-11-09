@@ -90,7 +90,7 @@ describe("Rewrites", () => {
                                           
        `));
       });
-    })
+    });
 
     describe("content with two tokens", () => {
       const content = `eg
@@ -125,7 +125,7 @@ describe("Rewrites", () => {
                                           
        `));
       });
-    })
+    });
   });
 
   describe("a cycle of length one with precedence", () => {
@@ -200,7 +200,7 @@ describe("Rewrites", () => {
              
       `));
       });
-    })
+    });
 
     describe("content with two tokens", () => {
       const content = `eg
@@ -235,7 +235,7 @@ describe("Rewrites", () => {
              
         `));
       });
-    })
+    });
 
     describe("content with three tokens", () => {
       const content = `egg
@@ -424,132 +424,6 @@ describe("Rewrites", () => {
        `));
       });
     });
-  });
-
-  describe("a cycle of length one with incidental rules", () => {
-    let bnf = `
-  
-      S ::= ( T ... <END_OF_LINE> ) ;
-      
-      T ::= T G
-      
-          | E
-          
-          ;
-        
-      G ::= "g" ;
-        
-      E ::= "e" ;
-        
-    `;
-
-    let node,
-        rules,
-        tokens;
-
-    before(() => {
-      rules = rulesFromBNF(bnf);
-
-      rules = eliminateLeftRecursion(rules);  ///
-
-      const adjustedBNF = adjustedBNFFromRules(rules);
-
-      bnf = adjustedBNF;  ///
-    });
-
-    it("is rewritten", () => {
-      assert.isTrue(compareParseTreeStrings(bnf, `
-                                          
-        S  ::= ( T ... <END_OF_LINE> ) ;
-        
-        T  ::= _T ;
-        
-        G  ::= "g" ;
-          
-        E  ::= "e" ;
-
-        _G ::= "g" ;
-          
-        _E ::= "e" ;
-        
-        _T ::= T_ T~* ;
-        
-        T_ ::= _E ;
-        
-        T~ ::= _G ;
-
-      `));
-    });
-
-    describe("content with one token", () => {
-      const content = `e
-`;
-
-      before(() => {
-        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
-
-        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
-      });
-
-      it("results in the requisite parse tree" , () => {
-        assert.isTrue(checkParentNodes(node));
-
-        assert.isTrue(checkDescendentNodes(node));
-
-        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
-        assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                    
-                          S [0]            
-                            |              
-                   ------------------      
-                   |                |      
-                 T [0]        <END_OF_LINE>
-                   |                       
-                 E [0]                     
-                   |                       
-          "e"[unassigned] [0]              
-                                          
-       `));
-      });
-    })
-
-    describe("content with two tokens", () => {
-      const content = `eg
-`;
-
-      before(() => {
-        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
-
-        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
-      });
-
-      it("results in the requisite parse tree" , () => {
-        assert.isTrue(checkParentNodes(node));
-
-        assert.isTrue(checkDescendentNodes(node));
-
-        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
-        assert.isTrue(compareParseTreeStrings(parseTreeString, `
-          
-                                         S [0]                 
-                                           |                   
-                             ----------------------------      
-                             |                          |      
-                           T [0]                  <END_OF_LINE>
-                             |                                 
-                   ---------------------                       
-                   |                   |                       
-                 T [0]               G [0]                     
-                   |                   |                       
-                 E [0]        "g"[unassigned] [0]              
-                   |                                           
-          "e"[unassigned] [0]                                  
-                                          
-       `));
-      });
-    })
   });
 
   describe("a cycle of length one with right recursion and a cut", () => {
@@ -1535,6 +1409,132 @@ describe("Rewrites", () => {
     });
   });
 
+  describe("a cycle of length one with incidental rules", () => {
+    let bnf = `
+  
+      S ::= ( T ... <END_OF_LINE> ) ;
+      
+      T ::= T G
+      
+          | E
+          
+          ;
+        
+      G ::= "g" ;
+        
+      E ::= "e" ;
+        
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                                          
+        S  ::= ( T ... <END_OF_LINE> ) ;
+        
+        T  ::= _T ;
+        
+        G  ::= "g" ;
+          
+        E  ::= "e" ;
+
+        _G ::= "g" ;
+          
+        _E ::= "e" ;
+        
+        _T ::= T_ T~* ;
+        
+        T_ ::= _E ;
+        
+        T~ ::= _G ;
+
+      `));
+    });
+
+    describe("content with one token", () => {
+      const content = `e
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                    
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+                 T [0]        <END_OF_LINE>
+                   |                       
+                 E [0]                     
+                   |                       
+          "e"[unassigned] [0]              
+                                          
+       `));
+      });
+    });
+
+    describe("content with two tokens", () => {
+      const content = `eg
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+          
+                                         S [0]                 
+                                           |                   
+                             ----------------------------      
+                             |                          |      
+                           T [0]                  <END_OF_LINE>
+                             |                                 
+                   ---------------------                       
+                   |                   |                       
+                 T [0]               G [0]                     
+                   |                   |                       
+                 E [0]        "g"[unassigned] [0]              
+                   |                                           
+          "e"[unassigned] [0]                                  
+                                          
+       `));
+      });
+    });
+  });
+
   describe("a cycle of length two", () => {
     let bnf = `
   
@@ -1744,7 +1744,7 @@ describe("Rewrites", () => {
              
       `));
       });
-    })
+    });
 
     describe("content with two tokens", () => {
       const content = `eg
@@ -3228,7 +3228,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("two cycles of length two with a double indirect repetition, a cut and precedence", () => {
+  describe("two cycles of length two with a double indirect repetition, incidental rules, a cut and precedence", () => {
     let bnf = `
 
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -3438,7 +3438,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("two cycles of length two with a indirect repetition, a cut, precedence and a non-trivial intermediate rule", () => {
+  describe("two cycles of length two with a indirect repetition, incidental rules, a cut, precedence and a non-trivial intermediate rule", () => {
     let bnf = `
 
       S ::= ( T ... <END_OF_LINE> ) ;
