@@ -3,7 +3,6 @@
 import { Rule } from "occam-parsers";
 
 import { CYCLE_LENGTH_2 } from "../constants";
-import { isRuleSingular } from "../utilities/rule";
 
 export default class RemovedRule extends Rule {
   static fromIndirectRule(indirectRule, context) {
@@ -17,21 +16,15 @@ export default class RemovedRule extends Rule {
   }
 }
 
-export function removedRulesFromCycleAndCycles(context) {
-  const cycleLength = context.getCycleLength(),
-        removedRules = context.getRemovedRules();
+export function removedRulesFromCycleAndCycles(context, removedRules = []) {
+  const cycleLength = context.getCycleLength();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const rule = context.getRule(),
-            ruleSingular = isRuleSingular(rule, context);
+      const indirectRule = context.getIndirectRule(),
+            removedRule = RemovedRule.fromIndirectRule(indirectRule, context);
 
-      if (ruleSingular) {
-        const indirectRule = context.getIndirectRule(),
-              removedRule = RemovedRule.fromIndirectRule(indirectRule, context);
-
-        removedRules.push(removedRule);
-      }
+      removedRules.push(removedRule);
 
       break;
     }

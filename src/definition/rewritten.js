@@ -2,6 +2,7 @@
 
 import { Definition } from "occam-parsers";
 
+import { rewriteRuleNameParts } from "../utilities/rewrite";
 import { isDefinitionSingular } from "../utilities/definition";
 import { ruleNamePartFromRuleName, oneOrMorePartsPartFromPart, zeroOrMorePartsPartFromPart } from "../utilities/part";
 import { reducedRuleNameFromRuleName, repeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromIndirectRuleName } from "../utilities/ruleName";
@@ -68,6 +69,19 @@ export default class RewrittenDefinition extends Definition {
           rewrittenDefinition = new RewrittenDefinition(parts, precedence);
 
     return rewrittenDefinition;
+  }
+
+  static fromDefinitionAndRuleNames(definition, ruleNames, context) {
+    let parts;
+
+    parts = definition.getParts();
+
+    parts = rewriteRuleNameParts(parts, ruleNames); ///
+
+    const precedence = definition.getPrecedence(),
+          rewritenDefinition = new RewrittenDefinition(parts, precedence);
+
+    return rewritenDefinition;
   }
 }
 

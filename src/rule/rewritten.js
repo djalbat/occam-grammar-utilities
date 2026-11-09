@@ -43,6 +43,51 @@ export default class RewrittenRule extends Rule {
     return rewrittenRule;
   }
 
+  rewriteRuleNameParts(ruleNames, context) {
+    let definitions;
+
+    definitions = this.getDefinitions();
+
+    definitions = definitions.map((definition) => { ///
+      const rewrittenDefinition = RewrittenDefinition.fromDefinitionAndRuleNames(definition, ruleNames, context);
+
+      definition = rewrittenDefinition; ///
+
+      return definition;
+    });
+
+    this.setDefinitions(definitions);
+  }
+
+  static fromRuleNameAndRuleNames(ruleName, ruleNames, context) {
+    let rewrittenRule = null;
+
+    const ruleMap = context.getRuleMap(),
+          rule = ruleMap[ruleName] || null;
+
+    if (rule !== null) {
+      let definitions;
+
+      definitions = rule.getDefinitions();
+
+      definitions = definitions.map((definition) => { ///
+        const rewrittenDefinition = RewrittenDefinition.fromDefinitionAndRuleNames(definition, ruleNames, context);
+
+        definition = rewrittenDefinition; ///
+
+        return definition;
+      });
+
+      const rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
+            name = rewrittenRuleName, ///
+            opacity = rule.getOpacity();
+
+      rewrittenRule = new RewrittenRule(name, opacity, definitions);
+    }
+
+    return rewrittenRule;
+  }
+
   static fromIndirectlySingularRule(indirectlySingularRule, context) {
     const rule = indirectlySingularRule,  ///
           ruleName = rule.getName();

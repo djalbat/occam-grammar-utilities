@@ -1,15 +1,17 @@
 "use strict";
 
 import { CYCLE_LENGTH_1 } from "./constants";
+import { retrieveRecursiveRuleNames } from "./utilities/graph";
 import { ruleNameFromCycle, indirectRuleNameFromCycle } from "./utilities/cycle";
 
 export default class Context {
-  constructor(cycle, cycles, ruleMap, removedRules, replacementRules) {
+  constructor(cycle, cycles, ruleMap, ruleName, indirectRuleName, recursiveRuleNames) {
     this.cycle = cycle;
     this.cycles = cycles;
     this.ruleMap = ruleMap;
-    this.removedRules = removedRules;
-    this.replacementRules = replacementRules;
+    this.ruleName = ruleName;
+    this.indirectRuleName = indirectRuleName;
+    this.recursiveRuleNames = recursiveRuleNames;
   }
 
   getCycle() {
@@ -24,12 +26,16 @@ export default class Context {
     return this.ruleMap;
   }
 
-  getRemovedRules() {
-    return this.removedRules;
+  getRuleName() {
+    return this.ruleName;
   }
 
-  getReplacementRules() {
-    return this.replacementRules;
+  getIndirectRuleName() {
+    return this.indirectRuleName;
+  }
+
+  getRecursiveRuleNames() {
+    return this.recursiveRuleNames;
   }
 
   isCycleDirect() {
@@ -53,12 +59,6 @@ export default class Context {
     return rule;
   }
 
-  getRuleName() {
-    const ruleName = ruleNameFromCycle(this.cycle);
-
-    return ruleName;
-  }
-
   getCycleLength() {
     const cycleLength = this.cycle.getLength();
 
@@ -77,38 +77,11 @@ export default class Context {
     return indirectRule;
   }
 
-  getIndirectRuleName() {
-    let indirectRuleName = null;
-
-    const cycleIndirect = this.isCycleIndirect();
-
-    if (cycleIndirect) {
-      indirectRuleName = indirectRuleNameFromCycle(this.cycle);
-    }
-
-    return indirectRuleName;
-  }
-
-  permuteCycle() {
-    this.cycle = this.cycle.permuted();
-  }
-
-  static fromCycle(cycle, context) {
-    const cycles = context.getCycles(),
-          ruleMap = context.getRuleMap(),
-          removedRules = context.getRemovedRules(),
-          replacementRules = context.getReplacementRules();
-
-    context = new Context(cycle, cycles, ruleMap, removedRules, replacementRules);  ///
-
-    return context;
-  }
-
-  static fromCyclesAndRuleMap(cycles, ruleMap) {
-    const cycle = null,
-          removedRules = [],
-          replacementRules = [],
-          context = new Context(cycle, cycles, ruleMap, removedRules, replacementRules);
+  static fromCycleCyclesGraphAndRuleMap(cycle, cycles, graph, ruleMap) {
+    const ruleName = ruleNameFromCycle(cycle),
+          indirectRuleName = indirectRuleNameFromCycle(cycle),
+          recursiveRuleNames = retrieveRecursiveRuleNames(ruleName, graph),
+          context = new Context(cycle, cycles, ruleMap, ruleName, indirectRuleName, recursiveRuleNames);  ///
 
     return context;
   }

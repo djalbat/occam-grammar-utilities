@@ -30,7 +30,7 @@ export default class IndirectlyRewrittenDefinition extends Definition {
   }
 }
 
-export function indiretlyRewrittenDefinitionsFromDefinitions(definitions, context) {
+export function indirectlyRewrittenDefinitionsFromDefinitions(definitions, context) {
   const indirectlyRewrittenDefinitions = definitions.map((definition) => {
     const parts = partsfromDefinition(definition, context),
           precedence = definition.getPrecedence(),

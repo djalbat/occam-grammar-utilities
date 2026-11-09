@@ -5,7 +5,6 @@ import { Rule } from "occam-parsers";
 import ReplacementNode from "../node/replacement";
 import ReplacementDefinition from "../definition/replacement";
 
-import { isRuleSingular } from "../utilities/rule";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 
 export default class ReplacementRule extends Rule {
@@ -27,24 +26,10 @@ export default class ReplacementRule extends Rule {
 
     return replacementRule;
   }
-
-  static fromIndirectRule(indirectRule, context) {
-    const indirectRuleName = indirectRule.getName(),
-          replacementDefinition = ReplacementDefinition.fromIndirectRuleName(indirectRuleName),
-          name = indirectRuleName, ///
-          opacity = indirectRule.getOpacity(),
-          definitions = [
-            replacementDefinition
-          ],
-          replacementRule = new ReplacementRule(name, opacity, definitions);
-
-    return replacementRule;
-  }
 }
 
-export function replacementRulesFromCycleAndCycles(context) {
-  const cycleLength = context.getCycleLength(),
-        replacementRules = context.getReplacementRules();
+export function replacementRulesFromCycleAndCycles(context, replacementRules = []) {
+  const cycleLength = context.getCycleLength();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
@@ -61,15 +46,6 @@ export function replacementRulesFromCycleAndCycles(context) {
             replacementRule = ReplacementRule.fromRule(rule, context);
 
       replacementRules.push(replacementRule);
-
-      const ruleSingular = isRuleSingular(rule, context);
-
-      if (!ruleSingular) {
-        const indirectRule = context.getIndirectRule(),
-              replacementRule = ReplacementRule.fromIndirectRule(indirectRule, context);
-
-        replacementRules.push(replacementRule);
-      }
 
       break;
     }

@@ -2,6 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
+import { ruleNamesFromCycle } from "../utilities/cycle";
 import { rewriteRuleNameParts } from "../utilities/rewrite";
 import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursion";
 import { edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/edge";
@@ -11,11 +12,12 @@ const { first, tail } = arrayUtilities;
 export function partsfromDefinition(definition, context) {
   let parts;
 
-  const cycle = context.getCycle();
+  const cycle = context.getCycle(),
+        ruleNames = ruleNamesFromCycle(cycle);
 
   parts = definition.getParts();
 
-  parts = rewriteRuleNameParts(parts, cycle); ///
+  parts = rewriteRuleNameParts(parts, ruleNames); ///
 
   return parts;
 }
@@ -24,11 +26,12 @@ export function tailPartsfromDefinition(definition, context) {
   let tailParts;
 
   const cycle = context.getCycle(),
-        parts = definition.getParts();
+        parts = definition.getParts(),
+        ruleNames = ruleNamesFromCycle(cycle);
 
   tailParts = tail(parts);
 
-  tailParts = rewriteRuleNameParts(tailParts, cycle); ///
+  tailParts = rewriteRuleNameParts(tailParts, ruleNames); ///
 
   return tailParts;
 }

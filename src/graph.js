@@ -62,26 +62,26 @@ export default class Graph {
 
   findSuccessorEdges(vertex) {
     const sourceVertex = vertex,  ///
-      edges = this.findEdgesBySourceVertex(sourceVertex),
-      successorEdges = edges.filter((edge) => {
-        const targetVertex = edge.getTargetVertex();
+          edges = this.findEdgesBySourceVertex(sourceVertex),
+          successorEdges = edges.filter((edge) => {
+            const targetVertex = edge.getTargetVertex();
 
-        if (targetVertex !== sourceVertex) {
-          return true;
-        }
-      });
+            if (targetVertex !== sourceVertex) {
+              return true;
+            }
+          });
 
     return successorEdges;
   }
 
   findSuccessorVertexes(vertex) {
     const successorEdges = this.findSuccessorEdges(vertex),
-      successorVertexes = successorEdges.map((successorEdge) => {
-        const successorEdgeTargetVertex = successorEdge.getTargetVertex(),
-          successorVertex = successorEdgeTargetVertex;  ///
+          successorVertexes = successorEdges.map((successorEdge) => {
+            const successorEdgeTargetVertex = successorEdge.getTargetVertex(),
+                  successorVertex = successorEdgeTargetVertex;  ///
 
-        return successorVertex;
-      });
+            return successorVertex;
+          });
 
     return successorVertexes;
   }
@@ -110,7 +110,31 @@ export default class Graph {
     return edge;
   }
 
-  depthFirstSearch(vertex, vertexes, callback) {
+  depthFirstVertexSearch(vertex, visitedVertexes = []) {
+    const visitedVertexesIncludesVertex = visitedVertexes.includes(vertex);
+
+    if (visitedVertexesIncludesVertex) {
+      return;
+    }
+
+    const visitedVertex = vertex; ///
+
+    visitedVertexes.push(visitedVertex);
+
+    const successorVertexes = this.findSuccessorVertexes(vertex);
+
+    successorVertexes.forEach((successorVertex) => {
+      const vertex = successorVertex; ///
+
+      this.depthFirstVertexSearch(vertex, visitedVertexes);
+    });
+
+    const vertexes = visitedVertexes; ///
+
+    return vertexes;
+  }
+
+  nonTrivalCycleVertexesSearch(vertex, vertexes, callback) {
     const previousVertexes = vertexes,  ///
           successorVertexes = this.findSuccessorVertexes(vertex);
 
@@ -123,12 +147,14 @@ export default class Graph {
             vertex = successorVertex;  ///
 
       if (previousVertexesIncludesSuccessorVertex) {
-        callback(vertexes);
+        const nonTrivialCyclicVertexes = vertexes;  ///
+
+        callback(nonTrivialCyclicVertexes);
 
         return;
       }
 
-      this.depthFirstSearch(vertex, vertexes, callback);
+      this.nonTrivalCycleVertexesSearch(vertex, vertexes, callback);
     });
   }
 
@@ -172,8 +198,9 @@ export default class Graph {
             vertex
           ];
 
-    this.depthFirstSearch(vertex, vertexes, (vertexes) => {
-      const cycle = Cycle.fromGraphAndVertexes(graph, vertexes),
+    this.nonTrivalCycleVertexesSearch(vertex, vertexes, (nonTrivialCyclicVertexes) => {
+      const vertexes = nonTrivialCyclicVertexes,  ///
+            cycle = Cycle.fromGraphAndVertexes(graph, vertexes),
             nonTrivialCycle = cycle;  ///
 
       nonTrivialCycles.push(nonTrivialCycle);

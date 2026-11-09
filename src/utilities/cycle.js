@@ -2,7 +2,10 @@
 
 import { arrayUtilities } from "necessary";
 
-const { first, second, push } = arrayUtilities;
+import { CYCLE_LENGTH_2 } from "../constants";
+import { LEFT_RECURSIVE_LABEL } from "../labels";
+
+const { first, second, push, filter } = arrayUtilities;
 
 export function ruleNamesFromCycle(cycle, ruleNames = []) {
   const vertexes = cycle.getVertexes(),
@@ -22,9 +25,45 @@ export function ruleNameFromCycle(cycle) {
 }
 
 export function indirectRuleNameFromCycle(cycle) {
+  let indirectRuleName = null;
+
   const ruleNames = ruleNamesFromCycle(cycle),
-        secondRuleName = second(ruleNames),
-        indirectRuleName = secondRuleName; ///
+        ruleNamesLength = ruleNames.length;
+
+  if (ruleNamesLength === CYCLE_LENGTH_2) {
+    const secondRuleName = second(ruleNames);
+
+    indirectRuleName = secondRuleName; ///
+  }
 
   return indirectRuleName;
 }
+
+export function cyclesFromGrapah(graph) {
+  const cycles = graph.findCycles();
+
+  filter(cycles, (cycle) => {
+    const cycleLeftRecursive = isCycleLeftRecursive(cycle);
+
+    if (cycleLeftRecursive) {
+      return true;
+    }
+  });
+
+  return cycles;
+}
+
+function isCycleLeftRecursive(cycle) {
+  const cycleLeftRecursive = cycle.everyEdge((edge) => {
+    const label = edge.getLabel(),
+          labelLeftRecursiveLabel = (label === LEFT_RECURSIVE_LABEL),
+          edgeLeftRecursive = labelLeftRecursiveLabel;  ///
+
+    if (edgeLeftRecursive) {
+      return true;
+    }
+  });
+
+  return cycleLeftRecursive;
+}
+

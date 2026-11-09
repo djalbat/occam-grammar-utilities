@@ -20,6 +20,14 @@ export function graphFromRules(rules) {
   return graph;
 }
 
+export function retrieveRecursiveRuleNames(ruleName, graph) {
+  const vertex = ruleName, ///,
+        vertexes = graph.depthFirstVertexSearch(vertex),
+        recursiveRuleNames = vertexes; ///
+
+  return recursiveRuleNames;
+}
+
 function edgesFromRule(rule, edges, ruleMap, recursiveRuleNamesMap, leftRecursiveRuleNamesMap) {
   const ruleName = rule.getName(),
         recursiveRuleNames = recursiveRuleNamesMap[ruleName],
