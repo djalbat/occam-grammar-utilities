@@ -12,7 +12,7 @@ import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 import { rewrittenDefinitionsFromDefinitionsAndRuleName } from "../definition/rewritten";
 import { isRuleSingular, isRuleRepeatable, isRuleReducible } from "../utilities/rule";
 
-const { front } = arrayUtilities;
+const { first } = arrayUtilities;
 
 export default class RewrittenRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -21,22 +21,28 @@ export default class RewrittenRule extends Rule {
     return NonTerminalNode;
   }
 
+  getRewrittenDefinition() {
+    const defintions = this.getDefinitions(),
+          firstDefinition = first(defintions),
+          rewrittenDefinition = firstDefinition; ///
+
+    return rewrittenDefinition;
+  }
+
   mergedWith(rewrittenRule) {
-    let definitions;
+    let rewrittenDefinition;
 
-    definitions = this.getDefinitions();
+    const rewrittenRuleRewrttenDefinition = rewrittenRule.getRewrittenDefinition();
 
-    const frontDefinitions = front(definitions);
+    rewrittenDefinition = this.getRewrittenDefinition();
 
-    definitions = rewrittenRule.getDefinitions();
-
-    definitions = [ ///
-      ...frontDefinitions,
-      ...definitions
-    ];
+    rewrittenDefinition = rewrittenDefinition.mergedWith(rewrittenRuleRewrttenDefinition);
 
     const name = this.getName(),
-          opacity = this.getOpacity();
+          opacity = this.getOpacity(),
+          definitions = [
+            rewrittenDefinition
+          ];
 
     rewrittenRule = new RewrittenRule(name, opacity, definitions);  ///
 
@@ -59,31 +65,17 @@ export default class RewrittenRule extends Rule {
     this.setDefinitions(definitions);
   }
 
-  static fromRuleNameAndRuleNames(ruleName, ruleNames, context) {
-    let rewrittenRule = null;
-
-    const ruleMap = context.getRuleMap(),
-          rule = ruleMap[ruleName] || null;
-
-    if (rule !== null) {
-      let definitions;
-
-      definitions = rule.getDefinitions();
-
-      definitions = definitions.map((definition) => { ///
-        const rewrittenDefinition = RewrittenDefinition.fromDefinitionAndRuleNames(definition, ruleNames, context);
-
-        definition = rewrittenDefinition; ///
-
-        return definition;
-      });
-
-      const rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
-            name = rewrittenRuleName, ///
-            opacity = rule.getOpacity();
-
-      rewrittenRule = new RewrittenRule(name, opacity, definitions);
-    }
+  static fromDirectlyRepeatableRule(directlyRepeatableRule, context) {
+    const rule = directlyRepeatableRule,  ///
+          ruleName = rule.getName(),
+          rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, context),
+          rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
+          name = rewrittenRuleName, ///
+          opacity = null,
+          definitions = [
+            rewrittenDefinition
+          ],
+          rewrittenRule = new RewrittenRule(name, opacity, definitions);
 
     return rewrittenRule;
   }
@@ -96,34 +88,14 @@ export default class RewrittenRule extends Rule {
 
     definitions = rule.getDefinitions();
 
-    const singular = true,
+    const rewrittenDefinitions = rewrittenDefinitionsFromDefinitionsAndRuleName(definitions, ruleName, context),
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
-          rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, singular, context),
-          rewrittenDefinitions = rewrittenDefinitionsFromDefinitionsAndRuleName(definitions, ruleName, context);
-
-    rewrittenDefinitions.push(rewrittenDefinition);
-
-    const name = rewrittenRuleName, ///
+          name = rewrittenRuleName, ///
           opacity = null;
 
     definitions = rewrittenDefinitions; ///
 
     const rewrittenRule = new RewrittenRule(name, opacity, definitions);
-
-    return rewrittenRule;
-  }
-
-  static fromDirectlyRepeatableRule(directlyRepeatableRule, context) {
-    const rule = directlyRepeatableRule,  ///
-          ruleName = rule.getName(),
-          rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, context),
-          rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
-          name = rewrittenRuleName, ///
-          opacity = null,
-          definitions = [
-            rewrittenDefinition
-          ],
-          rewrittenRule = new RewrittenRule(name, opacity, definitions);
 
     return rewrittenRule;
   }

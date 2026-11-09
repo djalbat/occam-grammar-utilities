@@ -1,35 +1,58 @@
 "use strict";
 
-import { Definition } from "occam-parsers";
+import { arrayUtilities } from "necessary";
+import { Parts, partTypes, PartChoice, Definition } from "occam-parsers";
 
 import { rewriteRuleNameParts } from "../utilities/rewrite";
 import { isDefinitionSingular } from "../utilities/definition";
 import { ruleNamePartFromRuleName, oneOrMorePartsPartFromPart, zeroOrMorePartsPartFromPart } from "../utilities/part";
 import { reducedRuleNameFromRuleName, repeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromIndirectRuleName } from "../utilities/ruleName";
 
+const { ChoiceOfPartsPart } = Parts,
+      { push, first, second } = arrayUtilities,
+      { ChoiceOfPartsPartType } = partTypes;
+
 export default class RewrittenDefinition extends Definition {
-  static fromRuleName(ruleName, singular, context) {
-    if (context === undefined) {
-      context = singular; ///
+  mergedWith(rewrittenDefinition) {
+    const rewrittenDefintionA = this,  ///
+          rewrittenDefintionB = rewrittenDefinition, ///
+          definitions = [
+            rewrittenDefintionA,
+            rewrittenDefintionB
+          ],
+          choiceOfPartsPart = choideOrPartsPartFromDefinitions(definitions),
+          zeroOrMoreChoicesOfPartsParts = zeroOrMorePartsPartFromPart(choiceOfPartsPart);
 
-      singular = false;
-    }
+    let parts;
 
-    const parts = [],
-          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName);
+    parts = this.getParts();
 
-    parts.push(reducedRuleNamePart);
+    const firstPart = first(parts),
+          secondPart = zeroOrMoreChoicesOfPartsParts; ///
 
-    if (!singular) {
-      const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
-            repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
-            zeroOrMoreRepeatedRuleNamePartPart = zeroOrMorePartsPartFromPart(repeatedRuleNamePart);
+    parts = [ ///
+      firstPart,
+      secondPart
+    ];
 
-      parts.push(zeroOrMoreRepeatedRuleNamePartPart);
-    }
+    const precedence = null;
 
-    const precedence = null,
+    rewrittenDefinition = new RewrittenDefinition(parts, precedence); ///
+
+    return rewrittenDefinition;
+  }
+
+  static fromRuleName(ruleName, context) {
+    const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
+          repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
+          zeroOrMoreRepeatedRuleNamePartPart = zeroOrMorePartsPartFromPart(repeatedRuleNamePart),
+          parts = [
+            reducedRuleNamePart,
+            zeroOrMoreRepeatedRuleNamePartPart
+          ],
+          precedence = null,
           rewrittenDefinition = new RewrittenDefinition(parts, precedence);
 
     return rewrittenDefinition;
@@ -60,10 +83,10 @@ export default class RewrittenDefinition extends Definition {
           reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
           indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName),
           indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName),
-          oneOrMoreIndirectlyRepeatedRuleNamePartPart = oneOrMorePartsPartFromPart(indirectlyRepeatedRuleNamePart),
+          zeroOrMoreIndirectlyRepeatedRuleNamePartPart = zeroOrMorePartsPartFromPart(indirectlyRepeatedRuleNamePart),
           parts = [
             reducedRuleNamePart,
-            oneOrMoreIndirectlyRepeatedRuleNamePartPart
+            zeroOrMoreIndirectlyRepeatedRuleNamePartPart
           ],
           precedence = singularDefinition.getPrecedence(),
           rewrittenDefinition = new RewrittenDefinition(parts, precedence);
@@ -100,4 +123,36 @@ export function rewrittenDefinitionsFromDefinitionsAndRuleName(definitions, rule
   }, []);
 
   return rewrittenDefinitions;
+}
+
+function choideOrPartsPartFromDefinitions(definitions) {
+  const partChoices = definitions.reduce((partChoices, definition) => {
+          partChoicesFromDefinition(definition, partChoices);
+
+          return partChoices;
+        }, []),
+        choiceOfPartsPart = ChoiceOfPartsPart.fromPartChoices(partChoices);
+
+  return choiceOfPartsPart;
+}
+
+function partChoicesFromDefinition(definition, partChoices) {
+  const parts = definition.getParts(),
+        secondPart = second(parts),
+        secondPartType = secondPart.getType(),
+        secondPartTypechoiceOfPartsPartType = (secondPartType === ChoiceOfPartsPartType);
+
+  if (secondPartTypechoiceOfPartsPartType) {
+    const choiceOfPartsPart = secondPart, ///
+          choiceOfPartsPartPartChoices = choiceOfPartsPart.getPartChoices();
+
+    push(partChoices, choiceOfPartsPartPartChoices);
+  } else {
+    const zeroOrMorePartsPart = secondPart,  ///
+          part = zeroOrMorePartsPart.getPart(),
+          precedence = definition.getPrecedence(),
+          partChoice = PartChoice.fromPartAndPrecedence(part, precedence);
+
+    partChoices.push(partChoice);
+  }
 }

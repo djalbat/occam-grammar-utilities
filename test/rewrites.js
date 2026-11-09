@@ -1409,7 +1409,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two", () => {
+  describe("a cycle of length two", () => {
     let bnf = `
   
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -1438,7 +1438,7 @@ describe("Rewrites", () => {
       bnf = adjustedBNF;  ///
     });
 
-    it.only("is rewritten", () => {
+    it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
                                                   
         S   ::= ( T ... <END_OF_LINE> ) ;
@@ -1575,8 +1575,6 @@ describe("Rewrites", () => {
         S   ::= ( T ... <END_OF_LINE> ) ;
         
         T   ::= _T ;
-        
-        A   ::= _A ;
         
         _T  ::= T_ T~* ;
         
@@ -1739,8 +1737,6 @@ describe("Rewrites", () => {
         
         T   ::= _T ;
         
-        A   ::= _A ;
-        
         _T  ::= T_ T~* ;
         
         T_  ::= . ;
@@ -1901,8 +1897,6 @@ describe("Rewrites", () => {
         S   ::= ( T ... <END_OF_LINE> ) ;
         
         T   ::= _T ;
-        
-        A   ::= _A ;
         
         _T  ::= T_ T~* ;
         
@@ -2114,8 +2108,6 @@ describe("Rewrites", () => {
         
         T   ::= _T ;
         
-        A   ::= _A ;
-        
         _T  ::= T_ T~* ;
         
         T_  ::= . ;
@@ -2241,8 +2233,6 @@ describe("Rewrites", () => {
         S     ::= ( T ... <END_OF_LINE> ) ;
         
         T     ::= _T ;
-        
-        A     ::= _A ;
         
         _T    ::= T_ T~* ;
         
@@ -2494,8 +2484,6 @@ describe("Rewrites", () => {
         S     ::= ( T ... <END_OF_LINE> ) ;
         
         T     ::= _T ;
-        
-        A     ::= _A ;
         
         _T    ::= T_ T~* ;
         
@@ -3158,13 +3146,7 @@ describe("Rewrites", () => {
         
         T  ::= _T ;
         
-        _T ::= T_ ~C+ ( ) 
-        
-             | T_ ~L+ ( ) 
-        
-             | T_ 
-             
-             ;
+        _T ::= T_ ( ~C ( ) | ~L ( ) )* ;
         
         T_ ::= /[a-z0-9]/ ;
         
@@ -3330,7 +3312,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("two cycles of length two with a indirect repetition, a cut, precedence and a non-trivial intermediate rule", () => {
+  describe.only("two cycles of length two with a indirect repetition, a cut, precedence and a non-trivial intermediate rule", () => {
     let bnf = `
 
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -3369,7 +3351,7 @@ describe("Rewrites", () => {
       bnf = adjustedBNF;  ///
     });
 
-    it("is rewritten", () => {
+    it.only("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
                 
         S     ::= ( T ... <END_OF_LINE> ) ;

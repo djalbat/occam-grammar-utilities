@@ -31,10 +31,14 @@ export function rewriteRules(cycle, cycles, graph, ruleMap) {
   createIndirectlyRewrittenRules(context);
 
   createIntermediateRules(context);
+}
+
+export function removeOrReplaceRules(cycle, cycles, graph, ruleMap) {
+  const context = Context.fromCycleCyclesGraphAndRuleMap(cycle, cycles, graph, ruleMap);
 
   createReplacementRules(context);
 
-  createRemoevedRules(context);
+  createRemoveRules(context);
 }
 
 function createReducedRules(context) {
@@ -59,6 +63,18 @@ function createRepeatedRules(context) {
   });
 }
 
+function createRemoveRules(context) {
+  const ruleMap = context.getRuleMap(),
+        removedRules = removedRulesFromCycleAndCycles(context);
+
+  removedRules.forEach((removedRule) => {
+    const removedRuleName = removedRule.getName(),
+          ruleName = removedRuleName; ///
+
+    delete ruleMap[ruleName];
+  });
+}
+
 function createRewrittenRules(context) {
   const ruleMap = context.getRuleMap(),
         rewrittenRules = rewrittenRulesFromCycleAndCycles(context);
@@ -73,6 +89,18 @@ function createRewrittenRules(context) {
                         rewrittenRuleA;
 
     ruleMap[rewrittenRuleName] = rewrittenRule;
+  });
+}
+
+function createReplacementRules(context) {
+  const ruleMap = context.getRuleMap(),
+        replacementRules = replacementRulesFromCycleAndCycles(context);
+
+  replacementRules.forEach((replacementRule) => {
+    const replacementRuleName = replacementRule.getName(),
+          ruleName = replacementRuleName; ///
+
+    ruleMap[ruleName] = replacementRule;
   });
 }
 
@@ -109,41 +137,6 @@ function createIndirectlyRepeatedRules(context) {
   });
 }
 
-function createIndirectlyRewrittenRules(context) {
-  const ruleMap = context.getRuleMap(),
-        indirectlyRewrittenRules = indirectlyRewrittenRulesFromCycleAndCycles(context);
-
-  indirectlyRewrittenRules.map((indirectlyRewrittenRule) => {
-    const indirectlyRewrittenRuleName = indirectlyRewrittenRule.getName();
-
-    ruleMap[indirectlyRewrittenRuleName] = indirectlyRewrittenRule;
-  });
-}
-
-function createReplacementRules(context) {
-  const ruleMap = context.getRuleMap(),
-        replacementRules = replacementRulesFromCycleAndCycles(context);
-
-  replacementRules.forEach((replacementRule) => {
-    const replacementRuleName = replacementRule.getName(),
-          ruleName = replacementRuleName; ///
-
-    ruleMap[ruleName] = replacementRule;
-  });
-}
-
-function createRemoevedRules(context) {
-  const ruleMap = context.getRuleMap(),
-        removedRules = removedRulesFromCycleAndCycles(context);
-
-  removedRules.forEach((removedRule) => {
-    const removedRuleName = removedRule.getName(),
-          ruleName = removedRuleName; ///
-
-    delete ruleMap[ruleName];
-  });
-}
-
 function createTriviallyRewrittenRules(context) {
   const ruleMap = context.getRuleMap(),
         triviallyRewrittenRules = triviallyRewrittenRulesFromCycleAndCycles(context);
@@ -152,5 +145,16 @@ function createTriviallyRewrittenRules(context) {
     const triviallyRewrittenRuleName = triviallyRewrittenRule.getName();
 
     ruleMap[triviallyRewrittenRuleName] = triviallyRewrittenRule;
+  });
+}
+
+function createIndirectlyRewrittenRules(context) {
+  const ruleMap = context.getRuleMap(),
+        indirectlyRewrittenRules = indirectlyRewrittenRulesFromCycleAndCycles(context);
+
+  indirectlyRewrittenRules.map((indirectlyRewrittenRule) => {
+    const indirectlyRewrittenRuleName = indirectlyRewrittenRule.getName();
+
+    ruleMap[indirectlyRewrittenRuleName] = indirectlyRewrittenRule;
   });
 }
