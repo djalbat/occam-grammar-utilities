@@ -9,14 +9,14 @@ import { rewrittenRulesFromCycleAndCycles } from "../rule/rewritten";
 import { replacementRulesFromCycleAndCycles } from "../rule/replacement";
 import { intermediateRulesFromCycleAndCycles } from "../rule/intermediate";
 import { indirectlyReducedRulesFromCycleAndCycles } from "../rule/reduced/indirectly";
-import { triviallyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/tricially"
+import { incidentallyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/incidentally"
 import { indirectlyRepeatedRulesFromCycleAndCycles } from "../rule/repeated/indirectly";
 import { indirectlyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/indirectly";
 
 export function rewriteRules(cycle, cycles, graph, ruleMap) {
   const context = Context.fromCycleCyclesGraphAndRuleMap(cycle, cycles, graph, ruleMap);
 
-  createTriviallyRewrittenRules(context);
+  createIncidentallyRewrittenRules(context);
 
   createRewrittenRules(context);
 
@@ -137,14 +137,14 @@ function createIndirectlyRepeatedRules(context) {
   });
 }
 
-function createTriviallyRewrittenRules(context) {
+function createIncidentallyRewrittenRules(context) {
   const ruleMap = context.getRuleMap(),
-        triviallyRewrittenRules = triviallyRewrittenRulesFromCycleAndCycles(context);
+        incidentallyRewrittenRules = incidentallyRewrittenRulesFromCycleAndCycles(context);
 
-  triviallyRewrittenRules.map((triviallyRewrittenRule) => {
-    const triviallyRewrittenRuleName = triviallyRewrittenRule.getName();
+  incidentallyRewrittenRules.map((incidentallyRewrittenRule) => {
+    const incidentallyRewrittenRuleName = incidentallyRewrittenRule.getName();
 
-    ruleMap[triviallyRewrittenRuleName] = triviallyRewrittenRule;
+    ruleMap[incidentallyRewrittenRuleName] = incidentallyRewrittenRule;
   });
 }
 

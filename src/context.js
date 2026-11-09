@@ -1,17 +1,21 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
+
 import { CYCLE_LENGTH_1 } from "./constants";
 import { retrieveRecursiveRuleNames } from "./utilities/graph";
 import { ruleNameFromCycle, indirectRuleNameFromCycle } from "./utilities/cycle";
 
+const { filter } = arrayUtilities;
+
 export default class Context {
-  constructor(cycle, cycles, ruleMap, ruleName, indirectRuleName, recursiveRuleNames) {
+  constructor(cycle, cycles, ruleMap, ruleName, indirectRuleName, incidentalRuleNames) {
     this.cycle = cycle;
     this.cycles = cycles;
     this.ruleMap = ruleMap;
     this.ruleName = ruleName;
     this.indirectRuleName = indirectRuleName;
-    this.recursiveRuleNames = recursiveRuleNames;
+    this.incidentalRuleNames = incidentalRuleNames;
   }
 
   getCycle() {
@@ -34,8 +38,22 @@ export default class Context {
     return this.indirectRuleName;
   }
 
-  getRecursiveRuleNames() {
-    return this.recursiveRuleNames;
+  getIncidentalRuleNames() {
+    return this.incidentalRuleNames;
+  }
+
+  getRuleNames() {
+    const ruleNames = [
+      ...this.incidentalRuleNames,
+    ];
+
+    if (this.indirectRuleName !== null) {
+      ruleNames.unshift(this.indirectRuleName);
+    }
+
+    ruleNames.unshift(this.ruleName);
+
+    return ruleNames;
   }
 
   isCycleDirect() {
@@ -81,8 +99,26 @@ export default class Context {
     const ruleName = ruleNameFromCycle(cycle),
           indirectRuleName = indirectRuleNameFromCycle(cycle),
           recursiveRuleNames = retrieveRecursiveRuleNames(ruleName, graph),
-          context = new Context(cycle, cycles, ruleMap, ruleName, indirectRuleName, recursiveRuleNames);  ///
+          incidentalRuleNames = incidentalRuleNamesFromRuleNameIndirectRuleNameAndRecursiveRuleNames(ruleName, indirectRuleName, recursiveRuleNames),
+          context = new Context(cycle, cycles, ruleMap, ruleName, indirectRuleName, incidentalRuleNames);  ///
 
     return context;
   }
+}
+
+function incidentalRuleNamesFromRuleNameIndirectRuleNameAndRecursiveRuleNames(ruleName, indirectRuleName, recursiveRuleNames) {
+  const incidentalRuleNames = [
+    ...recursiveRuleNames
+  ];
+
+  filter(incidentalRuleNames, (incidentalRuleName) => {
+    const incidentalRuleNameRuleName = (incidentalRuleName === ruleName),
+          incidentalRuleNameIndirectRuleName = (incidentalRuleName === indirectRuleName);
+
+    if (!incidentalRuleNameRuleName && !incidentalRuleNameIndirectRuleName) {
+      return true;
+    }
+  });
+
+  return incidentalRuleNames;
 }

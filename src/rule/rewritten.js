@@ -12,7 +12,7 @@ import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 import { rewrittenDefinitionsFromDefinitionsAndRuleName } from "../definition/rewritten";
 import { isRuleSingular, isRuleRepeatable, isRuleReducible } from "../utilities/rule";
 
-const { first } = arrayUtilities;
+const { first, tail } = arrayUtilities;
 
 export default class RewrittenRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -29,40 +29,36 @@ export default class RewrittenRule extends Rule {
     return rewrittenDefinition;
   }
 
+  getRemamingDefinitions() {
+    const definitions = this.getDefinitions(),
+          tailDefinitions = tail(definitions),
+          remamingDefinitions = tailDefinitions;  ///
+
+    return remamingDefinitions;
+  }
+
   mergedWith(rewrittenRule) {
     let rewrittenDefinition;
 
-    const rewrittenRuleRewrttenDefinition = rewrittenRule.getRewrittenDefinition();
-
     rewrittenDefinition = this.getRewrittenDefinition();
 
-    rewrittenDefinition = rewrittenDefinition.mergedWith(rewrittenRuleRewrttenDefinition);
+    const rewrittenRuleRewrttenDefinition = rewrittenRule.getRewrittenDefinition();
 
-    const name = this.getName(),
+    rewrittenDefinition = rewrittenDefinition.mergedWith(rewrittenRuleRewrttenDefinition);  ///
+
+    const rewrittenRuleRemainingDefinitions = rewrittenRule.getRemamingDefinitions(),
+          remamingDefinitoins = this.getRemamingDefinitions(),
+          name = this.getName(),
           opacity = this.getOpacity(),
           definitions = [
-            rewrittenDefinition
+            rewrittenDefinition,
+            ...remamingDefinitoins,
+            ...rewrittenRuleRemainingDefinitions
           ];
 
     rewrittenRule = new RewrittenRule(name, opacity, definitions);  ///
 
     return rewrittenRule;
-  }
-
-  rewriteRuleNameParts(ruleNames, context) {
-    let definitions;
-
-    definitions = this.getDefinitions();
-
-    definitions = definitions.map((definition) => { ///
-      const rewrittenDefinition = RewrittenDefinition.fromDefinitionAndRuleNames(definition, ruleNames, context);
-
-      definition = rewrittenDefinition; ///
-
-      return definition;
-    });
-
-    this.setDefinitions(definitions);
   }
 
   static fromDirectlyRepeatableRule(directlyRepeatableRule, context) {

@@ -3,7 +3,6 @@
 import { Rule } from "occam-parsers";
 
 import ReducedNode from "../node/reduced";
-import RewrittenDefinition from "../definition/rewritten";
 
 import { reducedRuleNameFromRuleName } from "../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
@@ -14,22 +13,6 @@ export default class ReducedRule extends Rule {
     const NonTerminalNode = ReducedNode;  ///
 
     return NonTerminalNode;
-  }
-
-  rewriteRuleNameParts(ruleNames, context) {
-    let definitions;
-
-    definitions = this.getDefinitions();
-
-    definitions = definitions.map((definition) => { ///
-      const rewrittenDefinition = RewrittenDefinition.fromDefinitionAndRuleNames(definition, ruleNames, context);
-
-      definition = rewrittenDefinition; ///
-
-      return definition;
-    });
-
-    this.setDefinitions(definitions);
   }
 
   static fromRule(rule, context) {

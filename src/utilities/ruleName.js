@@ -32,12 +32,6 @@ export function ruleNameFromIndirectlyRepeatedRuleName(indirectlyRepeatedRuleNam
   return ruleName;
 }
 
-export function ruleNameFromtriviallyRewrittenRuleName(triviallyRewrittenRuleName) {
-  const ruleName = triviallyRewrittenRuleName.replace(/^_/g, EMPTY_STRING);
-
-  return ruleName;
-}
-
 export function ruleNameFromIndirectlyRewrittenRuleName(indirectlyRewrittenRuleName) {
   const ruleName = indirectlyRewrittenRuleName.replace(/^_/g, EMPTY_STRING);
 
@@ -48,6 +42,12 @@ export function indirectRuleNameFromIntermediateRuleName(intermediateRuleName) {
   const indirectRuleName = intermediateRuleName.replace(/~.+$/g, EMPTY_STRING);
 
   return indirectRuleName;
+}
+
+export function ruleNameFromIncidentallyRewrittenRuleName(incidentallyRewrittenRuleName) {
+  const ruleName = incidentallyRewrittenRuleName.replace(/^_/g, EMPTY_STRING);
+
+  return ruleName;
 }
 
 export function indirectRuleNameFromIndirectlyReducedRuleName(indirectlyReducedRuleName) {
@@ -74,6 +74,12 @@ export function rewrittenRuleNameFromRuleName(ruleName) {
   return rewrittenRuleName;
 }
 
+export function incidentallyRewrittenRuleNameFromRuleName(ruleName) {
+  const incidentallyRewrittenRuleName = `_${ruleName}`;
+
+  return incidentallyRewrittenRuleName;
+}
+
 export function indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName) {
   const indirectlyRepeatedRuleName = `~${indirectRuleName}`;
 
@@ -96,10 +102,4 @@ export function intermediateRuleNameFromRuleNameIndirectRuleNameAndIndex(ruleNam
   const intermediateRuleName = `${indirectRuleName}~${ruleName}_${index}`;
 
   return intermediateRuleName;
-}
-
-export function isRuleNameIntermedaiteRuleName(ruleName) {
-  const ruleNameIntermediateRuleName = /^.+~.+$/.test(ruleName);
-
-  return ruleNameIntermediateRuleName;
 }

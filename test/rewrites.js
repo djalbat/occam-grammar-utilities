@@ -426,6 +426,132 @@ describe("Rewrites", () => {
     });
   });
 
+  describe("a cycle of length one with incidental rules", () => {
+    let bnf = `
+  
+      S ::= ( T ... <END_OF_LINE> ) ;
+      
+      T ::= T G
+      
+          | E
+          
+          ;
+        
+      G ::= "g" ;
+        
+      E ::= "e" ;
+        
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                                          
+        S  ::= ( T ... <END_OF_LINE> ) ;
+        
+        T  ::= _T ;
+        
+        G  ::= "g" ;
+          
+        E  ::= "e" ;
+
+        _G ::= "g" ;
+          
+        _E ::= "e" ;
+        
+        _T ::= T_ T~* ;
+        
+        T_ ::= _E ;
+        
+        T~ ::= _G ;
+
+      `));
+    });
+
+    describe("content with one token", () => {
+      const content = `e
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                    
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+                 T [0]        <END_OF_LINE>
+                   |                       
+                 E [0]                     
+                   |                       
+          "e"[unassigned] [0]              
+                                          
+       `));
+      });
+    })
+
+    describe("content with two tokens", () => {
+      const content = `eg
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+          
+                                         S [0]                 
+                                           |                   
+                             ----------------------------      
+                             |                          |      
+                           T [0]                  <END_OF_LINE>
+                             |                                 
+                   ---------------------                       
+                   |                   |                       
+                 T [0]               G [0]                     
+                   |                   |                       
+                 E [0]        "g"[unassigned] [0]              
+                   |                                           
+          "e"[unassigned] [0]                                  
+                                          
+       `));
+      });
+    })
+  });
+
   describe("a cycle of length one with right recursion and a cut", () => {
     let bnf = `
   
@@ -2981,11 +3107,7 @@ describe("Rewrites", () => {
         
         T  ::= _T ;
         
-        _T ::= T_ ~C+ ( ) 
-        
-             | T_ 
-             
-             ;
+        _T ::= T_ ~C* ( ) ;
         
         T_ ::= /[a-z0-9]/ ;
         
@@ -3146,11 +3268,15 @@ describe("Rewrites", () => {
         
         T  ::= _T ;
         
+        _L ::= _T ( "|" | "&" ) \` _T (-2) ;
+        
         _T ::= T_ ( ~C ( ) | ~L ( ) )* ;
         
         T_ ::= /[a-z0-9]/ ;
         
         ~C ::= ( "=" | "!" ) \` _T (-1) ;
+        
+        _C ::= _T ( "=" | "!" ) \` _T (-1) ;
 
         ~L ::= ( "|" | "&" ) \` _T (-2) ; 
 
@@ -3312,7 +3438,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("two cycles of length two with a indirect repetition, a cut, precedence and a non-trivial intermediate rule", () => {
+  describe("two cycles of length two with a indirect repetition, a cut, precedence and a non-trivial intermediate rule", () => {
     let bnf = `
 
       S ::= ( T ... <END_OF_LINE> ) ;
@@ -3351,18 +3477,20 @@ describe("Rewrites", () => {
       bnf = adjustedBNF;  ///
     });
 
-    it.only("is rewritten", () => {
+    it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
                 
         S     ::= ( T ... <END_OF_LINE> ) ;
         
         T     ::= _T ;
         
-        A     ::= _A ;
-        
         V     ::= /[0-9]/ ;
         
         Y     ::= /[a-z]/ ;
+        
+        _Y    ::= /[a-z]/ ;
+
+        _V    ::= /[0-9]/ ;
         
         _T    ::= T_ T~*
             
@@ -3370,7 +3498,7 @@ describe("Rewrites", () => {
         
                 ;
         
-        T_    ::= V ;
+        T_    ::= _V ;
         
         T~    ::= A~T (-90)
             
@@ -3378,11 +3506,11 @@ describe("Rewrites", () => {
         
                 ;
         
-        A_T_  ::= Y ( ) ;
+        A_T_  ::= _Y ( ) ;
         
         _A    ::= _T ( )
             
-                | Y ( )
+                | _Y ( )
         
                 ;
         
