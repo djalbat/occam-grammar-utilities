@@ -62,14 +62,15 @@ class ReplacementNode extends NonTerminalNode {
     } else if (rewritableNode === nonTerminalNode) {
       nonTerminalNode = nonTerminalNode.rewrite(state); ///
     } else {
-      const oldRelevantNode = rewritableNode, ///
-            newRelevantNode = rewritableNode.rewrite(state);
+      const parentNode = rewritableNode.getParentNode(),
+            replacedNode = rewritableNode;  ///
 
-      if (newRelevantNode !== null) {
-        const parentNode = oldRelevantNode.getParentNode(),
-              replacedNode = oldRelevantNode,  ///
+      rewritableNode = rewritableNode.rewrite(state);
+
+      if (rewritableNode !== null) {
+        const replacementNode = rewritableNode, ///
               replacementNodes = [
-                newRelevantNode
+                replacementNode
               ];
 
         parentNode.replaceChildNode(replacedNode, replacementNodes);
