@@ -3811,16 +3811,24 @@ describe("Rewrites", () => {
       S ::= ( T ... <END_OF_LINE> ) ;
 
       T ::=  B
-
-          |  C
-
+      
+          |  N (-3)
+      
+          |  C (-2)
+      
+          |  L (-1)
+      
           |  /[a-z0-9]/
-
+      
           ;
+                
+      C ::= T ( "=" | "!" ) \` T ( ) ;
 
       B ::= "(" (T) ")" ;
+
+      N ::= "!"<NO_WHITESPACE>T ( ) ;
       
-      C ::= T ( "=" | "!" ) \` T ;
+      L ::= T ( "&" | "|" ) \` T ( ) ;
 
     `;
 
@@ -3845,27 +3853,277 @@ describe("Rewrites", () => {
         
         T  ::= _T ;
         
-        _T ::= T_ ~C+
-            
-             | T_
+        B  ::= "(" (T) ")" ;
         
-             ;
+        N  ::= "!" <NO_WHITESPACE> T ( ) ;
+        
+        _B ::= "(" (_T) ")" ;
+        
+        _N ::= "!" <NO_WHITESPACE> _T ( ) ;
+        
+        _L ::= _T ( "&" | "|" ) \` _T ( ) ;
+        
+        _T ::= T_ ( ~C (-2) | ~L (-1) )* ;
         
         T_ ::= _B
+            
+             | _N (-3)
             
              | /[a-z0-9]/
         
              ;
         
-        ~C ::= ( "=" | "!" ) \` _T ;
+        ~C ::= ( "=" | "!" ) \` _T ( ) ;
         
-        _B ::= "(" (_T) ")" ;
+        _C ::= _T ( "=" | "!" ) \` _T ( ) ;
+        
+        ~L ::= ( "&" | "|" ) \` _T ( ) ;
         
      `));
     });
 
-    describe("content with five tokens", () => {
-      const content = `(x=5)
+    describe("content with negation", () => {
+      const content = `!3
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                      
+                                                     S [0]                     
+                                                       |                       
+                                     ------------------------------------      
+                                     |                                  |      
+                                T [0] (-3)                        <END_OF_LINE>
+                                     |                                         
+                                 N [0] ( )                                     
+                                     |                                         
+                   -------------------------------------                       
+                   |                 |                 |                       
+          "!"[unassigned] [0] <NO_WHITESPACE>        T [0]                     
+                                                       |                       
+                                              "3"[unassigned] [0]              
+                              
+       `));
+      });
+    });
+
+    describe("content with comparison", () => {
+      const content = `x=3
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                            
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                  T [0] (-2)                          <END_OF_LINE>
+                                       |                                           
+                                   C [0] ( )                                       
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+                 T [0]        "="[unassigned] [0]        T [0]                     
+                   |                                       |                       
+          "x"[unassigned] [0]                     "3"[unassigned] [0]              
+                              
+       `));
+      });
+    });
+
+    describe("content with conjunction", () => {
+      const content = `3&2
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                  T [0] (-1)                          <END_OF_LINE>
+                                       |                                           
+                                   L [0] ( )                                       
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+                 T [0]        "&"[unassigned] [0]        T [0]                     
+                   |                                       |                       
+          "3"[unassigned] [0]                     "2"[unassigned] [0]              
+                              
+       `));
+      });
+    });
+
+    describe("content with a bracketed comparison", () => {
+      const content = `(x=3)
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                  
+                                                                                      S [0]                                
+                                                                                        |                                  
+                                                           ----------------------------------------------------------      
+                                                           |                                                        |      
+                                                         T [0]                                                <END_OF_LINE>
+                                                           |                                                               
+                                                      B [0] (())                                                           
+                                                           |                                                               
+                   ---------------------------------------------------------------------------------                       
+                   |                                       |                                       |                       
+          "("[unassigned] [0]                        T [0] ((-2))                         ")"[unassigned] [0]              
+                                                           |                                                               
+                                                       C [0] ( )                                                           
+                                                           |                                                               
+                                       -----------------------------------------                                           
+                                       |                   |                   |                                           
+                                     T [0]        "="[unassigned] [0]        T [0]                                         
+                                       |                                       |                                           
+                              "x"[unassigned] [0]                     "3"[unassigned] [0]                                  
+                              
+       `));
+      });
+    });
+
+    describe("content with comparison and negation", () => {
+      const content = `x=!3
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                
+                                                                              S [0]                                    
+                                                                                |                                      
+                                                -----------------------------------------------------------------      
+                                                |                                                               |      
+                                           T [0] (-2)                                                     <END_OF_LINE>
+                                                |                                                                      
+                                            C [0] ( )                                                                  
+                                                |                                                                      
+                   -----------------------------------------------------------                                         
+                   |                   |                                     |                                         
+                 T [0]        "="[unassigned] [0]                       T [0] (-3)                                     
+                   |                                                         |                                         
+          "x"[unassigned] [0]                                            N [0] ( )                                     
+                                                                             |                                         
+                                                           -------------------------------------                       
+                                                           |                 |                 |                       
+                                                  "!"[unassigned] [0] <NO_WHITESPACE>        T [0]                     
+                                                                                               |                       
+                                                                                      "3"[unassigned] [0]              
+                              
+       `));
+      });
+    });
+
+    describe("content with conjunction and disjunction", () => {
+      const content = `3&2!1
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                          
+                                                                                 S [0]                                     
+                                                                                   |                                       
+                                                 --------------------------------------------------------------------      
+                                                 |                                                                  |      
+                                            T [0] (-1)                                                        <END_OF_LINE>
+                                                 |                                                                         
+                                             L [0] ( )                                                                     
+                                                 |                                                                         
+                   -------------------------------------------------------------                                           
+                   |                   |                                       |                                           
+                 T [0]        "&"[unassigned] [0]                         T [0] (-2)                                       
+                   |                                                           |                                           
+          "3"[unassigned] [0]                                              C [0] ( )                                       
+                                                                               |                                           
+                                                           -----------------------------------------                       
+                                                           |                   |                   |                       
+                                                         T [0]        "!"[unassigned] [0]        T [0]                     
+                                                           |                                       |                       
+                                                  "2"[unassigned] [0]                     "1"[unassigned] [0]              
+                              
+       `));
+      });
+    });
+
+    describe("content with disjunction and conjunction", () => {
+      const content = `3!2&1
 `;
 
       before(() => {
@@ -3882,8 +4140,7 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-        
-          ...
+                                                          
                               
        `));
       });

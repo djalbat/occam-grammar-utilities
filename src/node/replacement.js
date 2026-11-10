@@ -53,21 +53,23 @@ class ReplacementNode extends NonTerminalNode {
   }
 
   rewriteNonTerminalNode(nonTerminalNode, state) {
-    let effectiveDescendantNode;
+    let relevantNode;
 
-    effectiveDescendantNode = nonTerminalNode.retrieveEffectiveDescendantNode();
+    const node = nonTerminalNode; ///
 
-    if (effectiveDescendantNode === nonTerminalNode) {
+    relevantNode = findRelevantNode(node);
+
+    if (relevantNode === nonTerminalNode) {
       nonTerminalNode = nonTerminalNode.rewrite(state); ///
     } else {
-      const oldEffectiveDescendantNode = effectiveDescendantNode, ///
-            newEffectiveDescendantNode = effectiveDescendantNode.rewrite(state);
+      const oldRelevantNode = relevantNode, ///
+            newRelevantNode = relevantNode.rewrite(state);
 
-      if (newEffectiveDescendantNode !== null) {
-        const parentNode = oldEffectiveDescendantNode.getParentNode(),
-              replacedNode = oldEffectiveDescendantNode,  ///
+      if (newRelevantNode !== null) {
+        const parentNode = oldRelevantNode.getParentNode(),
+              replacedNode = oldRelevantNode,  ///
               replacementNodes = [
-                newEffectiveDescendantNode
+                newRelevantNode
               ];
 
         parentNode.replaceChildNode(replacedNode, replacementNodes);
@@ -85,3 +87,21 @@ class ReplacementNode extends NonTerminalNode {
 Object.assign(ReplacementNode.prototype, simpliciationMixins);
 
 export default ReplacementNode;
+
+function findRelevantNode(node) {
+  let relevantNode;
+
+  const nodeRelevant = node.isRelevant();
+
+  if (nodeRelevant) {
+    relevantNode = node;  ///
+  } else {
+    const singleChildNode = node.getSingleChildNode();
+
+    node = singleChildNode; ///
+
+    relevantNode = findRelevantNode(node);
+  }
+
+  return relevantNode;
+}

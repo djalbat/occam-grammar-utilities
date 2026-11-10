@@ -292,14 +292,14 @@ describe.skip("Languages", () => {
   
   
       
-      comparisonTerm          ::=  term ( "==" | "!=" ) \` term ; 
-      
       bracketedTerm           ::=  "(" term ")" ; 
       
-      negatedTerm             ::=  "!"<NO_WHITESPACE>term ; 
+      comparisonTerm          ::=  term ( "==" | "!=" ) \` term ; 
       
       logicalTerm             ::=  term ( "||" | "&&" ) \` term ; 
   
+      negatedTerm             ::=  "!"<NO_WHITESPACE>term ; 
+      
   
       
       expression              ::=  procedureCall
@@ -338,13 +338,13 @@ describe.skip("Languages", () => {
       
       
       
-      term                    ::=  comparisonTerm 
+      term                    ::=  bracketedTerm 
       
-                                |  bracketedTerm 
-      
-                                |  negatedTerm 
+                                |  comparisonTerm 
       
                                 |  logicalTerm 
+      
+                                |  negatedTerm 
       
                                 |  primitive 
       

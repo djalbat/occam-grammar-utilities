@@ -22,6 +22,10 @@ class G extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpac
 
 class L extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(L, ruleName, childNodes, precedence, opacity); } }
 
+class M extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(M, ruleName, childNodes, precedence, opacity); } }
+
+class N extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(N, ruleName, childNodes, precedence, opacity); } }
+
 class U extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(U, ruleName, childNodes, precedence, opacity); } }
 
 class V extends NonTerminalNode { static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(V, ruleName, childNodes, precedence, opacity); } }
@@ -42,6 +46,8 @@ const NonTerminalNodeMap = {
   F,
   G,
   L,
+  M,
+  N,
   S,
   U,
   V,

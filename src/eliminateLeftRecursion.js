@@ -14,11 +14,11 @@ export default function eliminateLeftRecursion(rules) {
         graph = graphFromRules(rules),
         cycles = cyclesFromGrapah(graph);
 
-  cycles.forEach((cycle, index) => {
+  cycles.forEach((cycle) => {
     rewriteRules(cycle, cycles, graph, ruleMap);
   });
 
-  cycles.forEach((cycle, index) => {
+  cycles.forEach((cycle) => {
     removeOrReplaceRules(cycle, cycles, graph, ruleMap);
   });
 
