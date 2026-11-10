@@ -16,9 +16,9 @@ export default class IndirectlyReducedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromIndirectlySiingularIndirectRuleAndRule(indirectlyReducibleIndirectCycle, rule, context) {
+  static fromIndirectlySiingularIndirectRuleAndRule(indirectlyReducibleIndirectRule, rule, context) {
     const ruleName = rule.getName(),
-          indirectRule = indirectlyReducibleIndirectCycle,  ///
+          indirectRule = indirectlyReducibleIndirectRule,  ///
           indirectRuleName = indirectRule.getName();
 
     let definitions;
@@ -28,7 +28,7 @@ export default class IndirectlyReducedRule extends Rule {
     const indirectlyReducedDefinitions = indirectlyReducedDefinitionsFromDefinitions(definitions, context),
           indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName),
           name = indirectlyReducedRuleName, ///
-          opacity = null;
+          opacity = indirectRule.getOpacity();
 
     definitions = indirectlyReducedDefinitions; ///
 
