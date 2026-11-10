@@ -10,7 +10,7 @@ const { adjustedBNFFromRules } = require("./helpers/bnf");
 const { rulesFromBNF } = parserUtilities,
       { compareParseTreeStrings } = testUtilities;
 
-describe.skip("Languages", () => {
+describe("Languages", () => {
   describe("Nonimal", () => {
     describe("term", () => {
       let bnf = `
@@ -60,11 +60,13 @@ describe.skip("Languages", () => {
 
           term            ::= _term ;
           
-          argument        ::= _argument ;
-          
           variable        ::= . ;
           
           type            ::= . ;
+          
+          _type           ::= . ;
+          
+          _variable       ::= . ;
           
           _term           ::= term_ term~*
               
@@ -74,7 +76,7 @@ describe.skip("Languages", () => {
           
           term_           ::= "(" _argument ")"
               
-                            | variable
+                            | _variable
           
                             ;
           
@@ -84,11 +86,11 @@ describe.skip("Languages", () => {
           
                             ;
           
-          argument_term_  ::= type ( ) ;
+          argument_term_  ::= _type ( ) ;
           
           _argument       ::= _term ( )
               
-                            | type ( )
+                            | _type ( )
           
                             ;
           
@@ -147,14 +149,16 @@ describe.skip("Languages", () => {
 
       it("is rewritten", () => {
         assert.isTrue(compareParseTreeStrings(bnf, `
-                  
+                            
           statement               ::= _statement ;
-          
-          metaArgument            ::= _metaArgument ;
           
           metavariable            ::= . ;
           
           metaType                ::= . ;
+          
+          _metaType               ::= . ;
+          
+          _metavariable           ::= . ;
           
           _statement              ::= statement_ statement~*
               
@@ -166,17 +170,17 @@ describe.skip("Languages", () => {
               
                                     | "(" _metaArgument ")"
               
-                                    | metavariable
+                                    | _metavariable
           
                                     ;
           
           statement~              ::= metaArgument~statement ;
           
-          metaArgument_statement_ ::= metaType ( ) ;
+          metaArgument_statement_ ::= _metaType ( ) ;
           
           _metaArgument           ::= _statement ( )
               
-                                    | metaType ( )
+                                    | _metaType ( )
           
                                     ;
           
@@ -292,16 +296,6 @@ describe.skip("Languages", () => {
   
   
       
-      bracketedTerm           ::=  "(" term ")" ; 
-      
-      comparisonTerm          ::=  term ( "==" | "!=" ) \` term ; 
-      
-      logicalTerm             ::=  term ( "||" | "&&" ) \` term ; 
-  
-      negatedTerm             ::=  "!"<NO_WHITESPACE>term ; 
-      
-  
-      
       expression              ::=  procedureCall
        
                                 |  returnBlock
@@ -338,13 +332,23 @@ describe.skip("Languages", () => {
       
       
       
-      term                    ::=  bracketedTerm 
+      bracketedTerm           ::=  "(" term ")" ; 
       
-                                |  comparisonTerm 
+      comparisonTerm          ::=  term ( "==" | "!=" ) \` term (-2) ; 
       
-                                |  logicalTerm 
+      logicalTerm             ::=  term ( "||" | "&&" ) \` term (-1) ; 
+  
+      negatedTerm             ::=  "!"<NO_WHITESPACE>term (-3) ; 
       
-                                |  negatedTerm 
+  
+      
+      term                    ::=  bracketedTerm
+      
+                                |  comparisonTerm ( ) 
+      
+                                |  logicalTerm  ( )
+      
+                                |  negatedTerm ( ) 
       
                                 |  primitive 
       
@@ -418,7 +422,7 @@ describe.skip("Languages", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-      
+              
         document              ::= ( importStatement | procedure | error )+ ;
         
         procedure             ::= "export"? type label <NO_WHITESPACE> "(" parameters? ")" returnBlock ;
@@ -503,10 +507,6 @@ describe.skip("Languages", () => {
         
                                 ;
         
-        bracketedTerm         ::= "(" term ")" ;
-        
-        negatedTerm           ::= "!" <NO_WHITESPACE> term ;
-        
         expression            ::= procedureCall
             
                                 | returnBlock
@@ -540,6 +540,10 @@ describe.skip("Languages", () => {
                                 | term
         
                                 ;
+        
+        bracketedTerm         ::= "(" term ")" ;
+        
+        negatedTerm           ::= "!" <NO_WHITESPACE> term (-3) ;
         
         term                  ::= _term ;
         
@@ -601,27 +605,41 @@ describe.skip("Languages", () => {
         
         error.                ::= . ;
         
-        _term                 ::= term_ ~comparisonTerm+
+        _bracketedTerm        ::= "(" _term ")" ;
+        
+        _logicalTerm          ::= _term ( "||" | "&&" ) \` _term (-1) ;
+        
+        _negatedTerm          ::= "!" <NO_WHITESPACE> _term (-3) ;
+        
+        _primitive            ::= [string-literal]
             
-                                | term_ ~logicalTerm+
+                                | [boolean]
             
-                                | term_
+                                | [integer]
+            
+                                | [null]
         
                                 ;
         
-        term_                 ::= bracketedTerm
+        _variable.            ::= [name] ;
+        
+        _term                 ::= term_ ( ~comparisonTerm ( ) | ~logicalTerm ( ) )* ;
+        
+        term_                 ::= _bracketedTerm
             
-                                | negatedTerm
+                                | _negatedTerm ( )
             
-                                | primitive
+                                | _primitive
             
-                                | variable
+                                | _variable
         
                                 ;
         
-        ~comparisonTerm       ::= ( "==" | "!=" ) \` _term ;
+        ~comparisonTerm       ::= ( "==" | "!=" ) \` _term (-2) ;
         
-        ~logicalTerm          ::= ( "||" | "&&" ) \` _term ;
+        _comparisonTerm       ::= _term ( "==" | "!=" ) \` _term (-2) ;
+        
+        ~logicalTerm          ::= ( "||" | "&&" ) \` _term (-1) ;
 
       `));
     });
@@ -901,7 +919,7 @@ describe.skip("Languages", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-
+        
         javaScript       ::= preamble? ( statement | function | class | error )* ;
         
         preamble         ::= "use strict" <NO_WHITESPACE> ";" ;
@@ -1048,7 +1066,7 @@ describe.skip("Languages", () => {
         
         arrowFunction    ::= "(" arguments? ")" "=>" ( expression | ( "{" statement* "}" ) ) ;
         
-        templateLiteral  ::= "\`" ( ( "\${" expression? "}" ) | string )* "\`" ;
+        templateLiteral  ::= "\`" ( ( "\${" expression? "}" ) | string )* "\`" ;      
         
         string           ::= ( [number] | [special] | [operator] | [keyword] | [identifier] | [string-literal] | [unassigned] )+ ;
         
@@ -1080,15 +1098,169 @@ describe.skip("Languages", () => {
         
         error.           ::= . ;
         
+        _jsx             ::= _jsxCompleteTag
+            
+                           | _jsxStartTag ( jsx | ( "{" expression? "}" ) | string )* _jsxEndTag
+        
+                           ;
+        
+        _jsxCompleteTag  ::= "<" <NO_WHITESPACE> _name _jsxAttribute* "/>" ;
+        
+        _name            ::= [identifier] ;
+        
+        _jsxAttribute    ::= _name ( <NO_WHITESPACE> "=" ( ( <NO_WHITESPACE> [string-literal] ) | ( <NO_WHITESPACE> "{" expression "}" ) ) )? ;
+        
+        _jsxStartTag     ::= "<" <NO_WHITESPACE> _name _jsxAttribute* ">" ;
+        
+        _string          ::= ( [number] | [special] | [operator] | [keyword] | [identifier] | [string-literal] | [unassigned] )+ ;
+        
+        _jsxEndTag       ::= "</" <NO_WHITESPACE> _name ">" ;
+        
+        _json            ::= _jsonArray
+            
+                           | _jsonObject
+        
+                           ;
+        
+        _jsonArray       ::= "[" ( jsonElement ( "," jsonElement )* )? "]" ;
+        
+        _jsonElement     ::= _json
+            
+                           | [string-literal]
+            
+                           | [number]
+            
+                           | "true"
+            
+                           | "false"
+            
+                           | "null"
+        
+                           ;
+        
+        _jsonObject      ::= "{" ( [string-literal] ":" jsonElement ( "," [string-literal] ":" jsonElement )* )? "}" ;
+        
+        _arrowFunction   ::= "(" _arguments? ")" "=>" ( _expression | ( "{" _statement* "}" ) ) ;
+        
+        _arguments       ::= _spreadArgument
+            
+                           | ( _argument ( "," argument )* ( "," spreadArgument )? )
+        
+                           ;
+        
+        _spreadArgument  ::= "..." <NO_WHITESPACE> _variable ;
+        
+        _variable        ::= [identifier] ;
+        
+        _argument        ::= _variable ( "=" expression )? ;
+        
+        _statement       ::= ( _statementBody ... ";" )
+            
+                           | "{" ( statement | function )* "}"
+            
+                           | "if" "(" ( _expression ... ")" ) _statement ( "else" statement )?
+            
+                           | "for" ( ( "(" _initialiser ( ";" expression )? ( ";" expression )? ")" _statement ) | ( "(" _variable "in" ( _expression ... ")" ) _statement ) | ( "await"? "(" _variable "of" ( _expression ... ")" ) _statement ) )
+            
+                           | "do" _statement "while" "(" ( _expression ... ")" )
+            
+                           | "while" "(" ( _expression ... ")" ) _statement
+            
+                           | "switch" "(" ( _expression ... ")" ) "{" _case* _defaultCase? "}"
+            
+                           | _try ( ( _catch* _finally ) | _catch+ )
+        
+                           ;
+        
+        _statementBody   ::= "import" ( [string-literal] | ( _name "from" [string-literal] ) | ( "{" _names "}" "from" [string-literal] ) | ( "*" "as" _name "from" [string-literal] ) )
+            
+                           | "export" ( ( "{" _names "}" ( "from" [string-literal] )? ) | ( "const" "{" _fields "}" "=" _expression ) | ( "{" "default" "}" "from" [string-literal] ) | ( "*" ( "as" name )? "from" [string-literal] ) )
+            
+                           | "export"? ( ( "var" _var ( "," var )* ) | ( "let" _let ( "," let )* ) | ( "const" _const ( "," const )* ) )
+            
+                           | ( "export" "default" )? _expression
+            
+                           | "return" ( ( "(" _expression ")" ) | _expression? )
+            
+                           | "throw" _expression
+            
+                           | "delete" _expression
+            
+                           | "break"
+            
+                           | "continue"
+            
+                           | "debugger"
+        
+                           ;
+        
+        _names           ::= _name ( "as" name )? ( "," name ( "as" name )? )* ;
+        
+        _fields          ::= _name ( ":" name )? ( "," name ( ":" name )? )* ;
+        
+        _var             ::= _variable ( "=" expression )?
+            
+                           | _destructure "=" _expression
+        
+                           ;
+        
+        _destructure     ::= "[" _variable ( "=" expression )? ( "," variable ( "=" expression )? )* "]"
+            
+                           | "{" _variable ( "=" expression )? ( "," variable ( "=" expression )? )* "}"
+        
+                           ;
+        
+        _let             ::= _variable ( "=" expression )?
+            
+                           | _destructure "=" _expression
+        
+                           ;
+        
+        _const           ::= ( _variable | _destructure ) "=" _expression ;
+        
+        _function        ::= ( "export" "default"? )? "async"? "function" _name _functionBody
+            
+                           | "export" "default" "async"? "function" _functionBody
+        
+                           ;
+        
+        _functionBody    ::= "(" _arguments? ")" "{" ( statement | function )* "}" ;
+        
+        _initialiser     ::= _expression
+            
+                           | "var" _var ( "," var )*
+            
+                           | "let" _let ( "," let )*
+        
+                           ;
+        
+        _case            ::= "case" _expression ":" _statement ( "break" ";" )? ;
+        
+        _defaultCase     ::= "default" ":" _statement ( "break" ";" )? ;
+        
+        _try             ::= "try" "{" _statement+ "}" ;
+        
+        _catch           ::= "catch" "(" [identifier] ")" "{" _statement+ "}" ;
+        
+        _finally         ::= "finally" "{" _statement+ "}" ;
+        
+        _templateLiteral ::= "\`" ( ( "\${" expression? "}" ) | string )* "\`" ;
+        
+        _property        ::= ( ( ( _name | [string-literal] ) ":" _expression ) | _variable ) ;
+        
+        _expressions     ::= _expression ( "," expression )* ;
+        
+        _importMeta      ::= "import" <NO_WHITESPACE> "." <NO_WHITESPACE> "meta" ;
+        
         _expression      ::= expression_ expression~* ;
         
-        expression_      ::= jsx
+        expression_      ::= _jsx
             
-                           | json
+                           | _json
             
-                           | arrowFunction
+                           | _arrowFunction
             
-                           | templateLiteral
+                           | _templateLiteral
             
                            | "(" _expression ")"
             
@@ -1100,13 +1272,13 @@ describe.skip("Languages", () => {
             
                            | "void" ( _expression | ( "(" _expression ")" ) )
             
-                           | "new" name <NO_WHITESPACE> "(" expressions? ")"
+                           | "new" _name <NO_WHITESPACE> "(" _expressions? ")"
             
                            | [operator] <NO_WHITESPACE> _expression
             
-                           | variable
+                           | _variable
             
-                           | importMeta
+                           | _importMeta
             
                            | [number]
             
@@ -1126,12 +1298,12 @@ describe.skip("Languages", () => {
         
                            ;
         
-        expression~      ::= <NO_WHITESPACE> ( ( "." <NO_WHITESPACE> name ) | ( "[" expressions "]" ) | ( "(" expressions? ")" ) | templateLiteral | [operator] )
+        expression~      ::= <NO_WHITESPACE> ( ( "." <NO_WHITESPACE> _name ) | ( "[" _expressions "]" ) | ( "(" _expressions? ")" ) | _templateLiteral | [operator] )
             
                            | ( ( [operator] _expression ) | ( "?" _expression ":" _expression ) | ( "instanceof" _expression ) | ( "in" _expression ) )
         
-                           ;        
-                           
+                           ;
+                                                      
      `));
     });
   });
