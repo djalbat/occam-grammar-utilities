@@ -53,17 +53,17 @@ class ReplacementNode extends NonTerminalNode {
   }
 
   rewriteNonTerminalNode(nonTerminalNode, state) {
-    let relevantNode;
+    let rewritableNode;
 
-    const node = nonTerminalNode; ///
+    rewritableNode = findRewritableNode(nonTerminalNode);
 
-    relevantNode = findRelevantNode(node);
-
-    if (relevantNode === nonTerminalNode) {
+    if (rewritableNode === null) {
+      ///
+    } else if (rewritableNode === nonTerminalNode) {
       nonTerminalNode = nonTerminalNode.rewrite(state); ///
     } else {
-      const oldRelevantNode = relevantNode, ///
-            newRelevantNode = relevantNode.rewrite(state);
+      const oldRelevantNode = rewritableNode, ///
+            newRelevantNode = rewritableNode.rewrite(state);
 
       if (newRelevantNode !== null) {
         const parentNode = oldRelevantNode.getParentNode(),
@@ -88,20 +88,26 @@ Object.assign(ReplacementNode.prototype, simpliciationMixins);
 
 export default ReplacementNode;
 
-function findRelevantNode(node) {
-  let relevantNode;
+function findRewritableNode(nonTerminalNode) {
+  let rewritableNode = null;
 
-  const nodeRelevant = node.isRelevant();
+  const nodeRewritable = nonTerminalNode.isRewritable();
 
-  if (nodeRelevant) {
-    relevantNode = node;  ///
+  if (nodeRewritable) {
+    rewritableNode = nonTerminalNode;  ///
   } else {
-    const singleChildNode = node.getSingleChildNode();
+    const singleChildNode = nonTerminalNode.getSingleChildNode();
 
-    node = singleChildNode; ///
+    if (singleChildNode !== null) {
+      const singleChildNodeNonTerminalNode = singleChildNode.isNonTerminalNode();
 
-    relevantNode = findRelevantNode(node);
+      if (singleChildNodeNonTerminalNode) {
+        const nonTerminalNode = singleChildNode; ///
+
+        rewritableNode = findRewritableNode(nonTerminalNode);
+      }
+    }
   }
 
-  return relevantNode;
+  return rewritableNode;
 }
