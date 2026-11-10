@@ -25,7 +25,7 @@ describe("Languages", () => {
                             
                 |  argument<NO_WHITESPACE>argument (-101)
                 
-                |  "(" argument ")"
+                |  "(" (argument) ")"
                 
                 |  variable
                 
@@ -57,7 +57,7 @@ describe("Languages", () => {
 
       it("is rewritten", () => {
         assert.isTrue(compareParseTreeStrings(bnf, `
-
+          
           term            ::= _term ;
           
           variable        ::= . ;
@@ -74,7 +74,7 @@ describe("Languages", () => {
           
                             ;
           
-          term_           ::= "(" _argument ")"
+          term_           ::= "(" (_argument) ")"
               
                             | _variable
           
@@ -117,7 +117,7 @@ describe("Languages", () => {
                                     
                                      | "𝗂𝖿𝖿" (-6) ) \` metaArgument
                     
-                     |  "(" metaArgument ")" 
+                     |  "(" (metaArgument) ")" 
                                         
                      |  metavariable
         
@@ -149,7 +149,7 @@ describe("Languages", () => {
 
       it("is rewritten", () => {
         assert.isTrue(compareParseTreeStrings(bnf, `
-                            
+                                      
           statement               ::= _statement ;
           
           metavariable            ::= . ;
@@ -168,7 +168,7 @@ describe("Languages", () => {
           
           statement_              ::= "¬" <NO_WHITESPACE> _metaArgument (10)
               
-                                    | "(" _metaArgument ")"
+                                    | "(" (_metaArgument) ")"
               
                                     | _metavariable
           
