@@ -1,15 +1,18 @@
 "use strict";
 
 function lift() {
-  const parentNode = this.getParentNode(),
+  const opacity = this.getOpacity(),
+        parentNode = this.getParentNode(),
         precedence = this.getPrecedence(),
         childNodes = this.removeChildNodes(),
         replacedChildNode = this,  ///
         replacementChildNodes = childNodes; ///
 
-  parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+  parentNode.setOpacity(opacity);
 
   parentNode.setPrecedence(precedence);
+
+  parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 }
 
 function overwrite(state) {

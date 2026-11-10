@@ -67,7 +67,7 @@ export default class RewrittenRule extends Rule {
           rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, context),
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName, ///
-          opacity = null,
+          opacity = rule.getOpacity(),
           definitions = [
             rewrittenDefinition
           ],
@@ -87,7 +87,7 @@ export default class RewrittenRule extends Rule {
     const rewrittenDefinitions = rewrittenDefinitionsFromDefinitionsAndRuleName(definitions, ruleName, context),
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName, ///
-          opacity = null;
+          opacity = rule.getOpacity();
 
     definitions = rewrittenDefinitions; ///
 
@@ -102,7 +102,7 @@ export default class RewrittenRule extends Rule {
           rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, context),
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName, ///
-          opacity = null,
+          opacity = rule.getOpacity(),
           definitions = [
             rewrittenDefinition
           ],
@@ -119,7 +119,7 @@ export default class RewrittenRule extends Rule {
           indirectlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, context),
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName, ///
-          opacity = null,
+          opacity = rule.getOpacity(),
           definitions = [
             rewrittenDefinition,
             indirectlyRewrittenDefinition

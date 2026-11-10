@@ -25,10 +25,13 @@ class ReplacementNode extends NonTerminalNode {
   liftRewrittenNode() {
     const singleChildNode = this.getSingleChildNode(),
           rewrittenNode = singleChildNode,  //
+          opacity = rewrittenNode.getOpacity(),
           precedence = rewrittenNode.getPrecedence(),
           childNodes = rewrittenNode.removeChildNodes(),
           replacedChildNode = rewrittenNode, ///
           replacementChildNodes = childNodes; ///
+
+    this.setOpacity(opacity);
 
     this.setPrecedence(precedence);
 
@@ -36,18 +39,17 @@ class ReplacementNode extends NonTerminalNode {
   }
 
   createNonTerminalNode(state) {
-    const opacity = this.getOpacity(),
-          ruleName = this.getRuleName();
-
-    state = State.fromRuleNameAndOpacity(ruleName, opacity, state);  ///
+    state = State.fromNothing(state);  ///
 
     const replacementNode = this.clone(); ///
 
     replacementNode.simplify(state);
 
-    const precedence = replacementNode.getPrecedence(),
+    const opacity = replacementNode.getOpacity(),
+          ruleName = replacementNode.getRuleName(),
+          precedence = replacementNode.getPrecedence(),
           childNodes = replacementNode.removeChildNodes(),
-          nonTerminalNode = state.createNonTerminalNode(childNodes, precedence);
+          nonTerminalNode = state.createNonTerminalNode(ruleName, childNodes, precedence, opacity);
 
     return nonTerminalNode;
   }

@@ -5,6 +5,7 @@ import { NonTerminalNode } from "occam-parsers";
 import simpliciationMixins from  "../mixins/simpliciation";
 
 import { REPEATED_NODE_INITIAL_INDEX } from "../constants";
+import { ruleNameFromRepeatedRuleName } from "../utilities/ruleName";
 
 class RepeatedNode extends NonTerminalNode {
   rewrite(state) {
@@ -18,12 +19,15 @@ class RepeatedNode extends NonTerminalNode {
 
     if (!initial) {
       const index = this.getIndex(),
+            opacity = this.getOpacity(),
             parentNode = this.getParentNode(),
+            baseRuleName = this.getBaseRuleName(),
             startIndex = 0,
             endIndex = index, ///
+            ruleName = baseRuleName,  ///
             childNodes = parentNode.spliceChildNodes(startIndex, endIndex),
             precedence = parentNode.getPrecedence(),
-            nonTerminalNode = state.createNonTerminalNode(childNodes, precedence),
+            nonTerminalNode = state.createNonTerminalNode(ruleName, childNodes, precedence, opacity),
             prependedChildNode = nonTerminalNode, ///
             prependedChildNodes = [
               prependedChildNode
@@ -35,6 +39,20 @@ class RepeatedNode extends NonTerminalNode {
     this.simplifyChildNodes(state);
 
     this.lift();
+  }
+
+  getBaseRuleName() {
+    let ruleName;
+
+    ruleName = this.getRuleName();
+
+    const repeatedRuleName = ruleName; ///
+
+    ruleName = ruleNameFromRepeatedRuleName(repeatedRuleName);  ///
+
+    const baseRuleName = ruleName;  ///
+
+    return baseRuleName;
   }
 
   isInitial() {

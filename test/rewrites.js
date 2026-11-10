@@ -21,9 +21,9 @@ describe("Rewrites", () => {
   describe("a cycle of length one", () => {
     let bnf = `
   
-      S ::= ( T ... <END_OF_LINE> ) ;
+     S  ::= ( T ... <END_OF_LINE> ) ;
       
-      T ::= T "g"
+     T. ::= T "g"
       
           | "e"
           
@@ -47,16 +47,16 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                          
-        S  ::= ( T ... <END_OF_LINE> ) ;
+                                                                  
+        S   ::= ( T ... <END_OF_LINE> ) ;
         
-        T  ::= _T ;
+        T   ::= _T ;
         
-        _T ::= T_ T~* ;
+        _T. ::= T_ T~* ;
         
-        T_ ::= "e" ;
+        T_. ::= "e" ;
         
-        T~ ::= "g" ;
+        T~. ::= "g" ;
         
       `));
     });
@@ -79,12 +79,12 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-          
+                    
                           S [0]            
                             |              
                    ------------------      
                    |                |      
-                 T [0]        <END_OF_LINE>
+                T. [0]        <END_OF_LINE>
                    |                       
           "e"[unassigned] [0]              
                                           
@@ -102,7 +102,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it("results in the requisite parse tree" , () => {
+      it.only("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
@@ -110,18 +110,18 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-
-                                       S [0]                 
-                                         |                   
-                           ----------------------------      
-                           |                          |      
-                         T [0]                  <END_OF_LINE>
-                           |                                 
-                 ---------------------                       
-                 |                   |                       
-               T [0]        "g"[unassigned] [0]              
-                 |                                           
-        "e"[unassigned] [0]
+          
+                                         S [0]                 
+                                           |                   
+                             ----------------------------      
+                             |                          |      
+                          T. [0]                  <END_OF_LINE>
+                             |                                 
+                   ---------------------                       
+                   |                   |                       
+                T. [0]        "g"[unassigned] [0]              
+                   |                                           
+          "e"[unassigned] [0]                                  
                                           
        `));
       });

@@ -24,7 +24,7 @@ export default class ReducedRule extends Rule {
           ruleName = rule.getName(),
           reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           name = reducedRuleName, ///
-          opacity = null;
+          opacity = rule.getOpacity();
 
     definitions = reducedDefinitions; ///
 

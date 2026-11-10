@@ -1,47 +1,25 @@
 "use strict";
 
 export default class State {
-  constructor(ruleName, opacity, parser) {
-    this.ruleName = ruleName;
-    this.opacity = opacity;
+  constructor(parser) {
     this.parser = parser;
-  }
-
-  getRuleName() {
-    return this.ruleName;
-  }
-
-  getOpacity() {
-    return this.opacity;
   }
 
   getParser() {
     return this.parser;
   }
 
-  NonTerminalNodeFromRuleName(ruleName) { return this.parser.NonTerminalNodeFromRuleName(ruleName); }
-
   createNonTerminalNode(ruleName, childNodes, precedence, opacity) {
-    if (opacity === undefined) {
-      opacity = this.opacity;
-
-      precedence = childNodes;  ///
-
-      childNodes = ruleName;  ///
-
-      ruleName = this.ruleName;
-    }
-
-    const NonTerminalNode = this.NonTerminalNodeFromRuleName(ruleName),
+    const NonTerminalNode = this.parser.NonTerminalNodeFromRuleName(ruleName),
           nonTerminalNode = NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity);
 
     return nonTerminalNode;
   }
 
-  static fromRuleNameAndOpacity(ruleName, opacity, state) {
+  static fromNothing(state) {
     const parser = state.getParser();
 
-    state = new State(ruleName, opacity, parser);  ///
+    state = new State(parser);  ///
 
     return state;
   }

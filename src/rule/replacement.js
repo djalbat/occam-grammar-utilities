@@ -18,7 +18,7 @@ export default class ReplacementRule extends Rule {
     const ruleName = rule.getName(),
           replacementDefinition = ReplacementDefinition.fromRuleName(ruleName),
           name = ruleName, ///
-          opacity = rule.getOpacity(),
+          opacity = null,
           definitions = [
             replacementDefinition
           ],
