@@ -278,8 +278,6 @@ describe("Languages", () => {
       
       values                  ::=  value ( "," value )* ;
       
-      terms                   ::=  term ( "," term )* ;
-      
   
   
       importBinding           ::=  reference ( "as" label )? ;   
@@ -492,8 +490,6 @@ describe("Languages", () => {
         bindings              ::= binding ( "," binding )* ;
         
         values                ::= value ( "," value )* ;
-        
-        terms                 ::= term ( "," term )* ;
         
         importBinding         ::= reference ( "as" label )? ;
         
