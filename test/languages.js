@@ -192,7 +192,7 @@ describe("Languages", () => {
   });
 
   describe("Furtle", () => {
-    let bnf = `
+    let bnf =  `
 
       document                ::=  ( importStatement | procedure | error )+ ;
       
@@ -277,7 +277,7 @@ describe("Languages", () => {
       bindings                ::=  binding ( "," binding )* ;
       
       values                  ::=  value ( "," value )* ;
-      
+            
   
   
       importBinding           ::=  reference ( "as" label )? ;   
@@ -332,9 +332,9 @@ describe("Languages", () => {
       
       bracketedTerm           ::=  "(" term ")" ; 
       
-      comparisonTerm          ::=  term ( "==" | "!=" ) \` term (-2) ; 
+      comparisonTerm          ::=  term ( "==" | "!=" ) term (-2) ; 
       
-      logicalTerm             ::=  term ( "||" | "&&" ) \` term (-1) ; 
+      logicalTerm             ::=  term ( "||" | "&&" ) term (-1) ; 
   
       negatedTerm             ::=  "!"<NO_WHITESPACE>term (-3) ; 
       
@@ -603,7 +603,7 @@ describe("Languages", () => {
         
         _bracketedTerm        ::= "(" _term ")" ;
         
-        _logicalTerm          ::= _term ( "||" | "&&" ) \` _term (-1) ;
+        _logicalTerm          ::= _term ( "||" | "&&" ) _term (-1) ;
         
         _negatedTerm          ::= "!" <NO_WHITESPACE> _term (-3) ;
         
@@ -631,11 +631,11 @@ describe("Languages", () => {
         
                                 ;
         
-        ~comparisonTerm       ::= ( "==" | "!=" ) \` _term (-2) ;
+        ~comparisonTerm       ::= ( "==" | "!=" ) _term (-2) ;
         
-        _comparisonTerm       ::= _term ( "==" | "!=" ) \` _term (-2) ;
+        _comparisonTerm       ::= _term ( "==" | "!=" ) _term (-2) ;
         
-        ~logicalTerm          ::= ( "||" | "&&" ) \` _term (-1) ;
+        ~logicalTerm          ::= ( "||" | "&&" ) _term (-1) ;
 
       `));
     });
