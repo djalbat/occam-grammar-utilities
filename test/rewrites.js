@@ -4256,4 +4256,109 @@ describe("Rewrites", () => {
       });
     });
   });
+
+  describe.only("precedence check", () => {
+    let bnf = `
+
+      S  ::= ( T ... <END_OF_LINE> ) ;
+      
+      T  ::=  "¬"<NO_WHITESPACE>A (10)
+      
+           |  A ( "∧" (-9) 
+            
+                | "𝗂𝖿𝖿" (-6) ) \` A
+                  
+                | "(" (A) ")" 
+            
+           |  V
+            
+           ;
+      
+      V. ::=  . ;
+      
+      A  ::=  T ( ) ;
+            
+      `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                                
+        S   ::= ( T ... <END_OF_LINE> ) ;
+        
+        T   ::= _T ;
+        
+        V.  ::= . ;
+        
+        _V. ::= . ;
+        
+        _T  ::= T_ T~* ;
+        
+        T_  ::= "¬" <NO_WHITESPACE> _A (10)
+            
+              | "(" (_A) ")"
+            
+              | _V
+        
+              ;
+        
+        T~  ::= A~T ;
+        
+        _A  ::= _T ( ) ;
+        
+        A~T ::= ( "∧" (-9) | "𝗂𝖿𝖿" (-6) ) \` _A ( ) ;        
+
+     `));
+    });
+
+    describe("content", () => {
+      const content = `¬Q ∧ P
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        // assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                          
+                                                     S [0]                     
+                                                       |                       
+                                     ------------------------------------      
+                                     |                                  |      
+                                T. [0] ( )                        <END_OF_LINE>
+                                     |                                         
+                               N.. [0] (-3)                                    
+                                     |                                         
+                   -------------------------------------                       
+                   |                 |                 |                       
+          "!"[unassigned] [0] <NO_WHITESPACE>       T. [0]                     
+                                                       |                       
+                                              "3"[unassigned] [0]              
+                              
+       `));
+      });
+    });
+  });
 });

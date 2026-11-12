@@ -9,9 +9,11 @@ class ReplacementNode extends NonTerminalNode {
   rewrite(state) {
     let nonTerminalNode;
 
-    nonTerminalNode = this.createNonTerminalNode(state);
+    // nonTerminalNode = this.createNonTerminalNode(state);
+    //
+    // nonTerminalNode = this.rewriteNonTerminalNode(nonTerminalNode, state);  ///
 
-    nonTerminalNode = this.rewriteNonTerminalNode(nonTerminalNode, state);  ///
+    nonTerminalNode = this; ///
 
     return nonTerminalNode;
   }
