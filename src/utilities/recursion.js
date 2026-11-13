@@ -24,7 +24,7 @@ export function recursiveRuleNamesFromPart(part, ruleMap, recursiveRuleNames = [
             rule = ruleMap[ruleName] || null;
 
       if (rule == null) {
-        throw new Error(`The  '${ruleName}' rule is missing.`);
+        throw new Error(`The '${ruleName}' rule is missing.`);
       }
 
       const recursiveRuleNamesInclucesRuleName = recursiveRuleNames.includes(ruleName);

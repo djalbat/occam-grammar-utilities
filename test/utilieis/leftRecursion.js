@@ -11,7 +11,7 @@ const { rulesFromBNF } = parserUtilities,
       { ruleMapFromRules } = rulesUtilities,
       { leftRecursiveRuleNamesFromPart, leftRecursiveRuleNamesFromDefinition, leftRecursiveRuleNamesFromRule } = leftRecursionUtilities;
 
-describe("utiliies/leftReursion", () => {
+describe("utilities/leftRecursion", () => {
   describe("leftRecursiveRuleNamesFromPart", () => {
     describe("a missing rule name part", () => {
       const bnf = `
@@ -57,12 +57,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an empty array", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.isEmpty(leftRecursiveNames);
+        assert.isEmpty(leftRecursiveRuleNames);
       });
     });
 
@@ -87,12 +87,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -117,12 +117,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns false with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isFalse(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -145,12 +145,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns false with an empty array", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isFalse(terminate);
 
-        assert.isEmpty(leftRecursiveNames);
+        assert.isEmpty(leftRecursiveRuleNames);
       });
     });
 
@@ -175,12 +175,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns false with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isFalse(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -203,12 +203,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an empty array", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.isEmpty(leftRecursiveNames);
+        assert.isEmpty(leftRecursiveRuleNames);
       });
     });
 
@@ -233,12 +233,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -261,12 +261,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an empty array", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.isEmpty(leftRecursiveNames);
+        assert.isEmpty(leftRecursiveRuleNames);
       });
     });
 
@@ -291,12 +291,504 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
+      });
+    });
+
+    describe("an optional consuming terminal part part", () => {
+      const bnf = `
+
+        S ::= "e"? ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an empty array", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.isEmpty(leftRecursiveRuleNames);
+      });
+    });
+
+    describe("an optional non-consuming terminal part part", () => {
+      const bnf = `
+
+        S ::= <NO_WHITESPACE>? ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an empty array", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.isEmpty(leftRecursiveRuleNames);
+      });
+    });
+
+    describe("an optional non-consuming terminal part part", () => {
+      const bnf = `
+
+        S ::= "e"?? ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an empty array", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.isEmpty(leftRecursiveRuleNames);
+      });
+    });
+
+    describe("an optional consuming rule name part part", () => {
+      const bnf = `
+
+        S ::= A? ;
+    
+        A ::= "a" ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
+      });
+    });
+
+    describe("an optional non-consuming rule name part part", () => {
+      const bnf = `
+
+        S ::= A? ;
+    
+        A ::= "a"? ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
+      });
+    });
+
+    describe("a zero or more consuming terminal part part", () => {
+      const bnf = `
+
+        S ::= "e"* ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an empty array", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.isEmpty(leftRecursiveRuleNames);
+      });
+    });
+
+    describe("a zero or more non-consuming terminal part part", () => {
+      const bnf = `
+
+        S ::= <NO_WHITESPACE>* ;
+    
+      `;
+
+      let part,
+        ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an empty array", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.isEmpty(leftRecursiveRuleNames);
+      });
+    });
+
+    describe("a zero or more consuming rule name part part", () => {
+      const bnf = `
+
+        S ::= A* ;
+    
+        A ::= "a" ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
+      });
+    });
+
+    describe("a zero or more non-consuming rule name part part", () => {
+      const bnf = `
+
+        S ::= A* ;
+    
+        A ::= "a"? ;
+    
+      `;
+
+      let part,
+        ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
+      });
+    });
+
+    describe("a one or more consuming terminal part part", () => {
+      const bnf = `
+
+        S ::= "e"+ ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveRuleNames);
+      });
+    });
+
+    describe("a one or more non-consuming terminal part part", () => {
+      const bnf = `
+
+        S ::= <NO_WHITESPACE>+ ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an empty array", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.isEmpty(leftRecursiveRuleNames);
+      });
+    });
+
+    describe("a one or more consuming rule name part part", () => {
+      const bnf = `
+
+        S ::= A+ ;
+    
+        A ::= "a" ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
+      });
+    });
+
+    describe("a one or more non-consuming rule name part part", () => {
+      const bnf = `
+
+        S ::= A+ ;
+    
+        A ::= "a"? ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
+      });
+    });
+
+    describe("an isolated consuming terminal part part", () => {
+      const bnf = `
+
+        S ::= ("e") ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveRuleNames);
+      });
+    });
+
+    describe("an isolated non-consuming terminal part part", () => {
+      const bnf = `
+
+        S ::= (<NO_WHITESPACE>) ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an empty array", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.isEmpty(leftRecursiveRuleNames);
+      });
+    });
+
+    describe("an isolated consuming rule name part part", () => {
+      const bnf = `
+
+        S ::= (A) ;
+    
+        A ::= "a" ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
+      });
+    });
+
+    describe("an isolated non-consuming rule name part part", () => {
+      const bnf = `
+
+        S ::= (A) ;
+    
+        A ::= "a"? ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an array of length one", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -319,12 +811,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an empty array", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.isEmpty(leftRecursiveNames);
+        assert.isEmpty(leftRecursiveRuleNames);
       });
     });
 
@@ -351,12 +843,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -381,12 +873,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an empty array", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.isEmpty(leftRecursiveNames);
+        assert.isEmpty(leftRecursiveRuleNames);
       });
     });
 
@@ -411,12 +903,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -443,12 +935,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns false with an array of length two", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isFalse(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A", "B"]);
       });
     });
 
@@ -473,12 +965,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -505,12 +997,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an array of length two", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A", "B"]);
       });
     });
 
@@ -535,12 +1027,196 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns false with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isFalse(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
+      });
+    });
+
+    describe("a branching parts part with two terminal parts", () => {
+      const bnf = `
+
+        S ::= ( "a" ... "b" ) ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveRuleNames);
+      });
+    });
+
+    describe("a branching parts part with two rule name parts", () => {
+      const bnf = `
+
+        S ::= ( A ... B ) ;
+    
+        A ::= "a" ;
+    
+        B ::= "b" ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
+      });
+    });
+
+    describe("a branching parts part with one terminal part followed by one rule name part", () => {
+      const bnf = `
+
+        S ::= ( "e" ... A ) ;
+    
+        A ::= "a" ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns true with an empty array", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isTrue(terminate);
+
+        assert.isEmpty(leftRecursiveRuleNames);
+      });
+    });
+
+    describe("a branching parts part with one rule name part followed by one terminal part", () => {
+      const bnf = `
+
+        S ::= ( A ... "e" ) ;
+    
+        A ::= "a" ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns true with an array of length one", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
+      });
+    });
+
+    describe("a branching parts part with two nullified rule name parts", () => {
+      const bnf = `
+
+        S ::= ( A? ... B? ) ;
+    
+        A ::= "a" ;
+    
+        B ::= "b" ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns false with an array of length two", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isFalse(terminate);
+
+        assert.deepEqual(leftRecursiveRuleNames, ["A", "B"]);
+      });
+    });
+
+    describe("a branching parts part with one nullified rule name part followed by one rule name part", () => {
+      const bnf = `
+
+        S ::= ( A? ... B ) ;
+    
+        A ::= "a" ;
+    
+        B ::= "b" ;
+    
+      `;
+
+      let part,
+          ruleMap;
+
+      before(() => {
+        const rules = rulesFromBNF(bnf);
+
+        part = partFromRules(rules);
+
+        ruleMap = ruleMapFromRules(rules);
+      });
+
+      it("returns true with an array of length two", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
+
+        assert.isTrue(terminate);
+
+        assert.deepEqual(leftRecursiveRuleNames, ["A","B"]);
       });
     });
 
@@ -563,12 +1239,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an empty array", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.isEmpty(leftRecursiveNames);
+        assert.isEmpty(leftRecursiveRuleNames);
       });
     });
 
@@ -595,12 +1271,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an array of length two", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A", "B"]);
       });
     });
 
@@ -624,13 +1300,13 @@ describe("utiliies/leftReursion", () => {
         ruleMap = ruleMapFromRules(rules);
       });
 
-      it("returns false with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+      it("returns true with an array of length one", () => {
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -655,12 +1331,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns true with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isTrue(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -687,12 +1363,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns false with an array of length two", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isFalse(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A", "B"]);
       });
     });
 
@@ -717,12 +1393,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns false with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isFalse(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -749,12 +1425,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns false with an array of length two", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isFalse(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A", "B"]);
       });
     });
 
@@ -779,12 +1455,12 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns false with an array of length one", () => {
-        const leftRecursiveNames = [],
-              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveNames);
+        const leftRecursiveRuleNames = [],
+              terminate = leftRecursiveRuleNamesFromPart(part, ruleMap, leftRecursiveRuleNames);
 
         assert.isFalse(terminate);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
   });
@@ -809,11 +1485,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an empty array", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
 
-        assert.isEmpty(leftRecursiveNames);
+        assert.isEmpty(leftRecursiveRuleNames);
       });
     });
 
@@ -840,11 +1516,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an array of length one", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -868,11 +1544,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an empty array", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
 
-        assert.isEmpty(leftRecursiveNames);
+        assert.isEmpty(leftRecursiveRuleNames);
       });
     });
 
@@ -897,11 +1573,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an array of length one", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -928,11 +1604,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an array of length two", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A", "B"]);
       });
     });
 
@@ -957,11 +1633,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an array of length one", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -988,11 +1664,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an array of length two", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A", "B"]);
       });
     });
 
@@ -1017,11 +1693,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an array of length one", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromDefinition(definition, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
   });
@@ -1050,11 +1726,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an empty array", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames);
 
-        assert.isEmpty(leftRecursiveNames);
+        assert.isEmpty(leftRecursiveRuleNames);
       });
     });
 
@@ -1085,11 +1761,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an array of length two", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A", "B"]);
       });
     });
 
@@ -1118,11 +1794,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an array of length one", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -1151,11 +1827,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an array of length one", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -1186,11 +1862,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an array of length two", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A", "B"]);
       });
     });
 
@@ -1219,11 +1895,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an array of length one", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
 
@@ -1254,11 +1930,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns an array of length two", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A", "B"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A", "B"]);
       });
     });
 
@@ -1287,11 +1963,11 @@ describe("utiliies/leftReursion", () => {
       });
 
       it("returns false with an array of length one", () => {
-        const leftRecursiveNames = [];
+        const leftRecursiveRuleNames = [];
 
-        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveNames);
+        leftRecursiveRuleNamesFromRule(rule, ruleMap, leftRecursiveRuleNames);
 
-        assert.deepEqual(leftRecursiveNames, ["A"]);
+        assert.deepEqual(leftRecursiveRuleNames, ["A"]);
       });
     });
   });

@@ -11,7 +11,7 @@ const { rulesFromBNF } = parserUtilities,
       { ruleMapFromRules } = rulesUtilities,
       { recursiveRuleNamesFromPart, recursiveRuleNamesFromDefinition, recursiveRuleNamesFromRule } = recursionUtilities;
 
-describe("utiliies/recursion", () => {
+describe("utilities/recursion", () => {
   describe("recursiveRuleNamesFromPart", () => {
     describe("a missing rule name part", () => {
       const bnf = `

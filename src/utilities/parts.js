@@ -1,8 +1,12 @@
 "use strict";
 
+import { arrayUtilities } from "necessary";
 import { Parts, partTypes, PartChoice } from "occam-parsers";
 
-const { OptionalPartPart, IsolatedPartPart, ChoiceOfPartsPart, BranchingPartsPart, OneOrMorePartsPart, ZeroOrMorePartsPart, SequenceOfPartsPart } = Parts,
+import { isPartSimplePart } from "../utilities/part";
+
+const { forwardsSome, backwardsSome } = arrayUtilities,
+      { OptionalPartPart, IsolatedPartPart, ChoiceOfPartsPart, BranchingPartsPart, OneOrMorePartsPart, ZeroOrMorePartsPart, SequenceOfPartsPart } = Parts,
       { RuleNamePartType,
         IsolatedPartPartType,
         OptionalPartPartType,
@@ -197,6 +201,24 @@ export function replaceRuleNameParts(parts, callback) {
   return parts;
 }
 
+export function retrieveSimpleParts(part, backwards, callback) {
+  const terminate = retrieveParts(part, backwards, (part) => {
+    let terminate = false;
+
+    const partSimplePart = isPartSimplePart(part);
+
+    if (partSimplePart) {
+      const simplePart = part;  ///
+
+      terminate = callback(simplePart);
+    }
+
+    return terminate;
+  });
+
+  return terminate;
+}
+
 function replaceRuleNamePart(part, callback) {
   let ruleNamePart = null;
 
@@ -219,3 +241,112 @@ function replaceRuleNamePart(part, callback) {
 
   return ruleNamePart;
 }
+
+function retrieveParts(part, backwards, callback) {
+  let terminate;
+
+  terminate = callback(part);
+
+  if (!terminate) {
+    const partNonTerminalPart = part.isNonTerminalPart();
+
+    if (partNonTerminalPart) {
+      const nonTerminalPart = part, ///
+            type = nonTerminalPart.getType();
+
+      switch (type) {
+        case OptionalPartPartType: {
+          const optionalPart = nonTerminalPart, ///
+            part = optionalPart.getPart();
+
+          terminate = retrieveParts(part, backwards, callback);
+
+          terminate = false;
+
+          break;
+        }
+
+        case ZeroOrMorePartsPartType: {
+          const zeroOfMorePartsPart = nonTerminalPart, ///
+            part = zeroOfMorePartsPart.getPart();
+
+          terminate = retrieveParts(part, backwards, callback);
+
+          terminate = false;
+
+          break;
+        }
+
+        case OneOrMorePartsPartType: {
+          const oneOrMorePartsPart = nonTerminalPart,  ///
+            part = oneOrMorePartsPart.getPart();
+
+          terminate = retrieveParts(part, backwards, callback);
+
+          break;
+        }
+
+        case IsolatedPartPartType: {
+          const isolatedPartPart = nonTerminalPart,  ///
+            part = isolatedPartPart.getPart();
+
+          terminate = retrieveParts(part, backwards, callback);
+
+          break;
+        }
+
+        case SequenceOfPartsPartType: {
+          const sequenceOfPartsPart = nonTerminalPart, ///
+                parts = sequenceOfPartsPart.getParts(),
+                some = backwards ?
+                         backwardsSome :
+                           forwardsSome;
+
+          some(parts, (part) => {
+            terminate = retrieveParts(part, backwards, callback);
+
+            if (terminate) {
+              return true;
+            }
+          });
+
+          break;
+        }
+
+        case BranchingPartsPartType: {
+          const branchingPartsPart = nonTerminalPart, ///
+                parts = branchingPartsPart.getParts(),
+                some = backwards ?
+                         backwardsSome :
+                           forwardsSome;
+
+          some(parts, (part) => {
+            terminate = retrieveParts(part, backwards, callback);
+
+            if (terminate) {
+              return true;
+            }
+          });
+
+          break;
+        }
+
+        case ChoiceOfPartsPartType: {
+          const choiceOfPartsPart = nonTerminalPart, ///
+            parts = choiceOfPartsPart.getParts();
+
+          terminate = true;
+
+          parts.forEach((part) => {
+            terminate = retrieveParts(part, backwards, callback) && terminate;
+          });
+
+          break;
+        }
+      }
+    }
+  }
+
+  return terminate;
+}
+

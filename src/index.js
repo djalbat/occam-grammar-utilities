@@ -6,5 +6,6 @@ export { default as BasicParser } from "./basic/parser";
 export { default as recursionUtilities } from "./utilities/recursion";
 export { default as definitionUtilities } from "./utilities/definition";
 export { default as leftRecursionUtilities } from "./utilities/leftRecursion";
+export { default as rightRecursionUtilities } from "./utilities/rightRecursion";
 
 export { default as eliminateLeftRecursion } from "./eliminateLeftRecursion";
