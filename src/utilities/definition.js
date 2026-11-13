@@ -2,9 +2,10 @@
 
 import { arrayUtilities } from "necessary";
 
+import { LEFT_RECURSIVE_LABEL } from "../constants";
 import { rewriteRuleNameParts } from "../utilities/rewrite";
 import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursion";
-import { edgeFromRuleNameAndLeftRecursiveRuleName } from "../utilities/edge";
+import { edgeFromLabelRuleNameAndRecursiveRuleName } from "../utilities/graph";
 
 const { first, tail } = arrayUtilities;
 
@@ -128,10 +129,12 @@ export default {
 };
 
 function isDefinitionCyclical(definition, ruleName, cycleOrCycles, ruleMap) {
-  const cycles = guaranteeCycles(cycleOrCycles),
+  const label = LEFT_RECURSIVE_LABEL,
+        cycles = guaranteeCycles(cycleOrCycles),
         leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition, ruleMap),
         definitionCyclical = leftRecursiveRuleNames.some((leftRecursiveRuleName) => {
-          const edge = edgeFromRuleNameAndLeftRecursiveRuleName(ruleName, leftRecursiveRuleName),
+          const recursiveRuleName = leftRecursiveRuleName,  ///
+                edge = edgeFromLabelRuleNameAndRecursiveRuleName(label, ruleName, recursiveRuleName),
                 edgeMatchesCycles = cycles.some((cycle) => {
                   const edgeMatchesCycle = cycle.matchEdge(edge);
 

@@ -2,8 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
-import { CYCLE_LENGTH_2 } from "../constants";
-import { LEFT_RECURSIVE_LABEL } from "../labels";
+import { CYCLE_LENGTH_2, LEFT_RECURSIVE_LABEL } from "../constants";
 
 const { first, second, push, filter } = arrayUtilities;
 

@@ -2,6 +2,7 @@
 
 import { recursiveRuleNamesFromRule } from "../utilities/recursion";
 import { leftRecursiveRuleNamesFromRule } from "../utilities/leftRecursion";
+import { rightRecursiveRuleNamesFromRule } from "../utilities/rightRecursion";
 
 export function recursiveRuleNamesMapFromRuleMap(ruleMap) {
   const recursiveRuleNamesMap = {},
@@ -37,4 +38,22 @@ export function leftRecursiveRuleNamesMapFromRuleMap(ruleMap) {
   });
 
   return leftRecursiveRuleNamesMap;
+}
+
+export function rightRecursiveRuleNamesMapFromRuleMap(ruleMap) {
+  const rightRecursiveRuleNamesMap = {},
+        ruleNames = Object.keys(ruleMap);
+
+  ruleNames.forEach((ruleName) => {
+    const rule = ruleMap[ruleName],
+          rightRecursiveRuleNames = [];
+
+    rightRecursiveRuleNamesFromRule(rule, ruleMap, rightRecursiveRuleNames);
+
+    const ruleNames = rightRecursiveRuleNames; ///
+
+    rightRecursiveRuleNamesMap[ruleName] = ruleNames;
+  });
+
+  return rightRecursiveRuleNamesMap;
 }
