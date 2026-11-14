@@ -18,7 +18,7 @@ describe("Rewrites", () => {
     }
   ];
 
-  describe.only("a cycle of length one", () => {
+  describe("a cycle of length one", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -74,7 +74,7 @@ describe("Rewrites", () => {
       it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
-        // assert.isTrue(checkDescendentNodes(node));
+        assert.isTrue(checkDescendentNodes(node));
 
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -106,6 +106,41 @@ describe("Rewrites", () => {
         assert.isTrue(checkParentNodes(node));
 
         assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+          
+                                         S [0]                 
+                                           |                   
+                             ----------------------------      
+                             |                          |      
+                          T. [0]                  <END_OF_LINE>
+                             |                                 
+                   ---------------------                       
+                   |                   |                       
+                T. [0]        "g"[unassigned] [0]              
+                   |                                           
+          "e"[unassigned] [0]                                  
+                                          
+       `));
+      });
+    });
+
+    describe("content with three tokens", () => {
+      const content = `egg
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it.only("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        // assert.isTrue(checkDescendentNodes(node));
 
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 

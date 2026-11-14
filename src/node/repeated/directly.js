@@ -13,10 +13,43 @@ class DirectlyRepeatedNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
+  simplify(state) {
+    this.rotate(state);
+
+    this.simplifyChildNodes(state);
+  }
+
+  rotate(state) {
+    const index = this.getIndex(),
+          opacity = this.getOpacity(),
+          precedence = this.getPrecedence(),
+          baseRuleName = this.getBaseRuleName(),
+          startIndex = 0,
+          endIndex = index, ///
+          ruleName = baseRuleName,  ///
+          parentNode = this.getParentNode(),
+          childNodes = parentNode.spliceChildNodes(startIndex, endIndex),
+          nonTerminalNode = state.createNonTerminalNode(ruleName, childNodes, precedence, opacity),
+          prependedChildNode = nonTerminalNode, ///
+          prependedChildNodes = [
+            prependedChildNode
+          ];
+
+    parentNode.prependChildNodes(prependedChildNodes);
+
+    this.lift();
+  }
+
   getBaseRuleName() {
-    const ruleName = this.getRuleName(),
-          directlyRepeatedRuleName = ruleName,  ///
-          baseRuleName = ruleNameFromDirectlyRepeatedRuleName(directlyRepeatedRuleName);
+    let ruleName;
+
+    ruleName = this.getRuleName();
+
+    const directlyRepeatedRuleName = ruleName; ///
+
+    ruleName = ruleNameFromDirectlyRepeatedRuleName(directlyRepeatedRuleName);  ///
+
+    const baseRuleName = ruleName;  ///
 
     return baseRuleName;
   }
@@ -27,3 +60,21 @@ class DirectlyRepeatedNode extends NonTerminalNode {
 Object.assign(DirectlyRepeatedNode.prototype, simpliciationMixins);
 
 export default DirectlyRepeatedNode;
+
+// isInitial() {
+//   const index = this.getIndex(),
+//     initial = (index === REPEATED_NODE_INITIAL_INDEX);
+//
+//   return initial;
+// }
+//
+// simplify(state) {
+//   const initial = this.isInitial();
+//
+//   if (!initial) {
+//   }
+//
+//   this.simplifyChildNodes(state);
+//
+//   this.lift();
+// }

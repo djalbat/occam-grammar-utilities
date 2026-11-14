@@ -2,7 +2,7 @@
 
 import { Rule } from "occam-parsers";
 
-import DirectlyReducedNode from "../../node/reduced";
+import DirectlyReducedNode from "../../node/reduced/directly";
 
 import { CYCLE_LENGTH_1 } from "../../constants";
 import { directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
