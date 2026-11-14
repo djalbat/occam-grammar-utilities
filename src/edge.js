@@ -1,7 +1,7 @@
 "use strict";
 
 import { intersection } from "./utilities/collections";
-import { INTERSECTION_MATCH_METHOD } from "./constants";
+import { INDIFFERENT_MATCH_METHOD, INTERSECTION_MATCH_METHOD } from "./constants";
 
 export default class Edge {
   constructor(labels,sourceVertex, targetVertex) {
@@ -32,9 +32,49 @@ export default class Edge {
     const labels = edge.getLabels(),
           sourceVertex = edge.getSourceVertex(),
           targetVertex = edge.getTargetVertex(),
-          matches = this.matchLabelsSourceVertexAndTargetVertex(labels, sourceVertex, targetVertex, matchMethod);
+          matchesLabelsSourceVertexAndTargetVertex = this.matchLabelsSourceVertexAndTargetVertex(labels, sourceVertex, targetVertex, matchMethod),
+          matches = matchesLabelsSourceVertexAndTargetVertex; ///
 
     return matches;
+  }
+
+  matchLabel(label) {
+    const labels = [
+            label
+          ],
+          matchMethod = INTERSECTION_MATCH_METHOD,
+          labelsMatch = this.matchLabels(labels, matchMethod),
+          labelMatches = labelsMatch; ///
+
+    return labelMatches;
+  }
+
+  matchLabels(labels, matchMethod = INTERSECTION_MATCH_METHOD) {
+    let matchesLabels = false;
+
+    const labelsA = labels, ///
+          labelsB = this.labels;  ///
+
+    switch (matchMethod) {
+      case INDIFFERENT_MATCH_METHOD: {
+        matchesLabels = true;
+
+        break;
+      }
+
+      case INTERSECTION_MATCH_METHOD: {
+        const labels = intersection(labelsA, labelsB),
+              labelsLength = labels.length;
+
+        if (labelsLength > 0) {
+          matchesLabels = true;
+        }
+
+        break;
+      }
+    }
+
+    return matchesLabels;
   }
 
   matchSourceVertex(sourceVertex) {
@@ -50,25 +90,25 @@ export default class Edge {
   }
 
   matchSourceVertexAndTargetVertex(sourceVertex, targetVertex) {
-    const matches = ((this.sourceVertex === sourceVertex) && (this.targetVertex === targetVertex));
+    const matchesSourceVertexAndTargetVertex = ((this.sourceVertex === sourceVertex) && (this.targetVertex === targetVertex));
 
-    return matches;
+    return matchesSourceVertexAndTargetVertex;
   }
 
   matchLabelsSourceVertexAndTargetVertex(labels, sourceVertex, targetVertex, matchMethod) {
-    let matches = false;
+    let matchesLabelsSourceVertexAndTargetVertex = false;
 
-    const labelsA = labels, ///
-          labelsB = this.labels,  ///
-          labelsMatch = matchLabels(labelsA, labelsB, matchMethod);
+    const matchesLabels = this.matchLabels(labels, matchMethod);
 
-    if (labelsMatch) {
-      if ((this.sourceVertex === sourceVertex) && (this.targetVertex === targetVertex)) {
-        matches = true;
+    if (matchesLabels) {
+      const matchesSourceVertexAndTargetVertex = this.matchSourceVertexAndTargetVertex(sourceVertex, targetVertex);
+
+      if (matchesSourceVertexAndTargetVertex) {
+        matchesLabelsSourceVertexAndTargetVertex = true;
       }
     }
 
-    return matches;
+    return matchesLabelsSourceVertexAndTargetVertex;
   }
 
   static fromLabelsSourceVertexAndTargetVertex(labels, sourceVertex, targetVertex) {
@@ -76,23 +116,4 @@ export default class Edge {
 
     return edge;
   }
-}
-
-function matchLabels(labelsA, labelsB, matchMethod) {
-  let labelsMatch = false;
-
-  switch (matchMethod) {
-    case INTERSECTION_MATCH_METHOD: {
-      const labels = intersection(labelsA, labelsB),
-            labelsLength = labels.length;
-
-      if (labelsLength > 0) {
-        labelsMatch = true;
-      }
-
-      break;
-    }
-  }
-
-  return labelsMatch;
 }

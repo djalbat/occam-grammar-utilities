@@ -2,9 +2,9 @@
 
 import { arrayUtilities } from "necessary";
 
-import { CYCLE_LENGTH_2, LEFT_RECURSIVE_LABEL } from "../constants";
+import { CYCLE_LENGTH_2, LEFT_RECURSIVE_LABEL, RIGHT_RECURSIVE_LABEL } from "../constants";
 
-const { first, second, push, filter } = arrayUtilities;
+const { first, second, push } = arrayUtilities;
 
 export function ruleNamesFromCycle(cycle, ruleNames = []) {
   const vertexes = cycle.getVertexes(),
@@ -38,25 +38,60 @@ export function indirectRuleNameFromCycle(cycle) {
   return indirectRuleName;
 }
 
-export function cyclesFromGrapah(graph) {
+export function cyclesFromGraph(graph) {
   const cycles = graph.findCycles();
 
-  filter(cycles, (cycle) => {
-    const cycleLeftRecursive = isCycleLeftRecursive(cycle);
+  cycles.forEach((cycle) => {
+    const cycleLeftRecursive = isCycleLeftRecursive(cycle),
+          cycleRightRecursive = isCycleRightRecursive(cycle);
+
+    let label;
 
     if (cycleLeftRecursive) {
-      return true;
+      label = LEFT_RECURSIVE_LABEL;
+
+      cycle.addLabel(label);
+    }
+
+    if (cycleRightRecursive) {
+      label = RIGHT_RECURSIVE_LABEL;
+
+      cycle.addLabel(label);
     }
   });
 
   return cycles;
 }
 
+export function leftRecursiveCyclesFromCycles(cycles) {
+  const leftRecursiveCycles = cycles.filter((cycle) => {
+    const cycleLeftRecusrive = cycle.isLeftRecursive();
+
+    if (cycleLeftRecusrive) {
+      return true;
+    }
+  });
+
+  return leftRecursiveCycles;
+}
+
+export function rightRecursiveCyclesFromCycles(cycles) {
+  const rightRecursiveCycles = cycles.filter((cycle) => {
+    const cycleLeftRecusrive = cycle.isRightRecursive();
+
+    if (cycleLeftRecusrive) {
+      return true;
+    }
+  });
+
+  return rightRecursiveCycles;
+}
+
 function isCycleLeftRecursive(cycle) {
   const cycleLeftRecursive = cycle.everyEdge((edge) => {
-    const label = edge.getLabel(),
-          labelLeftRecursiveLabel = (label === LEFT_RECURSIVE_LABEL),
-          edgeLeftRecursive = labelLeftRecursiveLabel;  ///
+    const label = LEFT_RECURSIVE_LABEL,
+      labelMatches = edge.matchLabel(label),
+      edgeLeftRecursive = labelMatches;  ///
 
     if (edgeLeftRecursive) {
       return true;
@@ -64,5 +99,19 @@ function isCycleLeftRecursive(cycle) {
   });
 
   return cycleLeftRecursive;
+}
+
+function isCycleRightRecursive(cycle) {
+  const cycleRightRecursive = cycle.everyEdge((edge) => {
+    const label = RIGHT_RECURSIVE_LABEL,
+          labelMatches = edge.matchLabel(label),
+          edgeRightRecursive = labelMatches;  ///
+
+    if (edgeRightRecursive) {
+      return true;
+    }
+  });
+
+  return cycleRightRecursive;
 }
 

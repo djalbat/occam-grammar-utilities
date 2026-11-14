@@ -4,7 +4,7 @@ import { arrayUtilities } from "necessary";
 
 import { CYCLE_LENGTH_1 } from "./constants";
 import { retrieveRecursiveRuleNames } from "./utilities/graph";
-import { ruleNameFromCycle, indirectRuleNameFromCycle } from "./utilities/cycle";
+import { ruleNameFromCycle, indirectRuleNameFromCycle, leftRecursiveCyclesFromCycles, rightRecursiveCyclesFromCycles } from "./utilities/cycle";
 
 const { filter } = arrayUtilities;
 
@@ -95,21 +95,40 @@ export default class Context {
     return indirectRule;
   }
 
-  static fromCycleCyclesGraphAndRuleMap(cycle, cycles, graph, ruleMap) {
-    const ruleName = ruleNameFromCycle(cycle),
+  getLeftRecursiveCycle() {
+    const leftRecursiveCycle = this.cycle;  ///
+
+    return leftRecursiveCycle;
+  }
+
+  getLeftRecursiveCycles() {
+    const leftRecursiveCycles = leftRecursiveCyclesFromCycles(this.cycles);
+
+    return leftRecursiveCycles;
+  }
+
+  getRightRecursiveCycles() {
+    const rightRecursiveCycles = rightRecursiveCyclesFromCycles(this.cycles);
+
+    return rightRecursiveCycles;
+  }
+
+  static fromLeftRecursiveCycleCyclesGraphAndRuleMap(leftRecursiveCycle, cycles, graph, ruleMap) {
+    const cycle = leftRecursiveCycle, ///
+          ruleName = ruleNameFromCycle(cycle),
           indirectRuleName = indirectRuleNameFromCycle(cycle),
-          recursiveRuleNames = retrieveRecursiveRuleNames(ruleName, graph),
-          incidentalRuleNames = incidentalRuleNamesFromRuleNameIndirectRuleNameAndRecursiveRuleNames(ruleName, indirectRuleName, recursiveRuleNames),
+          incidentalRuleNames = incidentalRuleNamesFromGraphRuleNameAndIndirectRuleName(graph, ruleName, indirectRuleName),
           context = new Context(cycle, cycles, ruleMap, ruleName, indirectRuleName, incidentalRuleNames);  ///
 
     return context;
   }
 }
 
-function incidentalRuleNamesFromRuleNameIndirectRuleNameAndRecursiveRuleNames(ruleName, indirectRuleName, recursiveRuleNames) {
-  const incidentalRuleNames = [
-    ...recursiveRuleNames
-  ];
+function incidentalRuleNamesFromGraphRuleNameAndIndirectRuleName(graph, ruleName, indirectRuleName) {
+  const recursiveRuleNames = retrieveRecursiveRuleNames(ruleName, graph),
+        incidentalRuleNames = [
+          ...recursiveRuleNames
+        ];
 
   filter(incidentalRuleNames, (incidentalRuleName) => {
     const incidentalRuleNameRuleName = (incidentalRuleName === ruleName),

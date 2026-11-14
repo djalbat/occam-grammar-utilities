@@ -5,6 +5,7 @@ import { arrayUtilities } from "necessary";
 
 import RewrittenNode from "../node/rewritten";
 import RewrittenDefinition from "../definition/rewritten";
+import DirectlyRewrittenDefinition from "../definition/rewritten/directly";
 import IndirectlyRewrittenDefinition from "../definition/rewritten/indirectly";
 
 import { rewrittenRuleNameFromRuleName } from "../utilities/ruleName";
@@ -64,12 +65,12 @@ export default class RewrittenRule extends Rule {
   static fromDirectlyRepeatableRule(directlyRepeatableRule, context) {
     const rule = directlyRepeatableRule,  ///
           ruleName = rule.getName(),
-          rewrittenDefinition = RewrittenDefinition.fromRuleName(ruleName, context),
+          directlyRewrittenDefinition = DirectlyRewrittenDefinition.fromRuleName(ruleName, context),
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName, ///
           opacity = rule.getOpacity(),
           definitions = [
-            rewrittenDefinition
+            directlyRewrittenDefinition
           ],
           rewrittenRule = new RewrittenRule(name, opacity, definitions);
 
@@ -137,7 +138,7 @@ export function rewrittenRulesFromCycleAndCycles(context, rewrittenRules = []) {
     case CYCLE_LENGTH_1: {
       const rule = context.getRule(),
             directlyRepeatableRule = rule,  ///
-            rewrittenRule = RewrittenRule.fromDirectlyRepeatableRule(directlyRepeatableRule, context);
+            rewrittenRule = DirectlyRewrittenRule.fromDirectlyRepeatableRule(directlyRepeatableRule, context);
 
       rewrittenRules.push(rewrittenRule);
 

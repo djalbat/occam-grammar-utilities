@@ -2,10 +2,12 @@
 
 import { arrayUtilities } from "necessary";
 
-import { LEFT_RECURSIVE_LABEL } from "../constants";
 import { rewriteRuleNameParts } from "../utilities/rewrite";
+import { INDIFFERENT_MATCH_METHOD } from "../constants";
+import { leftRecursiveCyclesFromCycles } from "../utilities/cycle";
+import { edgeFromRuleNameAndRecursiveRuleName } from "../utilities/graph";
 import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursion";
-import { edgeFromLabelsRuleNameAndRecursiveRuleName } from "../utilities/graph";
+import { rightRecursiveRuleNamesFromDefinition } from "../utilities/rightRecursion";
 
 const { first, tail } = arrayUtilities;
 
@@ -54,11 +56,11 @@ export function isDefinitionConsuming(definition, context) {
 export function isDefinitionSingular(definition, ruleName, context) {
   let definitionSingular = false;
 
-  const cycle = context.getCycle(),
-        ruleMap = context.getRuleMap(),
-        definitionCyclical = isDefinitionCyclical(definition, ruleName, cycle, ruleMap);
+  const ruleMap = context.getRuleMap(),
+        leftRecursiveCycle = context.getLeftRecursiveCycle(),
+        definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycle, ruleMap);
 
-  if (definitionCyclical) {
+  if (definitionLeftRecursive) {
     const parts = definition.getParts(),
           firstPart = first(parts),
           firstPartRuleNamePart = firstPart.isRuleNamePart();
@@ -81,10 +83,10 @@ export function isDefinitionSingular(definition, ruleName, context) {
 }
 
 export function isDefinitionReducible(definition, ruleName, context) {
-  const cycles = context.getCycles(),
-        ruleMap = context.getRuleMap(),
-        definitionCyclical = isDefinitionCyclical(definition, ruleName, cycles, ruleMap),
-        definitionReducible = !definitionCyclical;
+  const ruleMap = context.getRuleMap(),
+        leftRecursiveCycles = context.getLeftRecursiveCycles(),
+        definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycles, ruleMap),
+        definitionReducible = !definitionLeftRecursive;
 
   return definitionReducible;
 }
@@ -92,11 +94,11 @@ export function isDefinitionReducible(definition, ruleName, context) {
 export function isDefinitionRepeatable(definition, ruleName, context) {
   let definitionRepeatable = false;
 
-  const cycle = context.getCycle(),
-        ruleMap = context.getRuleMap(),
-        definitionCyclical = isDefinitionCyclical(definition, ruleName, cycle, ruleMap);
+  const ruleMap = context.getRuleMap(),
+        leftRecursiveCycle = context.getLeftRecursiveCycle(),
+        definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycle, ruleMap);
 
-  if (definitionCyclical) {
+  if (definitionLeftRecursive) {
     const parts = definition.getParts(),
           firstPart = first(parts),
           firstPartRuleNamePart = firstPart.isRuleNamePart();
@@ -118,6 +120,19 @@ export function isDefinitionRepeatable(definition, ruleName, context) {
   return definitionRepeatable;
 }
 
+export function isDefinitionRightRecursive(definition, ruleName, context) {
+  const ruleMap = context.getRuleMap(),
+        rightRecursiveCycles = context.getRightRecursiveCycles(),
+        rightRecursiveRuleNames = rightRecursiveRuleNamesFromDefinition(definition, ruleMap),
+        recursiveRuleNames = rightRecursiveRuleNames, ///
+        cycles = rightRecursiveCycles,  ///
+        edges = edgesFromRuleNameAndRecursiveRuleNames(ruleName, recursiveRuleNames),
+        edgesMatchCycles = matchEdgesAndCycles(edges, cycles),
+        definitionRightRecursive = edgesMatchCycles; ///
+
+  return definitionRightRecursive;
+}
+
 export default {
   partsfromDefinition,
   tailPartsfromDefinition,
@@ -128,29 +143,16 @@ export default {
   isDefinitionRepeatable
 };
 
-function isDefinitionCyclical(definition, ruleName, cycleOrCycles, ruleMap) {
-  const labels = [
-          LEFT_RECURSIVE_LABEL
-        ],
-        cycles = guaranteeCycles(cycleOrCycles),
+function isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycleOrCycles, ruleMap) {
+  const leftRecursiveCycles = guaranteeCycles(leftRecursiveCycleOrCycles),
         leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition, ruleMap),
-        definitionCyclical = leftRecursiveRuleNames.some((leftRecursiveRuleName) => {
-          const recursiveRuleName = leftRecursiveRuleName,  ///
-                edge = edgeFromLabelsRuleNameAndRecursiveRuleName(labels, ruleName, recursiveRuleName),
-                edgeMatchesCycles = cycles.some((cycle) => {
-                  const edgeMatchesCycle = cycle.matchEdge(edge);
+        recursiveRuleNames = leftRecursiveRuleNames,  ///
+        cycles = leftRecursiveCycles, ///
+        edges = edgesFromRuleNameAndRecursiveRuleNames(ruleName, recursiveRuleNames),
+        edgesMatchCycles = matchEdgesAndCycles(edges, cycles),
+        definitionLeftRecursive = edgesMatchCycles; ///
 
-                  if (edgeMatchesCycle) {
-                    return true;
-                  }
-                });
-
-          if (edgeMatchesCycles) {
-            return true;
-          }
-        });
-
-  return definitionCyclical;
+  return definitionLeftRecursive;
 }
 
 function guaranteeCycles(cycleOrCycles) {
@@ -159,4 +161,33 @@ function guaranteeCycles(cycleOrCycles) {
                      [cycleOrCycles];
 
   return cycles;
+}
+
+function matchEdgesAndCycles(edges, cycles) {
+  const matchMethod = INDIFFERENT_MATCH_METHOD,
+        edgesMatchCycles = cycles.some((cycle) => {
+          const edgesMatchCycle = edges.some((edge) => {
+            const edgeMatchesCycle = cycle.matchEdge(edge, matchMethod);
+
+            if (edgeMatchesCycle) {
+              return true;
+            }
+          });
+
+          if (edgesMatchCycle) {
+            return true;
+          }
+        });
+
+  return edgesMatchCycles;
+}
+
+function edgesFromRuleNameAndRecursiveRuleNames(ruleName, recursiveRuleNames) {
+  const edges = recursiveRuleNames.map((recursiveRuleName) => {
+    const edge = edgeFromRuleNameAndRecursiveRuleName(ruleName, recursiveRuleName);
+
+    return edge;
+  });
+
+  return edges;
 }

@@ -3,7 +3,8 @@
 import { rulesUtilities } from "occam-parsers";
 
 import { graphFromRules } from "./utilities/graph";
-import { cyclesFromGrapah } from "./utilities/cycle";
+import { cyclesFromGraph } from "./utilities/cycle";
+import { leftRecursiveCyclesFromCycles } from "./utilities/cycle";
 import { rewriteRules, removeOrReplaceRules } from "./utilities/rules";
 
 const { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
@@ -12,14 +13,15 @@ export default function eliminateLeftRecursion(rules) {
   const startRule = startRuleFromRules(rules),
         ruleMap = ruleMapFromRules(rules),
         graph = graphFromRules(rules),
-        cycles = cyclesFromGrapah(graph);
+        cycles = cyclesFromGraph(graph),
+        leftRecursiveCycles = leftRecursiveCyclesFromCycles(cycles);
 
-  cycles.forEach((cycle) => {
-    rewriteRules(cycle, cycles, graph, ruleMap);
+  leftRecursiveCycles.forEach((leftRecursiveCycle) => {
+    rewriteRules(leftRecursiveCycle, cycles, graph, ruleMap);
   });
 
-  cycles.forEach((cycle) => {
-    removeOrReplaceRules(cycle, cycles, graph, ruleMap);
+  leftRecursiveCycles.forEach((leftRecursiveCycle) => {
+    removeOrReplaceRules(leftRecursiveCycle, cycles, graph, ruleMap);
   });
 
   rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap); ///

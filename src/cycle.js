@@ -3,16 +3,23 @@
 import { characters } from "necessary";
 import { arrayUtilities } from "necessary";
 
+import { LEFT_RECURSIVE_LABEL, RIGHT_RECURSIVE_LABEL, INTERSECTION_MATCH_METHOD } from "./constants";
+
 const { first, last } = arrayUtilities,
       { COMMA_CHARACTER } = characters;
 
 export default class Cycle {
-  constructor(edges) {
+  constructor(edges, labels) {
     this.edges = edges;
+    this.labels = labels;
   }
 
   getEdges() {
     return this.edges;
+  }
+
+  getLabels() {
+    return this.labels;
   }
 
   getLength() {
@@ -45,17 +52,21 @@ export default class Cycle {
     return firstVertex; ///
   }
 
+  addLabel(label) {
+    this.labels.push(label);
+  }
+
   mapEdge(callback) { return this.edges.map(callback); }
 
   everyEdge(callback) { return this.edges.every(callback); }
 
   forEachEdge(callback) { return this.edges.forEach(callback); }
 
-  matchEdge(edge) {
+  matchEdge(edge, matchMethdo = INTERSECTION_MATCH_METHOD) {
     const edgeA = edge, ///
           edgeMatches = this.edges.some((edge) => {
             const edgeB = edge, ///
-                  edgeBMatchesEdgeA = edgeB.match(edgeA);
+                  edgeBMatchesEdgeA = edgeB.match(edgeA, matchMethdo);
 
             if (edgeBMatchesEdgeA) {
               return true;
@@ -87,13 +98,28 @@ export default class Cycle {
     return equalTo;
   }
 
+  isLeftRecursive() {
+    const labelsInclucesLeftRecursiveLabel = this.labels.includes(LEFT_RECURSIVE_LABEL),
+          leftRecursive = labelsInclucesLeftRecursiveLabel; ///
+
+    return leftRecursive;
+  }
+
+  isRightRecursive() {
+    const labelsIncludesRightRecursiveLabel = this.labels.includes(RIGHT_RECURSIVE_LABEL),
+          rightRecursive = labelsIncludesRightRecursiveLabel; ///
+
+    return rightRecursive;
+  }
+
   permuted() {
     const edges = this.edges.slice(), ///
           edge = edges.pop();
 
     edges.unshift(edge);
 
-    const cycle = new Cycle(edges);
+    const labels = [],
+          cycle = new Cycle(edges, labels);
 
     return cycle;
   }
@@ -109,13 +135,15 @@ export default class Cycle {
     const edges = [
             edge
           ],
-          cycle = new Cycle(edges);
+          labels = [],
+          cycle = new Cycle(edges, labels);
 
     return cycle;
   }
 
   static fromEdges(edges) {
-    const cycle = new Cycle(edges);
+    const labels = [],
+          cycle = new Cycle(edges, labels);
 
     return cycle;
   }
@@ -139,7 +167,8 @@ export default class Cycle {
 
             return edge;
           }),
-          cycle = new Cycle(edges);
+          labels = [],
+          cycle = new Cycle(edges, labels);
 
     return cycle;
   }

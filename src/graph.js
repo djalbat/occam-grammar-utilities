@@ -100,9 +100,9 @@ export default class Graph {
 
   findEdgeBySourceVertexAndTargetVertex(sourceVertex, targetVertex) {
     const edge = this.edges.find((edge) => {
-      const matches = edge.matchSourceVertexAndTargetVertex(sourceVertex, targetVertex);
+      const edgeMatchesSourceVertexAndTargetVertex = edge.matchSourceVertexAndTargetVertex(sourceVertex, targetVertex);
 
-      if (matches) {
+      if (edgeMatchesSourceVertexAndTargetVertex) {
         return true;
       }
     }) || null;

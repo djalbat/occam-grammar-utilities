@@ -1,0 +1,80 @@
+"use strict";
+
+import { Definition } from "occam-parsers";
+
+import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
+import { epsilonPartFromNothing, ruleNamePartFromRuleName, choiceOfPartsPartFromParts } from "../../utilities/part";
+import { isDefinitionConsuming, tailPartsfromDefinition, isDefinitionRepeatable, isDefinitionRightRecursive } from "../../utilities/definition";
+
+export default class DirectlyRepeatedDefinition extends Definition {
+  static fromDefinitionAndRuleName(definition, ruleName, context) {
+    const tailParts = tailPartsfromDefinition(definition, context),
+          epsilonPart = epsilonPartFromNothing(),
+          directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
+          directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName);
+
+    let parts;
+
+    parts = [
+      directlyRepeatedRuleNamePart,
+      epsilonPart
+    ];
+
+    const choiceOfPartsPart = choiceOfPartsPartFromParts(parts);
+
+    parts = [
+      ...tailParts,
+      choiceOfPartsPart
+    ];
+
+    const precedence = definition.getPrecedence(),
+          directlyRepeatedDefinition = new DirectlyRepeatedDefinition(parts, precedence);
+
+    isDefinitionConsuming(directlyRepeatedDefinition, context);
+
+    return directlyRepeatedDefinition;
+  }
+
+  static fromRightRecursiveDefinitionAndRuleName(rightRecursiveDefinition, ruleName, context) {
+    const definition = rightRecursiveDefinition,  ///
+          tailParts = tailPartsfromDefinition(definition, context),
+          directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
+          directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName),
+          parts = [
+            ...tailParts,
+            directlyRepeatedRuleNamePart
+          ],
+          precedence = definition.getPrecedence(),
+          directlyRepeatedDefinition = new DirectlyRepeatedDefinition(parts, precedence);
+
+    isDefinitionConsuming(directlyRepeatedDefinition, context);
+
+    return directlyRepeatedDefinition;
+  }
+}
+
+export function directlyRepeatedDefinitionsFromDefinitions(definitions, ruleName, context) {
+  const directlyRepeatedDefinitions = definitions.reduce((directlyRepeatedDefinitions, definition) => {
+    const defintionRepeatable = isDefinitionRepeatable(definition, ruleName, context);
+
+    if (defintionRepeatable) {
+      const definitionRightRecursive = isDefinitionRightRecursive(definition, ruleName, context);
+
+      let directlyRepeatedDefinition;
+
+      if (definitionRightRecursive) {
+        const rightRecursiveDefinition = definition;  ///
+
+        directlyRepeatedDefinition = DirectlyRepeatedDefinition.fromRightRecursiveDefinitionAndRuleName(rightRecursiveDefinition, ruleName, context);
+      } else {
+        directlyRepeatedDefinition = DirectlyRepeatedDefinition.fromDefinitionAndRuleName(definition, ruleName, context);
+      }
+
+      directlyRepeatedDefinitions.push(directlyRepeatedDefinition);
+    }
+
+    return directlyRepeatedDefinitions;
+  }, []);
+
+  return directlyRepeatedDefinitions;
+}

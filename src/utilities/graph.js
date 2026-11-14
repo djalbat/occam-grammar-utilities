@@ -28,10 +28,19 @@ export function retrieveRecursiveRuleNames(ruleName, graph) {
   return recursiveRuleNames;
 }
 
-export function edgeFromLabelsRuleNameAndRecursiveRuleName(labels, ruleName, recursiveRuleName) {
-  const sourceVertex = ruleName,  ///
+export function edgeFromRuleNameAndRecursiveRuleName(ruleName, recursiveRuleName) {
+  const labels = [],
+        sourceVertex = ruleName,  ///
         targetVertex = recursiveRuleName, ///
         edge = Edge.fromLabelsSourceVertexAndTargetVertex(labels, sourceVertex, targetVertex);
+
+  return edge;
+}
+
+export function edgeFromLabelsRuleNameAndRecursiveRuleName(labels, ruleName, recursiveRuleName) {
+  const sourceVertex = ruleName,  ///
+    targetVertex = recursiveRuleName, ///
+    edge = Edge.fromLabelsSourceVertexAndTargetVertex(labels, sourceVertex, targetVertex);
 
   return edge;
 }

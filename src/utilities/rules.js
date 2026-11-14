@@ -3,52 +3,55 @@
 import Context from "../context";
 
 import { removedRulesFromCycleAndCycles } from "../rule/removed";
-import { reducedRulesFromCycleAndCycles } from "../rule/reduced";
 import { repeatedRulesFromCycleAndCycles } from "../rule/repeated";
-import { rewrittenRulesFromCycleAndCycles } from "../rule/rewritten";
 import { replacementRulesFromCycleAndCycles } from "../rule/replacement";
 import { intermediateRulesFromCycleAndCycles } from "../rule/intermediate";
+import { directlyReducedRulesFromCycleAndCycles } from "../rule/reduced/directly";
+import { directlyRepeatedRulesFromCycleAndCycles } from "../rule/repeated/directly";
+import { directlyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/directly";
 import { indirectlyReducedRulesFromCycleAndCycles } from "../rule/reduced/indirectly";
-import { incidentallyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/incidentally"
 import { indirectlyRepeatedRulesFromCycleAndCycles } from "../rule/repeated/indirectly";
 import { indirectlyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/indirectly";
+import { incidentallyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/incidentally"
 
-export function rewriteRules(cycle, cycles, graph, ruleMap) {
-  const context = Context.fromCycleCyclesGraphAndRuleMap(cycle, cycles, graph, ruleMap);
+export function rewriteRules(leftRecursiveCycle, cycles, graph, ruleMap) {
+  const context = Context.fromLeftRecursiveCycleCyclesGraphAndRuleMap(leftRecursiveCycle, cycles, graph, ruleMap);
 
-  createIncidentallyRewrittenRules(context);
+  createDirectlyRewrittenRules(context);
 
-  createRewrittenRules(context);
+  createDirectlyReducedRules(context);
 
-  createReducedRules(context);
+  createDirectlyRepeatedRules(context);
 
-  createRepeatedRules(context);
-
-  createIndirectlyReducedRules(context);
-
-  createIndirectlyRepeatedRules(context);
-
-  createIndirectlyRewrittenRules(context);
-
-  createIntermediateRules(context);
+  // createIncidentallyRewrittenRules(context);
+  //
+  // createRepeatedRules(context);
+  //
+  // createIndirectlyReducedRules(context);
+  //
+  // createIndirectlyRepeatedRules(context);
+  //
+  // createIndirectlyRewrittenRules(context);
+  //
+  // createIntermediateRules(context);
 }
 
-export function removeOrReplaceRules(cycle, cycles, graph, ruleMap) {
-  const context = Context.fromCycleCyclesGraphAndRuleMap(cycle, cycles, graph, ruleMap);
+export function removeOrReplaceRules(leftRecursiveCycle, cycles, graph, ruleMap) {
+  const context = Context.fromLeftRecursiveCycleCyclesGraphAndRuleMap(leftRecursiveCycle, cycles, graph, ruleMap);
 
   createReplacementRules(context);
 
-  createRemoveRules(context);
+  // createRemoveRules(context);
 }
 
-function createReducedRules(context) {
+function createDirectlyReducedRules(context) {
   const ruleMap = context.getRuleMap(),
-        reducedRules = reducedRulesFromCycleAndCycles(context);
+        directlyReducedRules = directlyReducedRulesFromCycleAndCycles(context);
 
-  reducedRules.forEach((reducedRule) => {
-    const reducedRuleName = reducedRule.getName();
+  directlyReducedRules.forEach((directlyReducedRule) => {
+    const directlyReducedRuleName = directlyReducedRule.getName();
 
-    ruleMap[reducedRuleName] = reducedRule;
+    ruleMap[directlyReducedRuleName] = directlyReducedRule;
   });
 }
 
@@ -75,20 +78,25 @@ function createRemoveRules(context) {
   });
 }
 
-function createRewrittenRules(context) {
+function createDirectlyRewrittenRules(context) {
   const ruleMap = context.getRuleMap(),
-        rewrittenRules = rewrittenRulesFromCycleAndCycles(context);
+    directlyRewrittenRules = directlyRewrittenRulesFromCycleAndCycles(context);
 
-  rewrittenRules.map((rewrittenRule) => {
-    const rewrittenRuleName = rewrittenRule.getName(),
-          rewrittenRuleA = rewrittenRule, ///
-          rewrittenRuleB = ruleMap[rewrittenRuleName] || null;  ///
+  directlyRewrittenRules.map((directlyRewrittenRule) => {
+    const directlyRewrittenRuleName = directlyRewrittenRule.getName();
 
-    rewrittenRule = (rewrittenRuleB !== null) ?
-                      rewrittenRuleB.mergedWith(rewrittenRuleA) :
-                        rewrittenRuleA;
+    ruleMap[directlyRewrittenRuleName] = directlyRewrittenRule;
+  });
+}
 
-    ruleMap[rewrittenRuleName] = rewrittenRule;
+function createDirectlyRepeatedRules(context) {
+  const ruleMap = context.getRuleMap(),
+        directlyRepeatedRules = directlyRepeatedRulesFromCycleAndCycles(context);
+
+  directlyRepeatedRules.map((directlyRepeatedRule) => {
+    const directlyRepeatedRuleName = directlyRepeatedRule.getName();
+
+    ruleMap[directlyRepeatedRuleName] = directlyRepeatedRule;
   });
 }
 

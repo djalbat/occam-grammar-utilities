@@ -1,9 +1,9 @@
 "use strict";
 
-import { Parts, partTypes } from "occam-parsers";
+import { Parts, partTypes, PartChoice } from "occam-parsers";
 
 const { RuleNamePartType } = partTypes,
-      { RuleNamePart, OneOrMorePartsPart, ZeroOrMorePartsPart } = Parts;
+      { EpsilonPart, RuleNamePart, ChoiceOfPartsPart, OptionalPartPart, OneOrMorePartsPart, ZeroOrMorePartsPart } = Parts;
 
 export function isPartSimplePart(part) {
   let partSimplePart = false;
@@ -24,10 +24,22 @@ export function isPartSimplePart(part) {
   return partSimplePart;
 }
 
+export function epsilonPartFromNothing() {
+  const epsilonPart = EpsilonPart.fromNothing();
+
+  return epsilonPart;
+}
+
 export function ruleNamePartFromRuleName(ruleName) {
   const ruleNamePart = RuleNamePart.fromRuleName(ruleName);
 
   return ruleNamePart;
+}
+
+export function optionalPartPartFromPart(part) {
+  const optionalPartPart = OptionalPartPart.fromPart(part);
+
+  return optionalPartPart;
 }
 
 export function oneOrMorePartsPartFromPart(part) {
@@ -40,4 +52,15 @@ export function zeroOrMorePartsPartFromPart(part) {
   const zeroOrMorePartsPart = ZeroOrMorePartsPart.fromPart(part);
 
   return zeroOrMorePartsPart;
+}
+
+export function choiceOfPartsPartFromParts(parts) {
+  const partChoices = parts.map((part) => {
+          const partChoice = PartChoice.fromPart(part);
+
+          return partChoice;
+        }),
+        choiceOfPartsPart = ChoiceOfPartsPart.fromPartChoices(partChoices);
+
+  return choiceOfPartsPart;
 }
