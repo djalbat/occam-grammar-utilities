@@ -5,7 +5,7 @@ import { rulesUtilities } from "occam-parsers";
 import Edge from "../edge";
 import Graph from "../graph";
 
-import { RECURSIVE_LABEL, LEFT_RECURSIVE_LABEL, RIGHT_RECURSIVE_LABEL } from "../constants";
+import { LEFT_RECURSIVE_LABEL, RIGHT_RECURSIVE_LABEL } from "../constants";
 import { recursiveRuleNamesMapFromRuleMap, leftRecursiveRuleNamesMapFromRuleMap, rightRecursiveRuleNamesMapFromRuleMap } from "../utilities/ruleMap";
 
 const { ruleMapFromRules, startRuleFromRules } = rulesUtilities;
@@ -28,10 +28,10 @@ export function retrieveRecursiveRuleNames(ruleName, graph) {
   return recursiveRuleNames;
 }
 
-export function edgeFromLabelRuleNameAndRecursiveRuleName(label, ruleName, recursiveRuleName) {
+export function edgeFromLabelsRuleNameAndRecursiveRuleName(labels, ruleName, recursiveRuleName) {
   const sourceVertex = ruleName,  ///
         targetVertex = recursiveRuleName, ///
-        edge = Edge.fromLabelSourceVertexAndTargetVertex(label, sourceVertex, targetVertex);
+        edge = Edge.fromLabelsSourceVertexAndTargetVertex(labels, sourceVertex, targetVertex);
 
   return edge;
 }
@@ -86,22 +86,19 @@ function edgesFromRules(rules) {
 }
 
 function edgeFromRuleNameRecursiveRuleNameAndLeftRecursiveRuleNames(ruleName, recursiveRuleName, leftRecursiveRuleNames, rightRecursiveRuleNames) {
-  const leftRecursiveRuleNamesIncludesRecursiveRuleName = leftRecursiveRuleNames.includes(recursiveRuleName),
-        rightRecursiveRuleNamesIncludesRecursiveRuleName = rightRecursiveRuleNames.includes(recursiveRuleName);
+  const labels = [],
+        leftRecursive = leftRecursiveRuleNames.includes(recursiveRuleName), ///
+        rightRecursive = rightRecursiveRuleNames.includes(recursiveRuleName); ///
 
-  let label;
-
-  if (false) {
-    ///
-  } else if (leftRecursiveRuleNamesIncludesRecursiveRuleName) {
-    label = LEFT_RECURSIVE_LABEL;
-  } else if (rightRecursiveRuleNamesIncludesRecursiveRuleName) {
-    label = RIGHT_RECURSIVE_LABEL;
-  } else {
-    label = RECURSIVE_LABEL;
+  if (leftRecursive) {
+    labels.push(LEFT_RECURSIVE_LABEL);
   }
 
-  const edge = edgeFromLabelRuleNameAndRecursiveRuleName(label, ruleName, recursiveRuleName);
+  if (rightRecursive) {
+    labels.push(RIGHT_RECURSIVE_LABEL);
+  }
+
+  const edge = edgeFromLabelsRuleNameAndRecursiveRuleName(labels, ruleName, recursiveRuleName);
 
   return edge;
 }
