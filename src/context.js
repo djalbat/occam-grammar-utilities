@@ -9,17 +9,15 @@ import { ruleNameFromCycle, indirectRuleNameFromCycle, leftRecursiveCyclesFromCy
 const { filter } = arrayUtilities;
 
 export default class Context {
-  constructor(cycle, cycles, ruleMap, ruleName, indirectRuleName, incidentalRuleNames) {
-    this.cycle = cycle;
+  constructor(cycles, ruleMap, ruleName, indirectRuleName, incidentalRuleNames, leftRecursiveCycle, leftRecursiveCycles, rightRecursiveCycles) {
     this.cycles = cycles;
     this.ruleMap = ruleMap;
     this.ruleName = ruleName;
     this.indirectRuleName = indirectRuleName;
     this.incidentalRuleNames = incidentalRuleNames;
-  }
-
-  getCycle() {
-    return this.cycle;
+    this.leftRecursiveCycle = leftRecursiveCycle;
+    this.leftRecursiveCycles = leftRecursiveCycles;
+    this.rightRecursiveCycles = rightRecursiveCycles;
   }
 
   getCycles() {
@@ -42,6 +40,25 @@ export default class Context {
     return this.incidentalRuleNames;
   }
 
+  getLeftRecursiveCycle() {
+    return this.leftRecursiveCycle;
+  }
+
+  getLeftRecursiveCycles() {
+    return this.leftRecursiveCycles;
+  }
+
+  getRightRecursiveCycles() {
+    return this.rightRecursiveCycles;
+  }
+
+  getRule() {
+    const ruleName = this.getRuleName(),
+          rule = this.ruleMap[ruleName];
+
+    return rule;
+  }
+
   getRuleNames() {
     const ruleNames = [
       ...this.incidentalRuleNames,
@@ -54,6 +71,24 @@ export default class Context {
     ruleNames.unshift(this.ruleName);
 
     return ruleNames;
+  }
+
+  getCycleLength() {
+    const leftRecursiveCycleLength = this.leftRecursiveCycle.getLength();
+
+    return leftRecursiveCycleLength;
+  }
+
+  getIndirectRule() {
+    let indirectRule = null;
+
+    const indirectRuleName = this.getIndirectRuleName();
+
+    if (indirectRuleName !== null) {
+      indirectRule = this.ruleMap[indirectRuleName];
+    }
+
+    return indirectRule;
   }
 
   isCycleDirect() {
@@ -70,55 +105,14 @@ export default class Context {
     return cycleIndirect;
   }
 
-  getRule() {
-    const ruleName = this.getRuleName(),
-          rule = this.ruleMap[ruleName];
-
-    return rule;
-  }
-
-  getCycleLength() {
-    const cycleLength = this.cycle.getLength();
-
-    return cycleLength;
-  }
-
-  getIndirectRule() {
-    let indirectRule = null;
-
-    const indirectRuleName = this.getIndirectRuleName();
-
-    if (indirectRuleName !== null) {
-      indirectRule = this.ruleMap[indirectRuleName];
-    }
-
-    return indirectRule;
-  }
-
-  getLeftRecursiveCycle() {
-    const leftRecursiveCycle = this.cycle;  ///
-
-    return leftRecursiveCycle;
-  }
-
-  getLeftRecursiveCycles() {
-    const leftRecursiveCycles = leftRecursiveCyclesFromCycles(this.cycles);
-
-    return leftRecursiveCycles;
-  }
-
-  getRightRecursiveCycles() {
-    const rightRecursiveCycles = rightRecursiveCyclesFromCycles(this.cycles);
-
-    return rightRecursiveCycles;
-  }
-
   static fromLeftRecursiveCycleCyclesGraphAndRuleMap(leftRecursiveCycle, cycles, graph, ruleMap) {
     const cycle = leftRecursiveCycle, ///
           ruleName = ruleNameFromCycle(cycle),
           indirectRuleName = indirectRuleNameFromCycle(cycle),
           incidentalRuleNames = incidentalRuleNamesFromGraphRuleNameAndIndirectRuleName(graph, ruleName, indirectRuleName),
-          context = new Context(cycle, cycles, ruleMap, ruleName, indirectRuleName, incidentalRuleNames);  ///
+          leftRecursiveCycles = leftRecursiveCyclesFromCycles(cycles),
+          rightRecursiveCycles = rightRecursiveCyclesFromCycles(cycles),
+          context = new Context(cycles, ruleMap, ruleName, indirectRuleName, incidentalRuleNames, leftRecursiveCycle, leftRecursiveCycles, rightRecursiveCycles);
 
     return context;
   }

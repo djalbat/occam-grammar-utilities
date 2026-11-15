@@ -14,6 +14,8 @@ class DirectlyReducedNode extends NonTerminalNode {
   }
 
   simplify(state) {
+    this.simplifyChildNodes(state);
+
     this.lift();
   }
 

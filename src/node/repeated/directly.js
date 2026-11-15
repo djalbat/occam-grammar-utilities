@@ -5,7 +5,6 @@ import { NonTerminalNode } from "occam-parsers";
 import simpliciationMixins from  "../../mixins/simpliciation";
 
 import { ruleNameFromDirectlyRepeatedRuleName } from "../../utilities/ruleName";
-import node from "occam-parsers/lib/mixins/node";
 
 let count = Infinity;
 

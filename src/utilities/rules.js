@@ -17,14 +17,14 @@ import { incidentallyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/
 export function rewriteRules(leftRecursiveCycle, cycles, graph, ruleMap) {
   const context = Context.fromLeftRecursiveCycleCyclesGraphAndRuleMap(leftRecursiveCycle, cycles, graph, ruleMap);
 
+  createIncidentallyRewrittenRules(context);
+
   createDirectlyRewrittenRules(context);
 
   createDirectlyReducedRules(context);
 
   createDirectlyRepeatedRules(context);
 
-  // createIncidentallyRewrittenRules(context);
-  //
   // createRepeatedRules(context);
   //
   // createIndirectlyReducedRules(context);
@@ -36,12 +36,10 @@ export function rewriteRules(leftRecursiveCycle, cycles, graph, ruleMap) {
   // createIntermediateRules(context);
 }
 
-export function removeOrReplaceRules(leftRecursiveCycle, cycles, graph, ruleMap) {
+export function replaceRules(leftRecursiveCycle, cycles, graph, ruleMap) {
   const context = Context.fromLeftRecursiveCycleCyclesGraphAndRuleMap(leftRecursiveCycle, cycles, graph, ruleMap);
 
   createReplacementRules(context);
-
-  // createRemoveRules(context);
 }
 
 function createDirectlyReducedRules(context) {

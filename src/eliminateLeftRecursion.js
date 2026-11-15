@@ -4,8 +4,8 @@ import { rulesUtilities } from "occam-parsers";
 
 import { graphFromRules } from "./utilities/graph";
 import { cyclesFromGraph } from "./utilities/cycle";
+import { rewriteRules, replaceRules } from "./utilities/rules";
 import { leftRecursiveCyclesFromCycles } from "./utilities/cycle";
-import { rewriteRules, removeOrReplaceRules } from "./utilities/rules";
 
 const { ruleMapFromRules, startRuleFromRules, rulesFromStartRuleAndRuleMap } = rulesUtilities;
 
@@ -21,7 +21,7 @@ export default function eliminateLeftRecursion(rules) {
   });
 
   leftRecursiveCycles.forEach((leftRecursiveCycle) => {
-    removeOrReplaceRules(leftRecursiveCycle, cycles, graph, ruleMap);
+    replaceRules(leftRecursiveCycle, cycles, graph, ruleMap);
   });
 
   rules = rulesFromStartRuleAndRuleMap(startRule, ruleMap); ///
