@@ -3,11 +3,11 @@
 import { Rule } from "occam-parsers";
 
 import IndirectlyRewrittenNode from "../../node/rewritten/indirectly";
+import IndirectlyRewrittenDefinition from "../../definition/rewritten/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
 import { isRuleRepeatable } from "../../utilities/rule";
-import { rewrittenRuleNameFromRuleName } from "../../utilities/ruleName";
-import { indirectlyRewrittenDefinitionsFromDefinitions } from "../../definition/rewritten/indirectly";
+import { indirectlyRewrittenRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class IndirectlyRewrittenRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -16,27 +16,23 @@ export default class IndirectlyRewrittenRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromIndirectRule(indirectRule, context) {
-    let definitions;
-
-    definitions = indirectRule.getDefinitions();
-
-    const indirectlyRewrittenDefinitions = indirectlyRewrittenDefinitionsFromDefinitions(definitions, context);
-
-    definitions = indirectlyRewrittenDefinitions; ///
-
-    const indirectRuleName = indirectRule.getName(),
-          ruleName = indirectRuleName,  ///
-          rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
-          name = rewrittenRuleName,  ///
-          opacity = indirectRule.getOpacity(),
+  static fromIndirectRuleAndRule(indirectRule, rule, context) {
+    const ruleName = rule.getName(),
+          indirectRuleName = indirectRule.getName(),
+          directlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromIndirectRuleName(indirectRuleName, context),
+          indirectlyRewrittenRuleName = indirectlyRewrittenRuleNameFromRuleName(ruleName),
+          name = indirectlyRewrittenRuleName, ///
+          opacity = rule.getOpacity(),
+          definitions = [
+            directlyRewrittenDefinition
+          ],
           indirectlyRewrittenRule = new IndirectlyRewrittenRule(name, opacity, definitions);
 
     return indirectlyRewrittenRule;
   }
 }
 
-export function indirectlyRewrittenRulesFromCycleAndCycles(context, rewrittenRules = []) {
+export function indirectlyRewrittenRulesFromCycleAndCycles(context, indirectlyRewrittenRules = []) {
   const cycleLength = context.getCycleLength();
 
   let indirectlyRewrittenRule;
@@ -47,14 +43,16 @@ export function indirectlyRewrittenRulesFromCycleAndCycles(context, rewrittenRul
             indirectRuleRepeatable = isRuleRepeatable(indirectRule, context);
 
       if (!indirectRuleRepeatable) {
-        indirectlyRewrittenRule = IndirectlyRewrittenRule.fromIndirectRule(indirectRule, context);
+        const rule = context.getRule();
 
-        rewrittenRules.push(indirectlyRewrittenRule);
+        indirectlyRewrittenRule = IndirectlyRewrittenRule.fromIndirectRuleAndRule(indirectRule, rule, context);
+
+        indirectlyRewrittenRules.push(indirectlyRewrittenRule);
       }
 
       break;
     }
   }
 
-  return rewrittenRules;
+  return indirectlyRewrittenRules;
 }

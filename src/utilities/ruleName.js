@@ -110,16 +110,34 @@ export function directlyRewrittenRuleNameFromRuleName(ruleName) {
   return directlyRewrittenRuleName;
 }
 
+export function indirectlyRewrittenRuleNameFromRuleName(ruleName) {
+  const directlyRewrittenRuleName = `_${ruleName}`;
+
+  return directlyRewrittenRuleName;
+}
+
 export function incidentallyRewrittenRuleNameFromRuleName(ruleName) {
   const incidentallyRewrittenRuleName = `_${ruleName}`;
 
   return incidentallyRewrittenRuleName;
 }
 
+export function indirectlyReducedRuleNameFromIndirectRuleName(indirectRuleName) {
+  const directlyReducedRuleName = `${indirectRuleName}_`;
+
+  return directlyReducedRuleName;
+}
+
 export function indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName) {
   const indirectlyRepeatedRuleName = `~${indirectRuleName}`;
 
   return indirectlyRepeatedRuleName;
+}
+
+export function indirectlyRewrittenRuleNameFromIndirectRuleName(indirectRuleName) {
+  const directlyRewrittenRuleName = `_${indirectRuleName}`;
+
+  return directlyRewrittenRuleName;
 }
 
 export function intermediateRuleNameFromRuleNameAndIndirectRuleName(ruleName, indirectRuleName) {

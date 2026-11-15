@@ -18,7 +18,7 @@ describe("Rewrites", () => {
     }
   ];
 
-  describe.only("a cycle of length one", () => {
+  describe("a cycle of length one", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -58,7 +58,7 @@ describe("Rewrites", () => {
         
         T~. ::= "g" ( T~ | ε ) ;
         
-      `));
+     `));
     });
 
     describe("content with one token", () => {
@@ -210,7 +210,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with precedence", () => {
+  describe("a cycle of length one with precedence", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -359,7 +359,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with incidental rules", () => {
+  describe("a cycle of length one with incidental rules", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -485,7 +485,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion", () => {
+  describe("a cycle of length one with right recursion", () => {
     let bnf = `
   
      S ::= ( T ... <END_OF_LINE> ) ;
@@ -634,7 +634,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion and a cut", () => {
+  describe("a cycle of length one with right recursion and a cut", () => {
     let bnf = `
   
        S ::= ( T ... <END_OF_LINE> ) ;
@@ -826,7 +826,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
+  describe("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -940,7 +940,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, precedence, one definition with a cut and the other without ", () => {
+  describe("a cycle of length one with right recursion, precedence, one definition with a cut and the other without ", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -1169,7 +1169,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials ", () => {
+  describe("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials ", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -1646,23 +1646,23 @@ describe("Rewrites", () => {
       bnf = adjustedBNF;  ///
     });
 
-    it("is rewritten", () => {
+    it.only("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
                                                           
-        S     ::= ( T ... <END_OF_LINE> ) ;
+        S   ::= ( T ... <END_OF_LINE> ) ;
         
-        T     ::= _T ;
+        T   ::= _T ;
         
-        _T.   ::= A_ T~? ;
+        _T.  ::= A_ A~? ;
         
         A_.   ::= T_ ;
+                
+        T_. ::= "e" ;
         
-        T_.   ::= "e" ;
-        
-        T~.   ::= "g" ( A~ | ε ) ;
-        
-        A~.   ::= T~ ;
+        A~.   ::= T~ ( A~ | ε ) ;
                         
+        T~.   ::= "g" ;
+
      `));
     });
 

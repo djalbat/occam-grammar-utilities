@@ -15,9 +15,8 @@ export default class DirectlyRewrittenRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromDirectlyRepeatableRule(directlyRepeatableRule, context) {
-    const rule = directlyRepeatableRule,  ///
-          ruleName = rule.getName(),
+  static fromRule(rule, context) {
+    const ruleName = rule.getName(),
           directlyRewrittenDefinition = DirectlyRewrittenDefinition.fromRuleName(ruleName, context),
           rewrittenRuleName = directlyRewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName, ///
@@ -25,26 +24,25 @@ export default class DirectlyRewrittenRule extends Rule {
           definitions = [
             directlyRewrittenDefinition
           ],
-          rewrittenRule = new DirectlyRewrittenRule(name, opacity, definitions);
+          directlyRewrittenRule = new DirectlyRewrittenRule(name, opacity, definitions);
 
-    return rewrittenRule;
+    return directlyRewrittenRule;
   }
 }
 
-export function directlyRewrittenRulesFromCycleAndCycles(context, rewrittenRules = []) {
+export function directlyRewrittenRulesFromCycleAndCycles(context, directlyRewrittenRules = []) {
   const cycleLength = context.getCycleLength();
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
       const rule = context.getRule(),
-            directlyRepeatableRule = rule,  ///
-            rewrittenRule = DirectlyRewrittenRule.fromDirectlyRepeatableRule(directlyRepeatableRule, context);
+            directlyRewrittenRule = DirectlyRewrittenRule.fromRule(rule, context);
 
-      rewrittenRules.push(rewrittenRule);
+      directlyRewrittenRules.push(directlyRewrittenRule);
 
       break;
     }
   }
 
-  return rewrittenRules;
+  return directlyRewrittenRules;
 }
