@@ -5,6 +5,9 @@ import { NonTerminalNode } from "occam-parsers";
 import simpliciationMixins from  "../../mixins/simpliciation";
 
 import { ruleNameFromDirectlyRepeatedRuleName } from "../../utilities/ruleName";
+import node from "occam-parsers/lib/mixins/node";
+
+let count = Infinity;
 
 class DirectlyRepeatedNode extends NonTerminalNode {
   rewrite(state) {
@@ -14,21 +17,27 @@ class DirectlyRepeatedNode extends NonTerminalNode {
   }
 
   simplify(state) {
-    this.rotate(state);
+    if (count === 0) {
+      return;
+    }
 
-    this.simplifyChildNodes(state);
-  }
+    count--;
 
-  rotate(state) {
-    const index = this.getIndex(),
-          opacity = this.getOpacity(),
-          precedence = this.getPrecedence(),
-          baseRuleName = this.getBaseRuleName(),
-          startIndex = 0,
-          endIndex = index, ///
-          ruleName = baseRuleName,  ///
-          parentNode = this.getParentNode(),
-          childNodes = parentNode.spliceChildNodes(startIndex, endIndex),
+    let opacity,
+        precedence,
+        removedChildNodes;
+
+    const parentNode = this.getParentNode(),
+          baseRuleName = this.getBaseRuleName();
+
+    opacity = parentNode.getOpacity();
+
+    precedence = parentNode.getPrecedence();
+
+    removedChildNodes = parentNode.removeAllButLastChildNode();
+
+    const ruleName = baseRuleName,  ///
+          childNodes = removedChildNodes, ///
           nonTerminalNode = state.createNonTerminalNode(ruleName, childNodes, precedence, opacity),
           prependedChildNode = nonTerminalNode, ///
           prependedChildNodes = [
@@ -37,7 +46,22 @@ class DirectlyRepeatedNode extends NonTerminalNode {
 
     parentNode.prependChildNodes(prependedChildNodes);
 
-    this.lift();
+    opacity = this.getOpacity();
+
+    precedence = this.getPrecedence();
+
+    removedChildNodes = this.removeChildNodes();
+
+    const replacedChildNode = this, ///
+          replacementChildNodes = removedChildNodes;  ///
+
+    parentNode.setOpacity(opacity);
+
+    parentNode.setPrecedence(precedence);
+
+    parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+
+    simplifyChildNodes(replacementChildNodes, state);
   }
 
   getBaseRuleName() {
@@ -54,6 +78,18 @@ class DirectlyRepeatedNode extends NonTerminalNode {
     return baseRuleName;
   }
 
+  removeLastChildNode() {
+    let lastChildNode;
+
+    this.backwardsSomeChildNode((childNode) => {
+      lastChildNode = childNode;  ///
+
+      return true;
+    });
+
+    return lastChildNode;
+  }
+
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(DirectlyRepeatedNode, ruleName, childNodes, precedence, opacity); }
 }
 
@@ -61,20 +97,8 @@ Object.assign(DirectlyRepeatedNode.prototype, simpliciationMixins);
 
 export default DirectlyRepeatedNode;
 
-// isInitial() {
-//   const index = this.getIndex(),
-//     initial = (index === REPEATED_NODE_INITIAL_INDEX);
-//
-//   return initial;
-// }
-//
-// simplify(state) {
-//   const initial = this.isInitial();
-//
-//   if (!initial) {
-//   }
-//
-//   this.simplifyChildNodes(state);
-//
-//   this.lift();
-// }
+function simplifyChildNodes(childNodes, state) {
+  childNodes.forEach((childNode) => {
+    childNode.simplify(state);
+  });
+}

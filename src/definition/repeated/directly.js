@@ -38,12 +38,7 @@ export default class DirectlyRepeatedDefinition extends Definition {
   static fromRightRecursiveDefinitionAndRuleName(rightRecursiveDefinition, ruleName, context) {
     const definition = rightRecursiveDefinition,  ///
           tailParts = tailPartsfromDefinition(definition, context),
-          directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
-          directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName),
-          parts = [
-            ...tailParts,
-            directlyRepeatedRuleNamePart
-          ],
+          parts = tailParts,  ///
           precedence = definition.getPrecedence(),
           directlyRepeatedDefinition = new DirectlyRepeatedDefinition(parts, precedence);
 
