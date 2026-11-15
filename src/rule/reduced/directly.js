@@ -4,7 +4,7 @@ import { Rule } from "occam-parsers";
 
 import DirectlyReducedNode from "../../node/reduced/directly";
 
-import { CYCLE_LENGTH_1 } from "../../constants";
+import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../../constants";
 import { directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 import { directlyReducedDefinitionsFromDefinitions } from "../../definition/reduced/directly";
 
@@ -39,6 +39,15 @@ export function directlyReducedRulesFromCycleAndCycles(context, directlyReducedR
 
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
+      const rule = context.getRule(),
+            directlyReducedRule = DicrectlyReducedRule.fromRule(rule, context);
+
+      directlyReducedRules.push(directlyReducedRule);
+
+      break;
+    }
+
+    case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
             directlyReducedRule = DicrectlyReducedRule.fromRule(rule, context);
 

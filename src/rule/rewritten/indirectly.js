@@ -6,7 +6,6 @@ import IndirectlyRewrittenNode from "../../node/rewritten/indirectly";
 import IndirectlyRewrittenDefinition from "../../definition/rewritten/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
-import { isRuleRepeatable } from "../../utilities/rule";
 import { indirectlyRewrittenRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class IndirectlyRewrittenRule extends Rule {
@@ -39,16 +38,12 @@ export function indirectlyRewrittenRulesFromCycleAndCycles(context, indirectlyRe
 
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
-      const indirectRule = context.getIndirectRule(),
-            indirectRuleRepeatable = isRuleRepeatable(indirectRule, context);
+      const rule = context.getRule(),
+            indirectRule = context.getIndirectRule();
 
-      if (!indirectRuleRepeatable) {
-        const rule = context.getRule();
+      indirectlyRewrittenRule = IndirectlyRewrittenRule.fromIndirectRuleAndRule(indirectRule, rule, context);
 
-        indirectlyRewrittenRule = IndirectlyRewrittenRule.fromIndirectRuleAndRule(indirectRule, rule, context);
-
-        indirectlyRewrittenRules.push(indirectlyRewrittenRule);
-      }
+      indirectlyRewrittenRules.push(indirectlyRewrittenRule);
 
       break;
     }

@@ -4,12 +4,11 @@ import { arrayUtilities } from "necessary";
 
 import { rewriteRuleNameParts } from "../utilities/rewrite";
 import { INDIFFERENT_MATCH_METHOD } from "../constants";
-import { leftRecursiveCyclesFromCycles } from "../utilities/cycle";
-import { edgeFromRuleNameAndRecursiveRuleName } from "../utilities/graph";
 import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursion";
 import { rightRecursiveRuleNamesFromDefinition } from "../utilities/rightRecursion";
+import { edgesFromRuleNameAndRecursiveRuleNames } from "../utilities/graph";
 
-const { first, tail } = arrayUtilities;
+const { first, last, tail } = arrayUtilities;
 
 export function partsfromDefinition(definition, context) {
   let parts;
@@ -56,23 +55,12 @@ export function isDefinitionConsuming(definition, context) {
 export function isDefinitionSingular(definition, ruleName, context) {
   let definitionSingular = false;
 
-  const ruleMap = context.getRuleMap(),
-        leftRecursiveCycle = context.getLeftRecursiveCycle(),
-        definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycle, ruleMap);
+  const leftRecursiveCycle = context.getLeftRecursiveCycle(),
+        definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycle, context);
 
   if (definitionLeftRecursive) {
     const parts = definition.getParts(),
-          firstPart = first(parts),
-          firstPartRuleNamePart = firstPart.isRuleNamePart();
-
-    if (!firstPartRuleNamePart) {
-      const firstPartString = firstPart.asString(),
-            definitionString = definition.asString();
-
-      throw new Error(`The '${firstPartString}' first part of the '${definitionString}' definition is not a rule name part.`);
-    }
-
-    const partsLength = parts.length;
+          partsLength = parts.length;
 
     if (partsLength === 1) {
       definitionSingular = true;
@@ -83,9 +71,9 @@ export function isDefinitionSingular(definition, ruleName, context) {
 }
 
 export function isDefinitionReducible(definition, ruleName, context) {
-  const ruleMap = context.getRuleMap(),
+  const strict = false,
         leftRecursiveCycles = context.getLeftRecursiveCycles(),
-        definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycles, ruleMap),
+        definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycles, strict, context),
         definitionReducible = !definitionLeftRecursive;
 
   return definitionReducible;
@@ -94,23 +82,12 @@ export function isDefinitionReducible(definition, ruleName, context) {
 export function isDefinitionRepeatable(definition, ruleName, context) {
   let definitionRepeatable = false;
 
-  const ruleMap = context.getRuleMap(),
-        leftRecursiveCycle = context.getLeftRecursiveCycle(),
-        definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycle, ruleMap);
+  const leftRecursiveCycle = context.getLeftRecursiveCycle(),
+        definitionLeftRecursive = isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycle, context);
 
   if (definitionLeftRecursive) {
     const parts = definition.getParts(),
-          firstPart = first(parts),
-          firstPartRuleNamePart = firstPart.isRuleNamePart();
-
-    if (!firstPartRuleNamePart) {
-      const firstPartString = firstPart.asString(),
-            definitionString = definition.asString();
-
-      throw new Error(`The '${firstPartString}' first part of the '${definitionString}' definition is not a rule name part.`);
-    }
-
-    const partsLength = parts.length;
+          partsLength = parts.length;
 
     if (partsLength > 1) {
       definitionRepeatable = true;
@@ -130,6 +107,19 @@ export function isDefinitionRightRecursive(definition, ruleName, context) {
         edgesMatchCycles = matchEdgesAndCycles(edges, cycles),
         definitionRightRecursive = edgesMatchCycles; ///
 
+  if (definitionRightRecursive) {
+    const parts = definition.getParts(),
+          lastPart = last(parts),
+          lastPartRuleNamePart = lastPart.isRuleNamePart();
+
+    if (!lastPartRuleNamePart) {
+      const lastPartString = lastPart.asString(),
+            definitionString = definition.asString();
+
+      throw new Error(`The '${lastPartString}' last part of the '${definitionString}' right recursive definition is not a rule name part.`);
+    }
+  }
+
   return definitionRightRecursive;
 }
 
@@ -143,8 +133,15 @@ export default {
   isDefinitionRepeatable
 };
 
-function isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycleOrCycles, ruleMap) {
-  const leftRecursiveCycles = guaranteeCycles(leftRecursiveCycleOrCycles),
+function isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycleOrCycles, strict, context) {
+  if (context === undefined) {
+    context = strict; ///
+
+    strict = true;
+  }
+
+  const ruleMap = context.getRuleMap(),
+        leftRecursiveCycles = guaranteeCycles(leftRecursiveCycleOrCycles),
         leftRecursiveRuleNames = leftRecursiveRuleNamesFromDefinition(definition, ruleMap),
         recursiveRuleNames = leftRecursiveRuleNames,  ///
         cycles = leftRecursiveCycles, ///
@@ -152,15 +149,22 @@ function isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycleOrCyc
         edgesMatchCycles = matchEdgesAndCycles(edges, cycles),
         definitionLeftRecursive = edgesMatchCycles; ///
 
+  if (strict) {
+    if (definitionLeftRecursive) {
+      const parts = definition.getParts(),
+            firstPart = first(parts),
+            firstPartRuleNamePart = firstPart.isRuleNamePart();
+
+      if (!firstPartRuleNamePart) {
+        const firstPartString = firstPart.asString(),
+              definitionString = definition.asString();
+
+        throw new Error(`The '${firstPartString}' first part of the '${definitionString}' left recursive definition is not a rule name part.`);
+      }
+    }
+  }
+
   return definitionLeftRecursive;
-}
-
-function guaranteeCycles(cycleOrCycles) {
-  const cycles = Array.isArray(cycleOrCycles) ?
-                   cycleOrCycles :
-                     [cycleOrCycles];
-
-  return cycles;
 }
 
 function matchEdgesAndCycles(edges, cycles) {
@@ -182,12 +186,10 @@ function matchEdgesAndCycles(edges, cycles) {
   return edgesMatchCycles;
 }
 
-function edgesFromRuleNameAndRecursiveRuleNames(ruleName, recursiveRuleNames) {
-  const edges = recursiveRuleNames.map((recursiveRuleName) => {
-    const edge = edgeFromRuleNameAndRecursiveRuleName(ruleName, recursiveRuleName);
+function guaranteeCycles(cycleOrCycles) {
+  const cycles = Array.isArray(cycleOrCycles) ?
+                   cycleOrCycles :
+                     [cycleOrCycles];
 
-    return edge;
-  });
-
-  return edges;
+  return cycles;
 }

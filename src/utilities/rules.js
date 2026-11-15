@@ -24,12 +24,10 @@ export function rewriteRules(leftRecursiveCycle, cycles, graph, ruleMap) {
 
   createIndirectlyRewrittenRules(context);
 
-  // createRepeatedRules(context);
-  //
-  // createIndirectlyReducedRules(context);
-  //
-  // createIndirectlyRepeatedRules(context);
-  //
+  createIndirectlyReducedRules(context);
+
+  createIndirectlyRepeatedRules(context);
+
   // createIntermediateRules(context);
 }
 

@@ -37,6 +37,16 @@ export function edgeFromRuleNameAndRecursiveRuleName(ruleName, recursiveRuleName
   return edge;
 }
 
+export function edgesFromRuleNameAndRecursiveRuleNames(ruleName, recursiveRuleNames) {
+  const edges = recursiveRuleNames.map((recursiveRuleName) => {
+    const edge = edgeFromRuleNameAndRecursiveRuleName(ruleName, recursiveRuleName);
+
+    return edge;
+  });
+
+  return edges;
+}
+
 export function edgeFromLabelsRuleNameAndRecursiveRuleName(labels, ruleName, recursiveRuleName) {
   const sourceVertex = ruleName,  ///
     targetVertex = recursiveRuleName, ///

@@ -48,7 +48,7 @@ export default class DirectlyRepeatedDefinition extends Definition {
   }
 }
 
-export function directlyRepeatedDefinitionsFromDefinitions(definitions, ruleName, context) {
+export function directlyRepeatedDefinitionsFromDefinitionsAndRuleName(definitions, ruleName, context) {
   const directlyRepeatedDefinitions = definitions.reduce((directlyRepeatedDefinitions, definition) => {
     const defintionRepeatable = isDefinitionRepeatable(definition, ruleName, context);
 

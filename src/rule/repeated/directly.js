@@ -3,11 +3,11 @@
 import { Rule } from "occam-parsers";
 
 import DirectlyRepeatedNode from "../../node/repeated/directly";
+import IndirectlyRepeatedRule from "../../rule/repeated/indirectly";
 
-import { CYCLE_LENGTH_1 } from "../../constants";
-import { isRuleRepeatable } from "../../utilities/rule";
+import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../../constants";
 import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
-import { directlyRepeatedDefinitionsFromDefinitions } from "../../definition/repeated/directly";
+import { directlyRepeatedDefinitionsFromDefinitionsAndRuleName } from "../../definition/repeated/directly";
 
 export default class DirectlyRepeatedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -16,15 +16,14 @@ export default class DirectlyRepeatedRule extends Rule {
     return NonTerminalNode;
   }
 
-  static fromDirectlyRepeatableRule(directlyRepeatableRule, context) {
-    const rule = directlyRepeatableRule,  ///
-          ruleName = rule.getName();
+  static fromRule(rule, context) {
+    const ruleName = rule.getName();
 
     let definitions;
 
     definitions = rule.getDefinitions();
 
-    const directlyRepeatedDefinitions = directlyRepeatedDefinitionsFromDefinitions(definitions, ruleName, context),
+    const directlyRepeatedDefinitions = directlyRepeatedDefinitionsFromDefinitionsAndRuleName(definitions, ruleName, context),
           directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
           name = directlyRepeatedRuleName, ///
           opacity = rule.getOpacity();
@@ -43,14 +42,19 @@ export function directlyRepeatedRulesFromCycleAndCycles(context, directlyRepeate
   switch (cycleLength) {
     case CYCLE_LENGTH_1: {
       const rule = context.getRule(),
-            ruleRepeatable = isRuleRepeatable(rule, context);
+            directlyRepeatedRule = DirectlyRepeatedRule.fromRule(rule, context);
 
-      if (ruleRepeatable) {
-        const directlyRepeatableRule = rule,  ///
-              directlyRepeatedRule = DirectlyRepeatedRule.fromDirectlyRepeatableRule(directlyRepeatableRule, context);
+      directlyRepeatedRules.push(directlyRepeatedRule);
 
-        directlyRepeatedRules.push(directlyRepeatedRule);
-      }
+      break;
+    }
+
+    case CYCLE_LENGTH_2: {
+      const rule = context.getRule(),
+            indirectlyRepeatedRule = IndirectlyRepeatedRule.fromRule(rule, context),
+            directlyRepeatedRule = indirectlyRepeatedRule;  ///
+
+      directlyRepeatedRules.push(directlyRepeatedRule);
 
       break;
     }
