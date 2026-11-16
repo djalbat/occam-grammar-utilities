@@ -17,6 +17,10 @@ class RewrittenNode extends NonTerminalNode {
     this.simplifyChildNodes(state);
 
     this.overwrite(state);
+
+    const terminate = false;
+
+    return terminate;
   }
 
   getBaseRuleName() {

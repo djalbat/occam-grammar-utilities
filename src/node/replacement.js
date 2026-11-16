@@ -20,6 +20,10 @@ class ReplacementNode extends NonTerminalNode {
     this.simplifyChildNodes(state);
 
     this.liftSingleChildNode();
+
+    const terminate = false;
+
+    return terminate;
   }
 
   liftSingleChildNode() {

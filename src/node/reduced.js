@@ -16,7 +16,13 @@ class ReducedNode extends NonTerminalNode {
   simplify(state) {
     this.simplifyChildNodes(state);
 
-    this.lift();
+    const remainingChildNodes = this.lift();
+
+    simplifyChildNodes(remainingChildNodes, state);
+
+    const terminate = true;
+
+    return terminate;
   }
 
   getBaseRuleName() {
@@ -39,3 +45,13 @@ class ReducedNode extends NonTerminalNode {
 Object.assign(ReducedNode.prototype, simpliciationMixins);
 
 export default ReducedNode;
+
+function simplifyChildNodes(childNodes, state) {
+  childNodes.some((childNode) => {
+    const terminate = childNode.simplify(state);
+
+    if (terminate) {
+      return true;
+    }
+  });
+}

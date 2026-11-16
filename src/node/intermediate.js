@@ -6,6 +6,8 @@ import simpliciationMixins from  "../mixins/simpliciation";
 
 import { ruleNameFromIntermediateRuleName } from "../utilities/ruleName";
 
+let count = 1;
+
 class IntermediateNode extends NonTerminalNode {
   rewrite(state) {
     const nonTerminalNode = this; ///
@@ -13,11 +15,28 @@ class IntermediateNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  // simplify(state) {
-  //   this.simplifyChildNodes(state);
-  //
-  //   this.overwrite(state);
-  // }
+  simplify(state) {
+    if (count-- === 0) {
+      return;
+    }
+
+    const parentNode = this.getParentNode(),
+          lastChildNode = parentNode.getLastChildNode();
+
+    lastChildNode.remove();
+
+    const appendedNode = lastChildNode; ///
+
+    this.appendChildNode(appendedNode);
+
+    this.rotate();
+
+    this.overwrite(state);
+
+    const terminate = true;
+
+    return terminate;
+  }
 
   getBaseRuleName() {
     let ruleName;

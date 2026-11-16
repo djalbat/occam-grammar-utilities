@@ -16,49 +16,19 @@ class RepeatedNode extends NonTerminalNode {
   }
 
   simplify(state) {
-    if (count === 0) {
+    if (count-- === 0) {
       return;
     }
 
-    count--;
+    const remamingChildNodes = this.rotate();
 
-    const childNodes = this.rotate();
-
-    simplifyChildNodes(childNodes, state);
+    simplifyChildNodes(remamingChildNodes, state);
 
     this.overwrite(state);
-  }
 
-  rotate() {
-    let parentNode;
+    const terminate = true;
 
-    parentNode = this.getParentNode();
-
-    const replacedChildNode = parentNode, ///
-          replacementChildNode = this, ///
-          replacementChildNodes = [
-            replacementChildNode
-          ];
-
-    parentNode = parentNode.getParentNode();
-
-    this.remove();
-
-    parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
-
-    let childNodes;
-
-    childNodes = this.getChildNodes();
-
-    childNodes = [
-      ...childNodes
-    ];
-
-    const prependedChildNode = replacedChildNode;  ///
-
-    this.prependChildNode(prependedChildNode)
-
-    return childNodes;
+    return terminate;
   }
 
   getBaseRuleName() {
@@ -83,7 +53,11 @@ Object.assign(RepeatedNode.prototype, simpliciationMixins);
 export default RepeatedNode;
 
 function simplifyChildNodes(childNodes, state) {
-  childNodes.forEach((childNode) => {
-    childNode.simplify(state);
+  childNodes.some((childNode) => {
+    const terminate = childNode.simplify(state);
+
+    if (terminate) {
+      return true;
+    }
   });
 }

@@ -1,18 +1,54 @@
 "use strict";
 
 function lift() {
-  const opacity = this.getOpacity(),
+  const index = this.getIndex(),
+        opacity = this.getOpacity(),
         parentNode = this.getParentNode(),
         precedence = this.getPrecedence(),
-        childNodes = this.removeChildNodes(),
+        removedChildNodes = this.removeChildNodes(),
         replacedChildNode = this,  ///
-        replacementChildNodes = childNodes; ///
+        replacementChildNodes = removedChildNodes; ///
 
   parentNode.setOpacity(opacity);
 
   parentNode.setPrecedence(precedence);
 
+  const startIndex = index + 1,
+        childNodes = parentNode.getChildNodes(),
+        remainingChildNodes = childNodes.slice(startIndex);
+
   parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+
+  return remainingChildNodes;
+}
+
+function rotate() {
+  let parentNode;
+
+  parentNode = this.getParentNode();
+
+  const replacedChildNode = parentNode, ///
+        replacementChildNode = this, ///
+        replacementChildNodes = [
+          replacementChildNode
+        ];
+
+  parentNode = parentNode.getParentNode();
+
+  this.remove();
+
+  parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+
+  const childNodes = this.getChildNodes(),
+        remainingChildNodes = [
+          ...childNodes
+        ];
+
+  const prependedChildNode = replacedChildNode;  ///
+
+  this.prependChildNode(prependedChildNode)
+
+  return remainingChildNodes;
 }
 
 function overwrite(state) {
@@ -34,27 +70,33 @@ function overwrite(state) {
   return nonTerminalNode;
 }
 
-function forEachChildNode(callback) {
-  const multiplicity = this.getMultiplicity();
+function getLastChildNode() {
+  let lastChildNode;
 
-  for (let index = 0; index < multiplicity; index++) {
-    const childNodes = this.getChildNodes(),
-          childNode = childNodes[index];
+  this.backwardsSomeChildNode((childNode) => {
+    lastChildNode = childNode;  ///
 
-    callback(childNode, index);
-  }
+    return true;
+  });
+
+  return lastChildNode;
 }
 
 function simplifyChildNodes(state) {
-  this.forEachChildNode((childNode) => {
-    childNode.simplify(state);
+  this.someChildNode((childNode) => {
+    const terminate = childNode.simplify(state);
+
+    if (terminate) {
+      return true;
+    }
   });
 }
 
 const simpliciationMixins = {
   lift,
+  rotate,
   overwrite,
-  forEachChildNode,
+  getLastChildNode,
   simplifyChildNodes
 };
 

@@ -18,7 +18,7 @@ describe("Rewrites", () => {
     }
   ];
 
-  describe("a cycle of length one", () => {
+  describe.only("a cycle of length one", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -210,7 +210,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with precedence", () => {
+  describe.only("a cycle of length one with precedence", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -359,7 +359,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with incidental rules", () => {
+  describe.only("a cycle of length one with incidental rules", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -485,7 +485,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with right recursion", () => {
+  describe.only("a cycle of length one with right recursion", () => {
     let bnf = `
   
      S ::= ( T ... <END_OF_LINE> ) ;
@@ -634,7 +634,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with right recursion and a cut", () => {
+  describe.only("a cycle of length one with right recursion and a cut", () => {
     let bnf = `
   
        S ::= ( T ... <END_OF_LINE> ) ;
@@ -826,7 +826,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
+  describe.only("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -940,7 +940,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with right recursion, precedence, one definition with a cut and the other without", () => {
+  describe.only("a cycle of length one with right recursion, precedence, one definition with a cut and the other without", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -1169,7 +1169,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials", () => {
+  describe.only("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -1617,7 +1617,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two", () => {
+  describe("a cycle of length two", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -1712,7 +1712,7 @@ describe("Rewrites", () => {
       it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
-        // assert.isTrue(checkDescendentNodes(node));
+        assert.isTrue(checkDescendentNodes(node));
 
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -1774,6 +1774,55 @@ describe("Rewrites", () => {
                 T. [0]                                                             
                    |                                                               
           "e"[unassigned] [0]                                                      
+                                            
+       `));
+      });
+    });
+
+    describe("content with four tokens", () => {
+      const content = `eggg
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                    
+                                                                             S [0]                     
+                                                                               |                       
+                                                              -----------------------------------      
+                                                              |                                 |      
+                                                           T. [0]                         <END_OF_LINE>
+                                                              |                                        
+                                            ------------------------------------                       
+                                            |                                  |                       
+                                         A.. [0]                      "g"[unassigned] [0]              
+                                            |                                                          
+                                         T. [0]                                                        
+                                            |                                                          
+                             -------------------------------                                           
+                             |                             |                                           
+                          A.. [0]                 "g"[unassigned] [0]                                  
+                             |                                                                         
+                          T. [0]                                                                       
+                             |                                                                         
+                   ---------------------                                                               
+                   |                   |                                                               
+                A.. [0]       "g"[unassigned] [0]                                                      
+                   |                                                                                   
+                T. [0]                                                                                 
+                   |                                                                                   
+          "e"[unassigned] [0]                                                                          
                                             
        `));
       });
