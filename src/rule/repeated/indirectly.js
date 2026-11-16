@@ -26,7 +26,7 @@ export default class IndirectlyRepeatedRule extends Rule {
     const indirectlyRepeatedDefinitions = indirectlyRepeatedDefinitionsFromDefinitionsIndirectRuleNameAndRuleName(definitions, indirectRuleName, ruleName, context),
           repeatedRuleName = repeatedRuleNameFromIndirectRuleName(indirectRuleName),
           name = repeatedRuleName, ///
-          opacity = rule.getOpacity();
+          opacity = indirectRule.getOpacity();
 
     definitions = indirectlyRepeatedDefinitions;  ///
 

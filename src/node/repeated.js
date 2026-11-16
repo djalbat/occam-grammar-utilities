@@ -22,45 +22,43 @@ class RepeatedNode extends NonTerminalNode {
 
     count--;
 
-    let opacity,
-        precedence,
-        removedChildNodes;
+    const childNodes = this.rotate();
 
-    const parentNode = this.getParentNode(),
-          baseRuleName = this.getBaseRuleName();
+    simplifyChildNodes(childNodes, state);
 
-    opacity = parentNode.getOpacity();
+    this.overwrite(state);
+  }
 
-    precedence = parentNode.getPrecedence();
+  rotate() {
+    let parentNode;
 
-    removedChildNodes = parentNode.removeAllButLastChildNode();
+    parentNode = this.getParentNode();
 
-    const ruleName = baseRuleName,  ///
-          childNodes = removedChildNodes, ///
-          nonTerminalNode = state.createNonTerminalNode(ruleName, childNodes, precedence, opacity),
-          prependedChildNode = nonTerminalNode, ///
-          prependedChildNodes = [
-            prependedChildNode
+    const replacedChildNode = parentNode, ///
+          replacementChildNode = this, ///
+          replacementChildNodes = [
+            replacementChildNode
           ];
 
-    parentNode.prependChildNodes(prependedChildNodes);
+    parentNode = parentNode.getParentNode();
 
-    opacity = this.getOpacity();
-
-    precedence = this.getPrecedence();
-
-    removedChildNodes = this.removeChildNodes();
-
-    const replacedChildNode = this, ///
-          replacementChildNodes = removedChildNodes;  ///
-
-    parentNode.setOpacity(opacity);
-
-    parentNode.setPrecedence(precedence);
+    this.remove();
 
     parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 
-    simplifyChildNodes(replacementChildNodes, state);
+    let childNodes;
+
+    childNodes = this.getChildNodes();
+
+    childNodes = [
+      ...childNodes
+    ];
+
+    const prependedChildNode = replacedChildNode;  ///
+
+    this.prependChildNode(prependedChildNode)
+
+    return childNodes;
   }
 
   getBaseRuleName() {
@@ -75,18 +73,6 @@ class RepeatedNode extends NonTerminalNode {
     const baseRuleName = ruleName;  ///
 
     return baseRuleName;
-  }
-
-  removeLastChildNode() {
-    let lastChildNode;
-
-    this.backwardsSomeChildNode((childNode) => {
-      lastChildNode = childNode;  ///
-
-      return true;
-    });
-
-    return lastChildNode;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RepeatedNode, ruleName, childNodes, precedence, opacity); }

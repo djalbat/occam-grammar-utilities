@@ -1617,7 +1617,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two", () => {
+  describe.only("a cycle of length two", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -1663,7 +1663,7 @@ describe("Rewrites", () => {
         
         A_.. ::= T_ ;
         
-        A~.  ::= ~T ( A~ | ε ) ;
+        A~.. ::= ~T ( A~ | ε ) ;
 
      `));
     });
@@ -1709,7 +1709,7 @@ describe("Rewrites", () => {
         node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
       });
 
-      it.only("results in the requisite parse tree" , () => {
+      it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
         // assert.isTrue(checkDescendentNodes(node));

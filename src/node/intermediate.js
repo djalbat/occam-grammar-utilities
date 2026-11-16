@@ -13,11 +13,11 @@ class IntermediateNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(state) {
-    this.simplifyChildNodes(state);
-
-    this.overwrite(state);
-  }
+  // simplify(state) {
+  //   this.simplifyChildNodes(state);
+  //
+  //   this.overwrite(state);
+  // }
 
   getBaseRuleName() {
     let ruleName;

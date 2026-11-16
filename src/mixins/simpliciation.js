@@ -34,6 +34,17 @@ function overwrite(state) {
   return nonTerminalNode;
 }
 
+function forEachChildNode(callback) {
+  const multiplicity = this.getMultiplicity();
+
+  for (let index = 0; index < multiplicity; index++) {
+    const childNodes = this.getChildNodes(),
+          childNode = childNodes[index];
+
+    callback(childNode, index);
+  }
+}
+
 function simplifyChildNodes(state) {
   this.forEachChildNode((childNode) => {
     childNode.simplify(state);
@@ -43,6 +54,7 @@ function simplifyChildNodes(state) {
 const simpliciationMixins = {
   lift,
   overwrite,
+  forEachChildNode,
   simplifyChildNodes
 };
 
