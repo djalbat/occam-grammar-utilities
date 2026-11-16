@@ -3,7 +3,7 @@
 import { Definition } from "occam-parsers";
 
 import { epsilonPartFromNothing, ruleNamePartFromRuleName, choiceOfPartsPartFromParts } from "../../utilities/part";
-import { intermediateRuleNameFromRuleName, indirectlyRepeatedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
+import { intermediateRuleNameFromRuleName, repeatedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
 import { isDefinitionConsuming, isDefinitionRepeatable, tailPartsfromDefinition, isDefinitionRightRecursive } from "../../utilities/definition";
 
 export default class IndirectlyRepeatedDefinition extends Definition {
@@ -21,15 +21,15 @@ export default class IndirectlyRepeatedDefinition extends Definition {
 
   static fromDefinitionIndirectRuleNameAndRuleName(definition, indirectRuleName, ruleName, context) {
     const epsilonPart = epsilonPartFromNothing(),
+          repeatedRuleName = repeatedRuleNameFromIndirectRuleName(indirectRuleName),
           intermediateRuleName = intermediateRuleNameFromRuleName(ruleName),
-          intermediateRuleNamePart = ruleNamePartFromRuleName(intermediateRuleName),
-          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName),
-          indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName);
+          repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
+          intermediateRuleNamePart = ruleNamePartFromRuleName(intermediateRuleName);
 
     let parts;
 
     parts = [
-      indirectlyRepeatedRuleNamePart,
+      repeatedRuleNamePart,
       epsilonPart
     ];
 

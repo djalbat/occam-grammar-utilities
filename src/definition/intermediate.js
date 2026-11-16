@@ -2,93 +2,35 @@
 
 import { Definition } from "occam-parsers";
 
-import { epsilonPartFromNothing, ruleNamePartFromRuleName, choiceOfPartsPartFromParts } from "../utilities/part";
-import { indirectlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromIndirectRuleName } from "../utilities/ruleName";
-import { isDefinitionConsuming, isDefinitionRepeatable, tailPartsfromDefinition, isDefinitionRightRecursive } from "../utilities/definition";
+import {isDefinitionConsuming, isDefinitionRepeatable, tailPartsfromDefinition} from "../utilities/definition";
 
-export default class IndirectlyRepeatedDefinition extends Definition {
-  static fromDefinition(definition, context) {
-    const tailParts = tailPartsfromDefinition(definition, context),
-          parts = tailParts,  ///
-          precedence = definition.getPrecedence(),
-          indirectlyRepeatedDefinition = new IndirectlyRepeatedDefinition(parts, precedence);
-
-    isDefinitionConsuming(indirectlyRepeatedDefinition, context);
-
-    return indirectlyRepeatedDefinition;
-  }
-
-  static fromRightRecursiveDefinition(rightRecursiveDefinition, context) {
-    const definition = rightRecursiveDefinition,  ///
+export default class IntermediateDefinition extends Definition {
+  static fromRepeatableDefinition(repeatableDefinition, context) {
+    const definition = repeatableDefinition,  ///
           tailParts = tailPartsfromDefinition(definition, context),
           parts = tailParts,  ///
           precedence = definition.getPrecedence(),
-          indirectlyRepeatedDefinition = new IndirectlyRepeatedDefinition(parts, precedence);
+          intermediateDefinition = new IntermediateDefinition(parts, precedence);
 
-    isDefinitionConsuming(indirectlyRepeatedDefinition, context);
+    isDefinitionConsuming(intermediateDefinition, context);
 
-    return indirectlyRepeatedDefinition;
-  }
-
-  static fromDefinitionIndirectRuleNameAndRuleName(definition, indirectRuleName, ruleName, context) {
-    let indirectlyRepeatedRuleName,
-        indirectlyRepeatedRuleNamePart;
-
-    const epsilonPart = epsilonPartFromNothing();
-
-    indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName);
-
-    indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName);
-
-    let parts;
-
-    parts = [
-      indirectlyRepeatedRuleNamePart,
-      epsilonPart
-    ];
-
-    const choiceOfPartsPart = choiceOfPartsPartFromParts(parts);
-
-    indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleName(ruleName);
-
-    indirectlyRepeatedRuleNamePart = ruleNamePartFromRuleName(indirectlyRepeatedRuleName);
-
-    parts = [
-      indirectlyRepeatedRuleNamePart,
-      choiceOfPartsPart
-    ];
-
-    const precedence = definition.getPrecedence(),
-          indirectlyRepeatedDefinition = new IndirectlyRepeatedDefinition(parts, precedence);
-
-    isDefinitionConsuming(indirectlyRepeatedDefinition, context);
-
-    return indirectlyRepeatedDefinition;
+    return intermediateDefinition;
   }
 }
 
-export function indirectlyRepeatedDefinitionsFromDefinitionsIndirectRuleNameAndRuleName(definitions, indirectRuleName, ruleName, context) {
-  const indirectlyRepeatedDefinitions = definitions.reduce((indirectlyRepeatedDefinitions, definition) => {
-    const defintionRepeatable = isDefinitionRepeatable(definition, ruleName, context);
+export function intermediateDefinitionsFromDefinitionsAndRuleName(definitions, ruleName, context) {
+  const intermediateDefinitions = definitions.reduce((intermediateDefinitions, definition) => {
+    const definitioRepeatable = isDefinitionRepeatable(definition, ruleName, context);
 
-    if (defintionRepeatable) {
-      const definitionRightRecursive = isDefinitionRightRecursive(definition, ruleName, context);
+    if (definitioRepeatable) {
+      const repeatableDefinition = definition,  ///
+            intermediateDefinition = IntermediateDefinition.fromRepeatableDefinition(repeatableDefinition, context);
 
-      let indirectlyRepeatedDefinition;
-
-      if (definitionRightRecursive) {
-        const rightRecursiveDefinition = definition;  ///
-
-        indirectlyRepeatedDefinition = IndirectlyRepeatedDefinition.fromRightRecursiveDefinition(rightRecursiveDefinition, context);
-      } else {
-        indirectlyRepeatedDefinition = IndirectlyRepeatedDefinition.fromDefinitionIndirectRuleNameAndRuleName(definition, indirectRuleName, ruleName, context);
-      }
-
-      indirectlyRepeatedDefinitions.push(indirectlyRepeatedDefinition);
+      intermediateDefinitions.push(intermediateDefinition);
     }
 
-    return indirectlyRepeatedDefinitions;
+    return intermediateDefinitions;
   }, []);
 
-  return indirectlyRepeatedDefinitions;
+  return intermediateDefinitions;
 }
