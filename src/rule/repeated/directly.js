@@ -2,16 +2,15 @@
 
 import { Rule } from "occam-parsers";
 
-import DirectlyRepeatedNode from "../../node/repeated/directly";
-import IndirectlyRepeatedRule from "../../rule/repeated/indirectly";
+import RepeatedNode from "../../node/repeated";
 
-import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../../constants";
-import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
+import { CYCLE_LENGTH_1 } from "../../constants";
+import { repeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 import { directlyRepeatedDefinitionsFromDefinitionsAndRuleName } from "../../definition/repeated/directly";
 
 export default class DirectlyRepeatedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
-    const NonTerminalNode = DirectlyRepeatedNode; ///
+    const NonTerminalNode = RepeatedNode; ///
 
     return NonTerminalNode;
   }
@@ -24,8 +23,8 @@ export default class DirectlyRepeatedRule extends Rule {
     definitions = rule.getDefinitions();
 
     const directlyRepeatedDefinitions = directlyRepeatedDefinitionsFromDefinitionsAndRuleName(definitions, ruleName, context),
-          directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
-          name = directlyRepeatedRuleName, ///
+          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+          name = repeatedRuleName, ///
           opacity = rule.getOpacity();
 
     definitions = directlyRepeatedDefinitions;  ///
@@ -43,16 +42,6 @@ export function directlyRepeatedRulesFromCycleAndCycles(context, directlyRepeate
     case CYCLE_LENGTH_1: {
       const rule = context.getRule(),
             directlyRepeatedRule = DirectlyRepeatedRule.fromRule(rule, context);
-
-      directlyRepeatedRules.push(directlyRepeatedRule);
-
-      break;
-    }
-
-    case CYCLE_LENGTH_2: {
-      const rule = context.getRule(),
-            indirectlyRepeatedRule = IndirectlyRepeatedRule.fromRule(rule, context),
-            directlyRepeatedRule = indirectlyRepeatedRule;  ///
 
       directlyRepeatedRules.push(directlyRepeatedRule);
 

@@ -2,36 +2,17 @@
 
 import { Rule } from "occam-parsers";
 
-import IndirectlyRepeatedNode from "../../node/repeated/indirectly";
+import RepeatedNode from "../../node/repeated";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
-import { indirectlyRepeatedRuleNameFromRuleName, indirectlyRepeatedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
-import { indirectlyRepeatedDefinitionsFromDefinitionsAndRuleName, indirectlyRepeatedDefinitionsFromDefinitionsIndirectRuleNameAndRuleName } from "../../definition/repeated/indirectly";
+import { repeatedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
+import { indirectlyRepeatedDefinitionsFromDefinitionsIndirectRuleNameAndRuleName } from "../../definition/repeated/indirectly";
 
 export default class IndirectlyRepeatedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
-    const NonTerminalNode = IndirectlyRepeatedNode; ///
+    const NonTerminalNode = RepeatedNode; ///
 
     return NonTerminalNode;
-  }
-
-  static fromRule(rule, context) {
-    const ruleName = rule.getName();
-
-    let definitions;
-
-    definitions = rule.getDefinitions();
-
-    const indirectlyRepeatedDefinitions = indirectlyRepeatedDefinitionsFromDefinitionsAndRuleName(definitions, ruleName, context),
-          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromRuleName(ruleName),
-          name = indirectlyRepeatedRuleName, ///
-          opacity = rule.getOpacity();
-
-    definitions = indirectlyRepeatedDefinitions;  ///
-
-    const indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions);
-
-    return indirectlyRepeatedRule;
   }
 
   static fromIndirectRuleAndRule(indirectRule, rule, context) {
@@ -43,8 +24,8 @@ export default class IndirectlyRepeatedRule extends Rule {
     definitions = rule.getDefinitions();
 
     const indirectlyRepeatedDefinitions = indirectlyRepeatedDefinitionsFromDefinitionsIndirectRuleNameAndRuleName(definitions, indirectRuleName, ruleName, context),
-          indirectlyRepeatedRuleName = indirectlyRepeatedRuleNameFromIndirectRuleName(indirectRuleName),
-          name = indirectlyRepeatedRuleName, ///
+          repeatedRuleName = repeatedRuleNameFromIndirectRuleName(indirectRuleName),
+          name = repeatedRuleName, ///
           opacity = rule.getOpacity();
 
     definitions = indirectlyRepeatedDefinitions;  ///

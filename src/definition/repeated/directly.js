@@ -2,7 +2,7 @@
 
 import { Definition } from "occam-parsers";
 
-import { directlyRepeatedRuleNameFromRuleName } from "../../utilities/ruleName";
+import { repeatedRuleNameFromRuleName } from "../../utilities/ruleName";
 import { epsilonPartFromNothing, ruleNamePartFromRuleName, choiceOfPartsPartFromParts } from "../../utilities/part";
 import { isDefinitionConsuming, tailPartsfromDefinition, isDefinitionRepeatable, isDefinitionRightRecursive } from "../../utilities/definition";
 
@@ -10,13 +10,13 @@ export default class DirectlyRepeatedDefinition extends Definition {
   static fromDefinitionAndRuleName(definition, ruleName, context) {
     const tailParts = tailPartsfromDefinition(definition, context),
           epsilonPart = epsilonPartFromNothing(),
-          directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
-          directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName);
+          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+          repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName);
 
     let parts;
 
     parts = [
-      directlyRepeatedRuleNamePart,
+      repeatedRuleNamePart,
       epsilonPart
     ];
 

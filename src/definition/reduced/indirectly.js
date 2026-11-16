@@ -2,9 +2,9 @@
 
 import { Definition } from "occam-parsers";
 
-import { indirectlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
+import { ruleNamePartFromRuleName } from "../../utilities/part";
+import { reducedRuleNameFromRuleName } from "../../utilities/ruleName";
 import { partsfromDefinition, isDefinitionSingular, isDefinitionRepeatable } from "../../utilities/definition";
-import {ruleNamePartFromRuleName} from "../../utilities/part";
 
 export default class IndirectlyReducedDefinition extends Definition {
   static fromDefinition(definition, context) {
@@ -17,10 +17,10 @@ export default class IndirectlyReducedDefinition extends Definition {
 
   static fromSingularDefinition(singularDefinition, context) {
     const ruleName = context.getRuleName(),
-          indirectlyReducedRuleName = indirectlyReducedRuleNameFromRuleName(ruleName),
-          indirectlyReducedRuleNamePart = ruleNamePartFromRuleName(indirectlyReducedRuleName),
+          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
           parts = [
-            indirectlyReducedRuleNamePart
+            reducedRuleNamePart
           ],
           precedence = singularDefinition.getPrecedence(),
           indirectlyReducedDefinition = new IndirectlyReducedDefinition(parts, precedence);

@@ -2,15 +2,15 @@
 
 import { Rule } from "occam-parsers";
 
-import DirectlyReducedNode from "../../node/reduced/directly";
+import ReducedNode from "../../node/reduced";
 
+import { reducedRuleNameFromRuleName } from "../../utilities/ruleName";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../../constants";
-import { directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
 import { directlyReducedDefinitionsFromDefinitions } from "../../definition/reduced/directly";
 
 export default class DicrectlyReducedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
-    const NonTerminalNode = DirectlyReducedNode;  ///
+    const NonTerminalNode = ReducedNode;  ///
 
     return NonTerminalNode;
   }
@@ -22,8 +22,8 @@ export default class DicrectlyReducedRule extends Rule {
 
     const directlyReducedDefinitions = directlyReducedDefinitionsFromDefinitions(definitions, context),
           ruleName = rule.getName(),
-          directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
-          name = directlyReducedRuleName, ///
+          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+          name = reducedRuleName, ///
           opacity = rule.getOpacity();
 
     definitions = directlyReducedDefinitions; ///

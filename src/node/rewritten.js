@@ -26,7 +26,7 @@ class RewrittenNode extends NonTerminalNode {
 
     const rewrittenRuleName = ruleName; ///
 
-    ruleName = ruleNameFromRewrittenRuleName(rewrittenRuleName);  ///
+    ruleName = ruleNameFromRewrittenRuleName(rewrittenRuleName);
 
     const baseRuleName = ruleName;  ///
 

@@ -2,15 +2,15 @@
 
 import { Rule } from "occam-parsers";
 
-import IndirectlyRewrittenNode from "../../node/rewritten/indirectly";
+import RewrittenNode from "../../node/rewritten";
 import IndirectlyRewrittenDefinition from "../../definition/rewritten/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
-import { indirectlyRewrittenRuleNameFromRuleName } from "../../utilities/ruleName";
+import { rewrittenRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class IndirectlyRewrittenRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
-    const NonTerminalNode = IndirectlyRewrittenNode; ///
+    const NonTerminalNode = RewrittenNode; ///
 
     return NonTerminalNode;
   }
@@ -19,8 +19,8 @@ export default class IndirectlyRewrittenRule extends Rule {
     const ruleName = rule.getName(),
           indirectRuleName = indirectRule.getName(),
           directlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromIndirectRuleName(indirectRuleName, context),
-          indirectlyRewrittenRuleName = indirectlyRewrittenRuleNameFromRuleName(ruleName),
-          name = indirectlyRewrittenRuleName, ///
+          rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
+          name = rewrittenRuleName, ///
           opacity = rule.getOpacity(),
           definitions = [
             directlyRewrittenDefinition

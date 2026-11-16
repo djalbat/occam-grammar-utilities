@@ -3,17 +3,17 @@
 import { Definition } from "occam-parsers";
 
 import { ruleNamePartFromRuleName, optionalPartPartFromPart } from "../../utilities/part";
-import { directlyRepeatedRuleNameFromRuleName, directlyReducedRuleNameFromRuleName } from "../../utilities/ruleName";
+import { repeatedRuleNameFromRuleName, reducedRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class DirectlyRewrittenDefinition extends Definition {
   static fromRuleName(ruleName, context) {
-    const directlyReducedRuleName = directlyReducedRuleNameFromRuleName(ruleName),
-          directlyReducedRuleNamePart = ruleNamePartFromRuleName(directlyReducedRuleName),
-          directlyRepeatedRuleName = directlyRepeatedRuleNameFromRuleName(ruleName),
-          directlyRepeatedRuleNamePart = ruleNamePartFromRuleName(directlyRepeatedRuleName),
-          optionalDirectlyRepeatedRuleNamePartPart = optionalPartPartFromPart(directlyRepeatedRuleNamePart),
+    const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
+          repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
+          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
+          repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
+          optionalDirectlyRepeatedRuleNamePartPart = optionalPartPartFromPart(repeatedRuleNamePart),
           parts = [
-            directlyReducedRuleNamePart,
+            reducedRuleNamePart,
             optionalDirectlyRepeatedRuleNamePartPart
           ],
           precedence = null,

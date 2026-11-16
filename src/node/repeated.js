@@ -2,13 +2,13 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
-import simpliciationMixins from  "../../mixins/simpliciation";
+import simpliciationMixins from  "../mixins/simpliciation";
 
-import { ruleNameFromDirectlyRepeatedRuleName } from "../../utilities/ruleName";
+import { ruleNameFromRepeatedRuleName } from "../utilities/ruleName";
 
 let count = Infinity;
 
-class DirectlyRepeatedNode extends NonTerminalNode {
+class RepeatedNode extends NonTerminalNode {
   rewrite(state) {
     const nonTerminalNode = this; ///
 
@@ -68,9 +68,9 @@ class DirectlyRepeatedNode extends NonTerminalNode {
 
     ruleName = this.getRuleName();
 
-    const directlyRepeatedRuleName = ruleName; ///
+    const repeatedRuleName = ruleName; ///
 
-    ruleName = ruleNameFromDirectlyRepeatedRuleName(directlyRepeatedRuleName);  ///
+    ruleName = ruleNameFromRepeatedRuleName(repeatedRuleName);
 
     const baseRuleName = ruleName;  ///
 
@@ -89,12 +89,12 @@ class DirectlyRepeatedNode extends NonTerminalNode {
     return lastChildNode;
   }
 
-  static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(DirectlyRepeatedNode, ruleName, childNodes, precedence, opacity); }
+  static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RepeatedNode, ruleName, childNodes, precedence, opacity); }
 }
 
-Object.assign(DirectlyRepeatedNode.prototype, simpliciationMixins);
+Object.assign(RepeatedNode.prototype, simpliciationMixins);
 
-export default DirectlyRepeatedNode;
+export default RepeatedNode;
 
 function simplifyChildNodes(childNodes, state) {
   childNodes.forEach((childNode) => {
