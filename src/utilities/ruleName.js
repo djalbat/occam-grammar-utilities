@@ -61,3 +61,15 @@ export function repeatedRuleNameFromIndirectRuleName(indirectRuleName) {
 
   return repeatedRuleName;
 }
+
+export function rewrittenRuleNameFromIndirectRuleName(indirectRuleName) {
+  const rewrittenRuleName = `_${indirectRuleName}`;
+
+  return rewrittenRuleName;
+}
+
+export function intermediateRuleNameFromIndirectRuleName(indirectRuleName) {
+  const intermediateRuleName = `~${indirectRuleName}`;
+
+  return intermediateRuleName;
+}

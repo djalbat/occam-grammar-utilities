@@ -2161,7 +2161,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion and a cut", () => {
+  describe("a cycle of length two with right recursion and a cut", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -2193,19 +2193,23 @@ describe("Rewrites", () => {
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
                                                                                                                   
-        S     ::= ( T ... <END_OF_LINE> ) ;
+        S    ::= ( T ... <END_OF_LINE> ) ;
         
-        T     ::= _T ;
+        T    ::= _T ;
         
-        _T.   ::= A_ T~? ;
+        A..  ::= T ( ) ;
         
-        A_.   ::= T_ ;
+        _A.. ::= _T ( ) ;
         
-        T_.   ::= . ;
+        T_.  ::= . ;
         
-        T~.   ::= "+" \` _A ;
+        ~T.  ::= "+" \` _A ;
         
-        _A..  ::= _T ( ) ;
+        _T.  ::= A_ A~? ;
+        
+        A_.. ::= T_ ( ) ;
+        
+        A~.. ::= ~T ( ) ;
 
      `));
     });
@@ -2406,16 +2410,20 @@ describe("Rewrites", () => {
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
-
-        _T.  ::= A_ T~? ;
-
-        A_.  ::= T_ ;
-
-        T_.  ::= . ;
-
-        T~.  ::= "?" \` _A ":" _A ;
-
+        
+        A..  ::= T ( ) ;
+        
         _A.. ::= _T ( ) ;
+        
+        T_.  ::= . ;
+        
+        ~T.  ::= "?" \` _A ":" _A ;
+        
+        _T.  ::= A_ A~? ;
+        
+        A_.. ::= T_ ( ) ;
+        
+        A~.. ::= ~T ( ) ;
                 
       `));
     });
@@ -2506,13 +2514,13 @@ describe("Rewrites", () => {
   
             ;
   
-      C.. ::= T ( "=" | "!" ) \` T (-1);
+      C.. ::= T ( "=" | "!" ) \` T (-1) ;
 
     `;
 
     let node,
-      rules,
-      tokens;
+        rules,
+        tokens;
 
     before(() => {
       rules = rulesFromBNF(bnf);
@@ -2524,24 +2532,26 @@ describe("Rewrites", () => {
       bnf = adjustedBNF;  ///
     });
 
-    it("is rewritten", () => {
+    it.only("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
 
         S    ::= ( T ... <END_OF_LINE> ) ;
-
-        T    ::= _T ;
-
-        _T.  ::= _C ( )
-  
-               |  T_
-  
+        
+        T.   ::= C ( )
+            
+               | /[a-z0-9]/
+        
                ;
-
-        T_.  ::= /[a-z0-9]/ ;
-
-        _C.. ::= T_ ~C? ;
+        
+        C    ::= _C ;
+        
+        _C.. ::= T_ T~? ;
+        
+        T_.  ::= /[a-z0-9]/ ;     
 
         ~C.. ::= ( "=" | "!" ) \` _T (-1) ;
+
+        T~.. ::= ~C ( ) ;
 
      `));
     });

@@ -5,8 +5,10 @@ import { Rule } from "occam-parsers";
 import IntermediateNode from "../node/intermediate";
 
 import { CYCLE_LENGTH_2 } from "../constants";
-import { intermediateRuleNameFromRuleName } from "../utilities/ruleName";
-import { intermediateDefinitionsFromDefinitionsRuleNameAndIndirectRuleName } from "../definition/intermediate";
+import { isRuleRepeatable } from "../utilities/rule";
+import { intermediateRuleNameFromRuleName, intermediateRuleNameFromIndirectRuleName } from "../utilities/ruleName";
+import { intermediateDefinitionsFromDefinitionsRuleNameAndIndirectRuleName,
+         intermediateDefinitionsFromDefinitionsIndirectRuleNameAndRuleName } from "../definition/intermediate";
 
 export default class IntermediateRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -34,6 +36,26 @@ export default class IntermediateRule extends Rule {
 
     return intermediateRule;
   }
+
+  static fromIndirectRuleAndRule(indirectRule, rule, context) {
+    const ruleName = rule.getName(),
+          indirectRuleName = indirectRule.getName();
+
+    let definitions;
+
+    definitions = indirectRule.getDefinitions();
+
+    const intermediateDefinitions = intermediateDefinitionsFromDefinitionsIndirectRuleNameAndRuleName(definitions, indirectRuleName, ruleName, context),
+          intermediateRuleName = intermediateRuleNameFromIndirectRuleName(indirectRuleName),
+          name = intermediateRuleName, ///
+          opacity = indirectRule.getOpacity();
+
+    definitions = intermediateDefinitions;  ///
+
+    const intermediateRule = new IntermediateRule(name, opacity, definitions);
+
+    return intermediateRule;
+  }
 }
 
 export function intermediateRulesFromCycleAndCycles(context, intermediateRules = []) {
@@ -43,9 +65,20 @@ export function intermediateRulesFromCycleAndCycles(context, intermediateRules =
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
             indirectRule = context.getIndirectRule(),
-            intermediateRule = IntermediateRule.fromRuleAndIndirectRule(rule, indirectRule, context);
+            ruleRepeatable = isRuleRepeatable(rule, context),
+            indirectRuleRepeatable = isRuleRepeatable(indirectRule, context);
 
-      intermediateRules.push(intermediateRule);
+      if (ruleRepeatable) {
+        const intermediateRule = IntermediateRule.fromRuleAndIndirectRule(rule, indirectRule, context);
+
+        intermediateRules.push(intermediateRule);
+      }
+
+      if (indirectRuleRepeatable) {
+        const intermediateRule = IntermediateRule.fromIndirectRuleAndRule(indirectRule, rule, context);
+
+        intermediateRules.push(intermediateRule);
+      }
 
       break;
     }

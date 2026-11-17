@@ -5,6 +5,7 @@ import { Rule } from "occam-parsers";
 import ReducedNode from "../../node/reduced";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
+import { isRuleRepeatable } from "../../utilities/rule";
 import { reducedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
 import { indirectlyReducedDefinitionsFromDefinitions } from "../../definition/reduced/indirectly";
 
@@ -41,9 +42,13 @@ export function indirectlyReducedRulesFromCycleAndCycles(context, indirectlyRedu
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
       const indirectRule = context.getIndirectRule(),
-            indirectlyReducedRule = IndirectlyReducedRule.fromIndirectRule(indirectRule, context);
+            indirectRuleRepetaable = isRuleRepeatable(indirectRule, context);
 
-      indirectlyReducedRules.push(indirectlyReducedRule);
+      if (!indirectRuleRepetaable) {
+        const indirectlyReducedRule = IndirectlyReducedRule.fromIndirectRule(indirectRule, context);
+
+        indirectlyReducedRules.push(indirectlyReducedRule);
+      }
 
       break;
     }
