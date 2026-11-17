@@ -70,23 +70,11 @@ function overwrite(state) {
   return nonTerminalNode;
 }
 
-function getLastChildNode() {
-  let lastChildNode;
-
-  this.backwardsSomeChildNode((childNode) => {
-    lastChildNode = childNode;  ///
-
-    return true;
-  });
-
-  return lastChildNode;
-}
-
 function simplifyChildNodes(state) {
-  this.someChildNode((childNode) => {
+  this.everyChildNode((childNode) => {
     const terminate = childNode.simplify(state);
 
-    if (terminate) {
+    if (!terminate) {
       return true;
     }
   });
@@ -96,7 +84,6 @@ const simpliciationMixins = {
   lift,
   rotate,
   overwrite,
-  getLastChildNode,
   simplifyChildNodes
 };
 

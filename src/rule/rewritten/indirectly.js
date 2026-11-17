@@ -34,14 +34,11 @@ export default class IndirectlyRewrittenRule extends Rule {
 export function indirectlyRewrittenRulesFromCycleAndCycles(context, indirectlyRewrittenRules = []) {
   const cycleLength = context.getCycleLength();
 
-  let indirectlyRewrittenRule;
-
   switch (cycleLength) {
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
-            indirectRule = context.getIndirectRule();
-
-      indirectlyRewrittenRule = IndirectlyRewrittenRule.fromIndirectRuleAndRule(indirectRule, rule, context);
+            indirectRule = context.getIndirectRule(),
+            indirectlyRewrittenRule = IndirectlyRewrittenRule.fromIndirectRuleAndRule(indirectRule, rule, context);
 
       indirectlyRewrittenRules.push(indirectlyRewrittenRule);
 

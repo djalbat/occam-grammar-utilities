@@ -18,7 +18,7 @@ describe("Rewrites", () => {
     }
   ];
 
-  describe.only("a cycle of length one", () => {
+  describe("a cycle of length one", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -210,7 +210,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with precedence", () => {
+  describe("a cycle of length one with precedence", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -359,7 +359,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with incidental rules", () => {
+  describe("a cycle of length one with incidental rules", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -485,7 +485,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion", () => {
+  describe("a cycle of length one with right recursion", () => {
     let bnf = `
   
      S ::= ( T ... <END_OF_LINE> ) ;
@@ -634,7 +634,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion and a cut", () => {
+  describe("a cycle of length one with right recursion and a cut", () => {
     let bnf = `
   
        S ::= ( T ... <END_OF_LINE> ) ;
@@ -826,7 +826,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
+  describe("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -940,7 +940,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, precedence, one definition with a cut and the other without", () => {
+  describe("a cycle of length one with right recursion, precedence, one definition with a cut and the other without", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -1169,7 +1169,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials", () => {
+  describe("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -1655,15 +1655,17 @@ describe("Rewrites", () => {
         
         A..  ::= T ;
         
+        _A.. ::= _T ;
+        
         T_.  ::= "e" ;
         
-        ~T.  ::= "g" ;
+        ~T.  ::= "g" ( A~ | ε ) ;
         
         _T.  ::= A_ A~? ;
         
         A_.. ::= T_ ;
         
-        A~.. ::= ~T ( A~ | ε ) ;
+        A~.. ::= ~T ;
 
      `));
     });
@@ -1749,7 +1751,7 @@ describe("Rewrites", () => {
       it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
-        // assert.isTrue(checkDescendentNodes(node));
+        assert.isTrue(checkDescendentNodes(node));
 
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
@@ -1861,19 +1863,23 @@ describe("Rewrites", () => {
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
                                                                                           
-        S     ::= ( T ... <END_OF_LINE> ) ;
+        S    ::= ( T ... <END_OF_LINE> ) ;
         
-        T     ::= _T ;
+        T    ::= _T ;
         
-        _T.   ::= A_ T~* ;
+        A..  ::= T ( ) ;
         
-        A_.   ::= T_ ( ) ;
+        _A.. ::= _T ( ) ;
         
-        T_.   ::= "e" (2) ;
+        T_.  ::= "e" (2) ;
         
-        T~.   ::= "g" ( A_ | ε ) (-1) ;
-
-        _A..  ::= _T ( ) ;
+        ~T.  ::= "g" ( A~ | ε ) (-1) ;
+        
+        _T.  ::= A_ A~? ;
+        
+        A_.. ::= T_ ( ) ;
+        
+        A~.. ::= ~T ( ) ;
                   
      `));
     });
@@ -2022,19 +2028,23 @@ describe("Rewrites", () => {
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
                                                                                                           
-        S     ::= ( T ... <END_OF_LINE> ) ;
+        S    ::= ( T ... <END_OF_LINE> ) ;
         
-        T     ::= _T ;
+        T    ::= _T ;
         
-        _T.   ::= A_ T~? ;
+        A..  ::= T ( ) ;
         
-        A_..  ::= T_ ( ) ;
+        _A.. ::= _T ( ) ;
         
-        T_.   ::= . ;
+        T_.  ::= . ;
         
-        T~.   ::= "+" _A ( ) ;
+        ~T.  ::= "+" _A ;
         
-        _A..  ::= _T ( ) ;
+        _T.  ::= A_ A~? ;
+        
+        A_.. ::= T_ ( ) ;
+        
+        A~.. ::= ~T ( ) ;
 
      `));
     });
@@ -2151,7 +2161,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two with right recursion and a cut", () => {
+  describe.only("a cycle of length two with right recursion and a cut", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;

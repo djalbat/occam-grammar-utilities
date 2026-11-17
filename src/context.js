@@ -9,15 +9,15 @@ import { ruleNameFromCycle, indirectRuleNameFromCycle, leftRecursiveCyclesFromCy
 const { filter } = arrayUtilities;
 
 export default class Context {
-  constructor(cycles, ruleMap, ruleName, indirectRuleName, incidentalRuleNames, leftRecursiveCycle, leftRecursiveCycles, rightRecursiveCycles) {
+  constructor(cycles, ruleMap, ruleName, indirectRuleName, leftRecursiveCycle, leftRecursiveCycles, rightRecursiveCycles, incidentalRuleNames) {
     this.cycles = cycles;
     this.ruleMap = ruleMap;
     this.ruleName = ruleName;
     this.indirectRuleName = indirectRuleName;
-    this.incidentalRuleNames = incidentalRuleNames;
     this.leftRecursiveCycle = leftRecursiveCycle;
     this.leftRecursiveCycles = leftRecursiveCycles;
     this.rightRecursiveCycles = rightRecursiveCycles;
+    this.incidentalRuleNames = incidentalRuleNames;
   }
 
   getCycles() {
@@ -36,10 +36,6 @@ export default class Context {
     return this.indirectRuleName;
   }
 
-  getIncidentalRuleNames() {
-    return this.incidentalRuleNames;
-  }
-
   getLeftRecursiveCycle() {
     return this.leftRecursiveCycle;
   }
@@ -50,6 +46,10 @@ export default class Context {
 
   getRightRecursiveCycles() {
     return this.rightRecursiveCycles;
+  }
+
+  getIncidentalRuleNames() {
+    return this.incidentalRuleNames;
   }
 
   getRule() {
@@ -109,26 +109,25 @@ export default class Context {
     const cycle = leftRecursiveCycle, ///
           ruleName = ruleNameFromCycle(cycle),
           indirectRuleName = indirectRuleNameFromCycle(cycle),
-          incidentalRuleNames = incidentalRuleNamesFromGraphRuleNameAndIndirectRuleName(graph, ruleName, indirectRuleName),
+          incidentalRuleNames = incidentalRuleNamesFromGraphAndRuleName(graph, ruleName),
           leftRecursiveCycles = leftRecursiveCyclesFromCycles(cycles),
           rightRecursiveCycles = rightRecursiveCyclesFromCycles(cycles),
-          context = new Context(cycles, ruleMap, ruleName, indirectRuleName, incidentalRuleNames, leftRecursiveCycle, leftRecursiveCycles, rightRecursiveCycles);
+          context = new Context(cycles, ruleMap, ruleName, indirectRuleName, leftRecursiveCycle, leftRecursiveCycles, rightRecursiveCycles, incidentalRuleNames);
 
     return context;
   }
 }
 
-function incidentalRuleNamesFromGraphRuleNameAndIndirectRuleName(graph, ruleName, indirectRuleName) {
+function incidentalRuleNamesFromGraphAndRuleName(graph, ruleName) {
   const recursiveRuleNames = retrieveRecursiveRuleNames(ruleName, graph),
         incidentalRuleNames = [
           ...recursiveRuleNames
         ];
 
   filter(incidentalRuleNames, (incidentalRuleName) => {
-    const incidentalRuleNameRuleName = (incidentalRuleName === ruleName),
-          incidentalRuleNameIndirectRuleName = (incidentalRuleName === indirectRuleName);
+    const incidentalRuleNameRuleName = (incidentalRuleName === ruleName);
 
-    if (!incidentalRuleNameRuleName && !incidentalRuleNameIndirectRuleName) {
+    if (!incidentalRuleNameRuleName) {
       return true;
     }
   });

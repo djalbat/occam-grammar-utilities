@@ -4,6 +4,7 @@ import { NonTerminalNode } from "occam-parsers";
 
 import simpliciationMixins from  "../mixins/simpliciation";
 
+import { simplifyChildNodes } from "../utilities/simplification";
 import { ruleNameFromReducedRuleName } from "../utilities/ruleName";
 
 class ReducedNode extends NonTerminalNode {
@@ -45,13 +46,3 @@ class ReducedNode extends NonTerminalNode {
 Object.assign(ReducedNode.prototype, simpliciationMixins);
 
 export default ReducedNode;
-
-function simplifyChildNodes(childNodes, state) {
-  childNodes.some((childNode) => {
-    const terminate = childNode.simplify(state);
-
-    if (terminate) {
-      return true;
-    }
-  });
-}

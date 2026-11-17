@@ -4,9 +4,10 @@ import { NonTerminalNode } from "occam-parsers";
 
 import simpliciationMixins from  "../mixins/simpliciation";
 
+import { simplifyChildNodes } from "../utilities/simplification";
 import { ruleNameFromIntermediateRuleName } from "../utilities/ruleName";
 
-let count = 1;
+let count = Infinity;
 
 class IntermediateNode extends NonTerminalNode {
   rewrite(state) {
@@ -20,16 +21,9 @@ class IntermediateNode extends NonTerminalNode {
       return;
     }
 
-    const parentNode = this.getParentNode(),
-          lastChildNode = parentNode.getLastChildNode();
+    const remainingChildNodes = this.rotate();
 
-    lastChildNode.remove();
-
-    const appendedNode = lastChildNode; ///
-
-    this.appendChildNode(appendedNode);
-
-    this.rotate();
+    simplifyChildNodes(remainingChildNodes, state);
 
     this.overwrite(state);
 

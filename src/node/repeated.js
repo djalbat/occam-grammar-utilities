@@ -4,6 +4,7 @@ import { NonTerminalNode } from "occam-parsers";
 
 import simpliciationMixins from  "../mixins/simpliciation";
 
+import { simplifyChildNodes } from "../utilities/simplification";
 import { ruleNameFromRepeatedRuleName } from "../utilities/ruleName";
 
 let count = Infinity;
@@ -51,13 +52,3 @@ class RepeatedNode extends NonTerminalNode {
 Object.assign(RepeatedNode.prototype, simpliciationMixins);
 
 export default RepeatedNode;
-
-function simplifyChildNodes(childNodes, state) {
-  childNodes.some((childNode) => {
-    const terminate = childNode.simplify(state);
-
-    if (terminate) {
-      return true;
-    }
-  });
-}
