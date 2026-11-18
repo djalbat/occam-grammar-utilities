@@ -2,16 +2,10 @@
 
 function lift() {
   const index = this.getIndex(),
-        opacity = this.getOpacity(),
         parentNode = this.getParentNode(),
-        precedence = this.getPrecedence(),
         removedChildNodes = this.removeChildNodes(),
         replacedChildNode = this,  ///
         replacementChildNodes = removedChildNodes; ///
-
-  parentNode.setOpacity(opacity);
-
-  parentNode.setPrecedence(precedence);
 
   const startIndex = index + 1,
         childNodes = parentNode.getChildNodes(),
