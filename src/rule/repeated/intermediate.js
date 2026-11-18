@@ -17,6 +17,26 @@ export default class IntermediateRepeatedRule extends Rule {
     return NonTerminalNode;
   }
 
+  mergedWith(intermediateRepeatedRule) {
+    let definitions;
+
+    const intermediateRepeatedRuleDefinitions = intermediateRepeatedRule.getDefinitions();
+
+    definitions = this.getDefinitions();
+
+    const name = this.getName(),
+          opacity = this.getOpacity();
+
+    definitions = [ ///
+      ...definitions,
+      ...intermediateRepeatedRuleDefinitions
+    ];
+
+    intermediateRepeatedRule = new IntermediateRepeatedRule(name, opacity, definitions);  ///
+
+    return intermediateRepeatedRule;
+  }
+
   static fromRuleAndIndirectRule(rule, indirectRule, context) {
     const ruleName = rule.getName();
 

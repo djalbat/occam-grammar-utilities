@@ -33,6 +33,10 @@ export function rewriteRules(leftRecursiveCycle, cycles, graph, ruleMap) {
   createIntermediateRepeatedRules(context);
 
   createIntermediateRules(context);
+}
+
+export function replaceRules(leftRecursiveCycle, cycles, graph, ruleMap) {
+  const context = Context.fromLeftRecursiveCycleCyclesGraphAndRuleMap(leftRecursiveCycle, cycles, graph, ruleMap);
 
   createReplacementRules(context);
 }
@@ -137,10 +141,20 @@ function createIntermediateRepeatedRules(context) {
         intermediateRepeatedRules = intermediateRepeatedRulesFromCycleAndCycles(context);
 
   intermediateRepeatedRules.forEach((intermediateRepeatedRule) => {
-    const intermediateRepeatedRuleName = intermediateRepeatedRule.getName(),
-          repetaedRuleName = intermediateRepeatedRuleName;  ///
+    const intermediateRepeatedRuleA = intermediateRepeatedRule, ///
+          intermediateRepeatedRuleName = intermediateRepeatedRule.getName();
 
-    ruleMap[repetaedRuleName] = intermediateRepeatedRule;
+    intermediateRepeatedRule = ruleMap[intermediateRepeatedRuleName] || null;
+
+    if (intermediateRepeatedRule !== null) {
+      const intermediateRepeatedRuleB = intermediateRepeatedRule; ///
+
+      intermediateRepeatedRule = intermediateRepeatedRuleB.mergedWith(intermediateRepeatedRuleA);
+    } else {
+      intermediateRepeatedRule = intermediateRepeatedRuleA; ///
+    }
+
+    ruleMap[intermediateRepeatedRuleName] = intermediateRepeatedRule;
   });
 }
 

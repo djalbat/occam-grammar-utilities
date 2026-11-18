@@ -18,7 +18,7 @@ describe("Rewrites", () => {
     }
   ];
 
-  describe.only("a cycle of length one", () => {
+  describe("a cycle of length one", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -210,7 +210,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with precedence", () => {
+  describe("a cycle of length one with precedence", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -359,7 +359,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with incidental rules", () => {
+  describe("a cycle of length one with incidental rules", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -485,7 +485,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion", () => {
+  describe("a cycle of length one with right recursion", () => {
     let bnf = `
   
      S ::= ( T ... <END_OF_LINE> ) ;
@@ -634,7 +634,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion and a cut", () => {
+  describe("a cycle of length one with right recursion and a cut", () => {
     let bnf = `
   
        S ::= ( T ... <END_OF_LINE> ) ;
@@ -826,7 +826,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
+  describe("a cycle of length one with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -940,7 +940,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, precedence, one definition with a cut and the other without", () => {
+  describe("a cycle of length one with right recursion, precedence, one definition with a cut and the other without", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -1169,7 +1169,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials", () => {
+  describe("a cycle of length one with right recursion, together with definitions suitable to parsing polynomials", () => {
     let bnf = `
   
      S  ::= ( T ... <END_OF_LINE> ) ;
@@ -1617,7 +1617,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two", () => {
+  describe("a cycle of length two", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -1831,7 +1831,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with precedence", () => {
+  describe("a cycle of length two with precedence", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -1996,7 +1996,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion", () => {
+  describe("a cycle of length two with right recursion", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -2161,7 +2161,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion and a cut", () => {
+  describe("a cycle of length two with right recursion and a cut", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -2375,7 +2375,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion, a cut and intermediate recursion", () => {
+  describe("a cycle of length two with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -2503,7 +2503,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion, precedence, one definition with a cut and the other without ", () => {
+  describe("a cycle of length two with right recursion, precedence, one definition with a cut and the other without ", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -2754,7 +2754,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion, together with definitions suitable to parsing polynomials ", () => {
+  describe("a cycle of length two with right recursion, together with definitions suitable to parsing polynomials ", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -3254,7 +3254,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with single indirect repetition, a cut and precedence", () => {
+  describe("a cycle of length two with single indirect repetition, a cut and precedence", () => {
     let bnf = `
 
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -3417,7 +3417,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("two cycles of length two with double indirect repetition, incidental rules, a cut and precedence", () => {
+  describe.only("two cycles of length two with double indirect repetition, incidental rules, a cut and precedence", () => {
     let bnf = `
 
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -3456,24 +3456,28 @@ describe("Rewrites", () => {
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
+        
+        C..  ::= T ( "=" | "!" ) \` T (-1) ;
+        
+        L..  ::= T ( "|" | "&" ) \` T (-2) ; 
 
-        _T.  ::= _C ( )
-   
-               |  _L ( )
-   
-               |  T_
-   
-               ;
-               
+        _C.. ::= _T ( "=" | "!" ) \` _T (-1) ;
+        
+        _L.. ::= _T ( "|" | "&" ) \` _T (-2) ; 
+
         T_.  ::= /[a-z0-9]/ ;
         
-        _C.. ::= T_ ~C? ;
-
-        _L.. ::= T_ ~L? ;
-
+        _T.  ::= T_ ~T~? ;
+        
+        ~T~. ::= ~C ( ) 
+        
+               | ~L ( )
+               
+               ;
+        
         ~C.. ::= ( "=" | "!" ) \` _T (-1) ;
-
-        ~L.. ::= ( "|" | "&" ) \` _T (-2) ;
+  
+        ~L.. ::= ( "|" | "&" ) \` _T (-2) ; 
                 
      `));
     });
