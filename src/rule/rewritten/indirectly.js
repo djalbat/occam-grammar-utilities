@@ -7,13 +7,27 @@ import IndirectlyRewrittenDefinition from "../../definition/rewritten/indirectly
 
 import { CYCLE_LENGTH_2 } from "../../constants";
 import { isRuleRepeatable } from "../../utilities/rule";
-import { rewrittenRuleNameFromRuleName, rewrittenRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
+import { rewrittenRuleNameFromRuleName } from "../../utilities/ruleName";
 
 export default class IndirectlyRewrittenRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
     const NonTerminalNode = RewrittenNode; ///
 
     return NonTerminalNode;
+  }
+
+  static fromRule(rule, context) {
+    const ruleName = rule.getName(),
+          indirectlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromRuleName(ruleName, context),
+          rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
+          name = rewrittenRuleName, ///
+          opacity = rule.getOpacity(),
+          definitions = [
+            indirectlyRewrittenDefinition
+          ],
+          indirectlyRewrittenRule = new IndirectlyRewrittenRule(name, opacity, definitions);
+
+    return indirectlyRewrittenRule;
   }
 
   static fromRuleAndIndirectRule(rule, indirectRule, context) {
@@ -30,27 +44,12 @@ export default class IndirectlyRewrittenRule extends Rule {
 
     return indirectlyRewrittenRule;
   }
-
-  static fromIndirectRuleAndRule(indirectRule, rule, context) {
-    const ruleName = rule.getName(),
-          indirectRuleName = indirectRule.getName(),
-          indirectlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromRuleName(ruleName, context),
-          rewrittenRuleName = rewrittenRuleNameFromIndirectRuleName(indirectRuleName),
-          name = rewrittenRuleName, ///
-          opacity = indirectRule.getOpacity(),
-          definitions = [
-            indirectlyRewrittenDefinition
-          ],
-          indirectlyRewrittenRule = new IndirectlyRewrittenRule(name, opacity, definitions);
-
-    return indirectlyRewrittenRule;
-  }
 }
 
 export function indirectlyRewrittenRulesFromCycleAndCycles(context, indirectlyRewrittenRules = []) {
-  const cycleLength = context.getCycleLength();
+  const leftRecursiveCycleLength = context.getLeftRecursiveCycleLength();
 
-  switch (cycleLength) {
+  switch (leftRecursiveCycleLength) {
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
             indirectRule = context.getIndirectRule(),
@@ -64,7 +63,7 @@ export function indirectlyRewrittenRulesFromCycleAndCycles(context, indirectlyRe
       }
 
       if (indirectRuleRepeatable) {
-        const indirectlyRewrittenRule = IndirectlyRewrittenRule.fromIndirectRuleAndRule(indirectRule, rule, context);
+        const indirectlyRewrittenRule = IndirectlyRewrittenRule.fromRule(rule, context);
 
         indirectlyRewrittenRules.push(indirectlyRewrittenRule);
       }

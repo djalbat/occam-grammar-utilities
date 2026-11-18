@@ -31,9 +31,9 @@ export default class DirectlyRewrittenRule extends Rule {
 }
 
 export function directlyRewrittenRulesFromCycleAndCycles(context, directlyRewrittenRules = []) {
-  const cycleLength = context.getCycleLength();
+  const leftRecursiveCycleLength = context.getLeftRecursiveCycleLength();
 
-  switch (cycleLength) {
+  switch (leftRecursiveCycleLength) {
     case CYCLE_LENGTH_1: {
       const rule = context.getRule(),
             directlyRewrittenRule = DirectlyRewrittenRule.fromRule(rule, context);

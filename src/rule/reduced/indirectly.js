@@ -37,9 +37,9 @@ export default class IndirectlyReducedRule extends Rule {
 }
 
 export function indirectlyReducedRulesFromCycleAndCycles(context, indirectlyReducedRules = []) {
-  const cycleLength = context.getCycleLength();
+  const leftRecursiveCycleLength = context.getLeftRecursiveCycleLength();
 
-  switch (cycleLength) {
+  switch (leftRecursiveCycleLength) {
     case CYCLE_LENGTH_2: {
       const indirectRule = context.getIndirectRule(),
             indirectRuleRepetaable = isRuleRepeatable(indirectRule, context);

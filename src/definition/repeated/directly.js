@@ -3,8 +3,8 @@
 import { Definition } from "occam-parsers";
 
 import { repeatedRuleNameFromRuleName } from "../../utilities/ruleName";
+import { tailPartsfromDefinition, isDefinitionRepeatable, isDefinitionRightRecursive } from "../../utilities/definition";
 import { epsilonPartFromNothing, ruleNamePartFromRuleName, choiceOfPartsPartFromParts } from "../../utilities/part";
-import { isDefinitionConsuming, tailPartsfromDefinition, isDefinitionRepeatable, isDefinitionRightRecursive } from "../../utilities/definition";
 
 export default class DirectlyRepeatedDefinition extends Definition {
   static fromDefinitionAndRuleName(definition, ruleName, context) {
@@ -30,8 +30,6 @@ export default class DirectlyRepeatedDefinition extends Definition {
     const precedence = definition.getPrecedence(),
           directlyRepeatedDefinition = new DirectlyRepeatedDefinition(parts, precedence);
 
-    isDefinitionConsuming(directlyRepeatedDefinition, context);
-
     return directlyRepeatedDefinition;
   }
 
@@ -41,8 +39,6 @@ export default class DirectlyRepeatedDefinition extends Definition {
           parts = tailParts,  ///
           precedence = definition.getPrecedence(),
           directlyRepeatedDefinition = new DirectlyRepeatedDefinition(parts, precedence);
-
-    isDefinitionConsuming(directlyRepeatedDefinition, context);
 
     return directlyRepeatedDefinition;
   }

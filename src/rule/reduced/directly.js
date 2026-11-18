@@ -35,9 +35,9 @@ export default class DicrectlyReducedRule extends Rule {
 }
 
 export function directlyReducedRulesFromCycleAndCycles(context, directlyReducedRules = []) {
-  const cycleLength = context.getCycleLength();
+  const leftRecursiveCycleLength = context.getLeftRecursiveCycleLength();
 
-  switch (cycleLength) {
+  switch (leftRecursiveCycleLength) {
     case CYCLE_LENGTH_1: {
       const rule = context.getRule(),
             directlyReducedRule = DicrectlyReducedRule.fromRule(rule, context);

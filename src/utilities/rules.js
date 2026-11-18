@@ -10,6 +10,7 @@ import { directlyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/dire
 import { indirectlyReducedRulesFromCycleAndCycles } from "../rule/reduced/indirectly";
 import { indirectlyRepeatedRulesFromCycleAndCycles } from "../rule/repeated/indirectly";
 import { indirectlyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/indirectly";
+import { intermediateRepeatedRulesFromCycleAndCycles } from "../rule/repeated/intermediate";
 import { incidentallyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/incidentally"
 
 export function rewriteRules(leftRecursiveCycle, cycles, graph, ruleMap) {
@@ -23,17 +24,15 @@ export function rewriteRules(leftRecursiveCycle, cycles, graph, ruleMap) {
 
   createDirectlyRepeatedRules(context);
 
-  createIntermediateRules(context);
-
   createIndirectlyRewrittenRules(context);
 
   createIndirectlyReducedRules(context);
 
   createIndirectlyRepeatedRules(context);
-}
 
-export function replaceRules(leftRecursiveCycle, cycles, graph, ruleMap) {
-  const context = Context.fromLeftRecursiveCycleCyclesGraphAndRuleMap(leftRecursiveCycle, cycles, graph, ruleMap);
+  createIntermediateRepeatedRules(context);
+
+  createIntermediateRules(context);
 
   createReplacementRules(context);
 }
@@ -130,6 +129,18 @@ function createIndirectlyRewrittenRules(context) {
           rewrittenRuleName = indirectlyRewrittenRuleName;  ///
 
     ruleMap[rewrittenRuleName] = indirectlyRewrittenRule;
+  });
+}
+
+function createIntermediateRepeatedRules(context) {
+  const ruleMap = context.getRuleMap(),
+        intermediateRepeatedRules = intermediateRepeatedRulesFromCycleAndCycles(context);
+
+  intermediateRepeatedRules.forEach((intermediateRepeatedRule) => {
+    const intermediateRepeatedRuleName = intermediateRepeatedRule.getName(),
+          repetaedRuleName = intermediateRepeatedRuleName;  ///
+
+    ruleMap[repetaedRuleName] = intermediateRepeatedRule;
   });
 }
 

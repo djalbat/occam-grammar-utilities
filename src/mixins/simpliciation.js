@@ -22,6 +22,67 @@ function lift() {
   return remainingChildNodes;
 }
 
+function climb() {
+  let removedChildNodes;
+
+  removedChildNodes = this.removeChildNodes();
+
+  const parentNode = this.getParentNode(),
+        replacedChildNode = this,  ///
+        replacementChildNodes = removedChildNodes; ///
+
+  parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+
+  removedChildNodes = parentNode.removeChildNodes();
+
+  const appendedChildNode = this; ///
+
+  parentNode.appendChildNode(appendedChildNode);
+
+  const appendedChildNodes = removedChildNodes; ///
+
+  this.appendChildNodes(appendedChildNodes);
+
+  const remainingChildNodes = appendedChildNodes; ///
+
+  return remainingChildNodes;
+}
+
+function ascend() {
+  const removedChildNodes = this.removeChildNodes();
+
+  let parentNode;
+
+  parentNode = this.getParentNode();
+
+  const replacedChildNode = parentNode; ///
+
+  parentNode = parentNode.getParentNode();
+
+  this.remove();
+
+  const replacementChildNode = this,  ///
+        replacementChildNodes = [
+          replacementChildNode
+        ];
+
+  parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+
+  const appendedChildNode = replacedChildNode;  ///
+
+  this.appendChildNode(appendedChildNode);
+
+  parentNode = appendedChildNode; ///
+
+  const appendedChildNodes = removedChildNodes; ///
+
+  parentNode.appendChildNodes(appendedChildNodes);
+
+  const remainingChildNodes = appendedChildNodes;
+
+  return remainingChildNodes;
+}
+
 function rotate() {
   let parentNode;
 
@@ -82,6 +143,8 @@ function simplifyChildNodes(state) {
 
 const simpliciationMixins = {
   lift,
+  climb,
+  ascend,
   rotate,
   overwrite,
   simplifyChildNodes

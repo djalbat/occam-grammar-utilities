@@ -1,47 +1,20 @@
 "use strict";
 
 import { Rule } from "occam-parsers";
-import { arrayUtilities } from "necessary";
 
 import RepeatedNode from "../../node/repeated";
+import IndirectlyRepeatedDefinition from "../../definition/repeated/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
 import { isRuleRepeatable } from "../../utilities/rule";
-import { repeatedRuleNameFromRuleName, repeatedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
-import { indirectlyRepeatedDefinitionsFromDefinitionsRuleNameIndirectRuleNameAndPrecedence,
-         indirectlyRepeatedDefinitionsFromDefinitionsIndirectRuleNameRuleNameAndPrecedence } from "../../definition/repeated/indirectly";
-
-const { push } = arrayUtilities;
+import { repeatedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
+import { isDefinitionRepeatable, isDefinitionSingular } from "../../utilities/definition";
 
 export default class IndirectlyRepeatedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
     const NonTerminalNode = RepeatedNode; ///
 
     return NonTerminalNode;
-  }
-
-  static fromRuleAndIndirectRule(rule, indirectRule, context) {
-    const ruleName = rule.getName();
-
-    let definitions;
-
-    definitions = rule.getDefinitions();
-
-    definitions = definitions.reduce((definitions, definition) => {
-      const precedence = definition.getPrecedence(),
-            indirectlyRepeatedDefinitions = indirectlRepeatedDefinitionsFromIndirectRuleRuleNameAndPrecedence(indirectRule, ruleName, precedence, context);
-
-      push(definitions, indirectlyRepeatedDefinitions);
-
-      return definitions;
-    }, []);
-
-    const repeatedRuleName = repeatedRuleNameFromRuleName(ruleName),
-          name = repeatedRuleName, ///
-          opacity = rule.getOpacity(),
-          indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions);
-
-    return indirectlyRepeatedRule;
   }
 
   static fromIndirectRuleAndRule(indirectRule, rule, context) {
@@ -51,42 +24,44 @@ export default class IndirectlyRepeatedRule extends Rule {
 
     definitions = indirectRule.getDefinitions();
 
-    definitions = definitions.reduce((definitions, definition) => {
-      const precedence = definition.getPrecedence(),
-            indirectlyRepeatedDefinitions = indirectlRepeatedDefinitionsFromRuleIndirectRuleNameAndPrecedence(rule, indirectRuleName, precedence, context);
+    const indirectlyRepeatedDefinitions = definitions.reduce((indirectlyRepeatedDefinitions, definition) => {
+      const definitionSingular = isDefinitionSingular(definition, indirectRuleName, context),
+            definitionRepeatable = isDefinitionRepeatable(definition, indirectRuleName, context);
 
-      push(definitions, indirectlyRepeatedDefinitions);
+      if (definitionSingular || definitionRepeatable) {
+        const ruleName = rule.getName(),
+              precedence = definition.getPrecedence(),
+              indirectlyRepeatedDefinition = IndirectlyRepeatedDefinition.fromRuleNameAndPrecedence(ruleName, precedence, context);
 
-      return definitions;
+        indirectlyRepeatedDefinitions.push(indirectlyRepeatedDefinition);
+      }
+
+      return indirectlyRepeatedDefinitions;
     }, []);
 
     const repeatedRuleName = repeatedRuleNameFromIndirectRuleName(indirectRuleName),
           name = repeatedRuleName, ///
-          opacity = indirectRule.getOpacity(),
-          indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions);
+          opacity = indirectRule.getOpacity();
+
+    definitions = indirectlyRepeatedDefinitions;  ///
+
+    const indirectlyRepeatedRule = new IndirectlyRepeatedRule(name, opacity, definitions);
 
     return indirectlyRepeatedRule;
   }
 }
 
 export function indirectlyRepeatedRulesFromCycleAndCycles(context, indirectlyRepeatedRules = []) {
-  const cycleLength = context.getCycleLength();
+  const leftRecursiveCycleLength = context.getLeftRecursiveCycleLength();
 
-  switch (cycleLength) {
+  switch (leftRecursiveCycleLength) {
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
             indirectRule = context.getIndirectRule(),
-            ruleRepeatable = isRuleRepeatable(rule, context),
-            indirectRuleRepeatable = isRuleRepeatable(indirectRule, context);
+            ruleRepeatable = isRuleRepeatable(rule, context);
 
       if (ruleRepeatable) {
         const indirectlyRepeatedRule = IndirectlyRepeatedRule.fromIndirectRuleAndRule(indirectRule, rule, context);
-
-        indirectlyRepeatedRules.push(indirectlyRepeatedRule);
-      }
-
-      if (indirectRuleRepeatable) {
-        const indirectlyRepeatedRule = IndirectlyRepeatedRule.fromRuleAndIndirectRule(rule, indirectRule, context);
 
         indirectlyRepeatedRules.push(indirectlyRepeatedRule);
       }
@@ -96,26 +71,4 @@ export function indirectlyRepeatedRulesFromCycleAndCycles(context, indirectlyRep
   }
 
   return indirectlyRepeatedRules;
-}
-
-function indirectlRepeatedDefinitionsFromIndirectRuleRuleNameAndPrecedence(indirectRule, ruleName, precedence, context) {
-  let definitions;
-
-  definitions = indirectRule.getDefinitions();
-
-  const indirectRuleName = indirectRule.getName(),
-        indirectlyRepeatedDefinitions = indirectlyRepeatedDefinitionsFromDefinitionsIndirectRuleNameRuleNameAndPrecedence(definitions, indirectRuleName, ruleName, precedence, context);
-
-  return indirectlyRepeatedDefinitions;
-}
-
-function indirectlRepeatedDefinitionsFromRuleIndirectRuleNameAndPrecedence(rule, indirectRuleName, precedence, context) {
-  let definitions;
-
-  definitions = rule.getDefinitions();
-
-  const ruleName = rule.getName(),
-        indirectlyRepeatedDefinitions = indirectlyRepeatedDefinitionsFromDefinitionsRuleNameIndirectRuleNameAndPrecedence(definitions, ruleName, indirectRuleName, precedence, context);
-
-  return indirectlyRepeatedDefinitions;
 }

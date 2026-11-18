@@ -44,14 +44,6 @@ export function ruleNameFromRepeatableDefinition(repeatableDefinition) {
   return ruleName;
 }
 
-export function isDefinitionConsuming(definition, context) {
-  const ruleMap = context.getRuleMap(),
-        visitedRules = [],
-        checkForCutParts = true;
-
-  definition.isConsuming(ruleMap, visitedRules, checkForCutParts);
-}
-
 export function isDefinitionSingular(definition, ruleName, context) {
   let definitionSingular = false;
 
@@ -127,7 +119,6 @@ export default {
   partsfromDefinition,
   tailPartsfromDefinition,
   ruleNameFromRepeatableDefinition,
-  isDefinitionConsuming,
   isDefinitionSingular,
   isDefinitionReducible,
   isDefinitionRepeatable

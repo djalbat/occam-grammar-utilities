@@ -52,11 +52,10 @@ export default class Context {
     return this.incidentalRuleNames;
   }
 
-  getRule() {
-    const ruleName = this.getRuleName(),
-          rule = this.ruleMap[ruleName];
+  getLeftRecursiveCycleLength() {
+    const leftRecursiveCycleLength = this.leftRecursiveCycle.getLength();
 
-    return rule;
+    return leftRecursiveCycleLength;
   }
 
   getRuleNames() {
@@ -73,10 +72,11 @@ export default class Context {
     return ruleNames;
   }
 
-  getCycleLength() {
-    const leftRecursiveCycleLength = this.leftRecursiveCycle.getLength();
+  getRule() {
+    const ruleName = this.getRuleName(),
+          rule = this.ruleMap[ruleName];
 
-    return leftRecursiveCycleLength;
+    return rule;
   }
 
   getIndirectRule() {
@@ -89,20 +89,6 @@ export default class Context {
     }
 
     return indirectRule;
-  }
-
-  isCycleDirect() {
-    const cycleLength = this.getCycleLength(),
-          cycleDirect = (cycleLength === CYCLE_LENGTH_1);
-
-    return cycleDirect;
-  }
-
-  isCycleIndirect() {
-    const cycleDirect = this.isCycleDirect(),
-          cycleIndirect = !cycleDirect;
-
-    return cycleIndirect;
   }
 
   static fromLeftRecursiveCycleCyclesGraphAndRuleMap(leftRecursiveCycle, cycles, graph, ruleMap) {

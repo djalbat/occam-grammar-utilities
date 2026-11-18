@@ -5,7 +5,6 @@ import { Rule } from "occam-parsers";
 import ReplacementNode from "../node/replacement";
 import ReplacementDefinition from "../definition/replacement";
 
-import { isRuleRepeatable } from "../utilities/rule";
 import { CYCLE_LENGTH_1, CYCLE_LENGTH_2 } from "../constants";
 
 export default class ReplacementRule extends Rule {
@@ -27,25 +26,12 @@ export default class ReplacementRule extends Rule {
 
     return replacementRule;
   }
-
-  static fromIndirectRule(indirectRule, context) {
-    const indirectRuleName = indirectRule.getName(),
-          replacementDefinition = ReplacementDefinition.fromIndirectRuleName(indirectRuleName),
-          name = indirectRuleName, ///
-          opacity = null,
-          definitions = [
-            replacementDefinition
-          ],
-          replacementRule = new ReplacementRule(name, opacity, definitions);
-
-    return replacementRule;
-  }
 }
 
 export function replacementRulesFromCycleAndCycles(context, replacementRules = []) {
-  const cycleLength = context.getCycleLength();
+  const leftRecursiveCycleLength = context.getLeftRecursiveCycleLength();
 
-  switch (cycleLength) {
+  switch (leftRecursiveCycleLength) {
     case CYCLE_LENGTH_1: {
       const rule = context.getRule(),
             replacementRule = ReplacementRule.fromRule(rule, context);
@@ -57,21 +43,9 @@ export function replacementRulesFromCycleAndCycles(context, replacementRules = [
 
     case CYCLE_LENGTH_2: {
       const rule = context.getRule(),
-            indirectRule = context.getIndirectRule(),
-            ruleRepeatable = isRuleRepeatable(rule, context),
-            indirectRuleRepeatable = isRuleRepeatable(indirectRule, context);
+            replacementRule = ReplacementRule.fromRule(rule, context);
 
-      if (ruleRepeatable) {
-        const replacementRule = ReplacementRule.fromRule(rule, context);
-
-        replacementRules.push(replacementRule);
-      }
-
-      if (indirectRuleRepeatable) {
-        const replacementRule = ReplacementRule.fromIndirectRule(indirectRule, context);
-
-        replacementRules.push(replacementRule);
-      }
+      replacementRules.push(replacementRule);
 
       break;
     }
