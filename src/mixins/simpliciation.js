@@ -2,10 +2,16 @@
 
 function lift() {
   const index = this.getIndex(),
+        opacity = this.getOpacity(),
         parentNode = this.getParentNode(),
+        precedence = this.getPrecedence(),
         removedChildNodes = this.removeChildNodes(),
         replacedChildNode = this,  ///
         replacementChildNodes = removedChildNodes; ///
+
+  parentNode.setOpacity(opacity);
+
+  parentNode.setPrecedence(precedence);
 
   const startIndex = index + 1,
         childNodes = parentNode.getChildNodes(),
@@ -106,6 +112,22 @@ function rotate() {
   return remainingChildNodes;
 }
 
+function disappear() {
+  const index = this.getIndex(),
+        parentNode = this.getParentNode(),
+        removedChildNodes = this.removeChildNodes(),
+        replacedChildNode = this,  ///
+        replacementChildNodes = removedChildNodes; ///
+
+  const startIndex = index + 1,
+        childNodes = parentNode.getChildNodes(),
+        remainingChildNodes = childNodes.slice(startIndex);
+
+  parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+
+  return remainingChildNodes;
+}
+
 function overwrite(state) {
   const opacity = this.getOpacity(),
         parentNode = this.getParentNode(),
@@ -140,6 +162,7 @@ const simpliciationMixins = {
   climb,
   ascend,
   rotate,
+  disappear,
   overwrite,
   simplifyChildNodes
 };

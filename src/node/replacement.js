@@ -17,11 +17,11 @@ class ReplacementNode extends NonTerminalNode {
   }
 
   simplify(state) {
+    const terminate = false;
+
     this.simplifyChildNodes(state);
 
     this.liftSingleChildNode();
-
-    const terminate = false;
 
     return terminate;
   }

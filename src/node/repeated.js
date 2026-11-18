@@ -21,13 +21,12 @@ class RepeatedNode extends NonTerminalNode {
       return;
     }
 
-    const remamingChildNodes = this.rotate();
+    const terminate = true,
+          remamingChildNodes = this.rotate();
 
     simplifyChildNodes(remamingChildNodes, state);
 
     this.overwrite(state);
-
-    const terminate = true;
 
     return terminate;
   }

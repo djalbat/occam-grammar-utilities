@@ -2,16 +2,16 @@
 
 import { Rule } from "occam-parsers";
 
-import ReducedNode from "../../node/reduced";
+import IndirectlyReducedNode from "../../node/reduced/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
-import { isRuleRepeatable } from "../../utilities/rule";
-import { reducedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
+import { isRuleReducible } from "../../utilities/rule";
 import { indirectlyReducedDefinitionsFromDefinitions } from "../../definition/reduced/indirectly";
+import { indirectlyReducedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
 
 export default class IndirectlyReducedRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
-    const NonTerminalNode = ReducedNode;  ///
+    const NonTerminalNode = IndirectlyReducedNode;  ///
 
     return NonTerminalNode;
   }
@@ -24,8 +24,8 @@ export default class IndirectlyReducedRule extends Rule {
     definitions = indirectRule.getDefinitions();
 
     const indirectlyReducedDefinitions = indirectlyReducedDefinitionsFromDefinitions(definitions, context),
-          reducedRuleName = reducedRuleNameFromIndirectRuleName(indirectRuleName),
-          name = reducedRuleName, ///
+          indirectlyReducedRuleName = indirectlyReducedRuleNameFromIndirectRuleName(indirectRuleName),
+          name = indirectlyReducedRuleName, ///
           opacity = indirectRule.getOpacity();
 
     definitions = indirectlyReducedDefinitions; ///
@@ -42,9 +42,9 @@ export function indirectlyReducedRulesFromCycleAndCycles(context, indirectlyRedu
   switch (leftRecursiveCycleLength) {
     case CYCLE_LENGTH_2: {
       const indirectRule = context.getIndirectRule(),
-            indirectRuleRepetaable = isRuleRepeatable(indirectRule, context);
+            indirectRuleReducible = isRuleReducible(indirectRule, context);
 
-      if (!indirectRuleRepetaable) {
+      if (indirectRuleReducible) {
         const indirectlyReducedRule = IndirectlyReducedRule.fromIndirectRule(indirectRule, context);
 
         indirectlyReducedRules.push(indirectlyReducedRule);

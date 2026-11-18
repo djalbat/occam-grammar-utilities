@@ -21,6 +21,8 @@ class RepeatedNodeIntermediate extends NonTerminalNode {
       return;
     }
 
+    const terminate = true;
+
     this.climb();
 
     const remamingChildNodes = this.ascend();
@@ -28,8 +30,6 @@ class RepeatedNodeIntermediate extends NonTerminalNode {
     simplifyChildNodes(remamingChildNodes, state);
 
     this.overwrite(state);
-
-    const terminate = true;
 
     return terminate;
   }

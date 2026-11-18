@@ -3,9 +3,12 @@
 import { Definition } from "occam-parsers";
 
 import { ruleNamePartFromRuleName, optionalPartPartFromPart } from "../../utilities/part";
-import { reducedRuleNameFromRuleName, repeatedRuleNameFromIndirectRuleName, intermediateRepeatedRuleNameFromRuleName, reducedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
+import { reducedRuleNameFromRuleName,
+         repeatedRuleNameFromIndirectRuleName,
+         intermediateRepeatedRuleNameFromRuleName,
+         indirectlyReducedRuleNameFromIndirectRuleName } from "../../utilities/ruleName";
 
-export default class InindirectlyDirectlyRewrittenDefinition extends Definition {
+export default class IndirectlyRewrittenDefinition extends Definition {
   static fromRuleName(ruleName, context) {
     const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           intermediateRepeatedRuleName = intermediateRepeatedRuleNameFromRuleName(ruleName),
@@ -17,13 +20,29 @@ export default class InindirectlyDirectlyRewrittenDefinition extends Definition 
             optionalInindirectlyDirectlyIntermediateRepeatedRuleNamePartPart
           ],
           precedence = null,
-          indirectlyRewrittenDefinition = new InindirectlyDirectlyRewrittenDefinition(parts, precedence);
+          indirectlyRewrittenDefinition = new IndirectlyRewrittenDefinition(parts, precedence);
 
     return indirectlyRewrittenDefinition;
   }
 
   static fromIndirectRuleName(indirectRuleName, context) {
-    const reducedRuleName = reducedRuleNameFromIndirectRuleName(indirectRuleName),
+    const repeatedRuleName = repeatedRuleNameFromIndirectRuleName(indirectRuleName),
+          indirectlyReducedRuleName = indirectlyReducedRuleNameFromIndirectRuleName(indirectRuleName),
+          repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
+          indirectlyReducedRuleNamePart = ruleNamePartFromRuleName(indirectlyReducedRuleName),
+          optionalInindirectlyDirectlyRepeatedRuleNamePartPart = optionalPartPartFromPart(repeatedRuleNamePart),
+          parts = [
+            indirectlyReducedRuleNamePart,
+            optionalInindirectlyDirectlyRepeatedRuleNamePartPart
+          ],
+          precedence = null,
+          indirectlyRewrittenDefinition = new IndirectlyRewrittenDefinition(parts, precedence);
+
+    return indirectlyRewrittenDefinition;
+  }
+
+  static fromIndirectRuleNameAndRuleName(indirectRuleName, ruleName, context) {
+    const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           repeatedRuleName = repeatedRuleNameFromIndirectRuleName(indirectRuleName),
           reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
           repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
@@ -33,7 +52,7 @@ export default class InindirectlyDirectlyRewrittenDefinition extends Definition 
             optionalInindirectlyDirectlyRepeatedRuleNamePartPart
           ],
           precedence = null,
-          indirectlyRewrittenDefinition = new InindirectlyDirectlyRewrittenDefinition(parts, precedence);
+          indirectlyRewrittenDefinition = new IndirectlyRewrittenDefinition(parts, precedence);
 
     return indirectlyRewrittenDefinition;
   }

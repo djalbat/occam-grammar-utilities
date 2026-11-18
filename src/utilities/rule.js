@@ -1,6 +1,6 @@
 "use strict";
 
-import { isDefinitionSingular, isDefinitionRepeatable } from "../utilities/definition";
+import { isDefinitionSingular, isDefinitionReducible, isDefinitionRepeatable } from "../utilities/definition";
 
 export function isRuleSingular(rule, context) {
   const ruleName = rule.getName(),
@@ -14,6 +14,20 @@ export function isRuleSingular(rule, context) {
         });
 
   return ruleSingular;
+}
+
+export function isRuleReducible(rule, context) {
+  const ruleName = rule.getName(),
+        definitions = rule.getDefinitions(),
+        ruleReducible = definitions.some((definition) => {
+          const definitionReducible = isDefinitionReducible(definition, ruleName, context);
+
+          if (definitionReducible) {
+            return true;
+          }
+        });
+
+  return ruleReducible;
 }
 
 export function isRuleRepeatable(rule, context) {

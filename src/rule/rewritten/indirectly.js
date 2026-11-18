@@ -6,8 +6,8 @@ import RewrittenNode from "../../node/rewritten";
 import IndirectlyRewrittenDefinition from "../../definition/rewritten/indirectly";
 
 import { CYCLE_LENGTH_2 } from "../../constants";
-import { isRuleRepeatable } from "../../utilities/rule";
 import { rewrittenRuleNameFromRuleName } from "../../utilities/ruleName";
+import { isRuleReducible, isRuleRepeatable } from "../../utilities/rule";
 
 export default class IndirectlyRewrittenRule extends Rule {
   NonTerminalNodeFromRuleName(ruleName, state) {
@@ -33,7 +33,10 @@ export default class IndirectlyRewrittenRule extends Rule {
   static fromRuleAndIndirectRule(rule, indirectRule, context) {
     const ruleName = rule.getName(),
           indirectRuleName = indirectRule.getName(),
-          indirectlyRewrittenDefinition = IndirectlyRewrittenDefinition.fromIndirectRuleName(indirectRuleName, context),
+          indirectRuleReducible = isRuleReducible(indirectRule, context),
+          indirectlyRewrittenDefinition = indirectRuleReducible ?
+                                            IndirectlyRewrittenDefinition.fromIndirectRuleName(indirectRuleName, context) :
+                                              IndirectlyRewrittenDefinition.fromIndirectRuleNameAndRuleName(indirectRuleName, ruleName, context),
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName, ///
           opacity = rule.getOpacity(),

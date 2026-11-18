@@ -14,11 +14,11 @@ class RewrittenNode extends NonTerminalNode {
   }
 
   simplify(state) {
+    const terminate = false;
+
     this.simplifyChildNodes(state);
 
     this.overwrite(state);
-
-    const terminate = false;
 
     return terminate;
   }

@@ -21,13 +21,12 @@ class IntermediateNode extends NonTerminalNode {
       return;
     }
 
-    const remainingChildNodes = this.rotate();
+    const terminate = true,
+          remainingChildNodes = this.rotate();
 
     simplifyChildNodes(remainingChildNodes, state);
 
     this.overwrite(state);
-
-    const terminate = true;
 
     return terminate;
   }
