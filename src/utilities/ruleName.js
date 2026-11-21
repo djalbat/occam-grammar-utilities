@@ -2,6 +2,12 @@
 
 import { EMPTY_STRING } from "../constants";
 
+export function ruleNameFromReducedRuleName(reducedRuleName) {
+  const ruleName = reducedRuleName.replace(/_$/g, EMPTY_STRING);
+
+  return ruleName;
+}
+
 export function ruleNameFromRepeatedRuleName(repeatedRuleName) {
   const ruleName = repeatedRuleName.replace(/~$/g, EMPTY_STRING);
 
@@ -16,6 +22,12 @@ export function ruleNameFromRewrittenRuleName(rewrittenRuleName) {
 
 export function ruleNameFromIntermediateRuleName(intermediateRuleName) {
   const ruleName = intermediateRuleName.replace(/^~/g, EMPTY_STRING);
+
+  return ruleName;
+}
+
+export function ruleNameFromIndirectlyReducedRuleName(indirectlyReducedRuleName) {
+  const ruleName = indirectlyReducedRuleName.replace(/_/g, EMPTY_STRING);
 
   return ruleName;
 }

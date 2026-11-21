@@ -2,7 +2,7 @@
 
 import { Definition } from "occam-parsers";
 
-import { ruleNamePartFromRuleName, optionalPartPartFromPart } from "../../utilities/part";
+import { ruleNamePartFromRuleName, optionalPartPartFromPart, choiceOfPartsPartFromParts } from "../../utilities/part";
 import { reducedRuleNameFromRuleName,
          repeatedRuleNameFromIndirectRuleName,
          intermediateRepeatedRuleNameFromRuleName,
@@ -25,17 +25,30 @@ export default class IndirectlyRewrittenDefinition extends Definition {
     return indirectlyRewrittenDefinition;
   }
 
-  static fromIndirectRuleName(indirectRuleName, context) {
-    const repeatedRuleName = repeatedRuleNameFromIndirectRuleName(indirectRuleName),
+  static fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, context) {
+    const reducedRuleName = reducedRuleNameFromRuleName(ruleName),
           indirectlyReducedRuleName = indirectlyReducedRuleNameFromIndirectRuleName(indirectRuleName),
+          reduceddRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
+          indirectlyReducedRuleNamePart = ruleNamePartFromRuleName(indirectlyReducedRuleName);
+
+    let parts;
+
+    parts = [
+      reduceddRuleNamePart,
+      indirectlyReducedRuleNamePart
+    ];
+
+    const choiceOfPartsPart = choiceOfPartsPartFromParts(parts),
+          repeatedRuleName = repeatedRuleNameFromIndirectRuleName(indirectRuleName),
           repeatedRuleNamePart = ruleNamePartFromRuleName(repeatedRuleName),
-          indirectlyReducedRuleNamePart = ruleNamePartFromRuleName(indirectlyReducedRuleName),
-          optionalInindirectlyDirectlyRepeatedRuleNamePartPart = optionalPartPartFromPart(repeatedRuleNamePart),
-          parts = [
-            indirectlyReducedRuleNamePart,
-            optionalInindirectlyDirectlyRepeatedRuleNamePartPart
-          ],
-          precedence = null,
+          optionalInindirectlyDirectlyRepeatedRuleNamePartPart = optionalPartPartFromPart(repeatedRuleNamePart);
+
+    parts = [
+      choiceOfPartsPart,
+      optionalInindirectlyDirectlyRepeatedRuleNamePartPart
+    ];
+
+    const precedence = null,
           indirectlyRewrittenDefinition = new IndirectlyRewrittenDefinition(parts, precedence);
 
     return indirectlyRewrittenDefinition;

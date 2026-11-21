@@ -2,9 +2,7 @@
 
 import { Definition } from "occam-parsers";
 
-import { ruleNamePartFromRuleName } from "../../utilities/part";
-import { reducedRuleNameFromRuleName } from "../../utilities/ruleName";
-import { partsfromDefinition, isDefinitionSingular, isDefinitionRepeatable } from "../../utilities/definition";
+import { partsfromDefinition, isDefinitionReducible } from "../../utilities/definition";
 
 export default class IndirectlyReducedDefinition extends Definition {
   static fromDefinition(definition, context) {
@@ -14,44 +12,24 @@ export default class IndirectlyReducedDefinition extends Definition {
 
     return indirectlyReducedDefinition;
   }
-
-  static fromSingularDefinition(singularDefinition, context) {
-    const ruleName = context.getRuleName(),
-          reducedRuleName = reducedRuleNameFromRuleName(ruleName),
-          reducedRuleNamePart = ruleNamePartFromRuleName(reducedRuleName),
-          parts = [
-            reducedRuleNamePart
-          ],
-          precedence = singularDefinition.getPrecedence(),
-          indirectlyReducedDefinition = new IndirectlyReducedDefinition(parts, precedence);
-
-    return indirectlyReducedDefinition;
-  }
 }
 
 export function indirectlyReducedDefinitionsFromDefinitions(definitions, context) {
   const indirectRuleName = context.getIndirectRuleName(),
-        indirectlyReducedDefinitions = definitions.map((definition) => {
+        indirectlyReducedDefinitions = definitions.reduce((indirectlyReducedDefinitions, definition) => {
           let indirectlyReducedDefinition;
 
           const ruleName = indirectRuleName,  ///
-                definitionSinglular = isDefinitionSingular(definition, ruleName, context),
-                definitionRepeatable = isDefinitionRepeatable(definition, ruleName, context);
+                definitionReducible = isDefinitionReducible(definition, ruleName, context);
 
-          if (false) {
-            ///
-          } else if (definitionSinglular) {
-            const singularDefinition = definition;  ///
-
-            indirectlyReducedDefinition = IndirectlyReducedDefinition.fromSingularDefinition(singularDefinition, context);
-          } else if (definitionRepeatable) {
-            debugger
-          } else {
+          if (definitionReducible) {
             indirectlyReducedDefinition = IndirectlyReducedDefinition.fromDefinition(definition, context);
+
+            indirectlyReducedDefinitions.push(indirectlyReducedDefinition);
           }
 
-          return indirectlyReducedDefinition;
-        });
+          return indirectlyReducedDefinitions;
+        }, []);
 
   return indirectlyReducedDefinitions;
 }

@@ -35,7 +35,7 @@ export default class IndirectlyRewrittenRule extends Rule {
           indirectRuleName = indirectRule.getName(),
           indirectRuleReducible = isRuleReducible(indirectRule, context),
           indirectlyRewrittenDefinition = indirectRuleReducible ?
-                                            IndirectlyRewrittenDefinition.fromIndirectRuleName(indirectRuleName, context) :
+                                            IndirectlyRewrittenDefinition.fromRuleNameAndIndirectRuleName(ruleName, indirectRuleName, context) :
                                               IndirectlyRewrittenDefinition.fromIndirectRuleNameAndRuleName(indirectRuleName, ruleName, context),
           rewrittenRuleName = rewrittenRuleNameFromRuleName(ruleName),
           name = rewrittenRuleName, ///

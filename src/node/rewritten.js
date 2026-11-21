@@ -4,6 +4,7 @@ import { NonTerminalNode } from "occam-parsers";
 
 import simpliciationMixins from  "../mixins/simpliciation";
 
+import { simplifyChildNodes } from "../utilities/simplification";
 import { ruleNameFromRewrittenRuleName } from "../utilities/ruleName";
 
 class RewrittenNode extends NonTerminalNode {
@@ -13,12 +14,24 @@ class RewrittenNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(state) {
-    const terminate = false;
+  simplify(alternate, state) {
+    let terminate = false;
 
-    this.simplifyChildNodes(state);
+    const congruent = this.isCongruent()
 
-    this.overwrite(state);
+    let childNodes;
+
+    if (alternate || congruent) {
+      childNodes = this.flatten(state);
+
+      alternate = congruent;  ///
+
+      terminate = true;
+    } else {
+      childNodes = this.overwrite(state);
+    }
+
+    simplifyChildNodes(childNodes, alternate, state);
 
     return terminate;
   }
@@ -35,6 +48,39 @@ class RewrittenNode extends NonTerminalNode {
     const baseRuleName = ruleName;  ///
 
     return baseRuleName;
+  }
+
+  isCongruent() {
+    let congruent = false;
+
+    const singular = this.isSingular();
+
+    if (singular) {
+      const singleChildNode = this.getSingleChildNode(),
+            singleChildNodeNonTerminalNode = singleChildNode.isNonTerminalNode();
+
+      if (singleChildNodeNonTerminalNode) {
+        const singleChildNonTerminalNode = singleChildNode, ///
+              singleChildNonTerminalNodeSingular = singleChildNonTerminalNode.isSingular();
+
+        if (singleChildNonTerminalNodeSingular) {
+          const singleGrandchildNode = singleChildNode.getSingleChildNode(), ///
+                singleGrandchildNodeNonTerminalNode = singleGrandchildNode.isNonTerminalNode();
+
+          if (singleGrandchildNodeNonTerminalNode) {
+            const baseRuleName = this.getBaseRuleName(),
+                  singleGrandchildNonTerminalNode = singleGrandchildNode, ///
+                  singleGrandchildNonTerminalNodeBaseRuleName = singleGrandchildNonTerminalNode.getBaseRuleName();
+
+            if (baseRuleName === singleGrandchildNonTerminalNodeBaseRuleName) {
+              congruent = true;
+            }
+          }
+        }
+      }
+    }
+
+    return congruent;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RewrittenNode, ruleName, childNodes, precedence, opacity); }

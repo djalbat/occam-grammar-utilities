@@ -5,6 +5,8 @@ import { NonTerminalNode } from "occam-parsers";
 import State from "../state";
 import simpliciationMixins from  "../mixins/simpliciation";
 
+import { simplifyChildNodes } from "../utilities/simplification";
+
 class ReplacementNode extends NonTerminalNode {
   rewrite(state) {
     let nonTerminalNode;
@@ -17,13 +19,18 @@ class ReplacementNode extends NonTerminalNode {
   }
 
   simplify(state) {
-    const terminate = false;
+    const alternate = false,
+          childNodes = this.getChildNodes();
 
-    this.simplifyChildNodes(state);
+    simplifyChildNodes(childNodes, alternate, state);
 
     this.liftSingleChildNode();
+  }
 
-    return terminate;
+  getBaseRuleName() {
+    const baseRuleName = null;  ///
+
+    return baseRuleName;
   }
 
   liftSingleChildNode() {

@@ -7,8 +7,6 @@ import simpliciationMixins from  "../mixins/simpliciation";
 import { simplifyChildNodes } from "../utilities/simplification";
 import { ruleNameFromRepeatedRuleName } from "../utilities/ruleName";
 
-let count = Infinity;
-
 class RepeatedNode extends NonTerminalNode {
   rewrite(state) {
     const nonTerminalNode = this; ///
@@ -16,17 +14,20 @@ class RepeatedNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(state) {
-    if (count-- === 0) {
-      return;
+  simplify(alternate, state) {
+    const terminate = true;
+
+    if (alternate) {
+      const remainingChildNodes = this.flatten();
+
+      simplifyChildNodes(remainingChildNodes, alternate, state);
+    } else {
+      const remainingChildNodes = this.rotate();
+
+      this.overwrite(state);
+
+      simplifyChildNodes(remainingChildNodes, alternate, state);
     }
-
-    const terminate = true,
-          remamingChildNodes = this.rotate();
-
-    simplifyChildNodes(remamingChildNodes, state);
-
-    this.overwrite(state);
 
     return terminate;
   }

@@ -7,29 +7,20 @@ import simpliciationMixins from  "../../mixins/simpliciation";
 import { simplifyChildNodes } from "../../utilities/simplification";
 import { ruleNameFromIntermediateRepeatedRuleName } from "../../utilities/ruleName";
 
-let count = Infinity;
-
-class RepeatedNodeIntermediate extends NonTerminalNode {
+class IntermediateRepeatedNode extends NonTerminalNode {
   rewrite(state) {
     const nonTerminalNode = this; ///
 
     return nonTerminalNode;
   }
 
-  simplify(state) {
-    if (count-- === 0) {
-      return;
-    }
-
-    const terminate = true;
-
-    this.climb();
-
-    const remamingChildNodes = this.ascend();
-
-    simplifyChildNodes(remamingChildNodes, state);
+  simplify(alternate, state) {
+    const terminate = true,
+          remamingChildNodes = this.ascend();
 
     this.overwrite(state);
+
+    simplifyChildNodes(remamingChildNodes, alternate, state);
 
     return terminate;
   }
@@ -48,9 +39,9 @@ class RepeatedNodeIntermediate extends NonTerminalNode {
     return baseRuleName;
   }
 
-  static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RepeatedNodeIntermediate, ruleName, childNodes, precedence, opacity); }
+  static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(IntermediateRepeatedNode, ruleName, childNodes, precedence, opacity); }
 }
 
-Object.assign(RepeatedNodeIntermediate.prototype, simpliciationMixins);
+Object.assign(IntermediateRepeatedNode.prototype, simpliciationMixins);
 
-export default RepeatedNodeIntermediate;
+export default IntermediateRepeatedNode;

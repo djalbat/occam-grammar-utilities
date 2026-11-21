@@ -1617,7 +1617,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two", () => {
+  describe("a cycle of length two", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -1829,7 +1829,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with precedence", () => {
+  describe("a cycle of length two with precedence", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -1992,7 +1992,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion", () => {
+  describe("a cycle of length two with right recursion", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -2155,7 +2155,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion and a cut", () => {
+  describe("a cycle of length two with right recursion and a cut", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -2367,7 +2367,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion, a cut and intermediate recursion", () => {
+  describe("a cycle of length two with right recursion, a cut and intermediate recursion", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -2493,7 +2493,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion, precedence, one definition with a cut and the other without ", () => {
+  describe("a cycle of length two with right recursion, precedence, one definition with a cut and the other without ", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -2742,7 +2742,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with right recursion, together with definitions suitable to parsing polynomials ", () => {
+  describe("a cycle of length two with right recursion, together with definitions suitable to parsing polynomials ", () => {
     let bnf = `
   
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -3240,7 +3240,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cylce of length two with right recursion, incidental rules, a cut, precedence and a non-trivial intermediate rule", () => {
+  describe("a cycle of length two with right recursion, incidental rules, a cut, precedence and a non-trivial intermediate rule", () => {
     let bnf = `
 
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -3308,13 +3308,9 @@ describe("Rewrites", () => {
         
         T_   ::= _V ;
         
-        _T   ::= _A_ A~? ;
+        _T   ::= ( T_ | _A_ ) A~? ;
         
-        _A_. ::= T_ ( )
-            
-               | _Y ( )
-        
-               ;
+        _A_. ::= _Y ( ) ;
         
         A~.  ::= ~T ( ) ;
         
@@ -3399,8 +3395,125 @@ describe("Rewrites", () => {
       });
     });
 
-    describe("content with one numeric token followed by one character tokwn", () => {
-      const content = `1 + a
+    describe("content with three numeric tokens", () => {
+      const content = `1 + 2 + 3
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                        
+                                                                                           S [0]                           
+                                                                                             |                             
+                                                                     ------------------------------------------------      
+                                                                     |                                              |      
+                                                                T [0] (-90)                                   <END_OF_LINE>
+                                                                     |                                                     
+                                       -------------------------------------------------------------                       
+                                       |                                       |                   |                       
+                                  A. [0] ( )                          "+"[unassigned] [0]     A. [0] ( )                   
+                                       |                                                           |                       
+                                  T [0] (-90)                                                    T [0]                     
+                                       |                                                           |                       
+                   -----------------------------------------                                    V.. [0]                    
+                   |                   |                   |                                       |                       
+              A. [0] ( )      "+"[unassigned] [0]     A. [0] ( )                          "3"[unassigned] [0]              
+                   |                                       |                                                               
+                 T [0]                                   T [0]                                                             
+                   |                                       |                                                               
+                V.. [0]                                 V.. [0]                                                            
+                   |                                       |                                                               
+          "1"[unassigned] [0]                     "2"[unassigned] [0]                                                      
+
+       `));
+      });
+    });
+
+    describe("content with one character token", () => {
+      const content = `a
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                              
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+                 T [0]        <END_OF_LINE>
+                   |                       
+              A. [0] ( )                   
+                   |                       
+                Y.. [0]                    
+                   |                       
+          "a"[unassigned] [0]              
+
+       `));
+      });
+    });
+
+    describe("content with two charater tokens", () => {
+      const content = `a + b
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                        
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                  T [0] (-90)                         <END_OF_LINE>
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+              A. [0] ( )      "+"[unassigned] [0]     A. [0] ( )                   
+                   |                                       |                       
+                Y.. [0]                                 Y.. [0]                    
+                   |                                       |                       
+          "a"[unassigned] [0]                     "b"[unassigned] [0]              
+
+       `));
+      });
+    });
+
+    describe("content with three charater tokens", () => {
+      const content = `a + b + c
 `;
 
       before(() => {
@@ -3418,28 +3531,32 @@ describe("Rewrites", () => {
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
                                                   
-                                                        S [0]                      
-                                                          |                        
-                                       --------------------------------------      
-                                       |                                    |      
-                                  T [0] (-90)                         <END_OF_LINE>
-                                       |                                           
-                   -----------------------------------------                       
-                   |                   |                   |                       
-              A. [0] ( )      "+"[unassigned] [0]     A. [0] ( )                   
-                   |                                       |                       
-                 T [0]                                   T [0]                     
-                   |                                       |                       
-                V.. [0]                                 Y.. [0]                    
-                   |                                       |                       
-          "1"[unassigned] [0]                     "a"[unassigned] [0]              
+                                                                                           S [0]                           
+                                                                                             |                             
+                                                                     ------------------------------------------------      
+                                                                     |                                              |      
+                                                                T [0] (-90)                                   <END_OF_LINE>
+                                                                     |                                                     
+                                       -------------------------------------------------------------                       
+                                       |                                       |                   |                       
+                                  A. [0] ( )                          "+"[unassigned] [0]     A. [0] ( )                   
+                                       |                                                           |                       
+                                  T [0] (-90)                                                   Y.. [0]                    
+                                       |                                                           |                       
+                   -----------------------------------------                              "c"[unassigned] [0]              
+                   |                   |                   |                                                               
+              A. [0] ( )      "+"[unassigned] [0]     A. [0] ( )                                                           
+                   |                                       |                                                               
+                Y.. [0]                                 Y.. [0]                                                            
+                   |                                       |                                                               
+          "a"[unassigned] [0]                     "b"[unassigned] [0]                                                      
 
        `));
       });
     });
 
-    describe("content with one character token followed by one numeric tokwn", () => {
-      const content = `a + 2
+    describe("content with one numeric token followed by one character tokwn", () => {
+      const content = `1 + a
 `;
 
       before(() => {
@@ -3467,11 +3584,50 @@ describe("Rewrites", () => {
                    |                   |                   |                       
               A. [0] ( )      "+"[unassigned] [0]     A. [0] ( )                   
                    |                                       |                       
-                 T [0]                                   T [0]                     
+                 T [0]                                  Y.. [0]                    
                    |                                       |                       
-                Y.. [0]                                 V.. [0]                    
+                V.. [0]                           "a"[unassigned] [0]              
+                   |                                                               
+          "1"[unassigned] [0]                                                      
+
+       `));
+      });
+    });
+
+    describe("content with one character token followed by one numeric tokwn", () => {
+      const content = `a + 2
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                      
+                                                        S [0]                      
+                                                          |                        
+                                       --------------------------------------      
+                                       |                                    |      
+                                  T [0] (-90)                         <END_OF_LINE>
+                                       |                                           
+                   -----------------------------------------                       
+                   |                   |                   |                       
+              A. [0] ( )      "+"[unassigned] [0]     A. [0] ( )                   
                    |                                       |                       
-          "a"[unassigned] [0]                     "2"[unassigned] [0]              
+                Y.. [0]                                  T [0]                     
+                   |                                       |                       
+          "a"[unassigned] [0]                           V.. [0]                    
+                                                           |                       
+                                                  "2"[unassigned] [0]              
 
        `));
       });
@@ -3512,8 +3668,6 @@ describe("Rewrites", () => {
                    |                   |                   |                                       |                       
               A. [0] ( )      "+"[unassigned] [0]     A. [0] ( )                          "2"[unassigned] [0]              
                    |                                       |                                                               
-                 T [0]                                   T [0]                                                             
-                   |                                       |                                                               
                 Y.. [0]                                 Y.. [0]                                                            
                    |                                       |                                                               
           "a"[unassigned] [0]                     "b"[unassigned] [0]                                                      
@@ -3540,7 +3694,7 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                      
+                                                                                
                                                                                            S [0]                           
                                                                                              |                             
                                                                      ------------------------------------------------      
@@ -3557,11 +3711,11 @@ describe("Rewrites", () => {
                    |                   |                   |                                       |                       
               A. [0] ( )      "+"[unassigned] [0]     A. [0] ( )                          "2"[unassigned] [0]              
                    |                                       |                                                               
-                 T [0]                                   T [0]                                                             
+                Y.. [0]                                  T [0]                                                             
                    |                                       |                                                               
-                Y.. [0]                                 V.. [0]                                                            
-                   |                                       |                                                               
-          "a"[unassigned] [0]                     "1"[unassigned] [0]                                                      
+          "a"[unassigned] [0]                           V.. [0]                                                            
+                                                           |                                                               
+                                                  "1"[unassigned] [0]                                                      
 
        `));
       });
@@ -3585,7 +3739,7 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                      
+                                                                                
                                                                                            S [0]                           
                                                                                              |                             
                                                                      ------------------------------------------------      
@@ -3596,17 +3750,17 @@ describe("Rewrites", () => {
                                        |                                       |                   |                       
                                   A. [0] ( )                          "+"[unassigned] [0]     A. [0] ( )                   
                                        |                                                           |                       
-                                  T [0] (-90)                                                    T [0]                     
+                                  T [0] (-90)                                                   Y.. [0]                    
                                        |                                                           |                       
-                   -----------------------------------------                                    Y.. [0]                    
-                   |                   |                   |                                       |                       
-              A. [0] ( )      "+"[unassigned] [0]     A. [0] ( )                          "b"[unassigned] [0]              
+                   -----------------------------------------                              "b"[unassigned] [0]              
+                   |                   |                   |                                                               
+              A. [0] ( )      "+"[unassigned] [0]     A. [0] ( )                                                           
                    |                                       |                                                               
-                 T [0]                                   T [0]                                                             
+                Y.. [0]                                  T [0]                                                             
                    |                                       |                                                               
-                Y.. [0]                                 V.. [0]                                                            
-                   |                                       |                                                               
-          "a"[unassigned] [0]                     "1"[unassigned] [0]                                                      
+          "a"[unassigned] [0]                           V.. [0]                                                            
+                                                           |                                                               
+                                                  "1"[unassigned] [0]                                                      
 
        `));
       });
@@ -3776,7 +3930,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("two cycles of length two with double indirect repetition, incidental rules, a cut and precedence", () => {
+  describe("two cycles of length two with double indirect repetition, incidental rules, a cut and precedence", () => {
     let bnf = `
 
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -4529,7 +4683,7 @@ describe("Rewrites", () => {
       it("results in the requisite parse tree" , () => {
         assert.isTrue(checkParentNodes(node));
 
-        // assert.isTrue(checkDescendentNodes(node));
+        assert.isTrue(checkDescendentNodes(node));
 
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 

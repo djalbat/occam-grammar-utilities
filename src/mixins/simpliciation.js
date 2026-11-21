@@ -1,92 +1,80 @@
 "use strict";
 
-function lift() {
-  const index = this.getIndex(),
-        opacity = this.getOpacity(),
-        parentNode = this.getParentNode(),
-        precedence = this.getPrecedence(),
-        removedChildNodes = this.removeChildNodes(),
-        replacedChildNode = this,  ///
-        replacementChildNodes = removedChildNodes; ///
-
-  parentNode.setOpacity(opacity);
-
-  parentNode.setPrecedence(precedence);
-
-  const startIndex = index + 1,
-        childNodes = parentNode.getChildNodes(),
-        remainingChildNodes = childNodes.slice(startIndex);
-
-  parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
-
-  return remainingChildNodes;
-}
-
-function climb() {
-  let removedChildNodes;
-
-  removedChildNodes = this.removeChildNodes();
-
+function ascend() {
   const parentNode = this.getParentNode(),
-        replacedChildNode = this,  ///
-        replacementChildNodes = removedChildNodes; ///
+        grandparentNode = parentNode.getParentNode(), ///
+        replacedChildNode = parentNode, ///
+        replacementChildNode = this,  ///
+        replacementChildNodes = [
+          replacementChildNode
+        ];
 
-  parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+  this.remove();
 
-  removedChildNodes = parentNode.removeChildNodes();
+  grandparentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 
-  const appendedChildNode = this; ///
+  const removedChildNodes = this.removeChildNodes(),
+        prependedChildNode = parentNode;  ///
 
-  parentNode.appendChildNode(appendedChildNode);
+  this.prependChildNode(prependedChildNode);
 
   const appendedChildNodes = removedChildNodes; ///
 
-  this.appendChildNodes(appendedChildNodes);
+  parentNode.appendChildNodes(appendedChildNodes);
 
   const remainingChildNodes = appendedChildNodes; ///
 
   return remainingChildNodes;
 }
 
-function ascend() {
-  const removedChildNodes = this.removeChildNodes();
-
-  let parentNode;
-
-  parentNode = this.getParentNode();
-
-  const replacedChildNode = parentNode; ///
-
-  parentNode = parentNode.getParentNode();
-
-  this.remove();
-
-  const replacementChildNode = this,  ///
+function rotate() {
+  const parentNode = this.getParentNode(),
+        grandparentNode = parentNode.getParentNode(),
+        replacedChildNode = parentNode, ///
+        replacementChildNode = this, ///
         replacementChildNodes = [
           replacementChildNode
         ];
 
-  parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+  this.remove();
 
-  const appendedChildNode = replacedChildNode;  ///
+  grandparentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 
-  this.appendChildNode(appendedChildNode);
+  const childNodes = this.getChildNodes(),
+        prependedChildNode = replacedChildNode,
+        remainingChildNodes = [
+          ...childNodes
+        ]
 
-  parentNode = appendedChildNode; ///
-
-  const appendedChildNodes = removedChildNodes; ///
-
-  parentNode.appendChildNodes(appendedChildNodes);
-
-  const remainingChildNodes = appendedChildNodes;
+  this.prependChildNode(prependedChildNode)
 
   return remainingChildNodes;
 }
 
-function rotate() {
-  let parentNode;
+function flatten() {
+  const parentNode = this.getParentNode(),
+        removedChildNodes = this.removeChildNodes(),
+        replacedChildNode = this,  ///
+        replacementChildNodes = removedChildNodes; ///
 
-  parentNode = this.getParentNode();
+  parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+
+  const remainingChildNodes = replacementChildNodes;  ///
+
+  return remainingChildNodes;
+}
+
+function liftLast() {
+  const index = this.getIndex(),
+        parentNode = this.getParentNode(),
+        childNodes = this.getChildNodes(),
+        grandparentNode = parentNode.getParentNode(),
+        startIndex = 0,
+        deleteCount = index,  ///
+        removedChildNodes = parentNode.spliceChildNodes(startIndex, deleteCount),
+        prependedChildNodes = removedChildNodes; ///
+
+  this.prependChildNodes(prependedChildNodes);
 
   const replacedChildNode = parentNode, ///
         replacementChildNode = this, ///
@@ -94,36 +82,41 @@ function rotate() {
           replacementChildNode
         ];
 
-  parentNode = parentNode.getParentNode();
-
   this.remove();
 
-  parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+  grandparentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 
-  const childNodes = this.getChildNodes(),
-        remainingChildNodes = [
-          ...childNodes
-        ];
-
-  const prependedChildNode = replacedChildNode;  ///
-
-  this.prependChildNode(prependedChildNode)
+  const remainingChildNodes = [
+    ...childNodes
+  ]
 
   return remainingChildNodes;
 }
 
-function disappear() {
+function liftFirst() {
   const index = this.getIndex(),
         parentNode = this.getParentNode(),
-        removedChildNodes = this.removeChildNodes(),
-        replacedChildNode = this,  ///
-        replacementChildNodes = removedChildNodes; ///
+        grandparentNode = parentNode.getParentNode(),
+        startIndex = index + 1,
+        removedChildNodes = parentNode.spliceChildNodes(startIndex),
+        appendedChildNodes = removedChildNodes; ///
 
-  const startIndex = index + 1,
-        childNodes = parentNode.getChildNodes(),
-        remainingChildNodes = childNodes.slice(startIndex);
+  this.appendChildNodes(appendedChildNodes);
 
-  parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+  const replacedChildNode = parentNode, ///
+        replacementChildNode = this, ///
+        replacementChildNodes = [
+          replacementChildNode
+        ];
+
+  this.remove();
+
+  grandparentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
+
+  const childNodes = this.getChildNodes(),
+        remainingChildNodes = [
+          ...childNodes
+        ]
 
   return remainingChildNodes;
 }
@@ -132,9 +125,10 @@ function overwrite(state) {
   const opacity = this.getOpacity(),
         parentNode = this.getParentNode(),
         precedence = this.getPrecedence(),
-        childNodes = this.removeChildNodes(),
         baseRuleName = this.getBaseRuleName(),
+        removedChildNOdes = this.removeChildNodes(),
         ruleName = baseRuleName,  ///
+        childNodes = removedChildNOdes, ///
         nonTerminalNode = state.createNonTerminalNode(ruleName, childNodes, precedence, opacity),
         replacedChildNode = this, ///
         replacementChildNode = nonTerminalNode, ///
@@ -144,27 +138,16 @@ function overwrite(state) {
 
   parentNode.replaceChildNode(replacedChildNode, replacementChildNodes);
 
-  return nonTerminalNode;
-}
-
-function simplifyChildNodes(state) {
-  this.everyChildNode((childNode) => {
-    const terminate = childNode.simplify(state);
-
-    if (!terminate) {
-      return true;
-    }
-  });
+  return childNodes;
 }
 
 const simpliciationMixins = {
-  lift,
-  climb,
   ascend,
   rotate,
-  disappear,
-  overwrite,
-  simplifyChildNodes
+  flatten,
+  liftLast,
+  liftFirst,
+  overwrite
 };
 
 export default simpliciationMixins;

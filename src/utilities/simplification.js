@@ -1,11 +1,15 @@
 "use strict";
 
-export function simplifyChildNodes(childNodes, state) {
-  childNodes.every((childNode) => {
-    const terminate = childNode.simplify(state);
+export function simplifyChildNodes(childNodes, alternate, state) {
+  childNodes.some((childNode) => {
+    const terminate = childNode.simplify(alternate, state);
 
-    if (!terminate) {
+    if (terminate) {
       return true;
+    }
+
+    if (terminate === null) {
+      alternate = true;
     }
   });
 }

@@ -5,6 +5,7 @@ import { NonTerminalNode } from "occam-parsers";
 import simpliciationMixins from  "../../mixins/simpliciation";
 
 import { simplifyChildNodes } from "../../utilities/simplification";
+import { ruleNameFromIndirectlyReducedRuleName } from "../../utilities/ruleName";
 
 class IndirectlyReducedNode extends NonTerminalNode {
   rewrite(state) {
@@ -13,16 +14,33 @@ class IndirectlyReducedNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(state) {
-    const terminate = true;
+  simplify(alternate, state) {
+    let terminate = true;
 
-    this.simplifyChildNodes(state);
+    const single = this.isSingle(),
+          childNodes = this.overwrite(state);
 
-    const remainingChildNodes = this.disappear();
+    simplifyChildNodes(childNodes, alternate, state);
 
-    simplifyChildNodes(remainingChildNodes, state);
+    if (!single) {
+      terminate = null;
+    }
 
     return terminate;
+  }
+
+  getBaseRuleName() {
+    let ruleName;
+
+    ruleName = this.getRuleName();
+
+    const indirectlyReducedRuleName = ruleName; ///
+
+    ruleName = ruleNameFromIndirectlyReducedRuleName(indirectlyReducedRuleName);
+
+    const baseRuleName = ruleName;  ///
+
+    return baseRuleName;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(IndirectlyReducedNode, ruleName, childNodes, precedence, opacity); }

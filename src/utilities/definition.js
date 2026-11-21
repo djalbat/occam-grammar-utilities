@@ -35,15 +35,6 @@ export function tailPartsfromDefinition(definition, context) {
   return tailParts;
 }
 
-export function ruleNameFromRepeatableDefinition(repeatableDefinition) {
-  const parts = repeatableDefinition.getParts(),
-        firstPart = first(parts),
-        ruleNamePart = firstPart, ///
-        ruleName = ruleNamePart.getRuleName();
-
-  return ruleName;
-}
-
 export function isDefinitionSingular(definition, ruleName, context) {
   let definitionSingular = false;
 
@@ -118,7 +109,6 @@ export function isDefinitionRightRecursive(definition, ruleName, context) {
 export default {
   partsfromDefinition,
   tailPartsfromDefinition,
-  ruleNameFromRepeatableDefinition,
   isDefinitionSingular,
   isDefinitionReducible,
   isDefinitionRepeatable
