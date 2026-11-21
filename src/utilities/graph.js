@@ -5,7 +5,7 @@ import { rulesUtilities } from "occam-parsers";
 import Edge from "../edge";
 import Graph from "../graph";
 
-import { LEFT_RECURSIVE_LABEL, RIGHT_RECURSIVE_LABEL } from "../constants";
+import { LEFT_RECURSIVE_LABEL, RIGHT_RECURSIVE_LABEL, INDIFFERENT_MATCH_METHOD } from "../constants";
 import { recursiveRuleNamesMapFromRuleMap, leftRecursiveRuleNamesMapFromRuleMap, rightRecursiveRuleNamesMapFromRuleMap } from "../utilities/ruleMap";
 
 const { ruleMapFromRules, startRuleFromRules } = rulesUtilities;
@@ -80,7 +80,8 @@ function edgesMatchEdge(edges, edge) {
   const edgeA = edge, ///
         matches = edges.some((edge) => {
           const edgeB = edge, ///
-                edgeAMatchesEdgeB = edgeA.match(edgeB);
+                method = INDIFFERENT_MATCH_METHOD,
+                edgeAMatchesEdgeB = edgeA.match(edgeB, method);
 
           if (edgeAMatchesEdgeB) {
             return true;

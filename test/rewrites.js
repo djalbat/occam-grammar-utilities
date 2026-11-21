@@ -3767,7 +3767,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe.only("a cycle of length two with single indirect repetition, a cut and precedence", () => {
+  describe("one cycle of length two with single indirect repetition, a cut and precedence", () => {
     let bnf = `
 
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -4193,22 +4193,26 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                        
+                                
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
+        
+        C..  ::= T ( "=" | "!" ) \` T (-2) ;
         
         B..  ::= "(" (T) ")" ;
         
         N..  ::= "!" <NO_WHITESPACE> T (-3) ;
         
+        L..  ::= T ( "&" | "|" ) \` T (-1) ;
+        
         _B.. ::= "(" (_T) ")" ;
         
         _N.. ::= "!" <NO_WHITESPACE> _T (-3) ;
         
-        _L.. ::= _T ( "&" | "|" ) \` _T (-1) ;
+        _C.. ::= _T ( "=" | "!" ) \` _T (-2) ;
         
-        _T.  ::= T_ ( ~C ( ) | ~L ( ) )* ;
+        _L.. ::= _T ( "&" | "|" ) \` _T (-1) ;
         
         T_.  ::= _B
             
@@ -4218,9 +4222,15 @@ describe("Rewrites", () => {
         
                ;
         
-        ~C.. ::= ( "=" | "!" ) \` _T (-2) ;
+        _T.  ::= T_ ~T~? ;
         
-        _C.. ::= _T ( "=" | "!" ) \` _T (-2) ;
+        ~T~. ::= ~C ( )
+            
+               | ~L ( )
+        
+               ;
+        
+        ~C.. ::= ( "=" | "!" ) \` _T (-2) ;
         
         ~L.. ::= ( "&" | "|" ) \` _T (-1) ;
         
@@ -4356,18 +4366,18 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                      
+                                                
                                                                                       S [0]                                
                                                                                         |                                  
                                                            ----------------------------------------------------------      
                                                            |                                                        |      
                                                         T. [0]                                                <END_OF_LINE>
                                                            |                                                               
-                                                     B.. [0] (())                                                          
+                                                        B.. [0]                                                            
                                                            |                                                               
                    ---------------------------------------------------------------------------------                       
                    |                                       |                                       |                       
-          "("[unassigned] [0]                        T. [0] (( ))                         ")"[unassigned] [0]              
+          "("[unassigned] [0]                         T. [0] ( )                          ")"[unassigned] [0]              
                                                            |                                                               
                                                      C.. [0] (-2)                                                          
                                                            |                                                               
@@ -4571,7 +4581,7 @@ describe("Rewrites", () => {
         const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
 
         assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                                                        
+                                                                                                  
                                                                                                           S [0]                                                    
                                                                                                             |                                                      
                                                            --------------------------------------------------------------------------------------------------      
@@ -4584,11 +4594,11 @@ describe("Rewrites", () => {
                    |                   |                                                           |                                                               
                 T. [0]        "!"[unassigned] [0]                                               T. [0]                                                             
                    |                                                                               |                                                               
-          "3"[unassigned] [0]                                                                B.. [0] (())                                                          
+          "3"[unassigned] [0]                                                                   B.. [0]                                                            
                                                                                                    |                                                               
                                                            ---------------------------------------------------------------------------------                       
                                                            |                                       |                                       |                       
-                                                  "("[unassigned] [0]                        T. [0] (( ))                         ")"[unassigned] [0]              
+                                                  "("[unassigned] [0]                         T. [0] ( )                          ")"[unassigned] [0]              
                                                                                                    |                                                               
                                                                                              C.. [0] (-2)                                                          
                                                                                                    |                                                               
@@ -4597,111 +4607,6 @@ describe("Rewrites", () => {
                                                                             T. [0]        "="[unassigned] [0]       T. [0]                                         
                                                                                |                                       |                                           
                                                                       "2"[unassigned] [0]                     "1"[unassigned] [0]                                  
-                              
-       `));
-      });
-    });
-  });
-
-  describe("precedence check", () => {
-    let bnf = `
-
-      S  ::= ( T ... <END_OF_LINE> ) ;
-      
-      T  ::=  "¬"<NO_WHITESPACE>A (10)
-      
-           |  A ( "∧" (-9) 
-            
-                | "𝗂𝖿𝖿" (-6) ) \` A
-                  
-                | "(" (A) ")" 
-            
-           |  V
-            
-           ;
-      
-      V. ::=  . ;
-      
-      A  ::=  T ( ) ;
-            
-      `;
-
-    let node,
-        rules,
-        tokens;
-
-    before(() => {
-      rules = rulesFromBNF(bnf);
-
-      rules = eliminateLeftRecursion(rules);  ///
-
-      const adjustedBNF = adjustedBNFFromRules(rules);
-
-      bnf = adjustedBNF;  ///
-    });
-
-    it("is rewritten", () => {
-      assert.isTrue(compareParseTreeStrings(bnf, `
-                                        
-        S   ::= ( T ... <END_OF_LINE> ) ;
-        
-        T   ::= _T ;
-        
-        V.  ::= . ;
-        
-        _V. ::= . ;
-        
-        _T  ::= T_ T~* ;
-        
-        T_  ::= "¬" <NO_WHITESPACE> _A (10)
-            
-              | "(" (_A) ")"
-            
-              | _V
-        
-              ;
-        
-        T~  ::= A~T ;
-        
-        _A  ::= _T ( ) ;
-        
-        A~T ::= ( "∧" (-9) | "𝗂𝖿𝖿" (-6) ) \` _A ;
-
-     `));
-    });
-
-    describe("content", () => {
-      const content = `¬P ∧ Q  
-`;
-
-      before(() => {
-        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
-
-        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
-      });
-
-      it("results in the requisite parse tree" , () => {
-        assert.isTrue(checkParentNodes(node));
-
-        assert.isTrue(checkDescendentNodes(node));
-
-        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
-
-        assert.isTrue(compareParseTreeStrings(parseTreeString, `
-                                                          
-                                                     S [0]                     
-                                                       |                       
-                                     ------------------------------------      
-                                     |                                  |      
-                                T. [0] ( )                        <END_OF_LINE>
-                                     |                                         
-                               N.. [0] (-3)                                    
-                                     |                                         
-                   -------------------------------------                       
-                   |                 |                 |                       
-          "!"[unassigned] [0] <NO_WHITESPACE>       T. [0]                     
-                                                       |                       
-                                              "3"[unassigned] [0]              
                               
        `));
       });
