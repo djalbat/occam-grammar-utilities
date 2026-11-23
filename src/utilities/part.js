@@ -24,6 +24,23 @@ export function isPartSimplePart(part) {
   return partSimplePart;
 }
 
+export function isPartRuleNamePart(part) {
+  let partRuleNamePart = false;
+
+  const partNonTerminalPart = part.isNonTerminalPart();
+
+  if (partNonTerminalPart) {
+    const nonTerminalPart = part, ///
+          nonTerminalPartRuleNamePart = nonTerminalPart.isRuleNamePart();
+
+    if (nonTerminalPartRuleNamePart) {
+      partRuleNamePart = true;
+    }
+  }
+
+  return partRuleNamePart;
+}
+
 export function epsilonPartFromNothing() {
   const epsilonPart = EpsilonPart.fromNothing();
 

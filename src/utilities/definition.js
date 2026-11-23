@@ -2,6 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
+import { isPartRuleNamePart } from "../utilities/part";
 import { rewriteRuleNameParts } from "../utilities/rewrite";
 import { INDIFFERENT_MATCH_METHOD } from "../constants";
 import { leftRecursiveRuleNamesFromDefinition } from "../utilities/leftRecursion";
@@ -93,7 +94,7 @@ export function isDefinitionRightRecursive(definition, ruleName, context) {
   if (definitionRightRecursive) {
     const parts = definition.getParts(),
           lastPart = last(parts),
-          lastPartRuleNamePart = lastPart.isRuleNamePart();
+          lastPartRuleNamePart = isPartRuleNamePart(lastPart);
 
     if (!lastPartRuleNamePart) {
       const lastPartString = lastPart.asString(),
@@ -134,7 +135,7 @@ function isDefinitionLeftRecursive(definition, ruleName, leftRecursiveCycleOrCyc
     if (definitionLeftRecursive) {
       const parts = definition.getParts(),
             firstPart = first(parts),
-            firstPartRuleNamePart = firstPart.isRuleNamePart();
+            firstPartRuleNamePart = isPartRuleNamePart(firstPart);
 
       if (!firstPartRuleNamePart) {
         const firstPartString = firstPart.asString(),
