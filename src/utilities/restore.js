@@ -1,8 +1,8 @@
 "use strict";
 
-export function simplifyChildNodes(childNodes, alternate, state) {
+export function restoreChildNodes(childNodes, alternate, state) {
   childNodes.some((childNode) => {
-    const terminate = childNode.simplify(alternate, state);
+    const terminate = childNode.restore(alternate, state);
 
     if (terminate) {
       return true;

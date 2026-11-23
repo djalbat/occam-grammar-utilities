@@ -141,7 +141,7 @@ function overwrite(state) {
   return childNodes;
 }
 
-const simpliciationMixins = {
+const restoreMixins = {
   ascend,
   rotate,
   flatten,
@@ -150,4 +150,4 @@ const simpliciationMixins = {
   overwrite
 };
 
-export default simpliciationMixins;
+export default restoreMixins;

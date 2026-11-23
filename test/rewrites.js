@@ -3240,7 +3240,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("a cycle of length two with right recursion, incidental rules, a cut, precedence and a non-trivial intermediate rule", () => {
+  describe("a cycle of length two with right recursion, incidental rules, a cut, precedence and a non-trivial implicit rule", () => {
     let bnf = `
 
       S   ::= ( T ... <END_OF_LINE> ) ;
@@ -3767,6 +3767,121 @@ describe("Rewrites", () => {
     });
   });
 
+  describe("a cycle of length two with right recursion, an incidental rule, a cut, precedence and a trivial intermaediate rule", () => {
+    let bnf = `
+  
+      S   ::= ( T ... <END_OF_LINE> ) ;
+        
+      T   ::= "¬"<NO_WHITESPACE>A (10)
+
+            |  A "∧" \` A (-9)
+
+            |  V
+
+            ;
+
+      A ::= T ( ) ;
+
+      V ::= . ;
+
+    `;
+
+    let node,
+        rules,
+        tokens;
+
+    before(() => {
+      rules = rulesFromBNF(bnf);
+
+      rules = eliminateLeftRecursion(rules);  ///
+
+      const adjustedBNF = adjustedBNFFromRules(rules);
+
+      bnf = adjustedBNF;  ///
+    });
+
+    it("is rewritten", () => {
+      assert.isTrue(compareParseTreeStrings(bnf, `
+                                                                                                                          
+        S  ::= ( T ... <END_OF_LINE> ) ;
+        
+        T  ::= _T ;
+        
+        A  ::= T ( ) ;
+        
+        V  ::= . ;
+        
+        _A ::= _T ( ) ;
+        
+        _V ::= . ;
+        
+        T_ ::= "¬" <NO_WHITESPACE> _A (10)
+            
+             | _V
+        
+             ;
+        
+        _T ::= T_ A~? ;
+        
+        A~ ::= ~T ( ) ;
+        
+        ~T ::= "∧" \` _A (-9) ;
+                      
+     `));
+    });
+
+    describe("double negation and conjunction", () => {
+      const content = `¬¬P ∧ Q
+`;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                                                                                                  
+                                                                                                                     S [0]                                 
+                                                                                                                       |                                   
+                                                                                         ------------------------------------------------------------      
+                                                                                         |                                                          |      
+                                                                                    T [0] (-9)                                                <END_OF_LINE>
+                                                                                         |                                                                 
+                                              --------------------------------------------------------------------------------------                       
+                                              |                                                                |                   |                       
+                                          A [0] ( )                                                   "∧"[unassigned] [0]      A [0] ( )                   
+                                              |                                                                                    |                       
+                                         T [0] (10)                                                                              T [0]                     
+                                              |                                                                                    |                       
+                   -------------------------------------------------------                                                       V [0]                     
+                   |                 |                                   |                                                         |                       
+          "¬"[unassigned] [0] <NO_WHITESPACE>                        A [0] ( )                                            "Q"[unassigned] [0]              
+                                                                         |                                                                                 
+                                                                    T [0] (10)                                                                             
+                                                                         |                                                                                 
+                                                       -------------------------------------                                                               
+                                                       |                 |                 |                                                               
+                                              "¬"[unassigned] [0] <NO_WHITESPACE>      A [0] ( )                                                           
+                                                                                           |                                                               
+                                                                                         T [0]                                                             
+                                                                                           |                                                               
+                                                                                         V [0]                                                             
+                                                                                           |                                                               
+                                                                                  "P"[unassigned] [0]                                                      
+
+       `));
+      });
+    });
+  });
+
   describe("one cycle of length two with single indirect repetition, a cut and precedence", () => {
     let bnf = `
 
@@ -4150,7 +4265,7 @@ describe("Rewrites", () => {
     });
   });
 
-  describe("two cycles of length two with double indirect repetition, a cut, precedence and non-left recursive intermediate rules", () => {
+  describe("two cycles of length two with double indirect repetition, a cut, precedence and non-left recursive implicit rules", () => {
     let bnf = `
 
       S   ::= ( T ... <END_OF_LINE> ) ;

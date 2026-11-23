@@ -2,9 +2,9 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
-import simpliciationMixins from  "../mixins/simpliciation";
+import restoreMixins from  "../mixins/restore";
 
-import { simplifyChildNodes } from "../utilities/simplification";
+import { restoreChildNodes } from "../utilities/restore";
 import { ruleNameFromRepeatedRuleName } from "../utilities/ruleName";
 
 class RepeatedNode extends NonTerminalNode {
@@ -14,19 +14,19 @@ class RepeatedNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(alternate, state) {
+  restore(alternate, state) {
     const terminate = true;
 
     if (alternate) {
       const remainingChildNodes = this.flatten();
 
-      simplifyChildNodes(remainingChildNodes, alternate, state);
+      restoreChildNodes(remainingChildNodes, alternate, state);
     } else {
       const remainingChildNodes = this.rotate();
 
       this.overwrite(state);
 
-      simplifyChildNodes(remainingChildNodes, alternate, state);
+      restoreChildNodes(remainingChildNodes, alternate, state);
     }
 
     return terminate;
@@ -49,6 +49,6 @@ class RepeatedNode extends NonTerminalNode {
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RepeatedNode, ruleName, childNodes, precedence, opacity); }
 }
 
-Object.assign(RepeatedNode.prototype, simpliciationMixins);
+Object.assign(RepeatedNode.prototype, restoreMixins);
 
 export default RepeatedNode;

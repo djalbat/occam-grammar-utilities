@@ -2,9 +2,9 @@
 
 import { NonTerminalNode } from "occam-parsers";
 
-import simpliciationMixins from  "../../mixins/simpliciation";
+import restoreMixins from  "../../mixins/restore";
 
-import { simplifyChildNodes } from "../../utilities/simplification";
+import { restoreChildNodes } from "../../utilities/restore";
 import { ruleNameFromIndirectlyReducedRuleName } from "../../utilities/ruleName";
 
 class IndirectlyReducedNode extends NonTerminalNode {
@@ -14,13 +14,13 @@ class IndirectlyReducedNode extends NonTerminalNode {
     return nonTerminalNode;
   }
 
-  simplify(alternate, state) {
+  restore(alternate, state) {
     let terminate = true;
 
     const single = this.isSingle(),
           childNodes = this.overwrite(state);
 
-    simplifyChildNodes(childNodes, alternate, state);
+    restoreChildNodes(childNodes, alternate, state);
 
     if (!single) {
       terminate = null;
@@ -46,6 +46,6 @@ class IndirectlyReducedNode extends NonTerminalNode {
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(IndirectlyReducedNode, ruleName, childNodes, precedence, opacity); }
 }
 
-Object.assign(IndirectlyReducedNode.prototype, simpliciationMixins);
+Object.assign(IndirectlyReducedNode.prototype, restoreMixins);
 
 export default IndirectlyReducedNode;
