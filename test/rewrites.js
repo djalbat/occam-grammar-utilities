@@ -5,7 +5,7 @@ const { testUtilities } = require("occam-parsers"),
 
 const { BasicLexer, BasicParser, eliminateLeftRecursion } = require("../lib");  ///
 
-const { adjustedBNFFromRules } = require("./helpers/bnf"),
+const { rewrittenBNFFromRules } = require("./helpers/bnf"),
       { checkParentNodes, checkDescendentNodes } = require("./helpers/node");
 
 const { rulesFromBNF } = parserUtilities,
@@ -40,9 +40,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -232,9 +232,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -385,9 +385,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -507,9 +507,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -656,9 +656,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -848,9 +848,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -964,9 +964,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -1195,9 +1195,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -1641,9 +1641,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -1853,9 +1853,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -2016,9 +2016,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -2179,9 +2179,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -2391,9 +2391,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -2519,9 +2519,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -2770,9 +2770,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -3274,9 +3274,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -3795,9 +3795,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -3906,9 +3906,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -4073,9 +4073,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -4301,9 +4301,9 @@ describe("Rewrites", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {

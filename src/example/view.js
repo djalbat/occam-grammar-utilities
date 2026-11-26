@@ -14,7 +14,7 @@ import BNFTextarea from "./view/textarea/bnf";
 import ContentTextarea from "./view/textarea/content";
 import ParseTreeTextarea from "./view/textarea/parseTree";
 import StartRuleNameInput from "./view/input/startRuleName";
-import AdjustedBNFTextarea from "./view/textarea/adjustedBNF";
+import RewrittenBNFTextarea from "./view/textarea/rewrittenBNF";
 import LexicalEntriesTextarea from "./view/textarea/lexicalEntries";
 
 const { rulesAsString } = rulesUtilities,
@@ -41,9 +41,9 @@ class View extends Element {
 
     const multiLine = true,
           rulesString = rulesAsString(rules, multiLine),
-          adjustedBNF = rulesString;  ///
+          rewrittenBNF = rulesString;  ///
 
-    this.setAdjustedBNF(adjustedBNF);
+    this.setRewrittenBNF(rewrittenBNF);
 
     const basicLexer = basicLexerFromLexicalEntries(lexicalEntries),
           basicParser = basicParserFromRulesAndStartRuleName(rules, startRuleName);
@@ -76,9 +76,9 @@ class View extends Element {
             </SubHeading>
             <BNFTextarea onKeyUp={this.keyUpHandler} />
             <SubHeading>
-              Adjusted BNF
+              Rewritten BNF
             </SubHeading>
-            <AdjustedBNFTextarea readOnly />
+            <RewrittenBNFTextarea readOnly />
           </RowsDiv>
         </SizeableDiv>
         <VerticalSplitterDiv />

@@ -3,12 +3,13 @@
 const { testUtilities } = require("occam-parsers"),
       { parserUtilities } = require("occam-parsers");
 
-const { eliminateLeftRecursion } = require("../lib");  ///
+const { eliminateLeftRecursion, BasicLexer, BasicParser} = require("../lib");  ///
 
-const { adjustedBNFFromRules } = require("./helpers/bnf");
+const { rewrittenBNFFromRules } = require("./helpers/bnf");
+const {checkParentNodes, checkDescendentNodes} = require("./helpers/node");
 
 const { rulesFromBNF } = parserUtilities,
-      { compareParseTreeStrings } = testUtilities;
+      { nodeFromRulesAndTokens, compareParseTreeStrings, tokensFromEntriesAndContent, parseTreeStringFromNodeAndTokens } = testUtilities;
 
 describe("Languages", () => {
   describe("Nonimal", () => {
@@ -50,9 +51,9 @@ describe("Languages", () => {
 
         rules = eliminateLeftRecursion(rules);  ///
 
-        const adjustedBNF = adjustedBNFFromRules(rules);
+        const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-        bnf = adjustedBNF;  ///
+        bnf = rewrittenBNF;  ///
       });
 
       it("is rewritten", () => {
@@ -142,9 +143,9 @@ describe("Languages", () => {
 
         rules = eliminateLeftRecursion(rules);  ///
 
-        const adjustedBNF = adjustedBNFFromRules(rules);
+        const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-        bnf = adjustedBNF;  ///
+        bnf = rewrittenBNF;  ///
       });
 
       it("is rewritten", () => {
@@ -189,6 +190,133 @@ describe("Languages", () => {
           ~statement     ::= ( "∧" (-9) | "∨" (-8) | "⇒" (-7) | "⇐" (-7) | "𝗂𝖿𝖿" (-6) ) \` _metaArgument ;          
 
         `));
+      });
+    });
+
+    describe("satement and term", () => {
+      let bnf = `
+
+        step.         ::=  ( statement ... <END_OF_LINE> ) ;
+
+        statement     ::=  "¬"<NO_WHITESPACE>metaArgument (10)
+        
+                        |  metaArgument ( "∧" (-9) 
+                        
+                                        | "∨" (-8) 
+                                        
+                                        | "⇒" (-7) 
+                                        
+                                        | "⇐" (-7) 
+                                        
+                                        | "𝗂𝖿𝖿" (-6) ) \` metaArgument
+                                        
+                                        |  equality
+
+                                        |  "(" (metaArgument) ")" 
+                                                    
+                                        |  metavariable 
+            
+                                        ;
+                                     
+        equality      ::=  term ( "=" | "!=" ) \` term ;
+        
+        term          ::=  argument ( "÷" (-99)
+            
+                                    | "×" (-99)
+                                      
+                                    | "+" (-98)
+                                      
+                                    | "-" (-98) ) \` argument
+                          
+                        |  argument<NO_WHITESPACE>argument (-101)
+                          
+                        |  "𝘻𝘦𝘳𝘰"
+                         
+                        | "(" (argument) ")"
+            
+                        |  variable
+                          
+                        ;
+      
+        argument      ::=  term ( ) 
+        
+                        |  type ( )
+                                               
+                        ;
+        
+        metaArgument  ::=  statement ( ) 
+        
+                        |  metaType ( ) 
+                                               
+                        ;
+        
+
+        metaType      ::=  [meta-type] ;
+        
+        type          ::=  [type] ( <NO_WHITESPACE>[type] )? 
+        
+                        |  "<"<NO_WHITESPACE>">"
+        
+                        ;
+
+
+ 
+
+        metavariable  ::=  [name] ( <NO_WHITESPACE>"(" ( term | type | stuff ) ")" )? ;
+
+        variable      ::=  [identifier] ;
+
+        stuff         ::=  ( [symbol] | [type] | [name] | [backtick] | [identifier] | [primitive] | [unassigned] )+ ;
+
+      `;
+
+      before(() => {
+        rules = rulesFromBNF(bnf);
+
+        rules = eliminateLeftRecursion(rules);  ///
+
+        const rewrittenBNF = rewrittenBNFFromRules(rules);
+
+        bnf = rewrittenBNF;  ///
+      });
+
+      const content = `x=y
+`;
+
+      const entries = [
+        {
+          "unassigned": "^[^\\s]"
+        }
+      ];
+
+      let node,
+          rules,
+          tokens;
+
+      before(() => {
+        tokens = tokensFromEntriesAndContent(BasicLexer, entries, content);
+
+        node = nodeFromRulesAndTokens(BasicParser, rules, tokens);
+      });
+
+      it.only("results in the requisite parse tree" , () => {
+        assert.isTrue(checkParentNodes(node));
+
+        assert.isTrue(checkDescendentNodes(node));
+
+        const parseTreeString = parseTreeStringFromNodeAndTokens(node, tokens);
+
+        assert.isTrue(compareParseTreeStrings(parseTreeString, `
+                    
+                          S [0]            
+                            |              
+                   ------------------      
+                   |                |      
+                T. [0]        <END_OF_LINE>
+                   |                       
+          "e"[unassigned] [0]              
+                                          
+       `));
       });
     });
   });
@@ -415,9 +543,9 @@ describe("Languages", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {
@@ -920,9 +1048,9 @@ describe("Languages", () => {
 
       rules = eliminateLeftRecursion(rules);  ///
 
-      const adjustedBNF = adjustedBNFFromRules(rules);
+      const rewrittenBNF = rewrittenBNFFromRules(rules);
 
-      bnf = adjustedBNF;  ///
+      bnf = rewrittenBNF;  ///
     });
 
     it("is rewritten", () => {

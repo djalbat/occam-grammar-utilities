@@ -26,7 +26,7 @@ function definitionFromBNF(bnf) {
   return definition;
 }
 
-function adjustedBNFFromBNF(bnf) {
+function rewrittenBNFFromBNF(bnf) {
   let rules;
 
   rules = rulesFromBNF(bnf);
@@ -35,22 +35,22 @@ function adjustedBNFFromBNF(bnf) {
 
   const multiLine = true,
         rulesString = rulesAsString(rules, multiLine),
-        adjustedBNF = rulesString;  ///
+        rewrittenBNF = rulesString;  ///
 
-  return adjustedBNF;
+  return rewrittenBNF;
 }
 
-function adjustedBNFFromRules(rules) {
+function rewrittenBNFFromRules(rules) {
   const multiLine = true,
         rulesString = rulesAsString(rules, multiLine),
-        adjustedBNF = rulesString;  ///
+        rewrittenBNF = rulesString;  ///
 
-  return adjustedBNF;
+  return rewrittenBNF;
 }
 
 module.exports = {
   ruleFromBNF,
   definitionFromBNF,
-  adjustedBNFFromBNF,
-  adjustedBNFFromRules
+  rewrittenBNFFromBNF,
+  rewrittenBNFFromRules
 };
