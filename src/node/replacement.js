@@ -65,30 +65,16 @@ class ReplacementNode extends NonTerminalNode {
   }
 
   rewriteNonTerminalNode(nonTerminalNode, state) {
-    let rewritableNode;
-
-    rewritableNode = findRewritableNode(nonTerminalNode);
+    let rewritableNode = findRewritableNode(nonTerminalNode);
 
     if (rewritableNode === null) {
       ///
-    } else if (rewritableNode === nonTerminalNode) {
-      nonTerminalNode = nonTerminalNode.rewrite(state); ///
     } else {
-      const parentNode = rewritableNode.getParentNode(),
-            replacedNode = rewritableNode;  ///
+      nonTerminalNode = nonTerminalNode.mutate(rewritableNode, (rewritableNode) => {
+        rewritableNode = rewritableNode.rewrite(state); ///
 
-      rewritableNode = rewritableNode.rewrite(state);
-
-      if (rewritableNode !== null) {
-        const replacementNode = rewritableNode, ///
-              replacementNodes = [
-                replacementNode
-              ];
-
-        parentNode.replaceChildNode(replacedNode, replacementNodes);
-      } else {
-        nonTerminalNode = null;
-      }
+        return rewritableNode;
+      });
     }
 
     return nonTerminalNode;
