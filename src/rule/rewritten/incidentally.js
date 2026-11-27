@@ -35,10 +35,10 @@ export default class IncidentallyRewrittenRule extends Rule {
 
 export function incidentallyRewrittenRulesFromCycleAndCycles(context, incidentallyRewrittenRules = []) {
   const ruleMap = context.getRuleMap(),
-        incidentalRuleNames = context.getIncidentalRuleNames();
+        recursiveRuleNames = context.getRecursiveRuleNames();
 
-  incidentalRuleNames.forEach((incidentalRuleName) => {
-    const ruleName = incidentalRuleName,  ///
+  recursiveRuleNames.forEach((recursiveRuleName) => {
+    const ruleName = recursiveRuleName,  ///
           rule = ruleMap[ruleName],
           incidentallyRewrittenRule = IncidentallyRewrittenRule.fromRule(rule, context);
 

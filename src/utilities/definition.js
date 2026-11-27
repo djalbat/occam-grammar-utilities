@@ -14,7 +14,8 @@ const { first, last, tail } = arrayUtilities;
 export function partsfromDefinition(definition, context) {
   let parts;
 
-  const ruleNames = context.getRuleNames();
+  const recursiveRuleNames = context.getRecursiveRuleNames(),
+        ruleNames = recursiveRuleNames; ///
 
   parts = definition.getParts();
 
@@ -26,8 +27,9 @@ export function partsfromDefinition(definition, context) {
 export function tailPartsfromDefinition(definition, context) {
   let tailParts;
 
-  const parts = definition.getParts(),
-        ruleNames = context.getRuleNames();
+  const recursiveRuleNames = context.getRecursiveRuleNames(),
+        ruleNames = recursiveRuleNames, ///
+        parts = definition.getParts();
 
   tailParts = tail(parts);
 

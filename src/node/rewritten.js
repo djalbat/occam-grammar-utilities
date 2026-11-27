@@ -36,20 +36,6 @@ class RewrittenNode extends NonTerminalNode {
     return terminate;
   }
 
-  getBaseRuleName() {
-    let ruleName;
-
-    ruleName = this.getRuleName();
-
-    const rewrittenRuleName = ruleName; ///
-
-    ruleName = ruleNameFromRewrittenRuleName(rewrittenRuleName);
-
-    const baseRuleName = ruleName;  ///
-
-    return baseRuleName;
-  }
-
   isCongruent() {
     let congruent = false;
 
@@ -81,6 +67,20 @@ class RewrittenNode extends NonTerminalNode {
     }
 
     return congruent;
+  }
+
+  getBaseRuleName() {
+    let ruleName;
+
+    ruleName = this.getRuleName();
+
+    const rewrittenRuleName = ruleName; ///
+
+    ruleName = ruleNameFromRewrittenRuleName(rewrittenRuleName);
+
+    const baseRuleName = ruleName;  ///
+
+    return baseRuleName;
   }
 
   static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(RewrittenNode, ruleName, childNodes, precedence, opacity); }

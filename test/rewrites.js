@@ -392,7 +392,7 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                          
+                                                                  
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
@@ -401,15 +401,15 @@ describe("Rewrites", () => {
         
         E    ::= "e" ;
         
-        _G.. ::= "g" ;
-        
-        _E   ::= "e" ;
-        
         _T.  ::= T_ T~? ;
         
         T_.  ::= _E ;
         
         T~.  ::= _G ( T~ | ε ) ;
+        
+        _G.. ::= "g" ;
+        
+        _E   ::= "e" ;
 
      `));
     });
@@ -1648,14 +1648,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                  
+                                                                          
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
         
         A..  ::= T ;
-        
-        _A.. ::= _T ;
         
         T_.  ::= "e" ;
         
@@ -1664,6 +1662,8 @@ describe("Rewrites", () => {
         A~.. ::= ~T ;
         
         ~T.  ::= "g" ( A~ | ε ) ;
+        
+        _A.. ::= _T ;
 
      `));
     });
@@ -1860,14 +1860,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                                          
+                                                                                                  
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
         
         A..  ::= T ( ) ;
-        
-        _A.. ::= _T ( ) ;
         
         T_.  ::= "e" (2) ;
         
@@ -1876,6 +1874,8 @@ describe("Rewrites", () => {
         A~.. ::= ~T ( ) ;
         
         ~T.  ::= "g" ( A~ | ε ) (-1) ;
+        
+        _A.. ::= _T ( ) ;
                   
      `));
     });
@@ -2023,14 +2023,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                                                          
+                                                                                                                  
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
         
         A..  ::= T ( ) ;
-        
-        _A.. ::= _T ( ) ;
         
         T_.  ::= . ;
         
@@ -2039,6 +2037,8 @@ describe("Rewrites", () => {
         A~.. ::= ~T ( ) ;
         
         ~T.  ::= "+" _A ;
+        
+        _A.. ::= _T ( ) ;
 
      `));
     });
@@ -2186,14 +2186,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                                                                  
+                                                                                                                          
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
         
         A..  ::= T ( ) ;
-        
-        _A.. ::= _T ( ) ;
         
         T_.  ::= . ;
         
@@ -2202,6 +2200,8 @@ describe("Rewrites", () => {
         A~.. ::= ~T ( ) ;
         
         ~T.  ::= "+" \` _A ;
+        
+        _A.. ::= _T ( ) ;
 
      `));
     });
@@ -2398,14 +2398,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                                                                          
+                                                                                                                                  
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
         
         A..  ::= T ( ) ;
-        
-        _A.. ::= _T ( ) ;
         
         T_.  ::= . ;
         
@@ -2414,6 +2412,8 @@ describe("Rewrites", () => {
         A~.. ::= ~T ( ) ;
         
         ~T.  ::= "?" \` _A ":" _A ;
+        
+        _A.. ::= _T ( ) ;
                 
       `));
     });
@@ -2526,26 +2526,26 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                        
+                                
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
         
         A..  ::= T ( ) ;
         
-        _A.. ::= _T ( ) ;
-        
         T_.  ::= /[a-z0-9]/ ;
         
         _T.  ::= T_ A~? ;
         
         A~.. ::= ~T ( ) ;
-                              
-        ~T.  ::= "+" \` _A (-10)
         
-               |  "^" _A (20)
-               
+        ~T.  ::= "+" \` _A (-10)
+            
+               | "^" _A (20)
+        
                ;
+        
+        _A.. ::= _T ( ) ;
         
      `));
     });
@@ -2777,28 +2777,28 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                                                          
+                                                                                                                  
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
         
         A..  ::= T ( ) ;
         
-        _A.. ::= _T ( ) ;
-        
         T_.  ::= /[a-z0-9]/ ;
         
         _T.  ::= T_ A~? ;
         
         A~.. ::= ~T ( ) ;
-
+        
         ~T.  ::= "+" \` _A (-10)
-
-               |  <NO_WHITESPACE> _A (-20)
- 
-               |  "^" _A (30)
-  
+            
+               | <NO_WHITESPACE> _A (-20)
+            
+               | "^" _A (30)
+        
                ;
+        
+        _A.. ::= _T ( ) ;
                       
      `));
     });
@@ -3281,7 +3281,7 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                
+                                        
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
@@ -3296,16 +3296,6 @@ describe("Rewrites", () => {
         
         Y..  ::= /[a-z]/ ;
         
-        _A.  ::= _T ( )
-            
-               | _Y ( )
-        
-               ;
-        
-        _Y.. ::= /[a-z]/ ;
-        
-        _V.. ::= /[0-9]/ ;
-        
         T_   ::= _V ;
         
         _T   ::= ( T_ | _A_ ) A~? ;
@@ -3319,6 +3309,16 @@ describe("Rewrites", () => {
                | <NO_WHITESPACE> _A (-101)
         
                ;
+        
+        _A.  ::= _T ( )
+            
+               | _Y ( )
+        
+               ;
+        
+        _Y.. ::= /[a-z]/ ;
+        
+        _V.. ::= /[0-9]/ ;
                
      `));
     });
@@ -3802,7 +3802,7 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                                                                                                          
+                                                                                                                                  
         S  ::= ( T ... <END_OF_LINE> ) ;
         
         T  ::= _T ;
@@ -3810,10 +3810,6 @@ describe("Rewrites", () => {
         A  ::= T ( ) ;
         
         V  ::= . ;
-        
-        _A ::= _T ( ) ;
-        
-        _V ::= . ;
         
         T_ ::= "¬" <NO_WHITESPACE> _A (10)
             
@@ -3826,6 +3822,10 @@ describe("Rewrites", () => {
         A~ ::= ~T ( ) ;
         
         ~T ::= "∧" \` _A (-9) ;
+        
+        _A ::= _T ( ) ;
+        
+        _V ::= . ;
                       
      `));
     });
@@ -3913,14 +3913,12 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-        
+                
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
         
         C..  ::= T ( "=" | "!" ) \` T (-1) ;
-        
-        _C.. ::= _T ( "=" | "!" ) \` _T (-1) ;
         
         T_.  ::= /[a-z0-9]/ ;
         
@@ -3929,6 +3927,8 @@ describe("Rewrites", () => {
         ~T~. ::= ~C ( ) ;
         
         ~C.. ::= ( "=" | "!" ) \` _T (-1) ;
+        
+        _C.. ::= _T ( "=" | "!" ) \` _T (-1) ;
 
      `));
     });
@@ -4080,32 +4080,32 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                
+                        
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
         
         C..  ::= T ( "=" | "!" ) \` T (-1) ;
         
-        L..  ::= T ( "|" | "&" ) \` T (-2) ; 
-
-        _C.. ::= _T ( "=" | "!" ) \` _T (-1) ;
+        L..  ::= T ( "|" | "&" ) \` T (-2) ;
         
-        _L.. ::= _T ( "|" | "&" ) \` _T (-2) ; 
-
         T_.  ::= /[a-z0-9]/ ;
         
         _T.  ::= T_ ~T~? ;
         
-        ~T~. ::= ~C ( ) 
-        
+        ~T~. ::= ~C ( )
+            
                | ~L ( )
-               
+        
                ;
         
         ~C.. ::= ( "=" | "!" ) \` _T (-1) ;
-  
-        ~L.. ::= ( "|" | "&" ) \` _T (-2) ; 
+        
+        ~L.. ::= ( "|" | "&" ) \` _T (-2) ;
+        
+        _C.. ::= _T ( "=" | "!" ) \` _T (-1) ;
+        
+        _L.. ::= _T ( "|" | "&" ) \` _T (-2) ;
                 
      `));
     });
@@ -4308,7 +4308,7 @@ describe("Rewrites", () => {
 
     it("is rewritten", () => {
       assert.isTrue(compareParseTreeStrings(bnf, `
-                                
+                                        
         S    ::= ( T ... <END_OF_LINE> ) ;
         
         T    ::= _T ;
@@ -4320,14 +4320,6 @@ describe("Rewrites", () => {
         N..  ::= "!" <NO_WHITESPACE> T (-3) ;
         
         L..  ::= T ( "&" | "|" ) \` T (-1) ;
-        
-        _B.. ::= "(" (_T) ")" ;
-        
-        _N.. ::= "!" <NO_WHITESPACE> _T (-3) ;
-        
-        _C.. ::= _T ( "=" | "!" ) \` _T (-2) ;
-        
-        _L.. ::= _T ( "&" | "|" ) \` _T (-1) ;
         
         T_.  ::= _B
             
@@ -4348,6 +4340,14 @@ describe("Rewrites", () => {
         ~C.. ::= ( "=" | "!" ) \` _T (-2) ;
         
         ~L.. ::= ( "&" | "|" ) \` _T (-1) ;
+        
+        _B.. ::= "(" (_T) ")" ;
+        
+        _N.. ::= "!" <NO_WHITESPACE> _T (-3) ;
+        
+        _C.. ::= _T ( "=" | "!" ) \` _T (-2) ;
+        
+        _L.. ::= _T ( "&" | "|" ) \` _T (-1) ;
         
      `));
     });

@@ -2,6 +2,7 @@
 
 import Context from "../context";
 
+import { incidentallyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/incidentally"
 import { replacementRulesFromCycleAndCycles } from "../rule/replacement";
 import { intermediateRulesFromCycleAndCycles } from "../rule/intermediate";
 import { directlyReducedRulesFromCycleAndCycles } from "../rule/reduced/directly";
@@ -11,12 +12,9 @@ import { indirectlyReducedRulesFromCycleAndCycles } from "../rule/reduced/indire
 import { indirectlyRepeatedRulesFromCycleAndCycles } from "../rule/repeated/indirectly";
 import { indirectlyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/indirectly";
 import { intermediateRepeatedRulesFromCycleAndCycles } from "../rule/repeated/intermediate";
-import { incidentallyRewrittenRulesFromCycleAndCycles } from "../rule/rewritten/incidentally"
 
 export function rewriteRules(leftRecursiveCycle, cycles, graph, ruleMap) {
   const context = Context.fromLeftRecursiveCycleCyclesGraphAndRuleMap(leftRecursiveCycle, cycles, graph, ruleMap);
-
-  createIncidentallyRewrittenRules(context);
 
   createDirectlyRewrittenRules(context);
 
@@ -39,6 +37,12 @@ export function replaceRules(leftRecursiveCycle, cycles, graph, ruleMap) {
   const context = Context.fromLeftRecursiveCycleCyclesGraphAndRuleMap(leftRecursiveCycle, cycles, graph, ruleMap);
 
   createReplacementRules(context);
+}
+
+export function replicateRules(leftRecursiveCycle, cycles, graph, ruleMap) {
+  const context = Context.fromLeftRecursiveCycleCyclesGraphAndRuleMap(leftRecursiveCycle, cycles, graph, ruleMap);
+
+  createIncidentallyRewrittenRules(context);
 }
 
 function createReplacementRules(context) {
@@ -163,8 +167,13 @@ function createIncidentallyRewrittenRules(context) {
         incidentallyRewrittenRules = incidentallyRewrittenRulesFromCycleAndCycles(context);
 
   incidentallyRewrittenRules.map((incidentallyRewrittenRule) => {
-    const incidentallyRewrittenRuleName = incidentallyRewrittenRule.getName();
+    const incidentallyRewrittenRuleName = incidentallyRewrittenRule.getName(),
+          incidentallyRewrittenRuleA = incidentallyRewrittenRule, ///
+          rewrittenRuleName = incidentallyRewrittenRuleName,  ///
+          incidentallyRewrittenRuleB = ruleMap[rewrittenRuleName] || null;  ///
 
-    ruleMap[incidentallyRewrittenRuleName] = incidentallyRewrittenRule;
+    if (incidentallyRewrittenRuleB === null) {
+      ruleMap[rewrittenRuleName] = incidentallyRewrittenRuleA;
+    }
   });
 }
